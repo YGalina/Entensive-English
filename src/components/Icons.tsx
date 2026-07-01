@@ -37,6 +37,14 @@ export const Text = (p: P) => (
   </svg>
 );
 
+export const Chat = (p: P) => (
+  <svg {...base} className={p.className}>
+    <path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.5A8 8 0 1 1 21 12Z" />
+    <path d="M8.5 11h7" />
+    <path d="M8.5 14h4.5" />
+  </svg>
+);
+
 export const Play = (p: P) => (
   <svg {...base} className={p.className} fill="currentColor" stroke="none">
     <path d="M7 5.5v13l11-6.5-11-6.5Z" />

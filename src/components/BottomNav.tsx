@@ -2,24 +2,28 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Layers, Text, Play, Smile, Sound } from "./Icons";
+import { Home, Layers, Text, Play, Smile, Sound, Chat } from "./Icons";
+import { useUILang } from "@/lib/prefs";
 
 const items = [
-  { href: "/", label: "Сегодня", Icon: Home },
-  { href: "/vocab", label: "Словарь", Icon: Layers },
-  { href: "/pronunciation", label: "Звуки", Icon: Sound },
-  { href: "/reading", label: "Чтение", Icon: Text },
-  { href: "/video", label: "Видео", Icon: Play },
-  { href: "/profile", label: "Профиль", Icon: Smile },
+  { href: "/", ru: "Сегодня", en: "Today", Icon: Home },
+  { href: "/vocab", ru: "Словарь", en: "Words", Icon: Layers },
+  { href: "/pronunciation", ru: "Звуки", en: "Sounds", Icon: Sound },
+  { href: "/grammar", ru: "Времена", en: "Tenses", Icon: Chat },
+  { href: "/reading", ru: "Чтение", en: "Reading", Icon: Text },
+  { href: "/video", ru: "Видео", en: "Video", Icon: Play },
+  { href: "/profile", ru: "Профиль", en: "Profile", Icon: Smile },
 ];
 
 export default function BottomNav() {
   const path = usePathname();
+  const ui = useUILang();
   return (
     <nav className="sticky bottom-0 z-20 border-t border-line bg-surface/90 backdrop-blur">
       <ul className="mx-auto flex max-w-[480px] items-stretch justify-between px-2">
-        {items.map(({ href, label, Icon }) => {
+        {items.map(({ href, ru, en, Icon }) => {
           const active = href === "/" ? path === "/" : path.startsWith(href);
+          const label = ui === "en" ? en : ru;
           return (
             <li key={href} className="flex-1">
               <Link
