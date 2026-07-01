@@ -293,7 +293,7 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center py-6">
-          <div className="max-w-full break-words font-heading text-[38px] font-extrabold leading-tight text-brand-ink">
+          <div className="max-w-full break-words font-heading text-[38px] font-extrabold leading-tight text-accent">
             {w.en}
           </div>
           <div
@@ -525,7 +525,7 @@ function Context({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDon
             <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted">
               English
             </p>
-            <p className="font-heading text-[22px] font-extrabold leading-snug text-brand-ink">
+            <p className="font-heading text-[22px] font-extrabold leading-snug text-accent">
               {highlight(w.exEn ?? w.en, w.en)}
             </p>
           </div>
@@ -646,7 +646,7 @@ function Recognition({
       </p>
 
       <div className="flex flex-1 flex-col items-center justify-center rounded-card bg-surface p-6 text-center shadow-card">
-        <div className="font-heading text-[36px] font-extrabold leading-none text-ink">
+        <div className="font-heading text-[36px] font-extrabold leading-none text-accent">
           {w.en}
         </div>
         <button

@@ -87,19 +87,24 @@ export function speakEnglish(text: string, options: SpeakOptions = {}) {
     utterance.onend = () => options.onEnd?.();
     utterance.onerror = () => options.onError?.();
 
+    const speakNow = () => {
+      try {
+        // Chrome иногда «залипает» в состоянии paused → полная тишина. resume()
+        // безвреден, если не на паузе, и восстанавливает звук, если завис.
+        synth.resume();
+        synth.speak(utterance);
+      } catch {}
+    };
+
     // Chrome/Safari баг: cancel() сразу перед speak() часто «глотает» новую
     // реплику — поэтому при быстрой смене слов в киносеансе звука не было.
     // Прерываем, затем говорим на следующем тике, дав движку сброситься.
     const busy = synth.speaking || synth.pending;
     if (interrupt && busy) {
       synth.cancel();
-      setTimeout(() => {
-        try {
-          synth.speak(utterance);
-        } catch {}
-      }, 90);
+      setTimeout(speakNow, 90);
     } else {
-      synth.speak(utterance);
+      speakNow();
     }
   } catch {}
 }
