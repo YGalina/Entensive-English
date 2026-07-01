@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
 import ThemeToggle from "@/components/ThemeToggle";
-import { Sun } from "@/components/Icons";
+import { Sun, Sound } from "@/components/Icons";
+import { speakEnglish } from "@/lib/speech";
 import { usePrefs, updatePrefs } from "@/lib/prefs";
 import { useSrsStats } from "@/lib/srs";
 import { useTimeStats } from "@/lib/timelog";
@@ -24,6 +26,10 @@ const STR = {
     pace: "Темп занятий",
     paceNote: "Медленный темп даёт больше времени на слово и паузы между фразами. В сеансе темп можно менять.",
     paceNormal: "Обычный", paceSlow: "Медленный",
+    sound: "Звук", soundNote: "Не слышно английского в сеансе? Нажми — должно прозвучать «sound test».",
+    soundTest: "Проверить звук",
+    soundOk: (n: number) => `Найдено английских голосов: ${n}. Если тишина — проверь громкость и вывод звука.`,
+    soundNone: "Английских голосов в системе нет. Добавь: Системные настройки → Универсальный доступ → Устная речь → Управление голосами (напр. Samantha).",
     redo: "Пройти онбординг заново", reset: "Сбросить прогресс повторов",
   },
   en: {
@@ -39,6 +45,10 @@ const STR = {
     pace: "Session pace",
     paceNote: "Slow pace gives more time per word and longer pauses between phrases. You can change it during a session.",
     paceNormal: "Normal", paceSlow: "Slow",
+    sound: "Sound", soundNote: "No English audio in a session? Tap — you should hear “sound test”.",
+    soundTest: "Test sound",
+    soundOk: (n: number) => `English voices found: ${n}. If silent, check volume and audio output.`,
+    soundNone: "No English voices in the system. Add one: System Settings → Accessibility → Spoken Content → Manage Voices (e.g. Samantha).",
     redo: "Redo onboarding", reset: "Reset review progress",
   },
 } as const;
@@ -166,6 +176,14 @@ export default function Profile() {
           </div>
         </Card>
 
+        {/* Проверка звука */}
+        <Card title={t.sound} note={t.soundNote}>
+          <SoundTest
+            label={t.soundTest}
+            onResult={(n) => (n > 0 ? t.soundOk(n) : t.soundNone)}
+          />
+        </Card>
+
         {/* Тема оформления */}
         <Card title={t.appearance} note={t.appearanceNote}>
           <div className="flex items-center gap-2 text-sm text-muted">
@@ -207,6 +225,36 @@ function Mini({ n, label }: { n: number; label: string }) {
     <div className="rounded-card bg-surface p-3.5 text-center shadow-card">
       <p className="tnum font-heading text-xl font-extrabold text-brand">{n}</p>
       <p className="text-xs text-muted">{label}</p>
+    </div>
+  );
+}
+
+// Диагностика озвучки: проговаривает тест и показывает число англ. голосов ОС.
+function SoundTest({
+  label,
+  onResult,
+}: {
+  label: string;
+  onResult: (n: number) => string;
+}) {
+  const [msg, setMsg] = useState<string | null>(null);
+  return (
+    <div>
+      <button
+        onClick={() => {
+          const voices =
+            typeof window !== "undefined" && window.speechSynthesis
+              ? window.speechSynthesis.getVoices()
+              : [];
+          const en = voices.filter((v) => v.lang.toLowerCase().startsWith("en"));
+          setMsg(onResult(en.length));
+          speakEnglish("Sound test. One, two, three.", { interrupt: true });
+        }}
+        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-5 py-3.5 font-heading text-sm font-bold text-white"
+      >
+        <Sound className="h-4 w-4" /> {label}
+      </button>
+      {msg && <p className="mt-2 text-xs leading-relaxed text-muted">{msg}</p>}
     </div>
   );
 }
