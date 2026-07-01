@@ -210,7 +210,9 @@ function Ready({
 function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone: () => void }) {
   const pace = usePace();
   const [i, setI] = useState(0);
-  const [running, setRunning] = useState(true);
+  // Стартуем на паузе: пользователь сам жмёт «Смотреть» (это ещё и жест для
+  // разблокировки озвучки в браузере). Иначе поток пролетал до конца сам.
+  const [running, setRunning] = useState(false);
   // индекс в SPEEDS: медленный темп из настроек → «Медленно», иначе «Спокойно»
   const [speed, setSpeed] = useState(pace === "slow" ? 0 : 1);
   const [soundOn, setSoundOn] = useState(true);
@@ -368,33 +370,40 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
 
       {/* Управление */}
       <div className="mt-4 grid grid-cols-[1fr_auto] gap-2">
+        {/* Слева всегда управление воспроизведением: смотреть / пауза / заново */}
+        <button
+          onClick={() => {
+            if (running) {
+              setRunning(false);
+            } else {
+              if (last) setI(0);
+              setRunning(true);
+            }
+          }}
+          className="flex items-center justify-center gap-2 rounded-2xl bg-brand px-5 py-4 font-heading text-base font-extrabold text-white"
+        >
+          {running ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+          {running ? "Пауза" : last ? "Заново" : i === 0 ? "Смотреть" : "Продолжить"}
+        </button>
+        {/* Справа: в конце — переход к контексту, иначе — пропустить фазу */}
         {last && !running ? (
           <button
             onClick={onDone}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)]"
+            data-testid="flash-skip"
+            className="flex items-center justify-center gap-2 rounded-2xl bg-accent px-4 font-heading text-sm font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)]"
           >
             К контексту
             <ArrowRight className="h-5 w-5" />
           </button>
         ) : (
           <button
-            onClick={() => {
-              if (last) setI(0);
-              setRunning((r) => !r);
-            }}
-            className="flex items-center justify-center gap-2 rounded-2xl bg-brand px-5 py-4 font-heading text-base font-extrabold text-white"
+            onClick={onDone}
+            data-testid="flash-skip"
+            className="rounded-2xl border border-line bg-surface px-4 font-heading text-sm font-bold text-muted"
           >
-            {running ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-            {running ? "Пауза" : last ? "Заново" : "Дальше"}
+            Пропустить
           </button>
         )}
-        <button
-          onClick={onDone}
-          data-testid="flash-skip"
-          className="rounded-2xl border border-line bg-surface px-4 font-heading text-sm font-bold text-muted"
-        >
-          Пропустить
-        </button>
       </div>
     </div>
   );
