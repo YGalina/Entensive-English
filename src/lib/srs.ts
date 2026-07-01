@@ -1,26 +1,40 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import {
+  fsrs,
+  generatorParameters,
+  createEmptyCard,
+  Rating,
+  State,
+  type Card as FsrsCard,
+} from "ts-fsrs";
 
-// SRS-lite (упрощённый SM-2). Реализует кибернетическое ядро метода:
-// система планирует «узнавание» слов на будущее; усвоение за 2–3 повтора.
+// Кибернетическое ядро метода: система планирует «узнавание» слов на будущее.
+// Алгоритм — FSRS (современнее SM-2): интервалы считаются по стабильности и
+// сложности памяти. Ответ в UI мягкий и бинарный (метод без штрафов):
+//   «Знаю» → Good, «Ещё не всплыло» → Again.
+// Внутридневные learning-шаги отключены — интенсив мыслит днями, а не минутами:
+// первый Good планирует на дни вперёд, Again возвращает слово назавтра.
 // Состояние — в localStorage (до появления бэкенда с PostgreSQL).
 
-export type Card = {
+const f = fsrs(
+  generatorParameters({
+    enable_fuzz: false,
+    learning_steps: [],
+    relearning_steps: [],
+  })
+);
+
+/** Карточка FSRS плюс наши поля привязки. Даты сериализуются в ISO-строки. */
+export type Card = FsrsCard & {
   en: string;
   packId: string;
-  reps: number;
-  intervalDays: number;
-  ease: number;
-  /** epoch ms, когда слово снова к повтору */
-  due: number;
-  lapses: number;
 };
 
 type Store = Record<string, Card>;
 
 const KEY = "ie_srs";
-const DAY = 24 * 60 * 60 * 1000;
 const listeners = new Set<() => void>();
 
 function read(): Store {
@@ -38,38 +52,40 @@ function write(s: Store) {
   listeners.forEach((l) => l());
 }
 
+/** Восстанавливает Date-поля FSRS из ISO-строк после JSON. */
+function reviveFsrs(c: Card): FsrsCard {
+  return {
+    ...c,
+    due: new Date(c.due),
+    last_review: c.last_review ? new Date(c.last_review) : undefined,
+  };
+}
+
+/** true, если карточку можно продолжать в FSRS (а не легаси SM-2 / seed). */
+function isFsrsCard(c: Card | undefined): c is Card {
+  return (
+    !!c &&
+    typeof c.stability === "number" &&
+    c.stability > 0 &&
+    typeof c.state === "number" &&
+    !!c.last_review
+  );
+}
+
+function dueMs(c: Card): number {
+  return new Date(c.due).getTime();
+}
+
 /** Записать результат узнавания слова. known=true — «всплыло». */
 export function recordAnswer(packId: string, en: string, known: boolean) {
   const s = read();
-  const key = en;
-  const prev: Card =
-    s[key] ?? { en, packId, reps: 0, intervalDays: 0, ease: 2.5, due: 0, lapses: 0 };
-
-  let card: Card;
-  if (known) {
-    const reps = prev.reps + 1;
-    const intervalDays =
-      reps === 1 ? 1 : reps === 2 ? 3 : Math.round(prev.intervalDays * prev.ease);
-    card = {
-      ...prev,
-      packId,
-      reps,
-      intervalDays,
-      ease: Math.min(2.8, prev.ease + 0.05),
-      due: Date.now() + intervalDays * DAY,
-    };
-  } else {
-    card = {
-      ...prev,
-      packId,
-      reps: 0,
-      intervalDays: 0,
-      ease: Math.max(1.6, prev.ease - 0.2),
-      due: Date.now(), // снова сегодня
-      lapses: prev.lapses + 1,
-    };
-  }
-  s[key] = card;
+  const now = new Date();
+  const prev = s[en];
+  // Легаси SM-2 и seed-карточки конвертируем в свежую FSRS при первом ответе.
+  const card: FsrsCard = isFsrsCard(prev) ? reviveFsrs(prev) : createEmptyCard(now);
+  const grade = known ? Rating.Good : Rating.Again;
+  const { card: next } = f.next(card, now, grade);
+  s[en] = { ...next, en, packId };
   write(s);
 }
 
@@ -80,7 +96,7 @@ export function recordBatch(packId: string, results: { en: string; known: boolea
 
 export type Stats = {
   total: number;
-  learned: number; // reps >= 2 — «усвоено» по методу
+  learned: number; // reps >= 2 — «усвоено» по методу (2–3 прохода)
   dueToday: number;
 };
 
@@ -91,7 +107,7 @@ function snapshot(): string {
   const stats: Stats = {
     total: cards.length,
     learned: cards.filter((c) => c.reps >= 2).length,
-    dueToday: cards.filter((c) => c.due <= now).length,
+    dueToday: cards.filter((c) => dueMs(c) <= now).length,
   };
   return JSON.stringify(stats);
 }
@@ -99,8 +115,8 @@ function snapshot(): string {
 export function dueCards(): Card[] {
   const now = Date.now();
   return Object.values(read())
-    .filter((c) => c.due <= now)
-    .sort((a, b) => a.due - b.due);
+    .filter((c) => dueMs(c) <= now)
+    .sort((a, b) => dueMs(a) - dueMs(b));
 }
 
 function subscribe(cb: () => void) {
@@ -118,3 +134,6 @@ export function useSrsStats(): Stats {
   );
   return JSON.parse(raw) as Stats;
 }
+
+// State реэкспортируем — пригодится, если UI захочет различать New/Review и т.п.
+export { State };

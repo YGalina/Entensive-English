@@ -82,15 +82,17 @@ test("экран повторов отрабатывает очередь SRS д
   // Дошли до экрана «Повтор завершён».
   await expect(page.getByTestId("review-done")).toBeVisible();
 
-  // Все три ушли в «усвоено» (reps >= 2).
-  const learned = await page.evaluate(() => {
+  // FSRS перепланировал все три карточки в будущее (сегодня повторов не осталось).
+  const allRescheduled = await page.evaluate(() => {
+    const now = Date.now();
     const s = JSON.parse(localStorage.getItem("ie_srs") ?? "{}") as Record<
       string,
-      { reps: number }
+      { due: string }
     >;
-    return Object.values(s).filter((c) => c.reps >= 2).length;
+    const vals = Object.values(s);
+    return vals.length === 3 && vals.every((c) => new Date(c.due).getTime() > now);
   });
-  expect(learned).toBe(3);
+  expect(allRescheduled).toBe(true);
 
   await page.getByTestId("review-done").click();
   await expect(page.getByTestId("vocab-review-start")).toHaveCount(0);
