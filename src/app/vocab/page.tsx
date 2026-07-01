@@ -167,7 +167,7 @@ function Review({ onExit }: { onExit: () => void }) {
       </div>
 
       <div className="flex flex-1 flex-col items-center justify-center rounded-card bg-surface p-6 text-center shadow-card">
-        <div className="font-heading text-[34px] font-extrabold leading-none text-ink">
+        <div className="font-heading text-[34px] font-extrabold leading-none text-accent">
           {word.en}
         </div>
         <button

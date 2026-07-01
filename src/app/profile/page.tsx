@@ -21,6 +21,9 @@ const STR = {
     time: "Время практики", timeTotal: "всего", timeToday: "сегодня",
     appearance: "Оформление", appearanceNote: "Тёмная тема бережёт глаза в долгих сессиях.",
     themeHint: "Переключатель темы — вверху справа.",
+    pace: "Темп занятий",
+    paceNote: "Медленный темп даёт больше времени на слово и паузы между фразами. В сеансе темп можно менять.",
+    paceNormal: "Обычный", paceSlow: "Медленный",
     redo: "Пройти онбординг заново", reset: "Сбросить прогресс повторов",
   },
   en: {
@@ -33,6 +36,9 @@ const STR = {
     time: "Practice time", timeTotal: "total", timeToday: "today",
     appearance: "Appearance", appearanceNote: "Dark theme is easier on the eyes in long sessions.",
     themeHint: "Theme toggle is in the top right.",
+    pace: "Session pace",
+    paceNote: "Slow pace gives more time per word and longer pauses between phrases. You can change it during a session.",
+    paceNormal: "Normal", paceSlow: "Slow",
     redo: "Redo onboarding", reset: "Reset review progress",
   },
 } as const;
@@ -136,6 +142,28 @@ export default function Profile() {
           <Row label={t.goal} value={goal} />
           <Row label={t.level} value={level} />
           <Row label={t.topics} value={topicTitles || t.none} />
+        </Card>
+
+        {/* Темп занятий */}
+        <Card title={t.pace} note={t.paceNote}>
+          <div className="grid grid-cols-2 gap-2">
+            {(["normal", "slow"] as const).map((p) => {
+              const on = (prefs?.pace ?? "normal") === p;
+              return (
+                <button
+                  key={p}
+                  onClick={() => updatePrefs({ pace: p })}
+                  className={`rounded-soft border p-2.5 text-center font-heading text-sm font-bold transition-colors ${
+                    on
+                      ? "border-brand bg-brand-soft text-brand-d"
+                      : "border-line bg-surface text-ink hover:border-brand/40"
+                  }`}
+                >
+                  {p === "normal" ? t.paceNormal : t.paceSlow}
+                </button>
+              );
+            })}
+          </div>
         </Card>
 
         {/* Тема оформления */}

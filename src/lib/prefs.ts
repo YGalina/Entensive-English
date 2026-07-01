@@ -13,6 +13,8 @@ export type Prefs = {
   level: string;
   /** Текущий день программы интенсива (1..N) */
   programDay?: number;
+  /** Темп прохождения сеанса по умолчанию: обычный или медленный */
+  pace?: "normal" | "slow";
 };
 
 const KEY = "ie_prefs";
@@ -68,6 +70,12 @@ export function usePrefs(): Prefs | null {
 export function useNativeLang(): LangCode {
   const prefs = usePrefs();
   return prefs?.nativeLang ?? "ru";
+}
+
+/** Темп сеанса по умолчанию (обычный/медленный). */
+export function usePace(): "normal" | "slow" {
+  const prefs = usePrefs();
+  return prefs?.pace === "slow" ? "slow" : "normal";
 }
 
 function normalizePrefs(p: Prefs): Prefs {

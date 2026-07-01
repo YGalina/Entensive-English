@@ -76,7 +76,8 @@ export function speakEnglish(text: string, options: SpeakOptions = {}) {
   if (!clean) return;
 
   try {
-    if (options.interrupt ?? true) window.speechSynthesis.cancel();
+    const synth = window.speechSynthesis;
+    const interrupt = options.interrupt ?? true;
     const utterance = new SpeechSynthesisUtterance(clean);
     utterance.lang = "en-US";
     utterance.voice = bestEnglishVoice();
@@ -85,7 +86,21 @@ export function speakEnglish(text: string, options: SpeakOptions = {}) {
     utterance.volume = 1;
     utterance.onend = () => options.onEnd?.();
     utterance.onerror = () => options.onError?.();
-    window.speechSynthesis.speak(utterance);
+
+    // Chrome/Safari баг: cancel() сразу перед speak() часто «глотает» новую
+    // реплику — поэтому при быстрой смене слов в киносеансе звука не было.
+    // Прерываем, затем говорим на следующем тике, дав движку сброситься.
+    const busy = synth.speaking || synth.pending;
+    if (interrupt && busy) {
+      synth.cancel();
+      setTimeout(() => {
+        try {
+          synth.speak(utterance);
+        } catch {}
+      }, 90);
+    } else {
+      synth.speak(utterance);
+    }
   } catch {}
 }
 
