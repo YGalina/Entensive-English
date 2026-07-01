@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Sun, Sound } from "@/components/Icons";
-import { speakEnglish } from "@/lib/speech";
 import { usePrefs, updatePrefs } from "@/lib/prefs";
 import { useSrsStats } from "@/lib/srs";
 import { useTimeStats } from "@/lib/timelog";
@@ -242,13 +241,43 @@ function SoundTest({
     <div>
       <button
         onClick={() => {
-          const voices =
-            typeof window !== "undefined" && window.speechSynthesis
-              ? window.speechSynthesis.getVoices()
-              : [];
+          const synth = typeof window !== "undefined" ? window.speechSynthesis : undefined;
+          const voices = synth ? synth.getVoices() : [];
           const en = voices.filter((v) => v.lang.toLowerCase().startsWith("en"));
           setMsg(onResult(en.length));
-          speakEnglish("Sound test. One, two, three.", { interrupt: true });
+
+          // Отправляем диагностику на сервер, чтобы увидеть реальное окружение.
+          const diag: Record<string, unknown> = {
+            ua: typeof navigator !== "undefined" ? navigator.userAgent : "",
+            totalVoices: voices.length,
+            enVoices: en.map((v) => `${v.name} / ${v.lang}${v.default ? " *" : ""}`),
+            state: synth
+              ? { speaking: synth.speaking, pending: synth.pending, paused: synth.paused }
+              : null,
+          };
+          const post = (extra: Record<string, unknown>) => {
+            try {
+              fetch("/api/soundlog", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ...diag, ...extra }),
+              });
+            } catch {}
+          };
+          try {
+            const u = new SpeechSynthesisUtterance("Sound test. One, two, three.");
+            u.lang = "en-US";
+            if (en[0]) u.voice = en[0];
+            u.onstart = () => post({ event: "start" });
+            u.onend = () => post({ event: "end" });
+            u.onerror = (e) => post({ event: "error", error: (e as SpeechSynthesisErrorEvent).error });
+            synth?.resume();
+            synth?.cancel();
+            synth?.speak(u);
+            post({ event: "speak-called" });
+          } catch (e) {
+            post({ event: "throw", error: String(e) });
+          }
         }}
         className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-5 py-3.5 font-heading text-sm font-bold text-white"
       >
