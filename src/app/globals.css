@@ -1,26 +1,91 @@
 @import "tailwindcss";
 
+/* ===== Дизайн-система «Индиго» (см. 04_design_system.md) ===== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --brand: #4f46e5;
+  --brand-d: #4338ca;
+  --brand-soft: #eef0fe;
+  --brand-ink: #1e1b4b;
+  --accent: #ff6b5c;
+  --accent-d: #e04e3f;
+  --bg: #f5f5fb;
+  --surface: #ffffff;
+  --ink: #1e1b4b;
+  --muted: #6b7280;
+  --line: #ececf5;
+  --ok: #16a34a;
+  --warn: #b45309;
+  --warn-soft: #fef3e2;
+  --shadow: 0 1px 2px rgba(30, 27, 75, 0.04), 0 8px 24px rgba(30, 27, 75, 0.08);
+  --shadow-lg: 0 2px 4px rgba(30, 27, 75, 0.05), 0 18px 48px rgba(30, 27, 75, 0.14);
+}
+
+.dark {
+  /* Нейтральный тёмный фон + поверхности; индиго — только акцент */
+  --brand: #8b83f0;
+  --brand-d: #a8a2f7;
+  --brand-soft: #262a44; /* индиго-подложка для выделений/пилюль */
+  --brand-ink: #e7e6fb;
+  --accent: #ff6b5c;
+  --accent-d: #ff8275;
+  --bg: #0f1014; /* почти нейтральный, лёгкий холодок */
+  --surface: #1a1c22; /* карточки — нейтрально-тёмные */
+  --ink: #eceef3;
+  --muted: #969aa6;
+  --line: #2a2d36;
+  --ok: #34d399;
+  --warn: #f0b860;
+  --warn-soft: #2c2516;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.45), 0 18px 48px rgba(0, 0, 0, 0.6);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-brand: var(--brand);
+  --color-brand-d: var(--brand-d);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-ink: var(--brand-ink);
+  --color-accent: var(--accent);
+  --color-accent-d: var(--accent-d);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-heading: var(--font-nunito), system-ui, sans-serif;
+
+  --radius-card: 22px;
+  --radius-soft: 14px;
+
+  --shadow-card: var(--shadow);
+  --shadow-float: var(--shadow-lg);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+/* Табличные цифры для таймеров и счётчиков — без «прыжков» */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }

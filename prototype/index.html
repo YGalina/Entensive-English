@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intensive English — прототип</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* palette A — Индиго (default) */
+  --brand:#4F46E5; --brand-d:#4338CA; --brand-soft:#EEF0FE; --brand-ink:#1E1B4B;
+  --accent:#FF6B5C; --accent-d:#E04E3F;
+  --bg:#F5F5FB; --surface:#FFFFFF; --ink:#1E1B4B; --muted:#6B7280; --line:#ECECF5;
+  --ok:#16A34A; --warn:#B45309; --warn-soft:#FEF3E2;
+  --shadow:0 1px 2px rgba(30,27,75,.04), 0 8px 24px rgba(30,27,75,.08);
+  --shadow-lg:0 2px 4px rgba(30,27,75,.05), 0 18px 48px rgba(30,27,75,.14);
+  --r:22px; --r-sm:14px;
+}
+[data-pal="B"]{
+  --brand:#C2563A; --brand-d:#9C3F26; --brand-soft:#F7E7DD; --brand-ink:#3B2A22;
+  --accent:#E0A100; --accent-d:#B98300;
+  --bg:#FBF3EA; --surface:#FFFFFF; --ink:#3B2A22; --muted:#8A7A6F; --line:#F0E4D8;
+  --warn:#9C3F26; --warn-soft:#F7E7DD;
+}
+[data-pal="C"]{
+  --brand:#6D28D9; --brand-d:#5B21B6; --brand-soft:#EDE4FB; --brand-ink:#2A1248;
+  --accent:#F59E0B; --accent-d:#CC840A;
+  --bg:#F4EFFB; --surface:#FFFFFF; --ink:#2A1248; --muted:#6E6480; --line:#EBE3F6;
+  --warn:#92400E; --warn-soft:#FBEFD8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--ink);
+  -webkit-font-smoothing:antialiased;padding:28px 16px 60px;transition:background .3s}
+h1,h2,h3,.h{font-family:'Nunito',sans-serif}
+.wrap{max-width:1080px;margin:0 auto}
+.head{text-align:center;margin-bottom:8px}
+.head h1{font-size:26px;font-weight:800;color:var(--ink)}
+.head p{color:var(--muted);font-size:15px;margin-top:6px}
+.switch{display:flex;gap:8px;justify-content:center;margin:22px 0 34px;flex-wrap:wrap}
+.switch button{font-family:'Nunito';font-weight:700;font-size:14px;cursor:pointer;
+  padding:10px 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);
+  color:var(--ink);transition:.2s;box-shadow:var(--shadow)}
+.switch button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.screens{display:flex;gap:26px;justify-content:center;flex-wrap:wrap}
+.phone{width:300px;background:var(--surface);border-radius:34px;box-shadow:var(--shadow-lg);
+  overflow:hidden;border:1px solid var(--line)}
+.notch{height:30px;display:flex;align-items:center;justify-content:center}
+.notch span{width:90px;height:6px;border-radius:99px;background:var(--line)}
+.scr{padding:14px 18px 20px}
+.scr-cap{font-family:'Nunito';font-weight:700;font-size:12px;letter-spacing:.04em;
+  text-transform:uppercase;color:var(--muted);margin:2px 0 14px;display:flex;justify-content:space-between;align-items:center}
+.streak{display:inline-flex;align-items:center;gap:5px;color:var(--accent-d);font-weight:700}
+/* today */
+.goal{background:var(--brand);border-radius:var(--r);padding:20px;color:#fff;position:relative;overflow:hidden}
+.goal:after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;
+  border-radius:50%;background:rgba(255,255,255,.10)}
+.goal small{font-family:'Inter';opacity:.85;font-size:13px}
+.goal .big{font-family:'Nunito';font-weight:800;font-size:30px;line-height:1.1;margin-top:6px}
+.goal .sub{font-size:13px;opacity:.9;margin-top:8px}
+.cta{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;margin-top:16px;
+  background:var(--accent);color:#fff;border:none;border-radius:16px;padding:15px;font-family:'Nunito';
+  font-weight:800;font-size:16px;cursor:pointer;box-shadow:0 8px 20px -6px var(--accent);transition:transform .12s}
+.cta:active{transform:scale(.97)}
+.blocks{margin-top:18px}
+.blk{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);
+  border-radius:var(--r-sm);margin-bottom:9px}
+.blk .n{width:34px;height:34px;border-radius:11px;background:var(--brand-soft);color:var(--brand-d);
+  font-family:'Nunito';font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.blk .t{flex:1}
+.blk .t b{font-weight:600;font-size:14px}
+.blk .t small{color:var(--muted);font-size:12px;display:block}
+.blk .dot{width:9px;height:9px;border-radius:50%;background:var(--ok)}
+.blk.todo .dot{background:var(--line)}
+/* kinoseans */
+.phase-bar{display:flex;gap:5px;margin-bottom:16px}
+.phase-bar i{flex:1;height:5px;border-radius:99px;background:var(--line)}
+.phase-bar i.on{background:var(--brand)}
+.flash{background:var(--brand-soft);border-radius:var(--r);padding:30px 18px;text-align:center;position:relative}
+.flash .speed{position:absolute;top:12px;right:14px;font-size:11px;font-weight:700;color:var(--brand-d);
+  background:#fff;padding:4px 9px;border-radius:99px}
+.flash .word{font-family:'Nunito';font-weight:800;font-size:38px;color:var(--brand-ink);line-height:1}
+.flash .ipa{font-family:'Inter';color:var(--muted);font-size:14px;margin:8px 0 14px}
+.flash .tr{display:inline-flex;align-items:center;gap:7px;background:#fff;color:var(--brand-d);
+  font-weight:600;font-size:15px;padding:8px 16px;border-radius:99px;box-shadow:var(--shadow)}
+.count{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:13px;color:var(--muted)}
+.count b{font-family:'Nunito';color:var(--ink);font-size:18px}
+.track{height:7px;background:var(--line);border-radius:99px;margin-top:8px;overflow:hidden}
+.track i{display:block;height:100%;width:56%;background:var(--brand);border-radius:99px}
+.safety{display:flex;gap:8px;align-items:flex-start;margin-top:14px;background:var(--warn-soft);
+  border-radius:12px;padding:10px 12px;font-size:12px;color:var(--warn);line-height:1.45}
+/* recognition / context */
+.vid{border-radius:var(--r);overflow:hidden;border:1px solid var(--line)}
+.vid .thumb{height:120px;background:linear-gradient(135deg,var(--brand),var(--brand-d));
+  display:flex;align-items:center;justify-content:center;color:#fff;position:relative}
+.vid .play{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.92);color:var(--brand-d);
+  display:flex;align-items:center;justify-content:center;font-size:20px}
+.cols{display:flex;gap:0;font-size:13px}
+.cols div{flex:1;padding:12px 14px}
+.cols .en{border-right:1px solid var(--line)}
+.cols .en b{color:var(--brand-d)}
+.cols small{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;font-weight:700}
+.rec{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.rec button{font-family:'Nunito';font-weight:700;font-size:14px;padding:13px;border-radius:14px;cursor:pointer;border:none}
+.rec .no{background:var(--surface);border:1.5px solid var(--line);color:var(--muted)}
+.rec .yes{background:var(--brand);color:#fff}
+.nav{display:flex;justify-content:space-around;padding:12px 0 4px;border-top:1px solid var(--line);margin-top:18px;color:var(--muted);font-size:19px}
+.nav .act{color:var(--brand)}
+.cycle{max-width:760px;margin:40px auto 0;background:var(--surface);border-radius:var(--r);
+  padding:22px 24px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.cycle h3{font-size:17px;font-weight:800;margin-bottom:4px}
+.cycle p{color:var(--muted);font-size:13px;margin-bottom:16px}
+.steps{display:flex;gap:10px;flex-wrap:wrap}
+.step{flex:1;min-width:120px;background:var(--bg);border-radius:14px;padding:13px 14px;border:1px solid var(--line)}
+.step .n{font-family:'Nunito';font-weight:800;color:var(--brand);font-size:13px}
+.step b{display:block;font-family:'Nunito';font-weight:700;font-size:14px;margin:3px 0}
+.step small{color:var(--muted);font-size:12px;line-height:1.4}
+.ti{font-style:normal}
+</style>
+</head>
+<body data-pal="A">
+<div class="wrap">
+  <div class="head">
+    <h1>Intensive English</h1>
+    <p>Прототип по методу Петрусинского — сеанс, а не карточки. Переключи палитру:</p>
+  </div>
+  <div class="switch">
+    <button data-set="A" class="on">A · Индиго</button>
+    <button data-set="B">B · Терракота</button>
+    <button data-set="C">C · Слива + янтарь</button>
+  </div>
+
+  <div class="screens">
+    <!-- SCREEN 1: Сегодня -->
+    <div class="phone">
+      <div class="notch"><span></span></div>
+      <div class="scr">
+        <div class="scr-cap"><span>Сегодня</span><span class="streak">🔥 7 дней</span></div>
+        <div class="goal">
+          <small>Цель дня · интенсив 5 ч</small>
+          <div class="big">600 слов</div>
+          <div class="sub">4 пачки · 4 видео · сверхнасыщенное поле</div>
+        </div>
+        <button class="cta"><span class="ti">▶</span> Начать сеанс</button>
+        <div class="blocks">
+          <div class="blk"><div class="n">1</div><div class="t"><b>Пачка «Здоровье»</b><small>150 слов · видео + чтение</small></div><div class="dot"></div></div>
+          <div class="blk todo"><div class="n">2</div><div class="t"><b>Пачка «Эмоции»</b><small>150 слов · видео + чтение</small></div><div class="dot"></div></div>
+          <div class="blk todo"><div class="n">3</div><div class="t"><b>Пачка «Работа»</b><small>150 слов · видео + чтение</small></div><div class="dot"></div></div>
+        </div>
+        <div class="nav"><span class="act ti">⌂</span><span class="ti">▦</span><span class="ti">▤</span><span class="ti">▶</span><span class="ti">☺</span></div>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: Киносеанс / перегрузка -->
+    <div class="phone">
+      <div class="notch"><span></span></div>
+      <div class="scr">
+        <div class="scr-cap"><span>Киносеанс · перегрузка</span><span>пачка 1</span></div>
+        <div class="phase-bar"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+        <div class="flash">
+          <div class="speed">⚡ разгон 0,3 с</div>
+          <div class="word">resilience</div>
+          <div class="ipa">/rɪˈzɪliəns/</div>
+          <div class="tr">🔊 устойчивость, стойкость</div>
+        </div>
+        <div class="count"><span>усвоено в потоке</span><b>84 / 150</b></div>
+        <div class="track"><i></i></div>
+        <div class="safety"><span class="ti">⚠</span><span>Быстрый режим — по согласию. Безопасная скорость по умолчанию, пауза в любой момент.</span></div>
+        <div class="nav"><span class="ti">⌂</span><span class="act ti">▦</span><span class="ti">▤</span><span class="ti">▶</span><span class="ti">☺</span></div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: Активизация + узнавание -->
+    <div class="phone">
+      <div class="notch"><span></span></div>
+      <div class="scr">
+        <div class="scr-cap"><span>Активизация · в контексте</span><span>пачка 1</span></div>
+        <div class="phase-bar"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+        <div class="vid">
+          <div class="thumb"><div class="play ti">▶</div></div>
+          <div class="cols">
+            <div class="en"><small>English</small><div>She showed real <b>resilience</b> after the loss.</div></div>
+            <div class="ru"><small>Перевод</small><div>Она проявила настоящую <b>стойкость</b> после потери.</div></div>
+          </div>
+        </div>
+        <div class="count" style="margin-top:14px"><span>Те же слова — теперь в речи</span></div>
+        <div class="rec">
+          <button class="no">Ещё не всплыло</button>
+          <button class="yes">Знаю ✓</button>
+        </div>
+        <div class="nav"><span class="ti">⌂</span><span class="ti">▦</span><span class="act ti">▤</span><span class="ti">▶</span><span class="ti">☺</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cycle">
+    <h3>Цикл метода внутри каждого блока</h3>
+    <p>Единица обучения — блок: пачка 50–150 слов, жёстко связанная с видео и текстом, где эти слова встречаются.</p>
+    <div class="steps">
+      <div class="step"><div class="n">01</div><b>Готовность</b><small>настрой, музыка, снятие барьера</small></div>
+      <div class="step"><div class="n">02</div><b>Киносеанс</b><small>быстрый массивный ввод всей пачки</small></div>
+      <div class="step"><div class="n">03</div><b>Активизация</b><small>те же слова в видео и чтении</small></div>
+      <div class="step"><div class="n">04</div><b>Узнавание</b><small>нормальный темп, 2–3 прохода</small></div>
+      <div class="step"><div class="n">05</div><b>Релаксация</b><small>пауза перед следующей пачкой</small></div>
+    </div>
+  </div>
+</div>
+<script>
+  document.querySelectorAll('.switch button').forEach(b=>{
+    b.onclick=()=>{
+      document.body.dataset.pal=b.dataset.set;
+      document.querySelectorAll('.switch button').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+    };
+  });
+</script>
+</body>
+</html>

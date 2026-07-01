@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Intensive English
 
-## Getting Started
+Веб-приложение для интенсивного изучения английского по **методу Петрусинского**.
+Главный принцип: единица обучения — **блок** (пачка 50–150 слов + контекст), а не
+карточка по одному слову. Цикл: перегрузка массивом → активизация в контексте →
+узнавание. Подробно — в [05_method_to_mechanics.md](05_method_to_mechanics.md).
 
-First, run the development server:
+## Документы продукта
+
+- `05_method_to_mechanics.md` — ⭐ методика → механика (главный документ)
+- `03_spec_MVP.md` — спецификация MVP
+- `02_concept.md` · `01_research_method.md` — концепция и исследование метода
+- `04_design_system.md` — дизайн-система «Индиго», шрифты Nunito + Inter
+- `06_monetization.md` — модель оплаты (freemium)
+- `prototype/index.html` — статический hi-fi прототип (заменяется приложением)
+
+## Стек
+
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4.
+
+## Запуск
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run lint
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Что уже собрано (вертикальный срез, шаг 3)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Дизайн-система** «Индиго» как токены Tailwind, светлая + тёмная тема.
+- **Экран «Сегодня»** (`/`): цель дня в сотнях слов, пачки-блоки, цикл метода.
+- **Движок сеанса** (`/session/[pack]`) — все 5 фаз метода:
+  1. Готовность — снятие барьера, поддерживающий тон;
+  2. Киносеанс — автопрокрут всей пачки, безопасные скорости (см. ниже);
+  3. Активизация — те же слова в речи, параллельные колонки EN/RU;
+  4. Узнавание — спокойный темп, «знаю / ещё не всплыло», без штрафов;
+  5. Релаксация — пауза и итог блока.
+- Данные-seed: частотная пачка «Здоровье» (`src/data/packs.ts`).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Безопасность быстрого предъявления
 
-## Learn More
+Меняется только содержимое карточки, фон стабилен. Дефолт — спокойная скорость
+(0,6 с); разгон до 0,12 с — по явному согласию с предупреждением о
+фоточувствительности. Учитывается `prefers-reduced-motion`.
 
-To learn more about Next.js, take a look at the following resources:
+## Дальше (не входит в этот срез)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Авторизация (регион-зависимая, 199-ФЗ), БД PostgreSQL, SRS-повторы,
+скорочтение, YouTube-shadowing, онбординг, платежи, Telegram Mini App.
