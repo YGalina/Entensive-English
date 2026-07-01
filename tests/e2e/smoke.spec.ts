@@ -22,4 +22,12 @@ test("opens main learning surfaces", async ({ page }) => {
 
   await page.goto("/reading");
   await expect(page.getByTestId("reading-title")).toBeVisible();
+
+  await page.goto("/pronunciation");
+  await expect(page.getByTestId("pronunciation-title")).toBeVisible();
+  // Есть примеры-слова, и тап по слову не роняет страницу (TTS застаблен).
+  const examples = page.getByTestId("pron-example");
+  await expect(examples.first()).toBeVisible();
+  await examples.first().click();
+  await expect(page.getByTestId("pronunciation-title")).toBeVisible();
 });

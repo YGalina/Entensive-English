@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Layers, Text, Play, Smile } from "./Icons";
+import { Home, Layers, Text, Play, Smile, Sound } from "./Icons";
 
 const items = [
   { href: "/", label: "Сегодня", Icon: Home },
   { href: "/vocab", label: "Словарь", Icon: Layers },
+  { href: "/pronunciation", label: "Звуки", Icon: Sound },
   { href: "/reading", label: "Чтение", Icon: Text },
   { href: "/video", label: "Видео", Icon: Play },
   { href: "/profile", label: "Профиль", Icon: Smile },
