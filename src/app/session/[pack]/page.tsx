@@ -10,6 +10,7 @@ import { speakEnglish, warmEnglishVoices } from "@/lib/speech";
 import { recordAnswer } from "@/lib/srs";
 import { useActivityTimer } from "@/lib/timelog";
 import { LANG_DIR, type LangCode } from "@/data/catalog";
+import { AFFIRMATIONS, BREATH, BREATH_CYCLES_GOAL } from "@/data/affirmations";
 import {
   Sound,
   Play,
@@ -27,7 +28,7 @@ import {
 type Phase = "ready" | "flash" | "context" | "recognition" | "relax";
 const ORDER: Phase[] = ["ready", "flash", "context", "recognition", "relax"];
 const LABEL: Record<Phase, string> = {
-  ready: "Готовность",
+  ready: "Настройка · вход в состояние",
   flash: "Киносеанс · перегрузка",
   context: "Активизация · в контексте",
   recognition: "Узнавание",
@@ -47,6 +48,14 @@ const SESSION_UI = {
     readyNote:
       "Если звук включён, поток ждёт окончания английской озвучки. Пауза и выход доступны в любой момент.",
     start: "Поехали",
+    attune: "Настроиться · 1 минута",
+    attuneSkip: "Сразу к словам",
+    attuneHint: "Дыши вместе с кругом. Установку читай про себя или шёпотом.",
+    attuneDone: "Ты готова. Слова лягут сами.",
+    breathIn: "Вдох",
+    breathHold: "Держи",
+    breathOut: "Выдох",
+    cycle: "круг",
     sound: "Звук",
     noSound: "Без звука",
     interpretation: "Толкование",
@@ -87,6 +96,14 @@ const SESSION_UI = {
     readyNote:
       "When sound is on, the flow waits for the English audio to finish. Pause and exit are always available.",
     start: "Start",
+    attune: "Attune · 1 minute",
+    attuneSkip: "Straight to words",
+    attuneHint: "Breathe with the circle. Read the affirmation silently or in a whisper.",
+    attuneDone: "You are ready. The words will settle on their own.",
+    breathIn: "Inhale",
+    breathHold: "Hold",
+    breathOut: "Exhale",
+    cycle: "round",
     sound: "Sound",
     noSound: "No sound",
     interpretation: "Definition",
@@ -261,6 +278,94 @@ function Ready({
   onStart: () => void;
 }) {
   const t = SESSION_UI[ui];
+  // Настройка (суггестопедия + Крашен): дыхание 4–2–6 с установками снимает
+  // барьер восприятия перед массивом. Пропуск всегда доступен — не принуждаем.
+  const [stage, setStage] = useState<"intro" | "breathe">("intro");
+  const [bp, setBp] = useState<"in" | "hold" | "out">("in");
+  const [cycle, setCycle] = useState(0);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (stage !== "breathe") return;
+    let alive = true;
+    const step = (phase: "in" | "hold" | "out") => {
+      if (!alive) return;
+      setBp(phase);
+      const dur =
+        phase === "in" ? BREATH.inhale : phase === "hold" ? BREATH.hold : BREATH.exhale;
+      timer.current = setTimeout(() => {
+        if (!alive) return;
+        if (phase === "in") step("hold");
+        else if (phase === "hold") step("out");
+        else {
+          setCycle((c) => c + 1);
+          step("in");
+        }
+      }, dur);
+    };
+    step("in");
+    return () => {
+      alive = false;
+      if (timer.current) clearTimeout(timer.current);
+    };
+  }, [stage]);
+
+  if (stage === "breathe") {
+    const aff = AFFIRMATIONS[cycle % AFFIRMATIONS.length];
+    const expanded = bp !== "out";
+    const durMs = bp === "in" ? BREATH.inhale : bp === "hold" ? 0 : BREATH.exhale;
+    const goalReached = cycle >= BREATH_CYCLES_GOAL;
+    const breathLabel =
+      bp === "in" ? t.breathIn : bp === "hold" ? t.breathHold : t.breathOut;
+    return (
+      <div data-testid="phase-ready" className="flex flex-1 flex-col">
+        <div className="flex items-center justify-between text-xs text-muted">
+          <span>
+            {t.cycle}{" "}
+            <b className="tnum text-ink">{Math.min(cycle + 1, BREATH_CYCLES_GOAL)}</b> /{" "}
+            {BREATH_CYCLES_GOAL}
+          </span>
+          {goalReached && <span className="font-semibold text-ok">{t.attuneDone}</span>}
+        </div>
+
+        <div className="flex flex-1 flex-col items-center justify-center text-center">
+          {/* Дыхательный круг: вдох 4с — пауза 2с — выдох 6с */}
+          <div className="flex h-56 w-56 items-center justify-center">
+            <div
+              className="flex h-36 w-36 items-center justify-center rounded-full bg-brand-soft shadow-card transition-transform ease-in-out"
+              style={{
+                transform: `scale(${expanded ? 1.35 : 1})`,
+                transitionDuration: `${durMs}ms`,
+              }}
+            >
+              <span className="font-heading text-base font-bold text-brand-d">
+                {breathLabel}
+              </span>
+            </div>
+          </div>
+
+          {/* Установка: родной язык — главным, английская пара — тихой строкой */}
+          <div key={cycle} className="mt-6 min-h-[84px] max-w-[320px]">
+            <p className="font-heading text-lg font-bold leading-snug text-ink">
+              {aff.ru}
+            </p>
+            <p className="mt-2 text-sm italic leading-relaxed text-muted">{aff.en}</p>
+          </div>
+        </div>
+
+        <p className="mb-3 text-center text-xs leading-relaxed text-muted">{t.attuneHint}</p>
+        <button
+          onClick={onStart}
+          data-testid="phase-start"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)] transition-transform active:scale-[0.98]"
+        >
+          <Play className="h-5 w-5" />
+          {t.start}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div data-testid="phase-ready" className="flex flex-1 flex-col">
       <div className="flex flex-1 flex-col items-center justify-center text-center">
@@ -283,12 +388,19 @@ function Ready({
       </div>
 
       <button
-        onClick={onStart}
-        data-testid="phase-start"
+        onClick={() => setStage("breathe")}
+        data-testid="attune-start"
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)] transition-transform active:scale-[0.98]"
       >
-        <Play className="h-5 w-5" />
-        {t.start}
+        <Spark className="h-5 w-5" />
+        {t.attune}
+      </button>
+      <button
+        onClick={onStart}
+        data-testid="phase-start"
+        className="mt-2 w-full rounded-2xl border border-line bg-surface px-5 py-3.5 font-heading text-sm font-bold text-muted"
+      >
+        {t.attuneSkip}
       </button>
     </div>
   );

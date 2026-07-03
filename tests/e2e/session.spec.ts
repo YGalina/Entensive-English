@@ -10,7 +10,9 @@ test("проходит сеанс насквозь и записывает сл�
   await seed(page);
   await page.goto(`/session/${PACK}`);
 
-  // Фаза 1 — Готовность
+  // Фаза 1 — Настройка: интро → дыхание с установками → к словам.
+  await expect(page.getByTestId("phase-ready")).toBeVisible();
+  await page.getByTestId("attune-start").click();
   await expect(page.getByTestId("phase-ready")).toBeVisible();
   await page.getByTestId("phase-start").click();
 
