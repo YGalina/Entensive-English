@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { today } from "@/data/packs";
 import BottomNav from "@/components/BottomNav";
@@ -5,8 +7,9 @@ import ThemeToggle from "@/components/ThemeToggle";
 import OnboardingGate from "@/components/OnboardingGate";
 import DayPanel from "@/components/DayPanel";
 import { Flame, Play, Spark, Check } from "@/components/Icons";
+import { useUILang } from "@/lib/prefs";
 
-function plural(n: number, one: string, few: string, many: string) {
+function pluralRu(n: number, one: string, few: string, many: string) {
   const m10 = n % 10;
   const m100 = n % 100;
   if (m10 === 1 && m100 !== 11) return one;
@@ -14,17 +17,69 @@ function plural(n: number, one: string, few: string, many: string) {
   return many;
 }
 
-const cycle = [
-  { n: "01", t: "Готовность", d: "настрой, снятие барьера" },
-  { n: "02", t: "Киносеанс", d: "массивный ввод всей пачки" },
-  { n: "03", t: "Активизация", d: "те же слова в речи" },
-  { n: "04", t: "Узнавание", d: "спокойный темп, 2–3 прохода" },
-];
+const UI = {
+  ru: {
+    today: "Сегодня",
+    greeting: "Добрый день, Галина",
+    dailyGoal: "Цель дня по методике",
+    intensive: (hours: number) => `интенсив ${hours} ч`,
+    words: "слов",
+    readyNow: (total: number) => `В приложении сейчас готово ${total} слов. Проходи пачками: одна пачка = один законченный сеанс.`,
+    start: "Начать сеанс",
+    videos: "видео",
+    field: "сверхнасыщенное поле",
+    packsTitle: "Пачки дня",
+    ready: "слов готово",
+    pack: "Пачка",
+    videoReading: "видео + чтение",
+    soon: "скоро · готовим контекст",
+    methodTitle: "Сеанс, а не карточки",
+    methodText:
+      "Цель дня может быть 600 слов, но приложение ведёт к ней готовыми пачками. Перегрузка массивом → активизация в контексте → узнавание.",
+    noPenalty: "Без штрафов за ошибки. Темп — твой.",
+    packCount: (n: number) => `${n} ${pluralRu(n, "пачка", "пачки", "пачек")}`,
+    cycle: [
+      { n: "01", t: "Готовность", d: "настрой, снятие барьера" },
+      { n: "02", t: "Киносеанс", d: "массивный ввод всей пачки" },
+      { n: "03", t: "Активизация", d: "те же слова в речи" },
+      { n: "04", t: "Узнавание", d: "спокойный темп, 2–3 прохода" },
+    ],
+  },
+  en: {
+    today: "Today",
+    greeting: "Good afternoon, Galina",
+    dailyGoal: "Method goal for today",
+    intensive: (hours: number) => `${hours}h intensive`,
+    words: "words",
+    readyNow: (total: number) => `${total} words are ready in the app now. Work pack by pack: one pack is one complete session.`,
+    start: "Start session",
+    videos: "videos",
+    field: "intensive field",
+    packsTitle: "Today's packs",
+    ready: "words ready",
+    pack: "Pack",
+    videoReading: "video + reading",
+    soon: "soon · preparing context",
+    methodTitle: "Session, not single cards",
+    methodText:
+      "The daily goal may be 600 words, but the app moves toward it through ready packs. Bulk exposure → context activation → recognition.",
+    noPenalty: "No penalties for mistakes. Your pace.",
+    packCount: (n: number) => `${n} ${n === 1 ? "pack" : "packs"}`,
+    cycle: [
+      { n: "01", t: "Readiness", d: "settle in, lower resistance" },
+      { n: "02", t: "Exposure", d: "bulk input of the whole pack" },
+      { n: "03", t: "Activation", d: "the same words in speech" },
+      { n: "04", t: "Recognition", d: "calm pace, 2–3 passes" },
+    ],
+  },
+} as const;
 
 export default function Today() {
   const { goalWords, hours, streak, packs } = today;
   const filled = packs.filter((p) => p.words.length > 0);
   const total = filled.reduce((s, p) => s + p.words.length, 0);
+  const ui = useUILang();
+  const t = UI[ui];
 
   return (
     <OnboardingGate>
@@ -33,10 +88,10 @@ export default function Today() {
         <header className="mb-5 flex items-center justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-muted">
-              Сегодня
+              {t.today}
             </p>
             <h1 data-testid="home-greeting" className="font-heading text-2xl font-extrabold text-ink">
-              Добрый день, Галина
+              {t.greeting}
             </h1>
           </div>
           <div className="flex items-center gap-2">
@@ -48,18 +103,20 @@ export default function Today() {
           </div>
         </header>
 
-        {/* Цель дня — метод мыслит сотнями слов, не десятками */}
+        {/* Цель дня — метод мыслит сотнями слов, но приложение ведёт пачками */}
         <section className="relative overflow-hidden rounded-card bg-brand p-6 text-white shadow-float">
           <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10" />
           <p className="text-sm text-white/85">
-            Цель дня · интенсив {hours} ч
+            {t.dailyGoal} · {t.intensive(hours)}
           </p>
           <p className="mt-1 font-heading text-[44px] font-extrabold leading-none tnum">
-            {goalWords} слов
+            {goalWords} {t.words}
           </p>
           <p className="mt-2 text-sm text-white/90">
-            {packs.length} {plural(packs.length, "пачка", "пачки", "пачек")} ·{" "}
-            {packs.length} видео · сверхнасыщенное поле
+            {t.packCount(packs.length)} · {packs.length} {t.videos} · {t.field}
+          </p>
+          <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm leading-relaxed text-white/95">
+            {t.readyNow(total)}
           </p>
           <Link
             href="/session/health"
@@ -67,7 +124,7 @@ export default function Today() {
             className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)] transition-transform active:scale-[0.98]"
           >
             <Play className="h-5 w-5" />
-            Начать сеанс
+            {t.start}
           </Link>
         </section>
 
@@ -77,9 +134,9 @@ export default function Today() {
         {/* Пачки дня = блоки метода */}
         <section className="mt-7">
           <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="font-heading text-lg font-bold text-ink">Пачки дня</h2>
+            <h2 className="font-heading text-lg font-bold text-ink">{t.packsTitle}</h2>
             <span className="text-xs text-muted">
-              <span className="tnum">{total}</span> слов готово
+              <span className="tnum">{total}</span> {t.ready}
             </span>
           </div>
           <ul className="space-y-2.5">
@@ -99,12 +156,12 @@ export default function Today() {
                     </span>
                     <span className="flex-1">
                       <span className="block text-sm font-semibold text-ink">
-                        Пачка «{p.title}»
+                        {t.pack} «{p.title}»
                       </span>
                       <span className="block text-xs text-muted">
                         {ready
-                          ? `${p.words.length} слов · видео + чтение`
-                          : "скоро · готовим контекст"}
+                          ? `${p.words.length} ${t.words} · ${t.videoReading}`
+                          : t.soon}
                       </span>
                     </span>
                     {ready ? (
@@ -124,15 +181,14 @@ export default function Today() {
           <div className="mb-1 flex items-center gap-2">
             <Spark className="h-4 w-4 text-brand" />
             <h2 className="font-heading text-base font-bold text-ink">
-              Сеанс, а не карточки
+              {t.methodTitle}
             </h2>
           </div>
           <p className="mb-4 text-xs leading-relaxed text-muted">
-            Каждая пачка — это блок: 50–150 слов, жёстко связанных с видео и
-            текстом. Перегрузка массивом → активизация в контексте → узнавание.
+            {t.methodText}
           </p>
           <ol className="grid grid-cols-2 gap-2.5">
-            {cycle.map((c) => (
+            {t.cycle.map((c) => (
               <li key={c.n} className="rounded-xl bg-bg p-3">
                 <span className="font-heading text-xs font-extrabold text-brand">
                   {c.n}
@@ -148,7 +204,7 @@ export default function Today() {
           </ol>
           <p className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-ok">
             <Check className="h-4 w-4" />
-            Без штрафов за ошибки. Темп — твой.
+            {t.noPenalty}
           </p>
         </section>
       </main>

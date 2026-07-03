@@ -9,33 +9,70 @@ import { useActivityTimer } from "@/lib/timelog";
 import { speakEnglish } from "@/lib/speech";
 import { findWord, translate } from "@/data/packs";
 import { LEVEL_PACKS } from "@/data/levelVocab";
-import { useNativeLang } from "@/lib/prefs";
+import { useNativeLang, useUILang } from "@/lib/prefs";
 import { LANG_DIR } from "@/data/catalog";
+
+const UI = {
+  ru: {
+    title: "Словарь",
+    intro: "Система сама планирует повторы — узнавание закрепляется за 2–3 прохода.",
+    inWork: "в работе",
+    learned: "усвоено",
+    due: "к повтору",
+    emptyTitle: "Пока пусто",
+    emptyNote: "Пройди сеанс на «Сегодня» — слова попадут сюда и встанут в план повторов.",
+    review: (n: number) => `Повторить ${n}`,
+    allDoneTitle: "На сегодня всё",
+    allDoneNote: "Повторов нет — система покажет слова, когда придёт срок. Можно пройти новую пачку.",
+    levelSets: "Наборы по уровням",
+    levelNote: "Большие частотные списки. Киносеанс грузит массив, узнавание ставит слова в план повторов.",
+    words: "слов",
+    session: "киносеанс + узнавание",
+  },
+  en: {
+    title: "Words",
+    intro: "The system schedules reviews automatically: recognition settles after 2–3 passes.",
+    inWork: "active",
+    learned: "learned",
+    due: "due",
+    emptyTitle: "Nothing here yet",
+    emptyNote: "Complete a Today session — words will appear here and enter the review plan.",
+    review: (n: number) => `Review ${n}`,
+    allDoneTitle: "All done today",
+    allDoneNote: "No reviews are due. The system will show words when it is time, or you can start a new pack.",
+    levelSets: "Level word sets",
+    levelNote: "Large frequency lists. Exposure loads the array; recognition puts words into spaced review.",
+    words: "words",
+    session: "exposure + recognition",
+  },
+} as const;
 
 export default function Vocab() {
   const stats = useSrsStats();
   const [review, setReview] = useState(false);
+  const ui = useUILang();
+  const t = UI[ui];
 
   return (
     <div className="flex min-h-dvh flex-col">
       <main className="mx-auto w-full max-w-[480px] flex-1 px-5 pt-7 pb-6">
         {!review ? (
           <>
-            <h1 className="font-heading text-2xl font-extrabold text-ink">Словарь</h1>
+            <h1 className="font-heading text-2xl font-extrabold text-ink">{t.title}</h1>
             <p className="mt-1 mb-5 text-sm text-muted">
-              Система сама планирует повторы — узнавание закрепляется за 2–3 прохода.
+              {t.intro}
             </p>
 
             <div className="grid grid-cols-3 gap-2.5">
-              <Stat n={stats.total} label="в работе" />
-              <Stat n={stats.learned} label="усвоено" tone="ok" />
-              <Stat n={stats.dueToday} label="к повтору" tone="accent" />
+              <Stat n={stats.total} label={t.inWork} />
+              <Stat n={stats.learned} label={t.learned} tone="ok" />
+              <Stat n={stats.dueToday} label={t.due} tone="accent" />
             </div>
 
             {stats.total === 0 ? (
               <EmptyHint
-                title="Пока пусто"
-                note="Пройди сеанс на «Сегодня» — слова попадут сюда и встанут в план повторов."
+                title={t.emptyTitle}
+                note={t.emptyNote}
               />
             ) : stats.dueToday > 0 ? (
               <button
@@ -43,22 +80,22 @@ export default function Vocab() {
                 data-testid="vocab-review-start"
                 className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)] transition-transform active:scale-[0.98]"
               >
-                Повторить {stats.dueToday}
+                {t.review(stats.dueToday)}
               </button>
             ) : (
               <EmptyHint
-                title="На сегодня всё"
-                note="Повторов нет — система покажет слова, когда придёт срок. Можно пройти новую пачку."
+                title={t.allDoneTitle}
+                note={t.allDoneNote}
               />
             )}
 
             {/* Наборы по уровням — массивный ввод киносеансом */}
             <section className="mt-8">
               <h2 className="mb-1 font-heading text-base font-bold text-ink">
-                Наборы по уровням
+                {t.levelSets}
               </h2>
               <p className="mb-3 text-xs text-muted">
-                Большие частотные списки. Киносеанс грузит массив, узнавание ставит слова в план повторов.
+                {t.levelNote}
               </p>
               <ul className="space-y-2.5">
                 {LEVEL_PACKS.map((p) => (
@@ -75,7 +112,7 @@ export default function Vocab() {
                           {p.title}
                         </span>
                         <span className="block text-xs text-muted">
-                          {p.words.length} слов · киносеанс + узнавание
+                          {p.words.length} {t.words} · {t.session}
                         </span>
                       </span>
                       <Play className="h-4 w-4 text-muted" />

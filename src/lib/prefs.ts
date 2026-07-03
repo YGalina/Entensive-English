@@ -72,6 +72,12 @@ export function useNativeLang(): LangCode {
   return prefs?.nativeLang ?? "ru";
 }
 
+/** Язык интерфейса приложения. Не влияет на язык перевода слов. */
+export function useUILang(): "ru" | "en" {
+  const prefs = usePrefs();
+  return prefs?.uiLang === "en" ? "en" : "ru";
+}
+
 /** Темп сеанса по умолчанию (обычный/медленный). */
 export function usePace(): "normal" | "slow" {
   const prefs = usePrefs();

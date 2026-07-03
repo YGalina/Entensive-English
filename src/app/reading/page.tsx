@@ -1,8 +1,19 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import BottomNav from "@/components/BottomNav";
-import { Text, Play, Check, External, Book, Prev } from "@/components/Icons";
+import {
+  Text,
+  Play,
+  Pause,
+  Check,
+  External,
+  Book,
+  Prev,
+  Next,
+  Repeat,
+  Gauge,
+} from "@/components/Icons";
 import {
   gutenbergChunkToStory,
   type GutenbergChunk,
@@ -10,7 +21,7 @@ import {
 } from "@/data/gutenberg";
 import { storiesByLevel, wordCount, type Story } from "@/data/reading";
 import { LIBRARY, type Book as BookType } from "@/data/library";
-import { usePrefs } from "@/lib/prefs";
+import { usePrefs, useUILang } from "@/lib/prefs";
 import { useActivityTimer } from "@/lib/timelog";
 
 const LEVELS = ["a1", "a2", "b1", "b2", "c1"] as const;
@@ -22,8 +33,53 @@ const GENRE: Record<string, string> = {
   growth: "саморазвитие",
 };
 
+const UI = {
+  ru: {
+    title: "Чтение",
+    intro: "Короткие рассказы по уровням и полка книг. Читай массивом — замеряем скорость.",
+    stories: "Рассказы",
+    books: "Книги",
+    words: "слов",
+    empty: "Для этого уровня рассказы скоро добавим (наполняем библиотеку public-domain текстов).",
+    available: "Можно читать",
+    availableNote: "Public domain — загружаем и режем на фрагменты для скорочтения.",
+    protected: "Под защитой авторских прав",
+    protectedNote: "Не зашиваем текст. Ссылка на источник; позже — загрузка своей копии.",
+    loadError: "Не удалось загрузить текст Gutenberg. Проверь интернет и попробуй ещё раз.",
+    openSource: "Открыть источник",
+    loading: "Загружаю...",
+    refresh: "Обновить фрагменты",
+    load: "Загрузить фрагменты",
+    protectedBody: "Текст не встраиваем: книга защищена, поэтому пока оставляем только источник.",
+    fragment: "Фрагмент",
+    paragraphs: "абз.",
+  },
+  en: {
+    title: "Reading",
+    intro: "Short stories by level and a book shelf. Read in flow — we measure speed.",
+    stories: "Stories",
+    books: "Books",
+    words: "words",
+    empty: "Stories for this level are coming soon as we expand the public-domain library.",
+    available: "Ready to read",
+    availableNote: "Public domain texts: we load and split them into speed-reading fragments.",
+    protected: "Copyright protected",
+    protectedNote: "We do not embed the text. Open the source; later you will be able to upload your own copy.",
+    loadError: "Could not load the Gutenberg text. Check your connection and try again.",
+    openSource: "Open source",
+    loading: "Loading...",
+    refresh: "Refresh fragments",
+    load: "Load fragments",
+    protectedBody: "This text is protected, so for now we keep only the source link.",
+    fragment: "Fragment",
+    paragraphs: "paras",
+  },
+} as const;
+
 export default function Reading() {
   const prefs = usePrefs();
+  const ui = useUILang();
+  const t = UI[ui];
   const [tab, setTab] = useState<"stories" | "books">("stories");
   const initLevel = (LEVELS as readonly string[]).includes(prefs?.level ?? "")
     ? (prefs!.level as (typeof LEVELS)[number])
@@ -40,18 +96,18 @@ export default function Reading() {
   return (
     <div className="flex min-h-dvh flex-col">
       <main className="mx-auto w-full max-w-[480px] flex-1 px-5 pt-7 pb-6">
-        <h1 data-testid="reading-title" className="font-heading text-2xl font-extrabold text-ink">Чтение</h1>
+        <h1 data-testid="reading-title" className="font-heading text-2xl font-extrabold text-ink">{t.title}</h1>
         <p className="mt-1 mb-4 text-sm text-muted">
-          Короткие рассказы по уровням и полка книг. Читай массивом — замеряем скорость.
+          {t.intro}
         </p>
 
         {/* Вкладки */}
         <div className="mb-5 grid grid-cols-2 gap-1 rounded-2xl bg-surface p-1 shadow-card">
           <Seg on={tab === "stories"} onClick={() => setTab("stories")}>
-            Рассказы
+            {t.stories}
           </Seg>
           <Seg on={tab === "books"} onClick={() => setTab("books")}>
-            Книги
+            {t.books}
           </Seg>
         </div>
 
@@ -75,7 +131,7 @@ export default function Reading() {
             </div>
 
             {list.length === 0 ? (
-              <Empty note="Для этого уровня рассказы скоро добавим (наполняем библиотеку public-domain текстов)." />
+              <Empty note={t.empty} />
             ) : (
               <ul className="space-y-2.5">
                 {list.map((s) => (
@@ -92,7 +148,7 @@ export default function Reading() {
                           {s.title}
                         </span>
                         <span className="block text-xs text-muted">
-                          {s.author} · {wordCount(s)} слов · {GENRE[s.genre]}
+                          {s.author} · {wordCount(s)} {t.words} · {GENRE[s.genre]}
                         </span>
                       </span>
                       <Play className="h-4 w-4 text-muted" />
@@ -112,6 +168,8 @@ export default function Reading() {
 }
 
 function BooksView({ onOpen }: { onOpen: (story: Story) => void }) {
+  const ui = useUILang();
+  const t = UI[ui];
   const [chunksByBook, setChunksByBook] = useState<Record<string, GutenbergChunk[]>>({});
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -129,7 +187,7 @@ function BooksView({ onOpen }: { onOpen: (story: Story) => void }) {
       const data = (await res.json()) as GutenbergResponse;
       setChunksByBook((prev) => ({ ...prev, [book.id]: data.chunks }));
     } catch {
-      setError("Не удалось загрузить текст Gutenberg. Проверь интернет и попробуй ещё раз.");
+      setError(t.loadError);
     } finally {
       setLoadingId(null);
     }
@@ -143,8 +201,8 @@ function BooksView({ onOpen }: { onOpen: (story: Story) => void }) {
         </p>
       )}
       <Group
-        title="Можно читать"
-        note="Public domain — загружаем и режем на фрагменты для скорочтения."
+        title={t.available}
+        note={t.availableNote}
         books={pd}
         chunksByBook={chunksByBook}
         loadingId={loadingId}
@@ -152,8 +210,8 @@ function BooksView({ onOpen }: { onOpen: (story: Story) => void }) {
         onOpen={(chunk) => onOpen(gutenbergChunkToStory(chunk))}
       />
       <Group
-        title="Под защитой авторских прав"
-        note="Не зашиваем текст. Ссылка на источник; позже — загрузка своей копии."
+        title={t.protected}
+        note={t.protectedNote}
         books={prot}
         chunksByBook={{}}
         loadingId={loadingId}
@@ -181,6 +239,8 @@ function Group({
   onLoad: (book: BookType) => void;
   onOpen: (chunk: GutenbergChunk) => void;
 }) {
+  const ui = useUILang();
+  const t = UI[ui];
   return (
     <section>
       <h2 className="font-heading text-base font-bold text-ink">{title}</h2>
@@ -203,7 +263,7 @@ function Group({
                   href={b.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`Открыть источник: ${b.title}`}
+                  aria-label={`${t.openSource}: ${b.title}`}
                   className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl text-muted transition-colors hover:bg-bg hover:text-brand"
                 >
                   <External className="h-4 w-4" />
@@ -217,14 +277,14 @@ function Group({
                   className="mt-3 w-full rounded-xl bg-brand px-3 py-2.5 font-heading text-sm font-extrabold text-white transition-transform active:scale-[0.98] disabled:cursor-wait disabled:opacity-70"
                 >
                   {loadingId === b.id
-                    ? "Загружаю..."
+                    ? t.loading
                     : chunksByBook[b.id]?.length
-                      ? "Обновить фрагменты"
-                      : "Загрузить фрагменты"}
+                      ? t.refresh
+                      : t.load}
                 </button>
               ) : (
                 <p className="mt-3 text-xs leading-relaxed text-muted">
-                  Текст не встраиваем: книга защищена, поэтому пока оставляем только источник.
+                  {t.protectedBody}
                 </p>
               )}
 
@@ -238,10 +298,10 @@ function Group({
                       >
                         <span>
                           <span className="block font-heading text-sm font-bold text-ink">
-                            Фрагмент {chunk.index}
+                            {t.fragment} {chunk.index}
                           </span>
                           <span className="block text-xs text-muted">
-                            {chunk.wordCount} слов · {chunk.paras.length} абз.
+                            {chunk.wordCount} {t.words} · {chunk.paras.length} {t.paragraphs}
                           </span>
                         </span>
                         <Play className="h-4 w-4 flex-shrink-0 text-brand" />
@@ -290,31 +350,124 @@ function Empty({ note }: { note: string }) {
   );
 }
 
-/* ---------- Ридер одного рассказа (таймер + замер скорости) ---------- */
+/* ---------- Ридер одного рассказа: автопоток + замер скорости ---------- */
 type Stage = "intro" | "reading" | "done";
+type ReaderMode = "chunks" | "rsvp" | "pacer";
+
+type ReadingChunk = {
+  id: string;
+  text: string;
+  wordCount: number;
+  paraIndex: number;
+};
+
+const MODE_META: Record<ReaderMode, { title: string; note: string }> = {
+  chunks: {
+    title: "Чанки",
+    note: "Смотри группами слов, а не по одному слову.",
+  },
+  rsvp: {
+    title: "RSVP",
+    note: "Текст сам идёт в центре, взгляд не бегает по строкам.",
+  },
+  pacer: {
+    title: "Пейсер",
+    note: "Линия ведёт темп по полотну текста и снижает возвраты.",
+  },
+};
+
+const SPEEDS = [180, 240, 320, 420];
+const CHUNK_SIZES = [3, 4, 5, 6];
 
 function Reader({ story, onBack }: { story: Story; onBack: () => void }) {
   const words = wordCount(story);
   const hasTranslation = story.paras.some((p) => p.ru);
   const [stage, setStage] = useState<Stage>("intro");
+  const [mode, setMode] = useState<ReaderMode>("chunks");
+  const [targetWpm, setTargetWpm] = useState(240);
+  const [chunkSize, setChunkSize] = useState(4);
+  const [chunkIndex, setChunkIndex] = useState(0);
+  const [running, setRunning] = useState(true);
   const [showTr, setShowTr] = useState(false);
   const [elapsed, setElapsed] = useState(0);
-  const startRef = useRef(0);
-  useActivityTimer(stage === "reading" ? "reading" : null);
+  const chunks = useMemo(() => makeReadingChunks(story, chunkSize), [story, chunkSize]);
+  const currentChunk = chunks[Math.min(chunkIndex, Math.max(chunks.length - 1, 0))];
+  const currentRu =
+    currentChunk && typeof currentChunk.paraIndex === "number"
+      ? story.paras[currentChunk.paraIndex]?.ru
+      : undefined;
+  const targetSeconds = Math.max(8, Math.ceil((words / targetWpm) * 60));
+  const progress =
+    mode === "pacer"
+      ? Math.min(1, elapsed / targetSeconds)
+      : chunks.length > 0
+        ? Math.min(1, (chunkIndex + 1) / chunks.length)
+        : 0;
+
+  useActivityTimer(stage === "reading" && running ? "reading" : null);
 
   useEffect(() => {
-    if (stage !== "reading") return;
-    startRef.current = Date.now();
-    const id = setInterval(() => {
-      setElapsed(Math.floor((Date.now() - startRef.current) / 1000));
-    }, 250);
+    if (stage !== "reading" || !running) return;
+    const id = setInterval(() => setElapsed((s) => s + 1), 1000);
     return () => clearInterval(id);
-  }, [stage]);
+  }, [stage, running]);
+
+  useEffect(() => {
+    if (stage !== "reading" || !running || mode === "pacer" || !currentChunk) return;
+    const baseDelay = (currentChunk.wordCount / targetWpm) * 60 * 1000;
+    const delay = Math.max(mode === "rsvp" ? 520 : 850, baseDelay + (mode === "rsvp" ? 120 : 260));
+    const id = setTimeout(() => {
+      setChunkIndex((i) => {
+        if (i >= chunks.length - 1) {
+          setRunning(false);
+          setStage("done");
+          return i;
+        }
+        return i + 1;
+      });
+    }, delay);
+    return () => clearTimeout(id);
+  }, [chunks.length, currentChunk, mode, running, stage, targetWpm]);
+
+  useEffect(() => {
+    if (stage !== "reading" || !running || mode !== "pacer") return;
+    const remainingMs = Math.max(0, (targetSeconds - elapsed) * 1000);
+    const id = setTimeout(() => {
+      setRunning(false);
+      setStage("done");
+    }, remainingMs);
+    return () => clearTimeout(id);
+  }, [elapsed, mode, running, stage, targetSeconds]);
 
   const wpm = elapsed > 0 ? Math.round((words / elapsed) * 60) : 0;
   const mmss = `${String(Math.floor(elapsed / 60)).padStart(2, "0")}:${String(
     elapsed % 60
   ).padStart(2, "0")}`;
+
+  function start() {
+    setElapsed(0);
+    setChunkIndex(0);
+    setRunning(true);
+    setShowTr(false);
+    setStage("reading");
+  }
+
+  function restart() {
+    setElapsed(0);
+    setChunkIndex(0);
+    setRunning(true);
+    setStage("reading");
+  }
+
+  function finish() {
+    setRunning(false);
+    setStage("done");
+  }
+
+  function step(delta: number) {
+    if (!chunks.length) return;
+    setChunkIndex((i) => Math.min(chunks.length - 1, Math.max(0, i + delta)));
+  }
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -335,8 +488,8 @@ function Reader({ story, onBack }: { story: Story; onBack: () => void }) {
               <h1 className="mt-4 font-heading text-2xl font-extrabold text-ink">{story.title}</h1>
               <p className="mt-1 text-sm text-muted">{story.author}</p>
               <p className="mt-4 max-w-[300px] text-sm leading-relaxed text-muted">
-                Читай весь текст одним массивом, не застревая на словах. Засечём время и
-                покажем скорость. {hasTranslation ? "Перевод — рядом, если нужен." : "Этот текст из Gutenberg идёт без перевода."}
+                Текст пойдёт автоматически: без кнопки на каждую фразу. Твоя задача —
+                держать взгляд и не возвращаться назад. {hasTranslation ? "Перевод можно включить как опору." : "Этот текст из Gutenberg идёт без перевода."}
               </p>
               <div className="mt-4 rounded-soft bg-surface px-4 py-2 text-xs text-muted shadow-card">
                 {words} слов · уровень {story.level.toUpperCase()}
@@ -352,45 +505,181 @@ function Reader({ story, onBack }: { story: Story; onBack: () => void }) {
                 </a>
               )}
             </div>
+
+            <section className="mb-3 space-y-3">
+              <div>
+                <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-muted">
+                  Режим
+                </p>
+                <div className="grid grid-cols-3 gap-2">
+                  {(Object.keys(MODE_META) as ReaderMode[]).map((m) => (
+                    <Choice key={m} active={mode === m} onClick={() => setMode(m)}>
+                      {MODE_META[m].title}
+                    </Choice>
+                  ))}
+                </div>
+                <p className="mt-2 min-h-8 text-xs leading-relaxed text-muted">
+                  {MODE_META[mode].note}
+                </p>
+              </div>
+
+              <div>
+                <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-muted">
+                  Скорость
+                </p>
+                <div className="grid grid-cols-4 gap-2">
+                  {SPEEDS.map((speed) => (
+                    <Choice
+                      key={speed}
+                      active={targetWpm === speed}
+                      onClick={() => setTargetWpm(speed)}
+                    >
+                      {speed}
+                    </Choice>
+                  ))}
+                </div>
+              </div>
+
+              {mode !== "pacer" && (
+                <div>
+                  <p className="mb-2 text-xs font-bold uppercase tracking-[0.08em] text-muted">
+                    Слов в группе
+                  </p>
+                  <div className="grid grid-cols-4 gap-2">
+                    {CHUNK_SIZES.map((size) => (
+                      <Choice
+                        key={size}
+                        active={chunkSize === size}
+                        onClick={() => setChunkSize(size)}
+                      >
+                        {size}
+                      </Choice>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </section>
+
             <button
-              onClick={() => {
-                setElapsed(0);
-                setStage("reading");
-              }}
+              onClick={start}
               className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)] transition-transform active:scale-[0.98]"
             >
-              <Play className="h-5 w-5" /> Начать
+              <Play className="h-5 w-5" /> Старт: {MODE_META[mode].title}
             </button>
           </div>
         )}
 
         {stage === "reading" && (
           <div className="flex flex-1 flex-col">
-            <article className="flex-1 space-y-4">
-              {story.paras.map((p, i) => (
-                <div key={i}>
-                  <p className="text-[17px] leading-[1.7] text-ink">{p.en}</p>
-                  {showTr && p.ru && <p className="mt-1 text-sm leading-relaxed text-muted">{p.ru}</p>}
+            <div className="mb-3">
+              <div className="flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate font-heading text-base font-extrabold text-ink">
+                    {story.title}
+                  </p>
+                  <p className="text-xs text-muted">
+                    {MODE_META[mode].title} · {targetWpm} слов/мин
+                  </p>
                 </div>
-              ))}
-            </article>
-            <div className="sticky bottom-2 mt-5 flex items-center gap-2 rounded-2xl border border-line bg-surface/95 p-2 shadow-float backdrop-blur">
-              <span className="tnum px-2 font-heading text-lg font-extrabold text-ink">{mmss}</span>
+                <span className="tnum rounded-xl bg-surface px-3 py-2 font-heading text-base font-extrabold text-ink shadow-card">
+                  {mmss}
+                </span>
+              </div>
+              <div className="mt-3 h-2 overflow-hidden rounded-full bg-line">
+                <div
+                  className="h-full rounded-full bg-brand transition-all duration-300"
+                  style={{ width: `${Math.round(progress * 100)}%` }}
+                />
+              </div>
+            </div>
+
+            {mode === "pacer" ? (
+              <article className="relative min-h-[430px] flex-1 overflow-hidden rounded-card border border-line bg-surface px-5 py-6 shadow-card">
+                <div
+                  className="pointer-events-none absolute left-0 right-0 h-16 border-y border-brand/35 bg-brand-soft/45 transition-all duration-700"
+                  style={{ top: `${Math.max(3, Math.min(86, progress * 92))}%` }}
+                />
+                <div className="relative space-y-4">
+                  {story.paras.map((p, i) => (
+                    <div key={i}>
+                      <p className="text-[18px] leading-[1.72] text-ink">{p.en}</p>
+                      {showTr && p.ru && (
+                        <p className="mt-2 text-sm leading-relaxed text-muted">{p.ru}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ) : (
+              <section className="flex min-h-[430px] flex-1 flex-col justify-center rounded-card border border-line bg-surface px-5 py-7 text-center shadow-card">
+                <p
+                  className={`mx-auto max-w-[360px] font-heading font-extrabold leading-tight text-ink ${
+                    mode === "rsvp" ? "text-[34px]" : "text-[30px]"
+                  }`}
+                >
+                  {currentChunk?.text ?? ""}
+                </p>
+                {showTr && currentRu && (
+                  <p className="mx-auto mt-6 max-w-[360px] border-t border-line pt-4 text-sm leading-relaxed text-muted">
+                    {currentRu}
+                  </p>
+                )}
+                <p className="tnum mt-7 text-xs font-bold uppercase tracking-[0.08em] text-muted">
+                  {Math.min(chunkIndex + 1, chunks.length)} / {chunks.length}
+                </p>
+              </section>
+            )}
+
+            <div className="sticky bottom-2 mt-5 rounded-2xl border border-line bg-surface/95 p-2 shadow-float backdrop-blur">
+              <div className="grid grid-cols-[44px_1fr_44px_44px] gap-2">
+                <button
+                  onClick={() => step(-1)}
+                  disabled={mode === "pacer" || chunkIndex === 0}
+                  aria-label="Назад"
+                  className="flex h-11 items-center justify-center rounded-xl bg-bg text-ink transition-colors disabled:cursor-not-allowed disabled:opacity-45"
+                >
+                  <Prev className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => setRunning((v) => !v)}
+                  className="flex h-11 items-center justify-center gap-2 rounded-xl bg-accent px-4 font-heading text-sm font-extrabold text-white"
+                >
+                  {running ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                  {running ? "Пауза" : "Дальше"}
+                </button>
+                <button
+                  onClick={() => step(1)}
+                  disabled={mode === "pacer" || chunkIndex >= chunks.length - 1}
+                  aria-label="Вперёд"
+                  className="flex h-11 items-center justify-center rounded-xl bg-bg text-ink transition-colors disabled:cursor-not-allowed disabled:opacity-45"
+                >
+                  <Next className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={restart}
+                  aria-label="Повторить"
+                  className="flex h-11 items-center justify-center rounded-xl bg-bg text-ink transition-colors hover:text-brand"
+                >
+                  <Repeat className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="mt-2 flex items-center gap-2">
               <button
                 onClick={() => setShowTr((v) => !v)}
                 disabled={!hasTranslation}
-                className={`rounded-xl px-3 py-2.5 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${
+                className={`h-10 rounded-xl px-3 text-sm font-bold transition-colors disabled:cursor-not-allowed disabled:opacity-55 ${
                   showTr && hasTranslation ? "bg-brand text-white" : "bg-bg text-ink"
                 }`}
               >
                 {hasTranslation ? "Перевод" : "EN only"}
               </button>
               <button
-                onClick={() => setStage("done")}
-                className="ml-auto flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2.5 font-heading text-sm font-extrabold text-white"
+                onClick={finish}
+                className="ml-auto flex h-10 items-center gap-1.5 rounded-xl bg-bg px-4 font-heading text-sm font-extrabold text-ink"
               >
                 <Check className="h-4 w-4" /> Готов
               </button>
+              </div>
             </div>
           </div>
         )}
@@ -398,7 +687,10 @@ function Reader({ story, onBack }: { story: Story; onBack: () => void }) {
         {stage === "done" && (
           <div className="flex flex-1 flex-col">
             <div className="flex flex-1 flex-col items-center justify-center text-center">
-              <p className="text-sm text-muted">Твоя скорость</p>
+              <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-brand-soft text-brand">
+                <Gauge className="h-6 w-6" />
+              </span>
+              <p className="text-sm text-muted">Твоя скорость в режиме {MODE_META[mode].title}</p>
               <p className="tnum font-heading text-[56px] font-extrabold leading-none text-brand">
                 {wpm}
               </p>
@@ -408,15 +700,15 @@ function Reader({ story, onBack }: { story: Story; onBack: () => void }) {
                 <Stat n={mmss} label="время" />
               </div>
               <p className="mt-5 max-w-[300px] text-xs leading-relaxed text-muted">
-                Средний носитель читает ~200–250 слов/мин. Скорость растёт от текста к
-                тексту — это и есть тренировка.
+                Не просто замер: тренируем устойчивый темп, широкий взгляд и чтение группами.
+                Следующий проход можно делать чуть быстрее.
               </p>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2.5">
               <button
                 onClick={() => {
                   setShowTr(false);
-                  setStage("intro");
+                  restart();
                 }}
                 className="rounded-2xl border border-line bg-surface px-5 py-4 font-heading text-sm font-bold text-ink"
               >
@@ -436,6 +728,29 @@ function Reader({ story, onBack }: { story: Story; onBack: () => void }) {
   );
 }
 
+function Choice({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`min-h-11 rounded-xl border px-2 text-center font-heading text-sm font-extrabold transition-colors ${
+        active
+          ? "border-brand bg-brand text-white"
+          : "border-line bg-surface text-ink hover:border-brand/45"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 function Stat({ n, label }: { n: string; label: string }) {
   return (
     <div className="rounded-card bg-surface p-4 shadow-card">
@@ -443,4 +758,21 @@ function Stat({ n, label }: { n: string; label: string }) {
       <p className="text-xs text-muted">{label}</p>
     </div>
   );
+}
+
+function makeReadingChunks(story: Story, chunkSize: number): ReadingChunk[] {
+  const result: ReadingChunk[] = [];
+  story.paras.forEach((para, paraIndex) => {
+    const parts = para.en.match(/\S+/g) ?? [];
+    for (let i = 0; i < parts.length; i += chunkSize) {
+      const slice = parts.slice(i, i + chunkSize);
+      result.push({
+        id: `${story.id}-${paraIndex}-${i}`,
+        text: slice.join(" "),
+        wordCount: slice.length,
+        paraIndex,
+      });
+    }
+  });
+  return result;
 }

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { getPack, translate, translateExample, type Word } from "@/data/packs";
 import { getLevelPack } from "@/data/levelVocab";
-import { useNativeLang, usePace } from "@/lib/prefs";
+import { useNativeLang, usePace, useUILang } from "@/lib/prefs";
 import { speakEnglish, warmEnglishVoices } from "@/lib/speech";
 import { recordAnswer } from "@/lib/srs";
 import { useActivityTimer } from "@/lib/timelog";
@@ -34,13 +34,92 @@ const LABEL: Record<Phase, string> = {
   relax: "Релаксация",
 };
 
-// Безопасные скорости предъявления (см. 04_design_system §6). У каждой — свой
-// темп речи, чтобы на медленных слово успевало полностью прозвучать.
-const SPEEDS = [
-  { ms: 1100, label: "Медленно", sub: "1,1 с", rate: 0.8, warn: false },
-  { ms: 600, label: "Спокойно", sub: "0,6 с", rate: 0.95, warn: false },
-  { ms: 350, label: "Быстрее", sub: "0,35 с", rate: 1.05, warn: false },
-  { ms: 120, label: "Разгон", sub: "0,12 с", rate: 1.35, warn: true },
+const SESSION_UI = {
+  ru: {
+    phases: LABEL,
+    pack: "Пачка",
+    exit: "Выйти из сеанса",
+    missing: "Эта пачка ещё готовится.",
+    backToday: "← На сегодня",
+    readyTitle: "Ты справишься.",
+    readyText: (count: number) =>
+      `Сейчас будет текущая пачка: ${count} слов. Дневная цель набирается несколькими пачками, а не одним экраном. Не нужно заучивать — просто смотри и слушай.`,
+    readyNote:
+      "Если звук включён, поток ждёт окончания английской озвучки. Пауза и выход доступны в любой момент.",
+    start: "Поехали",
+    sound: "Звук",
+    noSound: "Без звука",
+    interpretation: "Толкование",
+    translationExample: "Перевод и пример",
+    inFlow: "усвоено в потоке",
+    fastWarn:
+      "Быстрый режим — по согласию. Меняется только слово, фон стабилен. Пауза и выход в любой момент.",
+    sprintConfirm:
+      "Разгон — очень быстрое предъявление. Если есть фоточувствительность или склонность к приступам, не используй этот режим. Меняется только слово на карточке, фон стабилен. Продолжить?",
+    pause: "Пауза",
+    restart: "Заново",
+    watch: "Смотреть",
+    resume: "Продолжить",
+    toContext: "К контексту",
+    skip: "Пропустить",
+    speed: {
+      slow: ["Медленно", "голос + пауза"],
+      calm: ["Спокойно", "голос + пауза"],
+      faster: ["Быстрее", "короткая пауза"],
+      sprint: ["Разгон", "без чтения перевода"],
+    },
+  },
+  en: {
+    phases: {
+      ready: "Readiness",
+      flash: "Exposure · overload",
+      context: "Activation · in context",
+      recognition: "Recognition",
+      relax: "Relax",
+    } as Record<Phase, string>,
+    pack: "Pack",
+    exit: "Exit session",
+    missing: "This pack is still being prepared.",
+    backToday: "← Back to Today",
+    readyTitle: "You can do this.",
+    readyText: (count: number) =>
+      `This is the current pack: ${count} words. The daily goal is reached through several packs, not one screen. No memorizing — just watch and listen.`,
+    readyNote:
+      "When sound is on, the flow waits for the English audio to finish. Pause and exit are always available.",
+    start: "Start",
+    sound: "Sound",
+    noSound: "No sound",
+    interpretation: "Definition",
+    translationExample: "Translation and example",
+    inFlow: "seen in flow",
+    fastWarn:
+      "Fast mode requires consent. Only the word changes; the background stays stable. Pause and exit any time.",
+    sprintConfirm:
+      "Sprint is very fast exposure. If you have photosensitivity or seizure risk, do not use it. Only the word changes; the background stays stable. Continue?",
+    pause: "Pause",
+    restart: "Restart",
+    watch: "Watch",
+    resume: "Resume",
+    toContext: "To context",
+    skip: "Skip",
+    speed: {
+      slow: ["Slow", "voice + pause"],
+      calm: ["Calm", "voice + pause"],
+      faster: ["Faster", "short pause"],
+      sprint: ["Sprint", "no translation reading"],
+    },
+  },
+} as const;
+
+type SpeedKey = keyof (typeof SESSION_UI)["ru"]["speed"];
+
+// Безопасные скорости предъявления. Если звук включён, это минимальное время
+// карточки: поток ждёт окончания английского голоса и только потом идёт дальше.
+const SPEEDS: { minMs: number; key: SpeedKey; rate: number; warn: boolean }[] = [
+  { minMs: 2600, key: "slow", rate: 0.78, warn: false },
+  { minMs: 1900, key: "calm", rate: 0.9, warn: false },
+  { minMs: 1300, key: "faster", rate: 1.0, warn: false },
+  { minMs: 700, key: "sprint", rate: 1.18, warn: true },
 ];
 // Темп фазы «Активизация»: скорость речи + пауза между фразами.
 const CONTEXT_TEMPOS = [
@@ -73,6 +152,8 @@ export default function SessionPage() {
 
   const [phase, setPhase] = useState<Phase>("ready");
   const lang = useNativeLang();
+  const ui = useUILang();
+  const t = SESSION_UI[ui];
   // Учёт времени по нагрузочным фазам
   useActivityTimer(
     phase === "flash" || phase === "context" || phase === "recognition" ? phase : null
@@ -81,9 +162,9 @@ export default function SessionPage() {
   if (!pack || pack.words.length === 0) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-4 px-6 text-center">
-        <p className="text-muted">Эта пачка ещё готовится.</p>
+        <p className="text-muted">{t.missing}</p>
         <Link href="/" className="font-heading font-bold text-brand">
-          ← На сегодня
+          {t.backToday}
         </Link>
       </div>
     );
@@ -107,15 +188,15 @@ export default function SessionPage() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-wide text-muted">
-              {LABEL[phase]}
+              {t.phases[phase]}
             </p>
             <p data-testid="session-pack-title" className="font-heading text-sm font-bold text-ink">
-              Пачка «{pack.title}»
+              {t.pack} «{pack.title}»
             </p>
           </div>
           <Link
             href="/"
-            aria-label="Выйти из сеанса"
+            aria-label={t.exit}
             className="flex h-9 w-9 items-center justify-center rounded-full border border-line bg-surface text-muted"
           >
             <X className="h-5 w-5" />
@@ -135,10 +216,16 @@ export default function SessionPage() {
 
       <main className="mx-auto flex w-full max-w-[480px] flex-1 flex-col px-5 py-6">
         {phase === "ready" && (
-          <Ready pack={pack.title} count={pack.words.length} context={pack.context} onStart={() => go("ready")} />
+          <Ready
+            pack={pack.title}
+            count={pack.words.length}
+            context={pack.context}
+            ui={ui}
+            onStart={() => go("ready")}
+          />
         )}
         {phase === "flash" && (
-          <Flash words={pack.words} lang={lang} onDone={() => go("flash")} />
+          <Flash words={pack.words} lang={lang} ui={ui} onDone={() => go("flash")} />
         )}
         {phase === "context" && (
           <Context words={pack.words} lang={lang} onDone={() => go("context")} />
@@ -164,13 +251,16 @@ function Ready({
   pack,
   count,
   context,
+  ui,
   onStart,
 }: {
   pack: string;
   count: number;
   context: string;
+  ui: "ru" | "en";
   onStart: () => void;
 }) {
+  const t = SESSION_UI[ui];
   return (
     <div data-testid="phase-ready" className="flex flex-1 flex-col">
       <div className="flex flex-1 flex-col items-center justify-center text-center">
@@ -178,11 +268,10 @@ function Ready({
           <Spark className="h-8 w-8" />
         </span>
         <h2 className="mt-5 font-heading text-2xl font-extrabold text-ink">
-          Ты справишься.
+          {t.readyTitle}
         </h2>
         <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-muted">
-          Сейчас будет {count} слов разом. Не нужно их заучивать — просто смотри
-          и слушай. Они «всплывут» сами в контексте.
+          {t.readyText(count)}
         </p>
         <p className="mt-5 rounded-soft bg-surface px-4 py-3 text-sm font-medium text-brand-ink shadow-card">
           «{pack}» — {context.toLowerCase()}
@@ -190,8 +279,7 @@ function Ready({
       </div>
 
       <div className="rounded-soft border border-line bg-surface p-3 text-xs leading-relaxed text-muted">
-        Темп выберешь на следующем шаге. По умолчанию — спокойный. Пауза и выход
-        доступны в любой момент.
+        {t.readyNote}
       </div>
 
       <button
@@ -200,15 +288,26 @@ function Ready({
         className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)] transition-transform active:scale-[0.98]"
       >
         <Play className="h-5 w-5" />
-        Поехали
+        {t.start}
       </button>
     </div>
   );
 }
 
 /* ---------- Фаза 2: Киносеанс / перегрузка ---------- */
-function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone: () => void }) {
+function Flash({
+  words,
+  lang,
+  ui,
+  onDone,
+}: {
+  words: Word[];
+  lang: LangCode;
+  ui: "ru" | "en";
+  onDone: () => void;
+}) {
   const pace = usePace();
+  const t = SESSION_UI[ui];
   const [i, setI] = useState(0);
   // Стартуем на паузе: пользователь сам жмёт «Смотреть» (это ещё и жест для
   // разблокировки озвучки в браузере). Иначе поток пролетал до конца сам.
@@ -219,11 +318,12 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
   const [consented, setConsented] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const ms = SPEEDS[speed].ms;
+  const minMs = SPEEDS[speed].minMs;
   const w = words[i];
   const tr = translate(w, lang);
   const ex = translateExample(w, lang);
   const last = i >= words.length - 1;
+  const speedText = t.speed[SPEEDS[speed].key];
 
   useEffect(() => {
     warmEnglishVoices();
@@ -235,13 +335,12 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
   }, []);
 
   useEffect(() => {
-    if (!running || !soundOn) return;
-    speakEnglish(w.en, { rate: SPEEDS[speed].rate, interrupt: true });
-  }, [i, speed, running, soundOn, w.en]);
-
-  useEffect(() => {
     if (!running) return;
-    timer.current = setTimeout(() => {
+    let done = false;
+    const started = Date.now();
+    const advance = () => {
+      if (done) return;
+      done = true;
       setI((prev) => {
         if (prev >= words.length - 1) {
           setRunning(false);
@@ -249,17 +348,34 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
         }
         return prev + 1;
       });
-    }, ms);
+    };
+
+    if (soundOn) {
+      const afterVoice = () => {
+        const left = Math.max(260, minMs - (Date.now() - started));
+        timer.current = setTimeout(advance, left);
+      };
+      speakEnglish(w.en, {
+        rate: SPEEDS[speed].rate,
+        interrupt: true,
+        onEnd: afterVoice,
+        onError: afterVoice,
+      });
+      // Страховка: если браузер не отдаст onend, поток не зависнет навсегда.
+      timer.current = setTimeout(advance, minMs + 4500);
+    } else {
+      timer.current = setTimeout(advance, minMs);
+    }
+
     return () => {
+      done = true;
       if (timer.current) clearTimeout(timer.current);
     };
-  }, [i, running, ms, words.length]);
+  }, [i, minMs, running, soundOn, speed, w.en, words.length]);
 
   function pickSpeed(idx: number) {
     if (SPEEDS[idx].warn && !consented) {
-      const ok = window.confirm(
-        "Разгон 0,12 с — очень быстрое предъявление. Если есть фоточувствительность или склонность к приступам, не используй этот режим. Меняется только слово на карточке, фон стабилен. Продолжить?"
-      );
+      const ok = window.confirm(t.sprintConfirm);
       if (!ok) return;
       setConsented(true);
     }
@@ -285,10 +401,10 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
             }`}
           >
             <Sound className="h-4 w-4" />
-            {soundOn ? "Звук" : "Без звука"}
+            {soundOn ? t.sound : t.noSound}
           </button>
           <span className="rounded-xl bg-surface px-3 py-2 text-[11px] font-bold text-brand-d">
-            {SPEEDS[speed].label} · {SPEEDS[speed].sub}
+            {speedText[0]} · {speedText[1]}
           </span>
         </div>
 
@@ -307,7 +423,7 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
 
         <div className="rounded-soft bg-surface/80 px-4 py-3 text-left shadow-card">
           <p className="text-[10px] font-bold uppercase tracking-wide text-muted">
-            {tr.isDef ? "Толкование" : "Перевод и пример"}
+            {tr.isDef ? t.interpretation : t.translationExample}
           </p>
           <p
             dir={tr.isDef ? "ltr" : LANG_DIR[lang]}
@@ -329,7 +445,7 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
       {/* Прогресс потока */}
       <div className="mt-4">
         <div className="flex items-center justify-between text-xs text-muted">
-          <span>усвоено в потоке</span>
+          <span>{t.inFlow}</span>
           <span className="tnum font-heading text-base font-bold text-ink">
             {i + 1} / {words.length}
           </span>
@@ -341,9 +457,11 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
 
       {/* Выбор темпа */}
       <div className="mt-4 grid grid-cols-4 gap-2">
-        {SPEEDS.map((s, idx) => (
+        {SPEEDS.map((s, idx) => {
+          const [label, sub] = t.speed[s.key];
+          return (
           <button
-            key={s.ms}
+            key={s.key}
             onClick={() => pickSpeed(idx)}
             className={`rounded-soft border px-2 py-2 text-center transition-colors ${
               idx === speed
@@ -351,20 +469,20 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
                 : "border-line bg-surface text-ink"
             }`}
           >
-            <span className="block font-heading text-xs font-bold">{s.label}</span>
+            <span className="block font-heading text-xs font-bold">{label}</span>
             <span className={`block text-[11px] ${idx === speed ? "text-white/80" : "text-muted"}`}>
-              {s.sub}
+              {sub}
             </span>
           </button>
-        ))}
+        );
+        })}
       </div>
 
       {/* Безопасность */}
       <div className="mt-3 flex items-start gap-2 rounded-soft bg-warn-soft px-3 py-2.5 text-xs leading-relaxed text-warn">
         <Warning className="mt-0.5 h-4 w-4 flex-shrink-0" />
         <span>
-          Быстрый режим — по согласию. Меняется только слово, фон стабилен. Пауза
-          и выход в любой момент.
+          {t.fastWarn}
         </span>
       </div>
 
@@ -383,7 +501,7 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
           className="flex items-center justify-center gap-2 rounded-2xl bg-brand px-5 py-4 font-heading text-base font-extrabold text-white"
         >
           {running ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-          {running ? "Пауза" : last ? "Заново" : i === 0 ? "Смотреть" : "Продолжить"}
+          {running ? t.pause : last ? t.restart : i === 0 ? t.watch : t.resume}
         </button>
         {/* Справа: в конце — переход к контексту, иначе — пропустить фазу */}
         {last && !running ? (
@@ -392,7 +510,7 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
             data-testid="flash-skip"
             className="flex items-center justify-center gap-2 rounded-2xl bg-accent px-4 font-heading text-sm font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)]"
           >
-            К контексту
+            {t.toContext}
             <ArrowRight className="h-5 w-5" />
           </button>
         ) : (
@@ -401,7 +519,7 @@ function Flash({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDone:
             data-testid="flash-skip"
             className="rounded-2xl border border-line bg-surface px-4 font-heading text-sm font-bold text-muted"
           >
-            Пропустить
+            {t.skip}
           </button>
         )}
       </div>

@@ -10,6 +10,7 @@ import {
   type ShadowScript,
 } from "@/data/shadowing";
 import { useActivityTimer } from "@/lib/timelog";
+import { useUILang } from "@/lib/prefs";
 
 type YTPlayer = {
   playVideo: () => void;
@@ -32,9 +33,27 @@ declare global {
 }
 
 const RATES = [1, 0.75, 0.5];
+const UI = {
+  ru: {
+    title: "Shadowing",
+    intro: "Выбери ролик: слушай носителя и повторяй вслух, читая текст.",
+    phrases: "фраз",
+    soon:
+      "Скоро: свои ролики по ссылке (Диспенза, любые TED и MOOC) — тайминги снимаем из субтитров автоматически.",
+  },
+  en: {
+    title: "Shadowing",
+    intro: "Choose a video: listen to a native speaker and repeat aloud while reading the text.",
+    phrases: "phrases",
+    soon:
+      "Soon: add your own videos by link (Dispenza, TED, MOOCs) and extract timings from subtitles automatically.",
+  },
+} as const;
 
 export default function Video() {
   const [selected, setSelected] = useState<ShadowScript | null>(null);
+  const ui = useUILang();
+  const t = UI[ui];
 
   if (selected) {
     return <ShadowPlayer script={selected} onBack={() => setSelected(null)} />;
@@ -43,10 +62,10 @@ export default function Video() {
   return (
     <div className="flex min-h-dvh flex-col">
       <main className="mx-auto w-full max-w-[480px] flex-1 px-5 pt-7 pb-6">
-        <h1 className="font-heading text-2xl font-extrabold text-ink">Shadowing</h1>
+        <h1 className="font-heading text-2xl font-extrabold text-ink">{t.title}</h1>
         <p className="mt-1 mb-5 flex items-center gap-1.5 text-sm text-muted">
           <Sound className="h-4 w-4 text-brand" />
-          Выбери ролик: слушай носителя и повторяй вслух, читая текст.
+          {t.intro}
         </p>
 
         {CATEGORY_ORDER.map((cat) => {
@@ -72,7 +91,7 @@ export default function Video() {
                           {s.title}
                         </span>
                         <span className="block text-xs text-muted">
-                          {s.author} · {s.level} · {s.lines.length} фраз
+                          {s.author} · {s.level} · {s.lines.length} {t.phrases}
                         </span>
                       </span>
                     </button>
@@ -85,8 +104,7 @@ export default function Video() {
 
         <div className="mt-2 flex items-start gap-2 rounded-soft border border-line bg-surface p-3 text-xs leading-relaxed text-muted">
           <Spark className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand" />
-          Скоро: свои ролики по ссылке (Диспенза, любые TED и MOOC) — тайминги снимаем
-          из субтитров автоматически.
+          {t.soon}
         </div>
       </main>
       <BottomNav />
