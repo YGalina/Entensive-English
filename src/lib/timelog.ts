@@ -45,6 +45,10 @@ export type TimeStats = {
   todaySec: number;
   totalSec: number;
   byActivityToday: Record<string, number>;
+  /** Сумма секунд по дням: дата → сек (для темпа и прогнозов) */
+  byDay: Record<string, number>;
+  /** Первая дата практики (старт пути) */
+  firstDay: string | null;
 };
 
 function snapshot(): string {
@@ -52,12 +56,30 @@ function snapshot(): string {
   const byActivityToday = l[todayKey()] || {};
   const todaySec = Object.values(byActivityToday).reduce((a, b) => a + b, 0);
   let totalSec = 0;
-  for (const day of Object.values(l))
-    for (const s of Object.values(day)) totalSec += s;
-  return JSON.stringify({ todaySec, totalSec, byActivityToday });
+  const byDay: Record<string, number> = {};
+  for (const [d, day] of Object.entries(l)) {
+    let s = 0;
+    for (const v of Object.values(day)) s += v;
+    byDay[d] = s;
+    totalSec += s;
+  }
+  const days = Object.keys(byDay).sort();
+  return JSON.stringify({
+    todaySec,
+    totalSec,
+    byActivityToday,
+    byDay,
+    firstDay: days[0] ?? null,
+  });
 }
 
-const EMPTY = JSON.stringify({ todaySec: 0, totalSec: 0, byActivityToday: {} });
+const EMPTY = JSON.stringify({
+  todaySec: 0,
+  totalSec: 0,
+  byActivityToday: {},
+  byDay: {},
+  firstDay: null,
+});
 
 function subscribe(cb: () => void) {
   listeners.add(cb);

@@ -6,6 +6,7 @@ import BottomNav from "@/components/BottomNav";
 import ThemeToggle from "@/components/ThemeToggle";
 import OnboardingGate from "@/components/OnboardingGate";
 import DayPanel from "@/components/DayPanel";
+import Horizon from "@/components/Horizon";
 import { Flame, Play, Spark, Check, ArrowRight } from "@/components/Icons";
 import { useUILang } from "@/lib/prefs";
 import { useDayPlan } from "@/lib/dayplan";
@@ -165,6 +166,9 @@ export default function Today() {
             </Link>
           )}
         </section>
+
+        {/* Горизонт: цель, прогноз от реального темпа, почему мы так считаем */}
+        <Horizon />
 
         {/* Путь дня: шаги закрываются реальным временем практики */}
         <section className="mt-6">
