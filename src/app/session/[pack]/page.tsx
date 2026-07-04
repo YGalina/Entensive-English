@@ -11,6 +11,7 @@ import { recordAnswer } from "@/lib/srs";
 import { useActivityTimer } from "@/lib/timelog";
 import { LANG_DIR, type LangCode } from "@/data/catalog";
 import { AFFIRMATIONS, BREATH, BREATH_CYCLES_GOAL } from "@/data/affirmations";
+import { startAmbient, stopAmbient } from "@/lib/ambient";
 import {
   Sound,
   Play,
@@ -52,6 +53,8 @@ const SESSION_UI = {
     attuneSkip: "Сразу к словам",
     attuneHint: "Дыши вместе с кругом. Установку читай про себя или шёпотом.",
     attuneDone: "Ты готова. Слова лягут сами.",
+    ambient: "Альфа-фон",
+    ambientHint: "мягкий тон 10 Гц · лучше в наушниках",
     breathIn: "Вдох",
     breathHold: "Держи",
     breathOut: "Выдох",
@@ -100,6 +103,8 @@ const SESSION_UI = {
     attuneSkip: "Straight to words",
     attuneHint: "Breathe with the circle. Read the affirmation silently or in a whisper.",
     attuneDone: "You are ready. The words will settle on their own.",
+    ambient: "Alpha tone",
+    ambientHint: "soft 10 Hz tone · best with headphones",
     breathIn: "Inhale",
     breathHold: "Hold",
     breathOut: "Exhale",
@@ -175,6 +180,8 @@ export default function SessionPage() {
   useActivityTimer(
     phase === "flash" || phase === "context" || phase === "recognition" ? phase : null
   );
+  // Альфа-фон, включённый в настройке, живёт весь сеанс; глушим при выходе.
+  useEffect(() => () => stopAmbient(), []);
 
   if (!pack || pack.words.length === 0) {
     return (
@@ -283,7 +290,17 @@ function Ready({
   const [stage, setStage] = useState<"intro" | "breathe">("intro");
   const [bp, setBp] = useState<"in" | "hold" | "out">("in");
   const [cycle, setCycle] = useState(0);
+  const [amb, setAmb] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function toggleAmbient() {
+    if (amb) {
+      stopAmbient();
+      setAmb(false);
+    } else if (startAmbient()) {
+      setAmb(true);
+    }
+  }
 
   useEffect(() => {
     if (stage !== "breathe") return;
@@ -325,7 +342,17 @@ function Ready({
             <b className="tnum text-ink">{Math.min(cycle + 1, BREATH_CYCLES_GOAL)}</b> /{" "}
             {BREATH_CYCLES_GOAL}
           </span>
-          {goalReached && <span className="font-semibold text-ok">{t.attuneDone}</span>}
+          <button
+            onClick={toggleAmbient}
+            data-testid="ambient-toggle"
+            title={t.ambientHint}
+            className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 font-heading text-[11px] font-bold transition-colors ${
+              amb ? "bg-brand text-white" : "bg-surface text-brand-d shadow-card"
+            }`}
+          >
+            <Sound className="h-3.5 w-3.5" />
+            {t.ambient}
+          </button>
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center text-center">
@@ -353,7 +380,13 @@ function Ready({
           </div>
         </div>
 
-        <p className="mb-3 text-center text-xs leading-relaxed text-muted">{t.attuneHint}</p>
+        <p
+          className={`mb-3 text-center text-xs leading-relaxed ${
+            goalReached ? "font-semibold text-ok" : "text-muted"
+          }`}
+        >
+          {goalReached ? t.attuneDone : t.attuneHint}
+        </p>
         <button
           onClick={onStart}
           data-testid="phase-start"
