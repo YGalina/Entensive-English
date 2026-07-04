@@ -6,8 +6,9 @@ import BottomNav from "@/components/BottomNav";
 import ThemeToggle from "@/components/ThemeToggle";
 import OnboardingGate from "@/components/OnboardingGate";
 import DayPanel from "@/components/DayPanel";
-import { Flame, Play, Spark, Check } from "@/components/Icons";
+import { Flame, Play, Spark, Check, ArrowRight } from "@/components/Icons";
 import { useUILang } from "@/lib/prefs";
+import { useDayPlan } from "@/lib/dayplan";
 
 function pluralRu(n: number, one: string, few: string, many: string) {
   const m10 = n % 10;
@@ -28,6 +29,14 @@ const UI = {
     start: "Начать сеанс",
     videos: "видео",
     field: "сверхнасыщенное поле",
+    pathTitle: "Путь дня",
+    pathNote: "Шаги закрываются сами — реальным временем практики. Порядок — подсказка, не приказ.",
+    step: (n: number, total: number) => `Шаг ${n} из ${total}`,
+    minToday: (m: number) => `${m} мин сегодня`,
+    allDone: "День собран. Всё остальное — в удовольствие.",
+    allDoneCta: "Взять ещё пачку",
+    due: (n: number) => `${n} к повтору`,
+    minGoal: (m: number) => `~${m} мин`,
     packsTitle: "Пачки дня",
     ready: "слов готово",
     pack: "Пачка",
@@ -55,6 +64,14 @@ const UI = {
     start: "Start session",
     videos: "videos",
     field: "intensive field",
+    pathTitle: "Today’s path",
+    pathNote: "Steps complete themselves — by real practice time. The order is a hint, not an order.",
+    step: (n: number, total: number) => `Step ${n} of ${total}`,
+    minToday: (m: number) => `${m} min today`,
+    allDone: "The day is complete. Everything else is pure pleasure.",
+    allDoneCta: "Take another pack",
+    due: (n: number) => `${n} to review`,
+    minGoal: (m: number) => `~${m} min`,
     packsTitle: "Today's packs",
     ready: "words ready",
     pack: "Pack",
@@ -80,6 +97,9 @@ export default function Today() {
   const total = filled.reduce((s, p) => s + p.words.length, 0);
   const ui = useUILang();
   const t = UI[ui];
+  const plan = useDayPlan();
+  const cur = plan.current;
+  const curIdx = cur ? plan.steps.findIndex((s) => s.id === cur.id) : -1;
 
   return (
     <OnboardingGate>
@@ -118,14 +138,94 @@ export default function Today() {
           <p className="mt-3 rounded-xl bg-white/10 px-3 py-2 text-sm leading-relaxed text-white/95">
             {t.readyNow(total)}
           </p>
-          <Link
-            href="/session/health"
-            data-testid="home-start-session"
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)] transition-transform active:scale-[0.98]"
-          >
-            <Play className="h-5 w-5" />
-            {t.start}
-          </Link>
+          {/* Одна следующая кнопка: дирижёр ведёт по шагам дня */}
+          {cur ? (
+            <Link
+              href={cur.href}
+              data-testid="home-start-session"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)] transition-transform active:scale-[0.98]"
+            >
+              <Play className="h-5 w-5" />
+              {cur[ui].title}
+              <span className="text-sm font-bold text-white/75">
+                · {t.step(curIdx + 1, plan.total)}
+              </span>
+            </Link>
+          ) : (
+            <Link
+              href="/vocab"
+              data-testid="home-start-session"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-white/15 px-5 py-4 font-heading text-base font-extrabold text-white"
+            >
+              <Check className="h-5 w-5" />
+              {t.allDone} {t.allDoneCta} →
+            </Link>
+          )}
+        </section>
+
+        {/* Путь дня: шаги закрываются реальным временем практики */}
+        <section className="mt-6">
+          <div className="mb-1 flex items-baseline justify-between">
+            <h2 className="font-heading text-lg font-bold text-ink">{t.pathTitle}</h2>
+            <span className="tnum text-xs font-bold text-muted">
+              {plan.doneCount}/{plan.total} · {t.minToday(plan.todayMin)}
+            </span>
+          </div>
+          <p className="mb-3 text-xs leading-relaxed text-muted">{t.pathNote}</p>
+          <ol className="space-y-2">
+            {plan.steps.map((s, i) => {
+              const isCur = cur?.id === s.id;
+              return (
+                <li key={s.id}>
+                  <Link
+                    href={s.href}
+                    data-testid="day-step"
+                    className={`flex items-center gap-3 rounded-soft border p-3 transition-colors ${
+                      isCur
+                        ? "border-brand bg-brand-soft"
+                        : s.done
+                          ? "border-line bg-surface opacity-70"
+                          : "border-line bg-surface hover:border-brand/40"
+                    }`}
+                  >
+                    <span
+                      className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl font-heading text-sm font-extrabold ${
+                        s.done
+                          ? "bg-ok/15 text-ok"
+                          : isCur
+                            ? "bg-brand text-white"
+                            : "bg-bg text-muted"
+                      }`}
+                    >
+                      {s.done ? <Check className="h-5 w-5" /> : i + 1}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span
+                        className={`block truncate text-sm font-semibold ${
+                          isCur ? "text-brand-ink" : "text-ink"
+                        }`}
+                      >
+                        {s[ui].title}
+                      </span>
+                      <span className="block truncate text-xs text-muted">{s[ui].note}</span>
+                    </span>
+                    <span className="tnum flex-shrink-0 text-xs font-bold text-muted">
+                      {s.kind === "review"
+                        ? s.done
+                          ? "✓"
+                          : t.due(s.due)
+                        : s.done
+                          ? "✓"
+                          : s.doneMin > 0.5
+                            ? `${Math.round(s.doneMin)}/${s.goalMin}м`
+                            : t.minGoal(s.goalMin)}
+                    </span>
+                    {isCur && <ArrowRight className="h-4 w-4 flex-shrink-0 text-brand" />}
+                  </Link>
+                </li>
+              );
+            })}
+          </ol>
         </section>
 
         {/* Программа по дням + почасовка */}
