@@ -18,6 +18,8 @@ export type DayStep = {
   /** Ключи активностей timelog, которые засчитываются в шаг */
   activities: string[];
   kind: "time" | "review";
+  /** CSS-переменная сигнального цвета навыка (дизайн-система «Марина») */
+  tone: string;
   ru: { title: string; note: string };
   en: { title: string; note: string };
 };
@@ -25,6 +27,7 @@ export type DayStep = {
 export const DAY_STEPS: DayStep[] = [
   {
     id: "session",
+    tone: "--sk-words",
     href: "/session/health",
     goalMin: 15,
     activities: ["flash", "context", "recognition"],
@@ -34,6 +37,7 @@ export const DAY_STEPS: DayStep[] = [
   },
   {
     id: "review",
+    tone: "--sk-words",
     href: "/vocab",
     goalMin: 0,
     activities: ["review"],
@@ -43,6 +47,7 @@ export const DAY_STEPS: DayStep[] = [
   },
   {
     id: "pronunciation",
+    tone: "--sk-sounds",
     href: "/pronunciation",
     goalMin: 5,
     activities: ["pronunciation"],
@@ -52,6 +57,7 @@ export const DAY_STEPS: DayStep[] = [
   },
   {
     id: "typing",
+    tone: "--sk-typing",
     href: "/typing",
     goalMin: 5,
     activities: ["typing"],
@@ -61,6 +67,7 @@ export const DAY_STEPS: DayStep[] = [
   },
   {
     id: "grammar",
+    tone: "--sk-grammar",
     href: "/grammar",
     goalMin: 5,
     activities: ["grammar"],
@@ -70,6 +77,7 @@ export const DAY_STEPS: DayStep[] = [
   },
   {
     id: "reading",
+    tone: "--sk-reading",
     href: "/reading",
     goalMin: 7,
     activities: ["reading"],
@@ -79,6 +87,7 @@ export const DAY_STEPS: DayStep[] = [
   },
   {
     id: "shadowing",
+    tone: "--sk-video",
     href: "/video",
     goalMin: 7,
     activities: ["shadowing"],

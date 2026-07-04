@@ -1,43 +1,63 @@
 @import "tailwindcss";
 
-/* ===== Дизайн-система «Индиго» (см. 04_design_system.md) ===== */
+/* ===== Дизайн-система «Марина» =====
+   Французская ривьера + Ralph Lauren preppy: глубокий navy, сигнальный красный,
+   хрустящий белый, латунь. Бретонская полоска — фирменный декор. Без бежа,
+   без индиго-фиолетового. Каждый навык имеет свой цвет (сигнальные флаги). */
 :root {
-  --brand: #4f46e5;
-  --brand-d: #4338ca;
-  --brand-soft: #eef0fe;
-  --brand-ink: #1e1b4b;
-  --accent: #ff6b5c;
-  --accent-d: #e04e3f;
-  --bg: #f5f5fb;
+  --brand: #1b3a6b; /* морской navy */
+  --brand-d: #12294e; /* глубже — мелкий текст, ховеры */
+  --brand-soft: #e9f0f9; /* ледяная волна — подложки пилюль */
+  --brand-ink: #0e2240; /* чернила капитана */
+  --accent: #d62839; /* сигнальный красный (CTA) */
+  --accent-d: #ab1f2e;
+  --sun: #f2c14e; /* латунь/золото фурнитуры — стрик, радость */
+  --bg: #f7f9fc; /* хрустящий холодный белый, НЕ беж */
   --surface: #ffffff;
-  --ink: #1e1b4b;
-  --muted: #6b7280;
-  --line: #ececf5;
-  --ok: #16a34a;
+  --ink: #14213d;
+  --muted: #5c6b84; /* стальной */
+  --line: #e3e9f2;
+  --ok: #178a50;
   --warn: #b45309;
   --warn-soft: #fef3e2;
-  --shadow: 0 1px 2px rgba(30, 27, 75, 0.04), 0 8px 24px rgba(30, 27, 75, 0.08);
-  --shadow-lg: 0 2px 4px rgba(30, 27, 75, 0.05), 0 18px 48px rgba(30, 27, 75, 0.14);
+  --shadow: 0 1px 2px rgba(14, 34, 64, 0.05), 0 8px 24px rgba(27, 58, 107, 0.08);
+  --shadow-lg: 0 2px 4px rgba(14, 34, 64, 0.06), 0 18px 48px rgba(27, 58, 107, 0.16);
+
+  /* Сигнальные флаги навыков: мгновенно видно, где ты */
+  --sk-words: #1b3a6b; /* словарь/сеанс — navy */
+  --sk-sounds: #d62839; /* звуки/говорение — сигнальный красный */
+  --sk-typing: #a06b1e; /* набор — латунь */
+  --sk-grammar: #177245; /* времена — охотничий зелёный */
+  --sk-reading: #8d2942; /* чтение — бордо библиотеки */
+  --sk-video: #0e7c7b; /* shadowing — морская волна */
 }
 
 .dark {
-  /* Нейтральный тёмный фон + поверхности; индиго — только акцент */
-  --brand: #8b83f0;
-  --brand-d: #a8a2f7;
-  --brand-soft: #262a44; /* индиго-подложка для выделений/пилюль */
-  --brand-ink: #e7e6fb;
-  --accent: #ff6b5c;
-  --accent-d: #ff8275;
-  --bg: #0f1014; /* почти нейтральный, лёгкий холодок */
-  --surface: #1a1c22; /* карточки — нейтрально-тёмные */
-  --ink: #eceef3;
-  --muted: #969aa6;
-  --line: #2a2d36;
+  /* Ночная палуба: глубокий полночный navy + светлые сигнальные акценты */
+  --brand: #7ca7e8;
+  --brand-d: #a5c4f0;
+  --brand-soft: #1b2b47;
+  --brand-ink: #dce8fa;
+  --accent: #ff5a6e;
+  --accent-d: #ff8291;
+  --sun: #f2c14e;
+  --bg: #0b1526; /* полночь над морем */
+  --surface: #14213a;
+  --ink: #eff3fa;
+  --muted: #93a3bc;
+  --line: #24334e;
   --ok: #34d399;
   --warn: #f0b860;
   --warn-soft: #2c2516;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.45), 0 18px 48px rgba(0, 0, 0, 0.6);
+
+  --sk-words: #7ca7e8;
+  --sk-sounds: #ff6b7a;
+  --sk-typing: #e0b252;
+  --sk-grammar: #35b37e;
+  --sk-reading: #e07a94;
+  --sk-video: #3fbdbb;
 }
 
 @theme inline {
@@ -47,6 +67,7 @@
   --color-brand-ink: var(--brand-ink);
   --color-accent: var(--accent);
   --color-accent-d: var(--accent-d);
+  --color-sun: var(--sun);
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-ink: var(--ink);
@@ -79,6 +100,30 @@ body {
 /* Табличные цифры для таймеров и счётчиков — без «прыжков» */
 .tnum {
   font-variant-numeric: tabular-nums;
+}
+
+/* Морской герой: глубина navy с лёгким градиентом к ночному борту */
+.bg-marine {
+  background-image: linear-gradient(160deg, #234a85 0%, #1b3a6b 45%, #12294e 100%);
+}
+.dark .bg-marine {
+  background-image: linear-gradient(160deg, #1d3a68 0%, #142b50 45%, #0d1d3a 100%);
+}
+
+/* Бретонская полоска — фирменный декор (тонкая лента, как тельняшка) */
+.stripe-breton {
+  background-image: repeating-linear-gradient(
+    0deg,
+    #ffffff 0 6px,
+    var(--brand) 6px 12px
+  );
+}
+.stripe-breton-red {
+  background-image: repeating-linear-gradient(
+    0deg,
+    #ffffff 0 6px,
+    var(--accent) 6px 12px
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {

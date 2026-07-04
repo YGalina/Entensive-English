@@ -115,7 +115,7 @@ export default function Today() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-2 text-sm font-bold text-accent-d shadow-card">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-sun px-3 py-2 text-sm font-bold text-brand-ink shadow-card">
               <Flame className="h-4 w-4" />
               <span className="tnum">{streak}</span>
             </span>
@@ -124,7 +124,9 @@ export default function Today() {
         </header>
 
         {/* Цель дня — метод мыслит сотнями слов, но приложение ведёт пачками */}
-        <section className="relative overflow-hidden rounded-card bg-brand p-6 text-white shadow-float">
+        <section className="relative overflow-hidden rounded-card bg-marine p-6 text-white shadow-float">
+          {/* Бретонская лента — фирменная полоска тельняшки */}
+          <div className="stripe-breton-red absolute inset-x-0 top-0 h-2 opacity-90" />
           <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10" />
           <p className="text-sm text-white/85">
             {t.dailyGoal} · {t.intensive(hours)}
@@ -188,14 +190,21 @@ export default function Today() {
                           : "border-line bg-surface hover:border-brand/40"
                     }`}
                   >
+                    {/* Чип шага — в сигнальном цвете навыка */}
                     <span
                       className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl font-heading text-sm font-extrabold ${
-                        s.done
-                          ? "bg-ok/15 text-ok"
-                          : isCur
-                            ? "bg-brand text-white"
-                            : "bg-bg text-muted"
+                        s.done ? "bg-ok/15 text-ok" : isCur ? "text-white" : ""
                       }`}
+                      style={
+                        s.done
+                          ? undefined
+                          : isCur
+                            ? { background: `var(${s.tone})` }
+                            : {
+                                background: `color-mix(in srgb, var(${s.tone}) 12%, transparent)`,
+                                color: `var(${s.tone})`,
+                              }
+                      }
                     >
                       {s.done ? <Check className="h-5 w-5" /> : i + 1}
                     </span>
