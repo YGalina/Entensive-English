@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Sound, Keyboard, Check, ArrowRight } from "@/components/Icons";
-import { speakEnglish } from "@/lib/speech";
+import { speakEnglish, speakRussian } from "@/lib/speech";
 import { useActivityTimer } from "@/lib/timelog";
 import { useUILang } from "@/lib/prefs";
 import { DRILL_LESSONS } from "@/data/pronunciationDrills";
@@ -28,6 +28,10 @@ const UI = {
     },
     layoutWarn:
       "Похоже, включена русская раскладка. Буквы я принимаю по клавишам, но переключись на английскую (⌘ или ⌃ + пробел) — иначе знаки препинания не совпадут.",
+    coach: "Тренер",
+    coachHint: "Голосовая подсказка пальца: по кнопке 🔊 и сама, если застряла.",
+    fingerPhrase: (shift: boolean, base: string) =>
+      shift ? `Шифт — мизинец другой руки. Буква — ${base}.` : `${base}.`,
     done: "Фраза записана",
     accuracy: "точность",
     speed: "зн/мин",
@@ -51,6 +55,10 @@ const UI = {
     },
     layoutWarn:
       "Looks like a Russian keyboard layout is on. Letters are accepted by physical key, but switch to English (⌘ or ⌃ + Space) — punctuation won't match otherwise.",
+    coach: "Coach",
+    coachHint: "Voice finger hint: via the 🔊 button, and automatically when you're stuck.",
+    fingerPhrase: (shift: boolean, base: string) =>
+      shift ? `Shift with the other hand's pinky. The letter — ${base}.` : `${base}.`,
     done: "Phrase recorded",
     accuracy: "accuracy",
     speed: "cpm",
@@ -92,6 +100,40 @@ function nowMs(): number {
   return Date.now();
 }
 
+/** Английское имя символа для озвучки («capital D», «space», «colon»…). */
+const CHAR_NAMES: Record<string, string> = {
+  " ": "space",
+  "'": "apostrophe",
+  ",": "comma",
+  ".": "period",
+  "!": "exclamation mark",
+  "?": "question mark",
+  ":": "colon",
+  ";": "semicolon",
+  '"': "quote",
+  "-": "dash",
+};
+function charName(ch: string): string {
+  const n = norm(ch);
+  if (CHAR_NAMES[n]) return CHAR_NAMES[n];
+  if (/[A-Z]/.test(n)) return `capital ${n}`;
+  return n;
+}
+
+type Strings = (typeof UI)["ru"] | (typeof UI)["en"];
+
+/** Озвучить подсказку: символ — английским голосом, палец — на языке интерфейса. */
+function speakFingerFor(ch: string, t: Strings, ui: "ru" | "en") {
+  const needShift = /[A-Z]/.test(ch);
+  const bf = FINGER[norm(ch).toLowerCase()] ?? null;
+  const phrase = t.fingerPhrase(needShift, bf ? t.fingers[bf] : "");
+  const sayHint = () => {
+    const say = ui === "ru" ? speakRussian : speakEnglish;
+    say(phrase, { interrupt: false, rate: 1.0 });
+  };
+  speakEnglish(charName(ch), { rate: 0.9, interrupt: true, onEnd: sayHint, onError: sayHint });
+}
+
 export default function Typing() {
   useActivityTimer("typing");
   const ui = useUILang();
@@ -104,6 +146,10 @@ export default function Typing() {
   const [wrongFlash, setWrongFlash] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [layoutWarn, setLayoutWarn] = useState(false);
+  // Голосовой тренер пальцев: 🔊 по кнопке и сам, когда застряла.
+  const [coach, setCoach] = useState(true);
+  const missOnPos = useRef(0);
+  const spokenPos = useRef(-1);
   const [doneAt, setDoneAt] = useState<number | null>(null);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -183,6 +229,12 @@ export default function Typing() {
       setWrongFlash(true);
       if (flashTimer.current) clearTimeout(flashTimer.current);
       flashTimer.current = setTimeout(() => setWrongFlash(false), 240);
+      // Два промаха на одном символе — тренер подсказывает голосом.
+      missOnPos.current += 1;
+      if (coach && missOnPos.current === 2 && spokenPos.current !== pos) {
+        spokenPos.current = pos;
+        speakFingerFor(chars[pos], t, ui);
+      }
     }
   }
 
@@ -217,6 +269,27 @@ export default function Typing() {
     ? FINGER[norm(current).toLowerCase()] ?? null
     : null;
 
+  function speakFinger() {
+    if (!current) return;
+    spokenPos.current = pos;
+    speakFingerFor(current, t, ui);
+  }
+
+  // Застряла на символе ~3с — тренер подскажет сам (один раз на символ).
+  useEffect(() => {
+    if (!coach || finished) return;
+    missOnPos.current = 0;
+    const ch = phrase.en[pos];
+    if (!ch) return;
+    const id = setTimeout(() => {
+      if (spokenPos.current !== pos) {
+        spokenPos.current = pos;
+        speakFingerFor(ch, t, ui);
+      }
+    }, 3000);
+    return () => clearTimeout(id);
+  }, [coach, finished, pos, pi, li, phrase.en, t, ui]);
+
   return (
     <div className="flex min-h-dvh flex-col">
       <div className="sticky top-0 z-10 border-b border-line bg-bg/95 backdrop-blur">
@@ -247,12 +320,23 @@ export default function Typing() {
       <main className="mx-auto w-full max-w-[480px] flex-1 px-5 pt-4 pb-6">
         {/* Управление фразой */}
         <div className="mb-3 flex items-center justify-between gap-2">
-          <button
-            onClick={() => speakEnglish(phrase.en, { interrupt: true, rate: 0.85 })}
-            className="flex items-center gap-1.5 rounded-xl bg-brand-soft px-3 py-2 font-heading text-xs font-bold text-brand-d"
-          >
-            <Sound className="h-4 w-4" /> {t.listen}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => speakEnglish(phrase.en, { interrupt: true, rate: 0.85 })}
+              className="flex items-center gap-1.5 rounded-xl bg-brand-soft px-3 py-2 font-heading text-xs font-bold text-brand-d"
+            >
+              <Sound className="h-4 w-4" /> {t.listen}
+            </button>
+            <button
+              onClick={() => setCoach((v) => !v)}
+              title={t.coachHint}
+              className={`rounded-xl px-3 py-2 font-heading text-xs font-bold transition-colors ${
+                coach ? "bg-brand text-white" : "bg-surface text-ink shadow-card"
+              }`}
+            >
+              {t.coach}
+            </button>
+          </div>
           <span className="tnum text-xs font-bold text-muted">
             {t.phrase} {pi + 1} / {lesson.phrases.length}
           </span>
@@ -334,8 +418,18 @@ export default function Typing() {
                         : "—"}
                   </b>
                 </span>
-                <span className="rounded bg-brand-soft px-2 py-0.5 font-heading text-sm font-extrabold text-brand-d">
-                  {current === " " ? "␣" : current}
+                <span className="flex items-center gap-1.5">
+                  <button
+                    onClick={speakFinger}
+                    data-testid="finger-voice"
+                    aria-label={t.coachHint}
+                    className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand-soft text-brand-d"
+                  >
+                    <Sound className="h-3.5 w-3.5" />
+                  </button>
+                  <span className="rounded bg-brand-soft px-2 py-0.5 font-heading text-sm font-extrabold text-brand-d">
+                    {current === " " ? "␣" : current}
+                  </span>
                 </span>
               </>
             )}

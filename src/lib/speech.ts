@@ -199,3 +199,85 @@ export function warmEnglishVoices() {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
   window.speechSynthesis.getVoices();
 }
+
+/** Лучший русский голос системы (для голосовых подсказок тренера). */
+function pickRussianVoice(): SpeechSynthesisVoice | null {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return null;
+  const voices = window.speechSynthesis
+    .getVoices()
+    .filter((v) => v.lang.toLowerCase().startsWith("ru"));
+  if (voices.length === 0) return null;
+  const score = (v: SpeechSynthesisVoice) => {
+    const n = v.name.toLowerCase();
+    let s = 0;
+    if (/premium|enhanced|natural|neural|milena|google/.test(n)) s += 50;
+    if (n.includes("compact")) s -= 40;
+    return s;
+  };
+  return voices.sort((a, b) => score(b) - score(a))[0] ?? null;
+}
+
+/** Русская озвучка (подсказки тренера). Те же гарантии колбэка, что и у английской. */
+export function speakRussian(text: string, options: SpeakOptions = {}) {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+    options.onError?.();
+    return;
+  }
+  const clean = text.trim();
+  if (!clean) {
+    options.onEnd?.();
+    return;
+  }
+  try {
+    const synth = window.speechSynthesis;
+    const rate = options.rate ?? 1.0;
+    const u = new SpeechSynthesisUtterance(clean);
+    u.lang = "ru-RU";
+    const v = pickRussianVoice();
+    if (v) u.voice = v;
+    u.rate = rate;
+
+    let settled = false;
+    let started = false;
+    let startGuard: ReturnType<typeof setTimeout> | null = null;
+    let endGuard: ReturnType<typeof setTimeout> | null = null;
+    const settle = (cb?: () => void) => {
+      if (settled) return;
+      settled = true;
+      if (startGuard) clearTimeout(startGuard);
+      if (endGuard) clearTimeout(endGuard);
+      cb?.();
+    };
+    u.onstart = () => {
+      started = true;
+    };
+    u.onend = () => settle(options.onEnd);
+    u.onerror = () => settle(options.onError);
+
+    const go = () => {
+      try {
+        synth.resume();
+        synth.speak(u);
+        startGuard = setTimeout(() => {
+          if (!started && !settled) {
+            try {
+              synth.cancel();
+            } catch {}
+            settle(options.onError);
+          }
+        }, 1600);
+        const estMs = 1600 + (clean.length * 1000) / (11 * rate);
+        endGuard = setTimeout(() => settle(options.onEnd), estMs + 2500);
+      } catch {
+        settle(options.onError);
+      }
+    };
+
+    if ((options.interrupt ?? true) && (synth.speaking || synth.pending)) {
+      synth.cancel();
+      setTimeout(go, 90);
+    } else {
+      go();
+    }
+  } catch {}
+}
