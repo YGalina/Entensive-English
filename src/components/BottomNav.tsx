@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Layers, Text, Play, Smile, Sound, Chat } from "./Icons";
+import { Home, Layers, Text, Play, Smile, Sound, Chat, Keyboard } from "./Icons";
 import { useUILang } from "@/lib/prefs";
 
 const items = [
   { href: "/", ru: "Сегодня", en: "Today", Icon: Home },
   { href: "/vocab", ru: "Словарь", en: "Words", Icon: Layers },
   { href: "/pronunciation", ru: "Звуки", en: "Sounds", Icon: Sound },
+  { href: "/typing", ru: "Набор", en: "Typing", Icon: Keyboard },
   { href: "/grammar", ru: "Времена", en: "Tenses", Icon: Chat },
   { href: "/reading", ru: "Чтение", en: "Reading", Icon: Text },
   { href: "/video", ru: "Видео", en: "Video", Icon: Play },

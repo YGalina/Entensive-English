@@ -37,6 +37,13 @@ export const Text = (p: P) => (
   </svg>
 );
 
+export const Keyboard = (p: P) => (
+  <svg {...base} className={p.className}>
+    <rect x="2.5" y="6" width="19" height="12" rx="2.5" />
+    <path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h.01M18 14h.01M9 14h6" />
+  </svg>
+);
+
 export const Chat = (p: P) => (
   <svg {...base} className={p.className}>
     <path d="M21 12a8 8 0 0 1-11.5 7.2L4 20l1-4.5A8 8 0 1 1 21 12Z" />

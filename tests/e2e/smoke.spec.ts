@@ -44,4 +44,12 @@ test("opens main learning surfaces", async ({ page }) => {
   await expect(examples.first()).toBeVisible();
   await examples.first().click();
   await expect(page.getByTestId("pronunciation-title")).toBeVisible();
+
+  // Набор (машинопись): zero-error ввод — печатаем фразу, получаем итог.
+  await page.goto("/typing");
+  await expect(page.getByTestId("typing-title")).toBeVisible();
+  await page.keyboard.type("Dear passengers: welcome aboard!");
+  await expect(page.getByTestId("typing-result")).toBeVisible();
+  await page.getByTestId("typing-next").click();
+  await expect(page.getByTestId("typing-result")).toHaveCount(0);
 });
