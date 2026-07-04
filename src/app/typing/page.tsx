@@ -151,11 +151,10 @@ export default function Typing() {
     resetPhrase(true, lesson.phrases[np].en);
   }
 
-  function handleKey(e: React.KeyboardEvent<HTMLInputElement>) {
+  function processKey(k: string, code: string, shiftKey: boolean, prevent: () => void) {
     if (finished) return;
-    const k = e.key;
     if (k === "Shift" || k === "CapsLock" || k === "Tab" || k.length > 1) return;
-    e.preventDefault();
+    prevent();
     const want = norm(chars[pos]);
     const got = norm(k);
     const now = nowMs();
@@ -166,9 +165,9 @@ export default function Typing() {
     // переключить раскладку — знаки препинания по code не мапятся.
     if (/[А-Яа-яЁё]/.test(k)) setLayoutWarn(true);
     let match = got === want;
-    if (!match && /[a-z]/i.test(want) && e.code === `Key${want.toUpperCase()}`) {
+    if (!match && /[a-z]/i.test(want) && code === `Key${want.toUpperCase()}`) {
       const wantUpper = want !== want.toLowerCase();
-      match = wantUpper ? e.shiftKey : !e.shiftKey;
+      match = wantUpper ? shiftKey : !shiftKey;
     }
 
     if (match) {
@@ -186,6 +185,26 @@ export default function Typing() {
       flashTimer.current = setTimeout(() => setWrongFlash(false), 240);
     }
   }
+
+  function handleKey(e: React.KeyboardEvent<HTMLInputElement>) {
+    processKey(e.key, e.code, e.shiftKey, () => e.preventDefault());
+  }
+
+  // Клавиши ловим и на уровне окна: если скрытый input потерял фокус (клик
+  // мимо, автоозвучка), набор не «умирает» — фокус не обязателен.
+  const processKeyRef = useRef(processKey);
+  useEffect(() => {
+    processKeyRef.current = processKey;
+  });
+  useEffect(() => {
+    const onWinKey = (e: KeyboardEvent) => {
+      if (document.activeElement === inputRef.current) return; // уже обработает input
+      if (e.metaKey || e.ctrlKey || e.altKey) return; // не мешаем шорткатам
+      processKeyRef.current(e.key, e.code, e.shiftKey, () => e.preventDefault());
+    };
+    window.addEventListener("keydown", onWinKey);
+    return () => window.removeEventListener("keydown", onWinKey);
+  }, []);
 
   const elapsedMin =
     doneAt && startedAt ? Math.max((doneAt - startedAt) / 60000, 1 / 60) : null;
