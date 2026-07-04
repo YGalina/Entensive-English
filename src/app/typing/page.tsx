@@ -24,8 +24,10 @@ const UI = {
     fingers: {
       lp: "левый мизинец", lr: "левый безымянный", lm: "левый средний", li: "левый указательный",
       ri: "правый указательный", rm: "правый средний", rr: "правый безымянный", rp: "правый мизинец",
-      th: "большой — пробел", sh: "Shift — мизинец другой руки",
+      th: "большой — пробел", sh: "Shift (мизинец другой руки)",
     },
+    layoutWarn:
+      "Похоже, включена русская раскладка. Буквы я принимаю по клавишам, но переключись на английскую (⌘ или ⌃ + пробел) — иначе знаки препинания не совпадут.",
     done: "Фраза записана",
     accuracy: "точность",
     speed: "зн/мин",
@@ -45,8 +47,10 @@ const UI = {
     fingers: {
       lp: "left pinky", lr: "left ring", lm: "left middle", li: "left index",
       ri: "right index", rm: "right middle", rr: "right ring", rp: "right pinky",
-      th: "thumb — space", sh: "Shift — other hand's pinky",
+      th: "thumb — space", sh: "Shift (other hand's pinky)",
     },
+    layoutWarn:
+      "Looks like a Russian keyboard layout is on. Letters are accepted by physical key, but switch to English (⌘ or ⌃ + Space) — punctuation won't match otherwise.",
     done: "Phrase recorded",
     accuracy: "accuracy",
     speed: "cpm",
@@ -99,6 +103,7 @@ export default function Typing() {
   const [errors, setErrors] = useState(0);
   const [wrongFlash, setWrongFlash] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [layoutWarn, setLayoutWarn] = useState(false);
   const [doneAt, setDoneAt] = useState<number | null>(null);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -118,6 +123,7 @@ export default function Typing() {
     setErrors(0);
     setDoneAt(null);
     setStartedAt(null);
+    setLayoutWarn(false);
     if (speak) speakEnglish(text, { interrupt: true, rate: 0.9 });
   }, []);
 
@@ -154,7 +160,18 @@ export default function Typing() {
     const got = norm(k);
     const now = nowMs();
     if (startedAt === null) setStartedAt(now);
-    if (got === want) {
+
+    // Русская раскладка: Shift+D даёт «В» и совпадения не будет никогда.
+    // Буквы принимаем по физической клавише (e.code), а баннер просит
+    // переключить раскладку — знаки препинания по code не мапятся.
+    if (/[А-Яа-яЁё]/.test(k)) setLayoutWarn(true);
+    let match = got === want;
+    if (!match && /[a-z]/i.test(want) && e.code === `Key${want.toUpperCase()}`) {
+      const wantUpper = want !== want.toLowerCase();
+      match = wantUpper ? e.shiftKey : !e.shiftKey;
+    }
+
+    if (match) {
       const np = pos + 1;
       setPos(np);
       if (np >= chars.length) {
@@ -175,10 +192,10 @@ export default function Typing() {
   const cpm = elapsedMin ? Math.round(chars.length / elapsedMin) : 0;
   const accuracy = Math.round((chars.length / Math.max(chars.length + errors, 1)) * 100);
 
-  const fingerKey: FingerKey | null = current
-    ? /[A-Z]/.test(current)
-      ? "sh"
-      : FINGER[norm(current).toLowerCase()] ?? null
+  // Для заглавной показываем ОБЕ клавиши: Shift + палец самой буквы.
+  const needShift = current ? /[A-Z]/.test(current) : false;
+  const baseFinger: FingerKey | null = current
+    ? FINGER[norm(current).toLowerCase()] ?? null
     : null;
 
   return (
@@ -231,6 +248,16 @@ export default function Typing() {
           </button>
         </div>
 
+        {/* Предупреждение о раскладке */}
+        {layoutWarn && (
+          <div
+            data-testid="layout-warn"
+            className="mb-3 rounded-soft bg-warn-soft px-3 py-2.5 text-xs leading-relaxed text-warn"
+          >
+            {t.layoutWarn}
+          </div>
+        )}
+
         {/* Поле набора */}
         <section
           onClick={focusInput}
@@ -280,7 +307,13 @@ export default function Typing() {
               <>
                 <span className="text-xs text-muted">
                   {t.finger}:{" "}
-                  <b className="text-ink">{fingerKey ? t.fingers[fingerKey] : "—"}</b>
+                  <b className="text-ink">
+                    {needShift
+                      ? `${t.fingers.sh}${baseFinger ? " + " + t.fingers[baseFinger] : ""}`
+                      : baseFinger
+                        ? t.fingers[baseFinger]
+                        : "—"}
+                  </b>
                 </span>
                 <span className="rounded bg-brand-soft px-2 py-0.5 font-heading text-sm font-extrabold text-brand-d">
                   {current === " " ? "␣" : current}

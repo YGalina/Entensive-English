@@ -109,22 +109,54 @@ function pickVoice(explicit?: string): SpeechSynthesisVoice | null {
   return voices[0] ?? null;
 }
 
+// Подряд идущие «не стартовавшие» реплики — признак немого голоса
+// (например, network-голос без сети). UI может показать подсказку.
+let silentStreak = 0;
+export function speechLooksSilent(): boolean {
+  return silentStreak >= 2;
+}
+
 export function speakEnglish(text: string, options: SpeakOptions = {}) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+    options.onError?.();
+    return;
+  }
   const clean = text.trim();
-  if (!clean) return;
+  if (!clean) {
+    options.onEnd?.();
+    return;
+  }
 
   try {
     const synth = window.speechSynthesis;
     const interrupt = options.interrupt ?? true;
+    const rate = options.rate ?? 0.92;
     const utterance = new SpeechSynthesisUtterance(clean);
     utterance.lang = "en-US";
     utterance.voice = pickVoice(options.voiceName);
-    utterance.rate = options.rate ?? 0.92;
+    utterance.rate = rate;
     utterance.pitch = 1;
     utterance.volume = 1;
-    utterance.onend = () => options.onEnd?.();
-    utterance.onerror = () => options.onError?.();
+
+    // Гарантия колбэка: браузер может не прислать ни onend, ни onerror
+    // (немой network-голос, прерывание). Страхуемся таймерами, колбэк — один раз.
+    let settled = false;
+    let startedFlag = false;
+    let startGuard: ReturnType<typeof setTimeout> | null = null;
+    let endGuard: ReturnType<typeof setTimeout> | null = null;
+    const settle = (cb?: () => void) => {
+      if (settled) return;
+      settled = true;
+      if (startGuard) clearTimeout(startGuard);
+      if (endGuard) clearTimeout(endGuard);
+      cb?.();
+    };
+    utterance.onstart = () => {
+      startedFlag = true;
+      silentStreak = 0;
+    };
+    utterance.onend = () => settle(options.onEnd);
+    utterance.onerror = () => settle(options.onError);
 
     const speakNow = () => {
       try {
@@ -132,7 +164,22 @@ export function speakEnglish(text: string, options: SpeakOptions = {}) {
         // безвреден, если не на паузе, и восстанавливает звук, если завис.
         synth.resume();
         synth.speak(utterance);
-      } catch {}
+        // Не начал говорить за 1.6с → голос немой: снимаем и отдаём onError.
+        startGuard = setTimeout(() => {
+          if (!startedFlag && !settled) {
+            silentStreak += 1;
+            try {
+              synth.cancel();
+            } catch {}
+            settle(options.onError);
+          }
+        }, 1600);
+        // Говорил, но onend потерялся → закрываем по оценке длительности.
+        const estMs = 1600 + (clean.length * 1000) / (11 * rate);
+        endGuard = setTimeout(() => settle(options.onEnd), estMs + 2500);
+      } catch {
+        settle(options.onError);
+      }
     };
 
     // Chrome/Safari баг: cancel() сразу перед speak() часто «глотает» новую

@@ -6,7 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { getPack, translate, translateExample, type Word } from "@/data/packs";
 import { getLevelPack } from "@/data/levelVocab";
 import { useNativeLang, usePace, useUILang } from "@/lib/prefs";
-import { speakEnglish, warmEnglishVoices } from "@/lib/speech";
+import { speakEnglish, warmEnglishVoices, speechLooksSilent } from "@/lib/speech";
 import { recordAnswer } from "@/lib/srs";
 import { useActivityTimer } from "@/lib/timelog";
 import { LANG_DIR, type LangCode } from "@/data/catalog";
@@ -66,6 +66,8 @@ const SESSION_UI = {
     inFlow: "усвоено в потоке",
     fastWarn:
       "Быстрый режим — по согласию. Меняется только слово, фон стабилен. Пауза и выход в любой момент.",
+    silentVoice:
+      "Озвучка молчит: выбранный голос не отвечает. Открой Профиль → «Голос диктора» и выбери другой (▶ — послушать).",
     sprintConfirm:
       "Разгон — очень быстрое предъявление. Если есть фоточувствительность или склонность к приступам, не используй этот режим. Меняется только слово на карточке, фон стабилен. Продолжить?",
     pause: "Пауза",
@@ -116,6 +118,8 @@ const SESSION_UI = {
     inFlow: "seen in flow",
     fastWarn:
       "Fast mode requires consent. Only the word changes; the background stays stable. Pause and exit any time.",
+    silentVoice:
+      "The voice is silent: the selected voice is not responding. Open Profile → “Narrator voice” and pick another (▶ to preview).",
     sprintConfirm:
       "Sprint is very fast exposure. If you have photosensitivity or seizure risk, do not use it. Only the word changes; the background stays stable. Continue?",
     pause: "Pause",
@@ -506,8 +510,6 @@ function Flash({
         onEnd: afterVoice,
         onError: afterVoice,
       });
-      // Страховка: если браузер не отдаст onend, поток не зависнет навсегда.
-      timer.current = setTimeout(advance, minMs + 4500);
     } else {
       timer.current = setTimeout(advance, minMs);
     }
@@ -622,6 +624,17 @@ function Flash({
         );
         })}
       </div>
+
+      {/* Немой голос: подсказка сменить в профиле */}
+      {soundOn && speechLooksSilent() && (
+        <Link
+          href="/profile"
+          className="mt-3 flex items-start gap-2 rounded-soft bg-warn-soft px-3 py-2.5 text-xs leading-relaxed text-warn underline-offset-2 hover:underline"
+        >
+          <Warning className="mt-0.5 h-4 w-4 flex-shrink-0" />
+          <span>{t.silentVoice}</span>
+        </Link>
+      )}
 
       {/* Безопасность */}
       <div className="mt-3 flex items-start gap-2 rounded-soft bg-warn-soft px-3 py-2.5 text-xs leading-relaxed text-warn">
