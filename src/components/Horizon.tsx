@@ -5,6 +5,7 @@
 // считаем». Не обещание — обратная связь: темп твой, прогноз пересчитывается.
 
 import { useOutcome } from "@/lib/outcome";
+import { useWpmStats } from "@/lib/wpm";
 import { useUILang } from "@/lib/prefs";
 import { Spark } from "./Icons";
 
@@ -25,6 +26,10 @@ const UI = {
       `начнёт всплывать сама ~к ${date} (тихий период по Крашену)`,
     speechNone: "начнёт всплывать сама через ~6 месяцев входа (Крашен)",
     days: "Дней в пути",
+    wpm: "Скорость чтения",
+    wpmRange: (f: number, l: number) => `${f} → ${l} сл/мин`,
+    wpmOne: (l: number) => `${l} сл/мин`,
+    wpmNone: "появится после первого текста в «Чтении»",
     why: "Почему так: ≈200 направленных часов = +1 уровень CEFR (Cambridge); словарь B2 ≈ 4 000 слов в узнавании; при постоянном понятном входе речь появляется сама через ~6 месяцев — её не надо выдавливать.",
   },
   en: {
@@ -41,6 +46,10 @@ const UI = {
     speechVal: (date: string) => `emerges on its own ~by ${date} (Krashen's silent period)`,
     speechNone: "emerges on its own after ~6 months of input (Krashen)",
     days: "Days on the path",
+    wpm: "Reading speed",
+    wpmRange: (f: number, l: number) => `${f} → ${l} wpm`,
+    wpmOne: (l: number) => `${l} wpm`,
+    wpmNone: "appears after your first text in Reading",
     why: "Why: ≈200 guided hours = +1 CEFR level (Cambridge); B2 vocabulary ≈ 4,000 recognized words; with steady comprehensible input, speech emerges by itself after ~6 months — it must not be forced.",
   },
 } as const;
@@ -54,6 +63,7 @@ function fmtDate(d: Date, ui: "ru" | "en"): string {
 
 export default function Horizon() {
   const o = useOutcome();
+  const w = useWpmStats();
   const ui = useUILang();
   const t = UI[ui];
   const hoursDone = Math.round(o.hoursDone * 10) / 10;
@@ -91,6 +101,16 @@ export default function Horizon() {
           <span className="text-muted">{t.speech}</span>
           <span className="text-right font-medium text-ink">
             {o.speechEta ? t.speechVal(fmtDate(o.speechEta, ui)) : t.speechNone}
+          </span>
+        </li>
+        <li className="flex items-start justify-between gap-3 text-sm">
+          <span className="text-muted">{t.wpm}</span>
+          <span className="tnum text-right font-medium text-ink">
+            {w.last === null
+              ? t.wpmNone
+              : w.count > 1 && w.first !== null && w.first !== w.last
+                ? t.wpmRange(w.first, w.last)
+                : t.wpmOne(w.last)}
           </span>
         </li>
         <li className="flex items-start justify-between gap-3 text-sm">

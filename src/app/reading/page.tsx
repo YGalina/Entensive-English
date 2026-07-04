@@ -23,6 +23,7 @@ import { storiesByLevel, wordCount, type Story } from "@/data/reading";
 import { LIBRARY, type Book as BookType } from "@/data/library";
 import { usePrefs, useUILang } from "@/lib/prefs";
 import { useActivityTimer } from "@/lib/timelog";
+import { recordWpm } from "@/lib/wpm";
 
 const LEVELS = ["a1", "a2", "b1", "b2", "c1"] as const;
 const GENRE: Record<string, string> = {
@@ -443,6 +444,11 @@ function Reader({ story, onBack }: { story: Story; onBack: () => void }) {
   const mmss = `${String(Math.floor(elapsed / 60)).padStart(2, "0")}:${String(
     elapsed % 60
   ).padStart(2, "0")}`;
+
+  // История скорости: замер уходит в ie_wpm один раз при завершении текста.
+  useEffect(() => {
+    if (stage === "done") recordWpm(wpm, words, elapsed);
+  }, [stage, wpm, words, elapsed]);
 
   function start() {
     setElapsed(0);
