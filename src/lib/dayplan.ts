@@ -95,6 +95,16 @@ export const DAY_STEPS: DayStep[] = [
     ru: { title: "Shadowing", note: "повторяй вслух за носителем" },
     en: { title: "Shadowing", note: "repeat aloud after a native" },
   },
+  {
+    id: "evening",
+    tone: "--brand",
+    href: "/evening",
+    goalMin: 4,
+    activities: ["evening"],
+    kind: "time",
+    ru: { title: "Вечерний круг", note: "тихий повтор перед сном — доучит сон" },
+    en: { title: "Evening circle", note: "quiet replay before sleep — sleep finishes it" },
+  },
 ];
 
 export type DayStepState = DayStep & {

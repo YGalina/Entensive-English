@@ -119,6 +119,26 @@ export function dueCards(): Card[] {
     .sort((a, b) => dueMs(a) - dueMs(b));
 }
 
+/** Карточки, которых касались сегодня (материал для вечернего круга). */
+export function todaysTouchedCards(): Card[] {
+  const today = new Date().toISOString().slice(0, 10);
+  return Object.values(read()).filter(
+    (c) => c.last_review && String(c.last_review).slice(0, 10) === today
+  );
+}
+
+/** Последние тронутые карточки (fallback, если сегодня практики не было). */
+export function recentCards(limit: number): Card[] {
+  return Object.values(read())
+    .filter((c) => c.last_review)
+    .sort(
+      (a, b) =>
+        new Date(String(b.last_review)).getTime() -
+        new Date(String(a.last_review)).getTime()
+    )
+    .slice(0, limit);
+}
+
 function subscribe(cb: () => void) {
   listeners.add(cb);
   window.addEventListener("storage", cb);

@@ -45,6 +45,12 @@ test("opens main learning surfaces", async ({ page }) => {
   await examples.first().click();
   await expect(page.getByTestId("pronunciation-title")).toBeVisible();
 
+  // Вечерний круг: тихий автопоток слов дня стартует и показывает слово.
+  await page.goto("/evening");
+  await expect(page.getByTestId("evening-title")).toBeVisible();
+  await page.getByTestId("evening-start").click();
+  await expect(page.getByTestId("evening-word")).toBeVisible();
+
   // Набор (машинопись): zero-error ввод — печатаем фразу, получаем итог.
   await page.goto("/typing");
   await expect(page.getByTestId("typing-title")).toBeVisible();
