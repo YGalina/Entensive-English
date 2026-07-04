@@ -15,6 +15,8 @@ export type Prefs = {
   programDay?: number;
   /** Темп прохождения сеанса по умолчанию: обычный или медленный */
   pace?: "normal" | "slow";
+  /** Имя выбранного голоса озвучки (SpeechSynthesisVoice.name) */
+  voiceName?: string;
 };
 
 const KEY = "ie_prefs";

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
 import ThemeToggle from "@/components/ThemeToggle";
-import { Sun, Sound } from "@/components/Icons";
+import { Sun, Sound, Play, Check } from "@/components/Icons";
 import { usePrefs, updatePrefs } from "@/lib/prefs";
+import { listEnglishVoices, speakEnglish } from "@/lib/speech";
 import { useSrsStats } from "@/lib/srs";
 import { useTimeStats } from "@/lib/timelog";
 import { NATIVE_LANGUAGES, GOALS, LEVELS, TOPICS, type LangCode } from "@/data/catalog";
@@ -27,6 +28,11 @@ const STR = {
     paceNormal: "Обычный", paceSlow: "Медленный",
     sound: "Звук", soundNote: "Не слышно английского в сеансе? Нажми — должно прозвучать «sound test».",
     soundTest: "Проверить звук",
+    voice: "Голос диктора",
+    voiceNote: "Нажми ▶ и послушай каждый. Выбери самый живой — им будет озвучен весь английский.",
+    voiceCurrent: "выбран",
+    voiceEmpty: "Английских голосов не найдено.",
+    voiceAdvice: "Совет: лучшие голоса ставятся в macOS: Системные настройки → Универсальный доступ → Устная речь → Системный голос → Управление голосами → English (например, Samantha, Ava или Zoe (Premium)). После установки перезапусти браузер.",
     soundOk: (n: number) => `Найдено английских голосов: ${n}. Если тишина — проверь громкость и вывод звука.`,
     soundNone: "Английских голосов в системе нет. Добавь: Системные настройки → Универсальный доступ → Устная речь → Управление голосами (напр. Samantha).",
     redo: "Пройти онбординг заново", reset: "Сбросить прогресс повторов",
@@ -46,6 +52,11 @@ const STR = {
     paceNormal: "Normal", paceSlow: "Slow",
     sound: "Sound", soundNote: "No English audio in a session? Tap — you should hear “sound test”.",
     soundTest: "Test sound",
+    voice: "Narrator voice",
+    voiceNote: "Tap ▶ to hear each one. Pick the most alive — it will speak all English.",
+    voiceCurrent: "selected",
+    voiceEmpty: "No English voices found.",
+    voiceAdvice: "Tip: the best voices install in macOS: System Settings → Accessibility → Spoken Content → System Voice → Manage Voices → English (e.g., Samantha, Ava, or Zoe (Premium)). Restart the browser afterwards.",
     soundOk: (n: number) => `English voices found: ${n}. If silent, check volume and audio output.`,
     soundNone: "No English voices in the system. Add one: System Settings → Accessibility → Spoken Content → Manage Voices (e.g. Samantha).",
     redo: "Redo onboarding", reset: "Reset review progress",
@@ -176,6 +187,16 @@ export default function Profile() {
         </Card>
 
         {/* Проверка звука */}
+        {/* Голос диктора */}
+        <Card title={t.voice} note={t.voiceNote}>
+          <VoicePicker
+            current={prefs?.voiceName}
+            empty={t.voiceEmpty}
+            advice={t.voiceAdvice}
+            currentLabel={t.voiceCurrent}
+          />
+        </Card>
+
         <Card title={t.sound} note={t.soundNote}>
           <SoundTest
             label={t.soundTest}
@@ -229,6 +250,90 @@ function Mini({ n, label }: { n: number; label: string }) {
 }
 
 // Диагностика озвучки: проговаривает тест и показывает число англ. голосов ОС.
+// Выбор голоса озвучки: прослушай каждый английский голос системы и выбери.
+// Выбранное имя хранится в prefs.voiceName и используется всей озвучкой.
+function VoicePicker({
+  current,
+  empty,
+  advice,
+  currentLabel,
+}: {
+  current?: string;
+  empty: string;
+  advice: string;
+  currentLabel: string;
+}) {
+  const [voices, setVoices] = useState<{ name: string; lang: string }[]>([]);
+
+  useEffect(() => {
+    const load = () =>
+      setVoices(listEnglishVoices().map((v) => ({ name: v.name, lang: v.lang })));
+    load();
+    window.speechSynthesis?.addEventListener?.("voiceschanged", load);
+    return () => window.speechSynthesis?.removeEventListener?.("voiceschanged", load);
+  }, []);
+
+  if (voices.length === 0) {
+    return (
+      <div>
+        <p className="text-sm font-semibold text-warn">{empty}</p>
+        <p className="mt-2 text-xs leading-relaxed text-muted">{advice}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <ul className="max-h-64 space-y-1.5 overflow-y-auto pr-1">
+        {voices.map((v) => {
+          const on = current === v.name;
+          return (
+            <li key={v.name} className="flex items-center gap-2">
+              <button
+                onClick={() =>
+                  speakEnglish("Hello! I will be your English voice.", {
+                    interrupt: true,
+                    voiceName: v.name,
+                  })
+                }
+                aria-label={`Прослушать ${v.name}`}
+                className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand-d"
+              >
+                <Play className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => {
+                  updatePrefs({ voiceName: v.name });
+                  speakEnglish("Great choice! Let us learn together.", {
+                    interrupt: true,
+                    voiceName: v.name,
+                  });
+                }}
+                className={`flex min-h-9 flex-1 items-center justify-between gap-2 rounded-xl border px-3 py-1.5 text-left transition-colors ${
+                  on ? "border-brand bg-brand-soft" : "border-line bg-surface hover:border-brand/40"
+                }`}
+              >
+                <span className="min-w-0">
+                  <span className="block truncate text-sm font-semibold text-ink">
+                    {v.name}
+                  </span>
+                  <span className="block text-[11px] text-muted">{v.lang}</span>
+                </span>
+                {on && (
+                  <span className="flex flex-shrink-0 items-center gap-1 text-xs font-bold text-brand-d">
+                    <Check className="h-4 w-4" /> {currentLabel}
+                  </span>
+                )}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="mt-3 text-xs leading-relaxed text-muted">{advice}</p>
+    </div>
+  );
+}
+
 function SoundTest({
   label,
   onResult,
