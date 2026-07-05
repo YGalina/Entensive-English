@@ -47,8 +47,8 @@ const UI = {
   },
 } as const;
 
-/** Сколько мс держим слово на экране (спокойный вечерний темп). */
-const STEP_MS = 8000;
+/** Сколько мс держим слово на экране (спокойно, но без затягивания). */
+const STEP_MS = 4500;
 const MAX_WORDS = 24;
 
 export default function Evening() {
@@ -96,7 +96,7 @@ export default function Evening() {
   // Автопоток: озвучили слово → подержали → дальше. Никаких действий.
   useEffect(() => {
     if (stage !== "flow" || !running || !w) return;
-    speakEnglish(w.en, { rate: 0.8, interrupt: true });
+    speakEnglish(w.en, { rate: 0.9, interrupt: true });
     timer.current = setTimeout(() => {
       setI((p) => {
         if (p >= words.length - 1) {
@@ -193,7 +193,7 @@ export default function Evening() {
           <div className="flex flex-1 flex-col">
             <div className="flex flex-1 flex-col items-center justify-center text-center">
               <button
-                onClick={() => speakEnglish(w.en, { rate: 0.8, interrupt: true })}
+                onClick={() => speakEnglish(w.en, { rate: 0.9, interrupt: true })}
                 className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/80"
                 aria-label="Озвучить"
               >

@@ -4,7 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { NATIVE_LANGUAGES, GOALS, LEVELS, TOPICS, type LangCode } from "@/data/catalog";
 import { savePrefs } from "@/lib/prefs";
-import { ArrowRight, Check, Spark } from "@/components/Icons";
+import { ArrowRight, Check, Spark, Sound } from "@/components/Icons";
+import { speakEnglish } from "@/lib/speech";
+import b1 from "@/data/vocab-b1.json";
+import b2 from "@/data/vocab-b2.json";
+import c1 from "@/data/vocab-c1.json";
 
 const STEPS = ["Родной язык", "Цель", "Темы", "Уровень"] as const;
 
@@ -16,6 +20,7 @@ export default function Onboarding() {
   const [goal, setGoal] = useState<string>("");
   const [topics, setTopics] = useState<string[]>(["core"]);
   const [level, setLevel] = useState<string>("");
+  const [checking, setChecking] = useState(false);
 
   const canNext =
     (step === 0 && !!nativeLang) ||
@@ -134,8 +139,8 @@ export default function Onboarding() {
         )}
 
         {/* Шаг 3: уровень */}
-        {step === 3 && (
-          <Section title="Какой у тебя уровень?" note="Без экзамена. Можно уточнить тестом позже.">
+        {step === 3 && !checking && (
+          <Section title="Какой у тебя уровень?" note="Без экзамена. Не уверена — определим за минуту по словам.">
             <div className="space-y-2.5">
               {LEVELS.map((l) => (
                 <Option
@@ -147,10 +152,29 @@ export default function Onboarding() {
                 />
               ))}
             </div>
+            <button
+              onClick={() => setChecking(true)}
+              data-testid="level-check-start"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-brand/40 bg-brand-soft px-5 py-3.5 font-heading text-sm font-bold text-brand-d"
+            >
+              <Spark className="h-4 w-4" />
+              Не знаю уровень — определить за минуту
+            </button>
           </Section>
         )}
 
+        {step === 3 && checking && (
+          <LevelCheck
+            onDone={(lvl) => {
+              setLevel(lvl);
+              setChecking(false);
+            }}
+            onCancel={() => setChecking(false)}
+          />
+        )}
+
         {/* Навигация */}
+        {!checking && (
         <div className="mt-auto flex items-center gap-2 pt-6">
           {step > 0 && (
             <button
@@ -176,7 +200,135 @@ export default function Onboarding() {
             )}
           </button>
         </div>
+        )}
       </main>
+    </div>
+  );
+}
+
+/* ---------- Мини-определение уровня по словам (yes/no vocabulary check) ----------
+   Классический приём оценки словаря: узнавание частотных слов трёх уровней.
+   Не экзамен: «знаю» = понимаешь смысл без перевода. ~1 минута, 18 слов. */
+
+type RawWord = { en: string; ipa: string; ru: string };
+
+function pickSample(list: RawWord[], count: number): RawWord[] {
+  const step = Math.floor(list.length / (count + 1));
+  return Array.from({ length: count }, (_, i) => list[(i + 1) * step]);
+}
+
+const CHECK_WORDS: { lvl: "b1" | "b2" | "c1"; w: RawWord }[] = [
+  ...pickSample(b1 as RawWord[], 6).map((w) => ({ lvl: "b1" as const, w })),
+  ...pickSample(b2 as RawWord[], 6).map((w) => ({ lvl: "b2" as const, w })),
+  ...pickSample(c1 as RawWord[], 6).map((w) => ({ lvl: "c1" as const, w })),
+];
+
+function scoreLevel(known: Record<"b1" | "b2" | "c1", number>): string {
+  if (known.b1 <= 2) return "a2";
+  if (known.b2 <= 2) return "b1";
+  if (known.c1 <= 2) return "b2";
+  return "c1";
+}
+
+function LevelCheck({
+  onDone,
+  onCancel,
+}: {
+  onDone: (level: string) => void;
+  onCancel: () => void;
+}) {
+  const [i, setI] = useState(0);
+  const [known, setKnown] = useState<Record<"b1" | "b2" | "c1", number>>({
+    b1: 0,
+    b2: 0,
+    c1: 0,
+  });
+  const item = CHECK_WORDS[i];
+  const finished = i >= CHECK_WORDS.length;
+  const result = finished ? scoreLevel(known) : null;
+  const resultTitle = result ? LEVELS.find((l) => l.id === result)?.title ?? result : "";
+
+  function answer(yes: boolean) {
+    if (yes) setKnown((k) => ({ ...k, [item.lvl]: k[item.lvl] + 1 }));
+    setI((p) => p + 1);
+  }
+
+  if (finished && result) {
+    return (
+      <div className="flex flex-1 flex-col">
+        <div className="flex flex-1 flex-col items-center justify-center text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-soft text-brand">
+            <Check className="h-7 w-7" />
+          </span>
+          <h1 className="mt-4 font-heading text-2xl font-extrabold text-ink">
+            Похоже, твой уровень — {result.toUpperCase()}
+          </h1>
+          <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-muted">
+            {resultTitle}. Это стартовая настройка, не приговор: программа сама
+            подстроится по мере практики.
+          </p>
+        </div>
+        <button
+          onClick={() => onDone(result)}
+          data-testid="level-check-accept"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)]"
+        >
+          Принять <Check className="h-5 w-5" />
+        </button>
+        <button
+          onClick={onCancel}
+          className="mt-2 w-full rounded-2xl border border-line bg-surface px-5 py-3.5 font-heading text-sm font-bold text-muted"
+        >
+          Выберу сама
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-1 flex-col">
+      <div className="mb-3 flex items-center justify-between text-xs text-muted">
+        <span>Понимаешь смысл — жми «Знаю». Честно, без словаря 🙂</span>
+        <span className="tnum font-heading text-sm font-bold text-ink">
+          {i + 1} / {CHECK_WORDS.length}
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col items-center justify-center rounded-card bg-surface p-6 text-center shadow-card">
+        <p
+          data-testid="level-check-word"
+          className="max-w-full break-words font-heading text-[34px] font-extrabold leading-tight text-accent"
+        >
+          {item.w.en}
+        </p>
+        <button
+          onClick={() => speakEnglish(item.w.en, { interrupt: true })}
+          className="mt-3 inline-flex items-center gap-1.5 text-sm text-muted"
+        >
+          <Sound className="h-4 w-4" /> {item.w.ipa}
+        </button>
+      </div>
+      <div className="mt-4 grid grid-cols-2 gap-2.5">
+        <button
+          onClick={() => answer(false)}
+          data-testid="level-check-no"
+          className="rounded-2xl border border-line bg-surface px-4 py-4 font-heading text-sm font-bold text-muted"
+        >
+          Ещё нет
+        </button>
+        <button
+          onClick={() => answer(true)}
+          data-testid="level-check-yes"
+          className="flex items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-4 font-heading text-sm font-bold text-white"
+        >
+          <Check className="h-5 w-5" /> Знаю
+        </button>
+      </div>
+      <button
+        onClick={onCancel}
+        className="mt-2 w-full py-2 text-center text-xs font-semibold text-muted"
+      >
+        ← вернуться к выбору вручную
+      </button>
     </div>
   );
 }

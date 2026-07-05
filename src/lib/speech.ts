@@ -77,13 +77,26 @@ function voiceScore(voice: SpeechSynthesisVoice): number {
   return score;
 }
 
-/** Все английские голоса системы, отсортированные от лучшего к худшему. */
+/** Голос — «мусорный» (novelty-шутки и роботы Eloquence)? Таких не существует для нас. */
+function isJunkVoice(v: SpeechSynthesisVoice): boolean {
+  const name = v.name.toLowerCase();
+  if (BAD_VOICE_NAMES.some((b) => name.includes(b))) return true;
+  if (ROBOTIC_VOICE_NAMES.some((r) => name === r || name.startsWith(r + " "))) return true;
+  return false;
+}
+
+/**
+ * Английские голоса системы: от лучшего к худшему. Novelty-голоса
+ * («пьяные роботы» macOS) исключены НАВСЕГДА — их нет ни в выборе, ни в списке.
+ */
 export function listEnglishVoices(): SpeechSynthesisVoice[] {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return [];
-  return window.speechSynthesis
+  const all = window.speechSynthesis
     .getVoices()
-    .filter((voice) => voice.lang.toLowerCase().startsWith("en"))
-    .sort((a, b) => voiceScore(b) - voiceScore(a));
+    .filter((voice) => voice.lang.toLowerCase().startsWith("en"));
+  const decent = all.filter((v) => !isJunkVoice(v));
+  // Если нормальных нет вовсе — лучше молчание с советом, чем «бомж»: пусто.
+  return decent.sort((a, b) => voiceScore(b) - voiceScore(a));
 }
 
 /** Имя голоса, выбранного пользователем в профиле (ie_prefs.voiceName). */
@@ -131,9 +144,17 @@ export function speakEnglish(text: string, options: SpeakOptions = {}) {
     const synth = window.speechSynthesis;
     const interrupt = options.interrupt ?? true;
     const rate = options.rate ?? 0.92;
+    const voice = pickVoice(options.voiceName);
+    // Достойных голосов нет (в системе только novelty-мусор или пусто):
+    // молчим и сигналим об ошибке — браузерный «дефолтный бомж» не пройдёт.
+    if (!voice) {
+      silentStreak += 1;
+      options.onError?.();
+      return;
+    }
     const utterance = new SpeechSynthesisUtterance(clean);
     utterance.lang = "en-US";
-    utterance.voice = pickVoice(options.voiceName);
+    utterance.voice = voice;
     utterance.rate = rate;
     utterance.pitch = 1;
     utterance.volume = 1;

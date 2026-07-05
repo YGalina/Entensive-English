@@ -4,10 +4,11 @@
 // реального темпа, вехи (слова, речь по Крашену) и строка «почему мы так
 // считаем». Не обещание — обратная связь: темп твой, прогноз пересчитывается.
 
+import Link from "next/link";
 import { useOutcome } from "@/lib/outcome";
 import { useWpmStats } from "@/lib/wpm";
 import { useUILang } from "@/lib/prefs";
-import { Spark } from "./Icons";
+import { Spark, ArrowRight } from "./Icons";
 
 const UI = {
   ru: {
@@ -26,6 +27,7 @@ const UI = {
       `начнёт всплывать сама ~к ${date} (тихий период по Крашену)`,
     speechNone: "начнёт всплывать сама через ~6 месяцев входа (Крашен)",
     days: "Дней в пути",
+    program: "вся программа",
     wpm: "Скорость чтения",
     wpmRange: (f: number, l: number) => `${f} → ${l} сл/мин`,
     wpmOne: (l: number) => `${l} сл/мин`,
@@ -46,6 +48,7 @@ const UI = {
     speechVal: (date: string) => `emerges on its own ~by ${date} (Krashen's silent period)`,
     speechNone: "emerges on its own after ~6 months of input (Krashen)",
     days: "Days on the path",
+    program: "full program",
     wpm: "Reading speed",
     wpmRange: (f: number, l: number) => `${f} → ${l} wpm`,
     wpmOne: (l: number) => `${l} wpm`,
@@ -76,6 +79,13 @@ export default function Horizon() {
           {t.toLevel(o.levelNow, o.levelNext)}
         </span>
       </div>
+      <Link
+        href="/program"
+        data-testid="horizon-program-link"
+        className="inline-flex items-center gap-1 text-xs font-bold text-brand underline-offset-2 hover:underline"
+      >
+        {t.program} <ArrowRight className="h-3.5 w-3.5" />
+      </Link>
 
       {/* Часы до уровня */}
       <p className="mt-3 text-sm text-muted">{t.hours(hoursDone, o.hoursGoal)}</p>
