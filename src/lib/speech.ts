@@ -165,11 +165,13 @@ export function speakEnglish(text: string, options: SpeakOptions = {}) {
     let startedFlag = false;
     let startGuard: ReturnType<typeof setTimeout> | null = null;
     let endGuard: ReturnType<typeof setTimeout> | null = null;
+    let keepAlive: ReturnType<typeof setInterval> | null = null;
     const settle = (cb?: () => void) => {
       if (settled) return;
       settled = true;
       if (startGuard) clearTimeout(startGuard);
       if (endGuard) clearTimeout(endGuard);
+      if (keepAlive) clearInterval(keepAlive);
       cb?.();
     };
     utterance.onstart = () => {
@@ -185,7 +187,14 @@ export function speakEnglish(text: string, options: SpeakOptions = {}) {
         // безвреден, если не на паузе, и восстанавливает звук, если завис.
         synth.resume();
         synth.speak(utterance);
-        // Не начал говорить за 1.6с → голос немой: снимаем и отдаём onError.
+        // Известный баг Chrome: речь длиннее ~15с глохнет без периодического
+        // resume(). Держим движок живым, пока фраза не закончилась.
+        keepAlive = setInterval(() => {
+          try {
+            if (!settled && synth.speaking) synth.resume();
+          } catch {}
+        }, 10000);
+        // Не начал говорить за 2.8с → голос немой: снимаем и отдаём onError.
         startGuard = setTimeout(() => {
           if (!startedFlag && !settled) {
             silentStreak += 1;
@@ -194,10 +203,12 @@ export function speakEnglish(text: string, options: SpeakOptions = {}) {
             } catch {}
             settle(options.onError);
           }
-        }, 1600);
-        // Говорил, но onend потерялся → закрываем по оценке длительности.
-        const estMs = 1600 + (clean.length * 1000) / (11 * rate);
-        endGuard = setTimeout(() => settle(options.onEnd), estMs + 2500);
+        }, 2800);
+        // onend потерялся → закрываем по КОНСЕРВАТИВНОЙ оценке длительности
+        // (медленнее реальной речи), чтобы страховка никогда не обрезала фразу
+        // раньше голоса — иначе текст «убегает» от озвучки.
+        const estMs = 2800 + (clean.length * 1000) / (8 * rate);
+        endGuard = setTimeout(() => settle(options.onEnd), estMs + 3500);
       } catch {
         settle(options.onError);
       }
@@ -262,11 +273,13 @@ export function speakRussian(text: string, options: SpeakOptions = {}) {
     let started = false;
     let startGuard: ReturnType<typeof setTimeout> | null = null;
     let endGuard: ReturnType<typeof setTimeout> | null = null;
+    let keepAlive: ReturnType<typeof setInterval> | null = null;
     const settle = (cb?: () => void) => {
       if (settled) return;
       settled = true;
       if (startGuard) clearTimeout(startGuard);
       if (endGuard) clearTimeout(endGuard);
+      if (keepAlive) clearInterval(keepAlive);
       cb?.();
     };
     u.onstart = () => {
@@ -279,6 +292,11 @@ export function speakRussian(text: string, options: SpeakOptions = {}) {
       try {
         synth.resume();
         synth.speak(u);
+        keepAlive = setInterval(() => {
+          try {
+            if (!settled && synth.speaking) synth.resume();
+          } catch {}
+        }, 10000);
         startGuard = setTimeout(() => {
           if (!started && !settled) {
             try {
@@ -286,9 +304,9 @@ export function speakRussian(text: string, options: SpeakOptions = {}) {
             } catch {}
             settle(options.onError);
           }
-        }, 1600);
-        const estMs = 1600 + (clean.length * 1000) / (11 * rate);
-        endGuard = setTimeout(() => settle(options.onEnd), estMs + 2500);
+        }, 2800);
+        const estMs = 2800 + (clean.length * 1000) / (8 * rate);
+        endGuard = setTimeout(() => settle(options.onEnd), estMs + 3500);
       } catch {
         settle(options.onError);
       }
