@@ -7,6 +7,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { Sun, Sound, Play, Check } from "@/components/Icons";
 import { usePrefs, updatePrefs } from "@/lib/prefs";
 import { listEnglishVoices, speakEnglish } from "@/lib/speech";
+import { fetchMe, logout, pushToCloud, pullFromCloud, type MeUser } from "@/lib/cloud";
 import { useSrsStats } from "@/lib/srs";
 import { useTimeStats } from "@/lib/timelog";
 import { NATIVE_LANGUAGES, GOALS, LEVELS, TOPICS, type LangCode } from "@/data/catalog";
@@ -28,6 +29,16 @@ const STR = {
     paceNormal: "Обычный", paceSlow: "Медленный",
     sound: "Звук", soundNote: "Не слышно английского в сеансе? Нажми — должно прозвучать «sound test».",
     soundTest: "Проверить звук",
+    account: "Аккаунт и облако",
+    accountNote: "Вход по волшебной ссылке привяжет прогресс к почте — продолжай с любого устройства.",
+    login: "Войти по волшебной ссылке",
+    loggedAs: "Ты вошла как",
+    cloudSave: "Сохранить в облако",
+    cloudLoad: "Забрать из облака",
+    cloudSaved: "Прогресс в облаке ✓",
+    cloudLoaded: "Прогресс загружен — обновляю…",
+    cloudFail: "Не получилось. Попробуй ещё раз.",
+    logout: "Выйти",
     voice: "Голос диктора",
     voiceNote: "Нажми ▶ и послушай каждый. Выбери самый живой — им будет озвучен весь английский.",
     voiceCurrent: "выбран",
@@ -52,6 +63,16 @@ const STR = {
     paceNormal: "Normal", paceSlow: "Slow",
     sound: "Sound", soundNote: "No English audio in a session? Tap — you should hear “sound test”.",
     soundTest: "Test sound",
+    account: "Account & cloud",
+    accountNote: "Magic-link sign-in binds progress to your email — continue from any device.",
+    login: "Sign in with a magic link",
+    loggedAs: "Signed in as",
+    cloudSave: "Save to cloud",
+    cloudLoad: "Load from cloud",
+    cloudSaved: "Progress is in the cloud ✓",
+    cloudLoaded: "Progress loaded — refreshing…",
+    cloudFail: "Something went wrong. Try again.",
+    logout: "Sign out",
     voice: "Narrator voice",
     voiceNote: "Tap ▶ to hear each one. Pick the most alive — it will speak all English.",
     voiceCurrent: "selected",
@@ -112,6 +133,11 @@ export default function Profile() {
           <Mini n={stats.learned} label={t.learned} />
           <Mini n={stats.dueToday} label={t.due} />
         </div>
+
+        {/* Аккаунт и облако */}
+        <Card title={t.account} note={t.accountNote}>
+          <AccountCard t={t} />
+        </Card>
 
         {/* Родной язык для переводов */}
         <Card title={t.nativeLang} note={t.nativeNote}>
@@ -250,6 +276,79 @@ function Mini({ n, label }: { n: number; label: string }) {
 }
 
 // Диагностика озвучки: проговаривает тест и показывает число англ. голосов ОС.
+// Аккаунт: вход по волшебной ссылке + ручной облачный синк прогресса (v1).
+function AccountCard({ t }: { t: (typeof STR)["ru"] | (typeof STR)["en"] }) {
+  const [user, setUser] = useState<MeUser>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchMe().then((u) => {
+      setUser(u);
+      setLoaded(true);
+    });
+  }, []);
+
+  if (!loaded) return <div className="h-12" />;
+
+  if (!user) {
+    return (
+      <a
+        href="/login"
+        data-testid="account-login"
+        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-5 py-3.5 font-heading text-sm font-bold text-white"
+      >
+        {t.login}
+      </a>
+    );
+  }
+
+  async function save() {
+    setMsg((await pushToCloud()) ? t.cloudSaved : t.cloudFail);
+  }
+  async function load() {
+    if (await pullFromCloud()) {
+      setMsg(t.cloudLoaded);
+      setTimeout(() => window.location.reload(), 600);
+    } else {
+      setMsg(t.cloudFail);
+    }
+  }
+  async function out() {
+    await logout();
+    setUser(null);
+    setMsg(null);
+  }
+
+  return (
+    <div>
+      <p className="text-sm text-muted">
+        {t.loggedAs} <b className="text-ink">{user.email}</b>
+      </p>
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        <button
+          onClick={save}
+          data-testid="cloud-save"
+          className="rounded-2xl bg-brand px-4 py-3 font-heading text-sm font-bold text-white"
+        >
+          {t.cloudSave}
+        </button>
+        <button
+          onClick={load}
+          data-testid="cloud-load"
+          className="rounded-2xl border border-line bg-surface px-4 py-3 font-heading text-sm font-bold text-ink"
+        >
+          {t.cloudLoad}
+        </button>
+      </div>
+      {msg && <p className="mt-2 text-xs font-semibold text-muted">{msg}</p>}
+      <button onClick={out} className="mt-2 w-full py-2 text-center text-xs font-semibold text-muted">
+        {t.logout}
+      </button>
+    </div>
+  );
+}
+
 // Выбор голоса озвучки: прослушай каждый английский голос системы и выбери.
 // Выбранное имя хранится в prefs.voiceName и используется всей озвучкой.
 function VoicePicker({
