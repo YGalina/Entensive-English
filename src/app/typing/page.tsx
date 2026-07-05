@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Sound, Keyboard, Check, ArrowRight } from "@/components/Icons";
 import { speakEnglish, speakRussian } from "@/lib/speech";
@@ -30,6 +30,9 @@ const UI = {
       "Похоже, включена русская раскладка. Буквы я принимаю по клавишам, но переключись на английскую (⌘ или ⌃ + пробел) — иначе знаки препинания не совпадут.",
     coach: "Тренер",
     coachHint: "Голосовая подсказка пальца: по кнопке 🔊 и сама, если застряла.",
+    soundOn: "Звук",
+    soundOff: "Тихо",
+    soundHint: "Автоозвучка фраз и тренера. Кнопка «Прослушать» работает всегда.",
     fingerPhrase: (shift: boolean, base: string) =>
       shift ? `Шифт — мизинец другой руки. Буква — ${base}.` : `${base}.`,
     done: "Фраза записана",
@@ -57,6 +60,9 @@ const UI = {
       "Looks like a Russian keyboard layout is on. Letters are accepted by physical key, but switch to English (⌘ or ⌃ + Space) — punctuation won't match otherwise.",
     coach: "Coach",
     coachHint: "Voice finger hint: via the 🔊 button, and automatically when you're stuck.",
+    soundOn: "Sound",
+    soundOff: "Muted",
+    soundHint: "Auto-voice for phrases and the coach. The Listen button always works.",
     fingerPhrase: (shift: boolean, base: string) =>
       shift ? `Shift with the other hand's pinky. The letter — ${base}.` : `${base}.`,
     done: "Phrase recorded",
@@ -122,6 +128,33 @@ function charName(ch: string): string {
 
 type Strings = (typeof UI)["ru"] | (typeof UI)["en"];
 
+// Переключатель звука набора: хранится в localStorage, читается реактивно
+// (useSyncExternalStore — без setState в эффектах и hydration-рассинхрона).
+const SOUND_KEY = "ie_typing_sound";
+const soundListeners = new Set<() => void>();
+function soundSubscribe(cb: () => void) {
+  soundListeners.add(cb);
+  return () => soundListeners.delete(cb);
+}
+function soundSnapshot(): string {
+  try {
+    return localStorage.getItem(SOUND_KEY) ?? "1";
+  } catch {
+    return "1";
+  }
+}
+function useTypingSound(): [boolean, () => void] {
+  const raw = useSyncExternalStore(soundSubscribe, soundSnapshot, () => "1");
+  const on = raw !== "0";
+  const toggle = () => {
+    try {
+      localStorage.setItem(SOUND_KEY, on ? "0" : "1");
+    } catch {}
+    soundListeners.forEach((l) => l());
+  };
+  return [on, toggle];
+}
+
 /** Озвучить подсказку: символ — английским голосом, палец — на языке интерфейса. */
 function speakFingerFor(ch: string, t: Strings, ui: "ru" | "en") {
   const needShift = /[A-Z]/.test(ch);
@@ -148,8 +181,16 @@ export default function Typing() {
   const [layoutWarn, setLayoutWarn] = useState(false);
   // Голосовой тренер пальцев: 🔊 по кнопке и сам, когда застряла.
   const [coach, setCoach] = useState(true);
+  // Общий звук набора: off — никакой автоозвучки (ручное «Прослушать» работает).
+  const [soundOn, toggleSound] = useTypingSound();
   const missOnPos = useRef(0);
   const spokenPos = useRef(-1);
+
+  // Свежее значение для колбэков вне рендера (resetPhrase, processKey).
+  const soundRef = useRef(true);
+  useEffect(() => {
+    soundRef.current = soundOn;
+  }, [soundOn]);
   const [doneAt, setDoneAt] = useState<number | null>(null);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -170,7 +211,7 @@ export default function Typing() {
     setDoneAt(null);
     setStartedAt(null);
     setLayoutWarn(false);
-    if (speak) speakEnglish(text, { interrupt: true, rate: 0.9 });
+    if (speak && soundRef.current) speakEnglish(text, { interrupt: true, rate: 0.9 });
   }, []);
 
   useEffect(() => {
@@ -222,7 +263,7 @@ export default function Typing() {
       if (np >= chars.length) {
         setDoneAt(now);
         // произнесение после записи — закрепление связки звук↔спеллинг
-        speakEnglish(phrase.en, { interrupt: true, rate: 0.95 });
+        if (soundRef.current) speakEnglish(phrase.en, { interrupt: true, rate: 0.95 });
       }
     } else {
       setErrors((x) => x + 1);
@@ -231,7 +272,7 @@ export default function Typing() {
       flashTimer.current = setTimeout(() => setWrongFlash(false), 240);
       // Два промаха на одном символе — тренер подсказывает голосом.
       missOnPos.current += 1;
-      if (coach && missOnPos.current === 2 && spokenPos.current !== pos) {
+      if (coach && soundRef.current && missOnPos.current === 2 && spokenPos.current !== pos) {
         spokenPos.current = pos;
         speakFingerFor(chars[pos], t, ui);
       }
@@ -277,7 +318,7 @@ export default function Typing() {
 
   // Застряла на символе ~3с — тренер подскажет сам (один раз на символ).
   useEffect(() => {
-    if (!coach || finished) return;
+    if (!coach || !soundOn || finished) return;
     missOnPos.current = 0;
     const ch = phrase.en[pos];
     if (!ch) return;
@@ -288,7 +329,7 @@ export default function Typing() {
       }
     }, 3000);
     return () => clearTimeout(id);
-  }, [coach, finished, pos, pi, li, phrase.en, t, ui]);
+  }, [coach, soundOn, finished, pos, pi, li, phrase.en, t, ui]);
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -335,6 +376,16 @@ export default function Typing() {
               }`}
             >
               {t.coach}
+            </button>
+            <button
+              onClick={toggleSound}
+              title={t.soundHint}
+              data-testid="typing-sound-toggle"
+              className={`rounded-xl px-3 py-2 font-heading text-xs font-bold transition-colors ${
+                soundOn ? "bg-brand text-white" : "bg-surface text-muted shadow-card"
+              }`}
+            >
+              {soundOn ? t.soundOn : t.soundOff}
             </button>
           </div>
           <span className="tnum text-xs font-bold text-muted">
