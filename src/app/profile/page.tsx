@@ -39,6 +39,10 @@ const STR = {
     cloudLoaded: "Прогресс загружен — обновляю…",
     cloudFail: "Не получилось. Попробуй ещё раз.",
     logout: "Выйти",
+    plan: "Тариф",
+    planFree: "Free · бета",
+    planPro: "Интенсив",
+    pricing: "Тарифы →",
     voice: "Голос диктора",
     voiceNote: "Нажми ▶ и послушай каждый. Выбери самый живой — им будет озвучен весь английский.",
     voiceCurrent: "выбран",
@@ -73,6 +77,10 @@ const STR = {
     cloudLoaded: "Progress loaded — refreshing…",
     cloudFail: "Something went wrong. Try again.",
     logout: "Sign out",
+    plan: "Plan",
+    planFree: "Free · beta",
+    planPro: "Intensive",
+    pricing: "Pricing →",
     voice: "Narrator voice",
     voiceNote: "Tap ▶ to hear each one. Pick the most alive — it will speak all English.",
     voiceCurrent: "selected",
@@ -324,6 +332,15 @@ function AccountCard({ t }: { t: (typeof STR)["ru"] | (typeof STR)["en"] }) {
     <div>
       <p className="text-sm text-muted">
         {t.loggedAs} <b className="text-ink">{user.email}</b>
+      </p>
+      <p className="mt-1 flex items-center justify-between text-sm">
+        <span className="text-muted">
+          {t.plan}:{" "}
+          <b className="text-ink">{user.plan === "pro" ? t.planPro : t.planFree}</b>
+        </span>
+        <a href="/pricing" className="text-xs font-bold text-brand underline-offset-2 hover:underline">
+          {t.pricing}
+        </a>
       </p>
       <div className="mt-3 grid grid-cols-2 gap-2">
         <button

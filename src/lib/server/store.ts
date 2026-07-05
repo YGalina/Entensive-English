@@ -35,20 +35,18 @@ type Db = {
 
 const FILE = process.env.AUTH_STORE_FILE ?? path.join(process.cwd(), ".data", "store.json");
 
-let cache: Db | null = null;
-
+// Без in-memory кэша: в dev каждый route-бандл получает СВОЮ копию модуля,
+// и кэш одного роута не видит записей другого (me не видел юзера из verify).
+// Файл крошечный — честное чтение на каждый запрос надёжнее.
 async function load(): Promise<Db> {
-  if (cache) return cache;
   try {
-    cache = JSON.parse(await fs.readFile(FILE, "utf8")) as Db;
+    return JSON.parse(await fs.readFile(FILE, "utf8")) as Db;
   } catch {
-    cache = { users: [], tokens: [], snapshots: [] };
+    return { users: [], tokens: [], snapshots: [] };
   }
-  return cache;
 }
 
 async function persist(db: Db) {
-  cache = db;
   await fs.mkdir(path.dirname(FILE), { recursive: true });
   await fs.writeFile(FILE, JSON.stringify(db, null, 1), "utf8");
 }
@@ -73,6 +71,15 @@ export async function getOrCreateUser(email: string): Promise<User> {
 export async function getUserById(id: string): Promise<User | null> {
   const db = await load();
   return db.users.find((u) => u.id === id) ?? null;
+}
+
+export async function setUserPlan(userId: string, plan: User["plan"]) {
+  const db = await load();
+  const user = db.users.find((u) => u.id === userId);
+  if (user) {
+    user.plan = plan;
+    await persist(db);
+  }
 }
 
 const TOKEN_TTL_MS = 15 * 60 * 1000;

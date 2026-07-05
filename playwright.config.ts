@@ -3,7 +3,9 @@ import { defineConfig, devices } from "@playwright/test";
 // Отдельный порт для e2e, чтобы прогон не утыкался в ручной `next dev` на :3000
 // (reuseExistingServer там подхватил бы чужой сервер и тесты били бы мимо).
 const PORT = Number(process.env.E2E_PORT ?? 3100);
-const BASE_URL = `http://127.0.0.1:${PORT}`;
+// localhost (не 127.0.0.1): Next канонизирует origin в localhost, и сессионная
+// кука magic-link садится на localhost — хосты браузера и куки должны совпадать.
+const BASE_URL = `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: "./tests/e2e",
