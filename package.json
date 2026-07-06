@@ -2,28 +2,15 @@
   "name": "intensive-english",
   "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "test:e2e": "playwright test"
-  },
-  "dependencies": {
-    "next": "16.2.9",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "ts-fsrs": "^5.4.1"
-  },
-  "devDependencies": {
-    "@playwright/test": "^1.61.1",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.9",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "web:dev": "npm run dev --workspace @ie/web",
+    "web:build": "npm run build --workspace @ie/web",
+    "web:start": "npm run start --workspace @ie/web",
+    "web:lint": "npm run lint --workspace @ie/web",
+    "test:e2e": "npm run test:e2e --workspace @ie/web"
   }
 }

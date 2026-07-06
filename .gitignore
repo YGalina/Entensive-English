@@ -1,7 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# dependencies (npm workspaces hoist to the repo-root node_modules)
 /node_modules
+apps/*/node_modules
+packages/*/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -10,17 +12,17 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-/playwright-report/
-/test-results/
+# testing (ignored anywhere — now live under apps/*)
+coverage
+playwright-report/
+test-results/
 
-# next.js
-/.next/
-/out/
+# next.js (ignored anywhere — now under apps/web)
+.next/
+out/
 
 # production
-/build
+build
 
 # misc
 .DS_Store
@@ -42,5 +44,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# dev auth store (file db)
-/.data/
+# dev auth store (file db) — now under apps/web
+.data/
