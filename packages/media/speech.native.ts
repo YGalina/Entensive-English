@@ -58,6 +58,10 @@ function speak(text: string, lang: string, options: SpeakOptions, defaultRate: n
     Speech.speak(clean, {
       language: lang,
       rate: options.rate ?? defaultRate,
+      // iOS: отдельная аудио-сессия для речи — иначе звук глушится боковым
+      // переключателем беззвучного режима. Для учебного голоса это неверно:
+      // нажатие «озвучить» = явное намерение слышать.
+      useApplicationAudioSession: false,
       // На native сохранённое web-имя голоса не совпадает с identifier —
       // используем только явно переданный идентификатор, иначе голос системы.
       voice: options.voiceName,
