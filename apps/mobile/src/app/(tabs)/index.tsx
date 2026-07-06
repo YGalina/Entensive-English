@@ -138,6 +138,39 @@ export default function TodayScreen() {
         )}
       </LinearGradient>
 
+      {/* «3-минутка»: ритуал жив даже в самый занятый день */}
+      <Pressable
+        onPress={() => {
+          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          router.push("/three" as never);
+        }}
+        accessibilityRole="button"
+        accessibilityLabel="Три минутки: дыхание, две фразы, установка"
+        style={({ pressed }) => ({
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 12,
+          backgroundColor: pressed ? c.brandSoft : c.surface,
+          borderRadius: radius.soft,
+          borderWidth: 1,
+          borderColor: c.line,
+          paddingHorizontal: 14,
+          minHeight: 56,
+          transform: [{ scale: pressed ? 0.99 : 1 }],
+        })}
+      >
+        <Ionicons name="timer" size={20} color={sk.video} />
+        <View style={{ flex: 1, paddingVertical: 10 }}>
+          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink }}>
+            Есть 3 минуты?
+          </Text>
+          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+            дыхание → две фразы вслух → установка
+          </Text>
+        </View>
+        <Ionicons name="chevron-forward" size={16} color={c.muted} />
+      </Pressable>
+
       {/* Путь дня: чипы шагов с флагами навыков */}
       <View style={{ gap: 10 }}>
         <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
