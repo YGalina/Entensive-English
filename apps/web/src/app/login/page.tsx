@@ -4,7 +4,7 @@ import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Spark, Check, ArrowRight, Prev } from "@/components/Icons";
-import { useUILang } from "@/lib/prefs";
+import { useUILang } from "@ie/core/prefs";
 
 // Вход по волшебной ссылке: никаких паролей. Email → письмо → одна кнопка.
 // Для РФ это разрешённый способ входа (собственная email-авторизация, 199-ФЗ).

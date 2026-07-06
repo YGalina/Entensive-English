@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
-import { useOutcome, HOURS_PER_LEVEL } from "@/lib/outcome";
-import { useWpmStats } from "@/lib/wpm";
-import { usePrefs, useUILang } from "@/lib/prefs";
+import { useOutcome, HOURS_PER_LEVEL } from "@ie/core/outcome";
+import { useWpmStats } from "@ie/core/wpm";
+import { usePrefs, useUILang } from "@ie/core/prefs";
 import { Check, Spark, ArrowRight, Flame } from "@/components/Icons";
 
 // Полная программа интенсива: не «что делать сегодня» (это Путь дня), а карта

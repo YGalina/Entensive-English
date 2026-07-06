@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 import { Check, Spark, Prev } from "@/components/Icons";
-import { useUILang } from "@/lib/prefs";
+import { useUILang } from "@ie/core/prefs";
 
 // Тарифы по 06_monetization: Free даёт почувствовать метод целиком; платим за
 // полноту интенсива и персонализацию. Цены — стартовые гипотезы из документа.

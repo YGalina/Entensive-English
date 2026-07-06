@@ -1,7 +1,7 @@
 "use client";
 
-import { usePrefs, updatePrefs, useUILang } from "@/lib/prefs";
-import { useTimeStats } from "@/lib/timelog";
+import { usePrefs, updatePrefs, useUILang } from "@ie/core/prefs";
+import { useTimeStats } from "@ie/core/timelog";
 import { PROGRAM, programDay } from "@ie/core/data/program";
 import { ArrowRight, Check } from "./Icons";
 

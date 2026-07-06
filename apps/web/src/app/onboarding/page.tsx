@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { NATIVE_LANGUAGES, GOALS, LEVELS, TOPICS, type LangCode } from "@ie/core/data/catalog";
-import { savePrefs } from "@/lib/prefs";
+import { savePrefs } from "@ie/core/prefs";
+import {
+  buildCheckWords,
+  scoreLevel,
+  type CheckLevel,
+  type RawWord,
+} from "@ie/core/levelcheck";
 import { ArrowRight, Check, Spark, Sound } from "@/components/Icons";
 import { speakEnglish } from "@/lib/speech";
 import b1 from "@ie/core/data/vocab-b1.json";
@@ -207,28 +213,13 @@ export default function Onboarding() {
 }
 
 /* ---------- Мини-определение уровня по словам (yes/no vocabulary check) ----------
-   Классический приём оценки словаря: узнавание частотных слов трёх уровней.
-   Не экзамен: «знаю» = понимаешь смысл без перевода. ~1 минута, 18 слов. */
+   Логика — в @ie/core/levelcheck (общая с mobile); здесь только UI. */
 
-type RawWord = { en: string; ipa: string; ru: string };
-
-function pickSample(list: RawWord[], count: number): RawWord[] {
-  const step = Math.floor(list.length / (count + 1));
-  return Array.from({ length: count }, (_, i) => list[(i + 1) * step]);
-}
-
-const CHECK_WORDS: { lvl: "b1" | "b2" | "c1"; w: RawWord }[] = [
-  ...pickSample(b1 as RawWord[], 6).map((w) => ({ lvl: "b1" as const, w })),
-  ...pickSample(b2 as RawWord[], 6).map((w) => ({ lvl: "b2" as const, w })),
-  ...pickSample(c1 as RawWord[], 6).map((w) => ({ lvl: "c1" as const, w })),
-];
-
-function scoreLevel(known: Record<"b1" | "b2" | "c1", number>): string {
-  if (known.b1 <= 2) return "a2";
-  if (known.b2 <= 2) return "b1";
-  if (known.c1 <= 2) return "b2";
-  return "c1";
-}
+const CHECK_WORDS = buildCheckWords({
+  b1: b1 as RawWord[],
+  b2: b2 as RawWord[],
+  c1: c1 as RawWord[],
+});
 
 function LevelCheck({
   onDone,
@@ -238,7 +229,7 @@ function LevelCheck({
   onCancel: () => void;
 }) {
   const [i, setI] = useState(0);
-  const [known, setKnown] = useState<Record<"b1" | "b2" | "c1", number>>({
+  const [known, setKnown] = useState<Record<CheckLevel, number>>({
     b1: 0,
     b2: 0,
     c1: 0,

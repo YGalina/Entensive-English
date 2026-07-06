@@ -4,8 +4,8 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 import BottomNav from "@/components/BottomNav";
 import { Sound, Keyboard, Check, ArrowRight } from "@/components/Icons";
 import { speakEnglish, speakRussian } from "@/lib/speech";
-import { useActivityTimer } from "@/lib/timelog";
-import { useUILang } from "@/lib/prefs";
+import { useActivityTimer } from "@ie/core/timelog";
+import { useUILang } from "@ie/core/prefs";
 import { DRILL_LESSONS } from "@ie/core/data/pronunciationDrills";
 
 // Модуль «Набор» — моторный канал метода (Шестов, TypeRIGHTing):

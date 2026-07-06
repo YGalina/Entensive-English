@@ -9,8 +9,8 @@ import {
   scriptsByCategory,
   type ShadowScript,
 } from "@ie/core/data/shadowing";
-import { useActivityTimer } from "@/lib/timelog";
-import { useUILang } from "@/lib/prefs";
+import { useActivityTimer } from "@ie/core/timelog";
+import { useUILang } from "@ie/core/prefs";
 
 type YTPlayer = {
   playVideo: () => void;

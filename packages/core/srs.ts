@@ -9,6 +9,7 @@ import {
   State,
   type Card as FsrsCard,
 } from "ts-fsrs";
+import { storage } from "./storage";
 
 // Кибернетическое ядро метода: система планирует «узнавание» слов на будущее.
 // Алгоритм — FSRS (современнее SM-2): интервалы считаются по стабильности и
@@ -39,16 +40,14 @@ const listeners = new Set<() => void>();
 
 function read(): Store {
   try {
-    return JSON.parse(localStorage.getItem(KEY) ?? "{}") as Store;
+    return JSON.parse(storage().getItem(KEY) ?? "{}") as Store;
   } catch {
     return {};
   }
 }
 
 function write(s: Store) {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(s));
-  } catch {}
+  storage().setItem(KEY, JSON.stringify(s));
   listeners.forEach((l) => l());
 }
 
@@ -141,10 +140,10 @@ export function recentCards(limit: number): Card[] {
 
 function subscribe(cb: () => void) {
   listeners.add(cb);
-  window.addEventListener("storage", cb);
+  const unExternal = storage().subscribeExternal(cb);
   return () => {
     listeners.delete(cb);
-    window.removeEventListener("storage", cb);
+    unExternal();
   };
 }
 

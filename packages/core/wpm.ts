@@ -1,10 +1,11 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { storage } from "./storage";
 
 // История скорости чтения (WPM). Самый наглядный измеримый результат метода:
 // у Петрусинского скорость чтения — главный KPI эксперимента (×2,5 за 2 недели).
-// Хранение: localStorage ie_wpm — массив замеров по датам.
+// Хранение: ключ ie_wpm — массив замеров по датам.
 
 const KEY = "ie_wpm";
 const listeners = new Set<() => void>();
@@ -13,7 +14,7 @@ export type WpmEntry = { d: string; wpm: number; words: number };
 
 function read(): WpmEntry[] {
   try {
-    const raw = JSON.parse(localStorage.getItem(KEY) ?? "[]");
+    const raw = JSON.parse(storage().getItem(KEY) ?? "[]");
     return Array.isArray(raw) ? (raw as WpmEntry[]) : [];
   } catch {
     return [];
@@ -21,9 +22,7 @@ function read(): WpmEntry[] {
 }
 
 function write(list: WpmEntry[]) {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(list.slice(-200)));
-  } catch {}
+  storage().setItem(KEY, JSON.stringify(list.slice(-200)));
   listeners.forEach((l) => l());
 }
 
@@ -61,10 +60,10 @@ const EMPTY = JSON.stringify({ count: 0, first: null, last: null, best: null });
 
 function subscribe(cb: () => void) {
   listeners.add(cb);
-  window.addEventListener("storage", cb);
+  const unExternal = storage().subscribeExternal(cb);
   return () => {
     listeners.delete(cb);
-    window.removeEventListener("storage", cb);
+    unExternal();
   };
 }
 

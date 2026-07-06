@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { loadPrefs } from "@/lib/prefs";
+import { loadPrefs } from "@ie/core/prefs";
 
 /**
  * Если онбординг не пройден — уводим на него.

@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import BottomNav from "@/components/BottomNav";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Sun, Sound, Play, Check } from "@/components/Icons";
-import { usePrefs, updatePrefs } from "@/lib/prefs";
+import { usePrefs, updatePrefs } from "@ie/core/prefs";
 import { listEnglishVoices, speakEnglish } from "@/lib/speech";
 import { fetchMe, logout, pushToCloud, pullFromCloud, type MeUser } from "@/lib/cloud";
-import { useSrsStats } from "@/lib/srs";
-import { useTimeStats } from "@/lib/timelog";
+import { useSrsStats } from "@ie/core/srs";
+import { useTimeStats } from "@ie/core/timelog";
 import { NATIVE_LANGUAGES, GOALS, LEVELS, TOPICS, type LangCode } from "@ie/core/data/catalog";
 
 // Локализация интерфейса профиля. Выбор English переключает профиль на английский.

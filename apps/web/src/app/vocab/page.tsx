@@ -4,12 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 import { Sound, Check, Layers, Play } from "@/components/Icons";
-import { useSrsStats, dueCards, recordAnswer } from "@/lib/srs";
-import { useActivityTimer } from "@/lib/timelog";
+import { useSrsStats, dueCards, recordAnswer } from "@ie/core/srs";
+import { useActivityTimer } from "@ie/core/timelog";
 import { speakEnglish } from "@/lib/speech";
 import { findWord, translate } from "@ie/core/data/packs";
 import { LEVEL_PACKS } from "@ie/core/data/levelVocab";
-import { useNativeLang, useUILang } from "@/lib/prefs";
+import { useNativeLang, useUILang } from "@ie/core/prefs";
 import { LANG_DIR } from "@ie/core/data/catalog";
 
 const UI = {

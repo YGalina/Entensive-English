@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useSyncExternalStore } from "react";
-import type { LangCode } from "@ie/core/data/catalog";
+import type { LangCode } from "./data/catalog";
+import { storage } from "./storage";
 
 export type Prefs = {
   /** Родной язык ученика (слой перевода). Target всегда English. */
@@ -28,26 +29,20 @@ function emit() {
 
 function subscribe(cb: () => void) {
   listeners.add(cb);
-  window.addEventListener("storage", cb);
+  const unExternal = storage().subscribeExternal(cb);
   return () => {
     listeners.delete(cb);
-    window.removeEventListener("storage", cb);
+    unExternal();
   };
 }
 
 /** Возвращаем сырую строку — стабильный снапшот для useSyncExternalStore. */
 function getSnapshot(): string {
-  try {
-    return localStorage.getItem(KEY) ?? "";
-  } catch {
-    return "";
-  }
+  return storage().getItem(KEY) ?? "";
 }
 
 export function savePrefs(p: Prefs) {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(normalizePrefs(p)));
-  } catch {}
+  storage().setItem(KEY, JSON.stringify(normalizePrefs(p)));
   emit();
 }
 

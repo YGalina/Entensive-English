@@ -4,10 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Sound, Spark, Play, Pause, Prev, Next } from "@/components/Icons";
 import { speakEnglish } from "@/lib/speech";
-import { useActivityTimer } from "@/lib/timelog";
+import { useActivityTimer } from "@ie/core/timelog";
 import { READING_RULES, SPECIAL_SOUNDS } from "@ie/core/data/readingRules";
 import { DRILL_LESSONS, TEMPO_STEPS, type TempoStepId } from "@ie/core/data/pronunciationDrills";
-import { useUILang } from "@/lib/prefs";
+import { useUILang } from "@ie/core/prefs";
 
 // Протокол Шестова (методичка, стр. 7): тренируем не отдельные слова, а
 // ключевое слово в живой фразе — по лестнице темпа: слушай → сверхмедленно

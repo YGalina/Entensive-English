@@ -8,8 +8,8 @@ import OnboardingGate from "@/components/OnboardingGate";
 import DayPanel from "@/components/DayPanel";
 import Horizon from "@/components/Horizon";
 import { Flame, Play, Spark, Check, ArrowRight } from "@/components/Icons";
-import { useUILang } from "@/lib/prefs";
-import { useDayPlan } from "@/lib/dayplan";
+import { useUILang } from "@ie/core/prefs";
+import { useDayPlan } from "@ie/core/dayplan";
 
 function pluralRu(n: number, one: string, few: string, many: string) {
   const m10 = n % 10;

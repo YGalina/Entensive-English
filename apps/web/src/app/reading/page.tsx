@@ -21,9 +21,9 @@ import {
 } from "@ie/core/data/gutenberg";
 import { storiesByLevel, wordCount, type Story } from "@ie/core/data/reading";
 import { LIBRARY, type Book as BookType } from "@ie/core/data/library";
-import { usePrefs, useUILang } from "@/lib/prefs";
-import { useActivityTimer } from "@/lib/timelog";
-import { recordWpm } from "@/lib/wpm";
+import { usePrefs, useUILang } from "@ie/core/prefs";
+import { useActivityTimer } from "@ie/core/timelog";
+import { recordWpm } from "@ie/core/wpm";
 
 const LEVELS = ["a1", "a2", "b1", "b2", "c1"] as const;
 const GENRE: Record<string, string> = {

@@ -5,9 +5,9 @@
 // считаем». Не обещание — обратная связь: темп твой, прогноз пересчитывается.
 
 import Link from "next/link";
-import { useOutcome } from "@/lib/outcome";
-import { useWpmStats } from "@/lib/wpm";
-import { useUILang } from "@/lib/prefs";
+import { useOutcome } from "@ie/core/outcome";
+import { useWpmStats } from "@ie/core/wpm";
+import { useUILang } from "@ie/core/prefs";
 import { Spark, ArrowRight } from "./Icons";
 
 const UI = {

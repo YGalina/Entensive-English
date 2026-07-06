@@ -4,8 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Sound, Spark, Play, Pause, Next, Repeat } from "@/components/Icons";
 import { speakEnglish } from "@/lib/speech";
-import { useActivityTimer } from "@/lib/timelog";
-import { useUILang } from "@/lib/prefs";
+import { useActivityTimer } from "@ie/core/timelog";
+import { useUILang } from "@ie/core/prefs";
 import { GRAMMAR, assemble } from "@ie/core/data/grammar";
 
 type DrillStep = {

@@ -2,10 +2,11 @@
 
 import { useEffect } from "react";
 import { useSyncExternalStore } from "react";
+import { storage } from "./storage";
 
 // Учёт времени по практикам (почасовка). Кибернетика метода: система считает часы —
 // это и обратная связь, и база для честной гарантии результата.
-// Хранение — localStorage: дата -> практика -> секунды.
+// Хранение — storage-адаптер: дата -> практика -> секунды.
 
 const KEY = "ie_time";
 const listeners = new Set<() => void>();
@@ -18,16 +19,14 @@ function todayKey(): string {
 
 function read(): Log {
   try {
-    return JSON.parse(localStorage.getItem(KEY) ?? "{}") as Log;
+    return JSON.parse(storage().getItem(KEY) ?? "{}") as Log;
   } catch {
     return {};
   }
 }
 
 function write(l: Log) {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(l));
-  } catch {}
+  storage().setItem(KEY, JSON.stringify(l));
   listeners.forEach((f) => f());
 }
 
@@ -83,10 +82,10 @@ const EMPTY = JSON.stringify({
 
 function subscribe(cb: () => void) {
   listeners.add(cb);
-  window.addEventListener("storage", cb);
+  const unExternal = storage().subscribeExternal(cb);
   return () => {
     listeners.delete(cb);
-    window.removeEventListener("storage", cb);
+    unExternal();
   };
 }
 
@@ -105,7 +104,9 @@ export function useActivityTimer(activity: string | null) {
     let last = Date.now();
     const flush = () => {
       const now = Date.now();
-      if (document.visibilityState === "visible") {
+      // На web считаем только видимую вкладку; в среде без document (React
+      // Native) экран смонтирован = практика идёт.
+      if (typeof document === "undefined" || document.visibilityState === "visible") {
         addTime(activity, (now - last) / 1000);
       }
       last = now;

@@ -124,16 +124,18 @@ export type DayPlanState = {
   todayMin: number;
 };
 
-export function useDayPlan(): DayPlanState {
-  const { byActivityToday, todaySec } = useTimeStats();
-  const srs = useSrsStats();
-
+/** Чистый расчёт плана дня из фактических секунд практики и очереди SRS. */
+export function buildDayPlan(
+  byActivityToday: Record<string, number>,
+  dueToday: number,
+  todaySec: number
+): DayPlanState {
   const steps: DayStepState[] = DAY_STEPS.map((s) => {
     const sec = s.activities.reduce((a, k) => a + (byActivityToday[k] || 0), 0);
     const doneMin = sec / 60;
     if (s.kind === "review") {
-      const done = srs.dueToday === 0;
-      return { ...s, doneMin, pct: done ? 100 : 0, done, due: srs.dueToday };
+      const done = dueToday === 0;
+      return { ...s, doneMin, pct: done ? 100 : 0, done, due: dueToday };
     }
     const pct = Math.min(100, Math.round((doneMin / s.goalMin) * 100));
     return { ...s, doneMin, pct, done: pct >= 100, due: 0 };
@@ -147,4 +149,10 @@ export function useDayPlan(): DayPlanState {
     total: steps.length,
     todayMin: Math.round(todaySec / 60),
   };
+}
+
+export function useDayPlan(): DayPlanState {
+  const { byActivityToday, todaySec } = useTimeStats();
+  const srs = useSrsStats();
+  return buildDayPlan(byActivityToday, srs.dueToday, todaySec);
 }

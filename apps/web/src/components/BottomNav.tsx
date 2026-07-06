@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Layers, Text, Play, Smile, Sound, Chat, Keyboard } from "./Icons";
-import { useUILang } from "@/lib/prefs";
+import { useUILang } from "@ie/core/prefs";
 
 // tone — сигнальный цвет навыка («Марина»): активный таб красится в свой флаг.
 const items = [
