@@ -1,4 +1,6 @@
-import { DarkTheme, DefaultTheme, ThemeProvider, Stack } from "expo-router";
+import { Stack } from "expo-router";
+// SDK 54: expo-router больше НЕ реэкспортит темы навигации — берём из первоисточника.
+import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";

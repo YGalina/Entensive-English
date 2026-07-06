@@ -10,6 +10,7 @@
     "@ie/core": "*",
     "@ie/media": "*",
     "@ie/tokens": "*",
+    "@react-navigation/native": "^7.3.7",
     "expo": "^54.0.0",
     "expo-constants": "~18.0.13",
     "expo-device": "~8.0.10",
