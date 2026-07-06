@@ -1,11 +1,11 @@
-import { createElement, useMemo, useState } from "react";
-import { Platform, Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
+import { useMemo, useState } from "react";
+import { Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { WebView } from "react-native-webview";
+import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { YouTube } from "@/components/youtube";
 import {
   SHADOWING,
   CATEGORY_LABEL,
@@ -18,28 +18,6 @@ import { useMarina } from "@/theme";
 // Shadowing: смотришь живого носителя и ПОВТОРЯЕШЬ ВСЛУХ, глазами по строкам.
 // Просодия, декодирование беглой речи и мышцы лица работают одновременно.
 // Перевод вторичен — по желанию, чтобы не выпадать из потока.
-
-/** Плеер: WebView на телефоне, <iframe> в RN-web (превью/веб-таргет). */
-function YouTube({ id, height }: { id: string; height: number }) {
-  const uri = `https://www.youtube.com/embed/${id}?playsinline=1&rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=en`;
-  if (Platform.OS === "web") {
-    return createElement("iframe", {
-      src: uri,
-      style: { width: "100%", height, border: 0, borderRadius: 16 },
-      allow: "autoplay; encrypted-media; picture-in-picture",
-      allowFullScreen: true,
-    });
-  }
-  return (
-    <WebView
-      source={{ uri }}
-      style={{ height, borderRadius: 16, backgroundColor: "#000" }}
-      allowsInlineMediaPlayback
-      mediaPlaybackRequiresUserAction={false}
-      allowsFullscreenVideo
-    />
-  );
-}
 
 export default function ListenScreen() {
   const { c, sk, radius } = useMarina();

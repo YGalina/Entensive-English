@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useDayPlan } from "@ie/core/dayplan";
 import { useSrsStats } from "@ie/core/srs";
+import { useStreak } from "@ie/core/timelog";
 import { usePrefs } from "@ie/core/prefs";
 import { useMarina, skillTone } from "@/theme";
 import { Breton } from "@/components/breton";
@@ -32,6 +33,7 @@ export default function TodayScreen() {
   const router = useRouter();
   const plan = useDayPlan();
   const srs = useSrsStats();
+  const streak = useStreak();
   const prefs = usePrefs();
 
   const steps = plan.steps.filter((s) => !WEB_ONLY_STEPS.has(s.id));
@@ -62,9 +64,37 @@ export default function TodayScreen() {
       }}
     >
       <View style={{ gap: 6 }}>
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.ink }}>
-          Сегодня
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.ink }}>
+            Сегодня
+          </Text>
+          {streak > 0 && (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 5,
+                paddingHorizontal: 12,
+                paddingVertical: 7,
+                borderRadius: 16,
+                backgroundColor: c.sun,
+              }}
+              accessibilityLabel={`Серия: ${streak} дней подряд`}
+            >
+              <Ionicons name="flame" size={14} color="#12294e" />
+              <Text
+                style={{
+                  fontFamily: "Nunito_800ExtraBold",
+                  fontSize: 13,
+                  color: "#12294e",
+                  fontVariant: ["tabular-nums"],
+                }}
+              >
+                {streak}
+              </Text>
+            </View>
+          )}
+        </View>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: c.muted }}>
           {prefs
             ? "Один понятный следующий шаг — остальное подождёт."

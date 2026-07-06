@@ -23,6 +23,11 @@ export default function TabsLayout() {
   // Хранилище синхронное (kv-store), поэтому мигания «таб → онбординг» нет.
   if (!prefs) return <Redirect href="/onboarding" />;
 
+  const en = prefs.uiLang === "en";
+  const T = en
+    ? { today: "Today", read: "Read", listen: "Listen", sounds: "Sounds", profile: "Profile" }
+    : { today: "Сегодня", read: "Читать", listen: "Слушать", sounds: "Звуки", profile: "Профиль" };
+
   return (
     <Tabs
       screenOptions={{
@@ -35,7 +40,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Сегодня",
+          title: T.today,
           tabBarActiveTintColor: c.brand,
           tabBarIcon: icon("home"),
         }}
@@ -43,7 +48,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="read"
         options={{
-          title: "Читать",
+          title: T.read,
           tabBarActiveTintColor: sk.reading,
           tabBarIcon: icon("book"),
         }}
@@ -51,7 +56,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="listen"
         options={{
-          title: "Слушать",
+          title: T.listen,
           tabBarActiveTintColor: sk.video,
           tabBarIcon: icon("headset"),
         }}
@@ -59,7 +64,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="sounds"
         options={{
-          title: "Звуки",
+          title: T.sounds,
           tabBarActiveTintColor: sk.sounds,
           tabBarIcon: icon("mic"),
         }}
@@ -67,7 +72,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Профиль",
+          title: T.profile,
           tabBarActiveTintColor: c.brand,
           tabBarIcon: icon("person-circle"),
         }}

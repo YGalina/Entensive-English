@@ -348,7 +348,7 @@ export default function SoundsScreen() {
           })}
         >
           <Ionicons name="arrow-back" size={16} color={c.muted} />
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>фраза</Text>
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>назад</Text>
         </Pressable>
         <Pressable
           onPress={() => pickPhrase(1)}
@@ -368,7 +368,7 @@ export default function SoundsScreen() {
             transform: [{ scale: pressed ? 0.98 : 1 }],
           })}
         >
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>фраза</Text>
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>вперёд</Text>
           <Ionicons name="arrow-forward" size={16} color={c.muted} />
         </Pressable>
       </View>

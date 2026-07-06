@@ -114,7 +114,8 @@ export default function ReadScreen() {
             {story.title}
           </Text>
           <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
-            {story.author} · {words} слов · {GENRE[story.genre]} · {story.level.toUpperCase()}
+            {story.author} · {words} слов · {GENRE[story.genre]} · {story.level.toUpperCase()} ·{" "}
+            {story.excerpt ? "фрагмент" : "история целиком"}
           </Text>
         </View>
 
@@ -157,6 +158,20 @@ export default function ReadScreen() {
                   ) : null}
                 </View>
               ))}
+              {story.excerpt ? (
+                <Text
+                  style={{
+                    fontFamily: "Inter_400Regular",
+                    fontSize: 12,
+                    lineHeight: 18,
+                    color: c.muted,
+                    fontStyle: "italic",
+                  }}
+                >
+                  Это начало произведения. Продолжение и целые книги скоро появятся в
+                  библиотеке — читать будем ради удовольствия, язык придёт следом.
+                </Text>
+              ) : null}
             </View>
 
             <Pressable
@@ -353,7 +368,8 @@ export default function ReadScreen() {
               {s.title}
             </Text>
             <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
-              {s.author} · {wordCount(s)} слов · {GENRE[s.genre]}
+              {s.author} · {wordCount(s)} слов · {GENRE[s.genre]} ·{" "}
+              {s.excerpt ? "фрагмент" : "целиком"}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={16} color={c.muted} />

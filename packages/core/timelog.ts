@@ -95,6 +95,30 @@ export function useTimeStats(): TimeStats {
 }
 
 /**
+ * Стрик: сколько дней ПОДРЯД была практика, считая от сегодня (или от вчера,
+ * если сегодня ещё не занималась — утренний вид не обнуляет вчерашнюю серию).
+ * Мягкая механика постоянства: хвалим серию, никогда не стыдим за пропуск.
+ */
+export function computeStreak(byDay: Record<string, number>, today = todayKey()): number {
+  const dayMs = 24 * 3600 * 1000;
+  const t = new Date(today + "T00:00:00Z").getTime();
+  const has = (ms: number) => (byDay[new Date(ms).toISOString().slice(0, 10)] ?? 0) > 0;
+  let start = t;
+  if (!has(start)) {
+    if (!has(start - dayMs)) return 0;
+    start -= dayMs;
+  }
+  let n = 0;
+  while (has(start - n * dayMs)) n++;
+  return n;
+}
+
+export function useStreak(): number {
+  const { byDay } = useTimeStats();
+  return computeStreak(byDay);
+}
+
+/**
  * Засекает реальное время на практике, пока компонент смонтирован и вкладка активна.
  * activity=null — не считать. Пишет фактическую дельту каждые 4 с и при размонтировании.
  */

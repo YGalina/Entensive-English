@@ -50,9 +50,11 @@ function speak(text: string, lang: string, options: SpeakOptions, defaultRate: n
   }
   const go = () => {
     let settled = false;
+    let endGuard: ReturnType<typeof setTimeout> | null = null;
     const settle = (cb?: () => void) => {
       if (settled) return;
       settled = true;
+      if (endGuard) clearTimeout(endGuard);
       cb?.();
     };
     Speech.speak(clean, {
@@ -69,6 +71,12 @@ function speak(text: string, lang: string, options: SpeakOptions, defaultRate: n
       onStopped: () => settle(options.onEnd),
       onError: () => settle(options.onError),
     });
+    // Гарантия колбэка (как на web): iOS изредка глотает onDone при быстрой
+    // смене реплик — тогда автопоток «замирал» и ждал кнопку. Страховка по
+    // КОНСЕРВАТИВНОЙ оценке длительности никогда не обрежет живую речь.
+    const rate = options.rate ?? defaultRate;
+    const estMs = 2800 + (clean.length * 1000) / (8 * rate);
+    endGuard = setTimeout(() => settle(options.onEnd), estMs + 3500);
   };
   if (options.interrupt ?? true) {
     // stop() чистит и очередь, и текущую реплику — как cancel() на web.
