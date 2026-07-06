@@ -8,6 +8,7 @@ import { DRILL_LESSONS } from "@ie/core/data/pronunciationDrills";
 import { AFFIRMATIONS } from "@ie/core/data/affirmations";
 import { useActivityTimer } from "@ie/core/timelog";
 import { speakEnglish } from "@ie/media/speech";
+import { useCalmMusic } from "@/lib/calm-music";
 import { useMarina } from "@/theme";
 
 // «3-минутка» — супер-короткий ритуал для метро/очереди/перед сном:
@@ -16,7 +17,7 @@ import { useMarina } from "@/theme";
 // (суггестопедия: на родном, чтобы легла без сопротивления) + мягкий финал.
 // Всё занимает ~3 минуты и поддерживает ежедневный ритуал без чувства вины.
 
-type Stage = "breath" | "phrases" | "affirm";
+type Stage = "breath" | "bridge" | "phrases" | "affirm";
 
 const BREATH_CYCLES = 4;
 const INHALE = 4000;
@@ -39,9 +40,18 @@ export default function ThreeMinutes() {
 
   const [stage, setStage] = useState<Stage>("breath");
   const [done, setDone] = useState(false);
+  const music = useCalmMusic();
 
   // Короткая практика целиком идёт в копилку shadowing-минут дня.
   useActivityTimer(done ? null : "shadowing");
+
+  // Классика (барокко ≈60 уд/мин) ведёт весь ритуал: громче на дыхании,
+  // тихо под голосом фраз — психорегуляция по Лозанову, не украшение.
+  useEffect(() => {
+    music.start(0.32);
+    return () => music.stop();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Единый «рубильник»: смена стадии/выход глушит все хвосты.
   const session = useRef(0);
@@ -132,14 +142,27 @@ export default function ThreeMinutes() {
       {done ? (
         <Finale onClose={close} />
       ) : stage === "breath" ? (
-        <Breath onDone={() => nextStage("phrases")} onSkip={() => nextStage("phrases")} />
+        <Breath onDone={() => nextStage("bridge")} onSkip={() => nextStage("bridge")} />
+      ) : stage === "bridge" ? (
+        <Bridge
+          onDone={() => {
+            music.duck(0.12);
+            nextStage("phrases");
+          }}
+        />
       ) : stage === "phrases" ? (
         <Phrases
           phrases={phrases}
           session={session}
           timer={timer}
-          onDone={() => nextStage("affirm")}
-          onSkip={() => nextStage("affirm")}
+          onDone={() => {
+            music.duck(0.3);
+            nextStage("affirm");
+          }}
+          onSkip={() => {
+            music.duck(0.3);
+            nextStage("affirm");
+          }}
         />
       ) : (
         <Affirm text={affirmation} onDone={() => nextStage("done")} />
@@ -241,6 +264,48 @@ function Breath({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) 
         </Text>
       </Pressable>
     </View>
+  );
+}
+
+/* ---------- Мягкий мост: дыхание → фразы, без резкого старта ---------- */
+
+function Bridge({ onDone }: { onDone: () => void }) {
+  const { c, sk } = useMarina();
+  const anim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(anim, { toValue: 1, duration: 700, useNativeDriver: true }).start();
+    const t = setTimeout(onDone, 3200);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <Animated.View style={{ flex: 1, alignItems: "center", justifyContent: "center", opacity: anim, gap: 12 }}>
+      <Ionicons name="musical-notes" size={26} color={sk.video} />
+      <Text
+        style={{
+          fontFamily: "Nunito_700Bold",
+          fontSize: 18,
+          lineHeight: 27,
+          color: c.ink,
+          textAlign: "center",
+          maxWidth: 300,
+        }}
+      >
+        Хорошо. Теперь — две живые фразы.
+      </Text>
+      <Text
+        style={{
+          fontFamily: "Inter_400Regular",
+          fontSize: 14,
+          lineHeight: 21,
+          color: c.muted,
+          textAlign: "center",
+          maxWidth: 300,
+        }}
+      >
+        Просто слушай… и повторяй вслух в свою паузу. Музыка останется с тобой.
+      </Text>
+    </Animated.View>
   );
 }
 

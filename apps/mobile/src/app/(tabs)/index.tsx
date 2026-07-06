@@ -22,6 +22,7 @@ const WEB_ONLY_STEPS = new Set(["typing"]);
 // Куда ведёт шаг в мобильной v1 (рецептивное ядро). Остальные модули пока
 // живут в веб-версии — по тапу тепло объясняем, не обрывая ритуал.
 const STEP_ROUTE: Record<string, string> = {
+  session: "/session",
   pronunciation: "/sounds",
   reading: "/read",
   shadowing: "/listen",

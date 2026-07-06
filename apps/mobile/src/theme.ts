@@ -28,7 +28,9 @@ function subscribeTheme(cb: () => void) {
 
 function themeSnapshot(): ThemePref {
   const v = storage().getItem(THEME_KEY);
-  return v === "light" || v === "dark" ? v : "system";
+  // Дефолт — СВЕТЛАЯ (фидбэк Галины: тёмная «полночь» мрачновата как первое
+  // впечатление). Системную/тёмную можно выбрать в профиле.
+  return v === "light" || v === "dark" || v === "system" ? (v as ThemePref) : "light";
 }
 
 export function useThemePref(): ThemePref {
