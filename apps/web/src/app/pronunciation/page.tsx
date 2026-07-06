@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Sound, Spark, Play, Pause, Prev, Next } from "@/components/Icons";
-import { speakEnglish } from "@/lib/speech";
+import { speakEnglish } from "@ie/media/speech";
 import { useActivityTimer } from "@ie/core/timelog";
 import { READING_RULES, SPECIAL_SOUNDS } from "@ie/core/data/readingRules";
 import { DRILL_LESSONS, TEMPO_STEPS, type TempoStepId } from "@ie/core/data/pronunciationDrills";

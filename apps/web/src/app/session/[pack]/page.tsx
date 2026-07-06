@@ -6,12 +6,12 @@ import { useParams, useRouter } from "next/navigation";
 import { getPack, translate, translateExample, type Word } from "@ie/core/data/packs";
 import { getLevelPack } from "@ie/core/data/levelVocab";
 import { useNativeLang, usePace, useUILang } from "@ie/core/prefs";
-import { speakEnglish, warmEnglishVoices, speechLooksSilent } from "@/lib/speech";
+import { speakEnglish, warmEnglishVoices, speechLooksSilent } from "@ie/media/speech";
 import { recordAnswer } from "@ie/core/srs";
 import { useActivityTimer } from "@ie/core/timelog";
 import { LANG_DIR, type LangCode } from "@ie/core/data/catalog";
 import { AFFIRMATIONS, BREATH, BREATH_CYCLES_GOAL } from "@ie/core/data/affirmations";
-import { startAmbient, stopAmbient } from "@/lib/ambient";
+import { startAmbient, stopAmbient } from "@ie/media/ambient";
 import {
   Sound,
   Play,

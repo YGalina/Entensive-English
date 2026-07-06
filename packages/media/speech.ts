@@ -1,5 +1,7 @@
 "use client";
 
+import { storage } from "@ie/core/storage";
+
 type SpeakOptions = {
   rate?: number;
   interrupt?: boolean;
@@ -102,7 +104,7 @@ export function listEnglishVoices(): SpeechSynthesisVoice[] {
 /** Имя голоса, выбранного пользователем в профиле (ie_prefs.voiceName). */
 function savedVoiceName(): string | null {
   try {
-    const raw = localStorage.getItem("ie_prefs");
+    const raw = storage().getItem("ie_prefs");
     if (!raw) return null;
     const p = JSON.parse(raw) as { voiceName?: string };
     return p.voiceName || null;

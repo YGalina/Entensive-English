@@ -6,7 +6,7 @@ import BottomNav from "@/components/BottomNav";
 import { Sound, Check, Layers, Play } from "@/components/Icons";
 import { useSrsStats, dueCards, recordAnswer } from "@ie/core/srs";
 import { useActivityTimer } from "@ie/core/timelog";
-import { speakEnglish } from "@/lib/speech";
+import { speakEnglish } from "@ie/media/speech";
 import { findWord, translate } from "@ie/core/data/packs";
 import { LEVEL_PACKS } from "@ie/core/data/levelVocab";
 import { useNativeLang, useUILang } from "@ie/core/prefs";

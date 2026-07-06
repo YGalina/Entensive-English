@@ -6,7 +6,7 @@ import BottomNav from "@/components/BottomNav";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Sun, Sound, Play, Check } from "@/components/Icons";
 import { usePrefs, updatePrefs } from "@ie/core/prefs";
-import { listEnglishVoices, speakEnglish } from "@/lib/speech";
+import { listEnglishVoices, speakEnglish } from "@ie/media/speech";
 import { fetchMe, logout, pushToCloud, pullFromCloud, type MeUser } from "@/lib/cloud";
 import { useSrsStats } from "@ie/core/srs";
 import { useTimeStats } from "@ie/core/timelog";

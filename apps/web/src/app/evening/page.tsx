@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { speakEnglish } from "@/lib/speech";
-import { startAmbient, stopAmbient } from "@/lib/ambient";
+import { speakEnglish } from "@ie/media/speech";
+import { startAmbient, stopAmbient } from "@ie/media/ambient";
 import { useActivityTimer } from "@ie/core/timelog";
 import { useNativeLang, useUILang } from "@ie/core/prefs";
 import { todaysTouchedCards, recentCards } from "@ie/core/srs";

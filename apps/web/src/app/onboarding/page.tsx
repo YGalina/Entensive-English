@@ -11,7 +11,7 @@ import {
   type RawWord,
 } from "@ie/core/levelcheck";
 import { ArrowRight, Check, Spark, Sound } from "@/components/Icons";
-import { speakEnglish } from "@/lib/speech";
+import { speakEnglish } from "@ie/media/speech";
 import b1 from "@ie/core/data/vocab-b1.json";
 import b2 from "@ie/core/data/vocab-b2.json";
 import c1 from "@ie/core/data/vocab-c1.json";

@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import BottomNav from "@/components/BottomNav";
 import { Sound, Keyboard, Check, ArrowRight } from "@/components/Icons";
-import { speakEnglish, speakRussian } from "@/lib/speech";
+import { speakEnglish, speakRussian } from "@ie/media/speech";
 import { useActivityTimer } from "@ie/core/timelog";
 import { useUILang } from "@ie/core/prefs";
 import { DRILL_LESSONS } from "@ie/core/data/pronunciationDrills";
