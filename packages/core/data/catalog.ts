@@ -49,7 +49,29 @@ export const LANG_DIR: Record<LangCode, "ltr" | "rtl"> = Object.fromEntries(
 export type UiLang = "ru" | "en";
 export type Topic = { id: string; title: string; titleEn: string };
 
-// Темы изучения (паки = блоки). Расширяемо.
+/**
+ * ⭐ Интересы-смыслы для онбординга (§8 мастер-брифа): через любимые смыслы
+ * английский заходит без сопротивления. Это ОДНА ось — «про что тебе
+ * интересно», без методических категорий. Лексические слои метода (частотный
+ * костяк, фразовые глаголы, коллокации, предлоги) в онбординге НЕ спрашиваются:
+ * их программа включает сама. TOPICS ниже — внутренние ярлыки данных (пачек),
+ * человеку в выборе не показываются.
+ */
+export type Interest = { id: string; title: string; titleEn: string };
+export const INTERESTS: Interest[] = [
+  { id: "psychology", title: "Психология и мозг", titleEn: "Psychology & brain" },
+  { id: "spirit", title: "Духовный рост и предназначение", titleEn: "Inner growth & purpose" },
+  { id: "stories", title: "Сказки и красивые истории", titleEn: "Fairy tales & stories" },
+  { id: "humor", title: "Английский юмор", titleEn: "British humour" },
+  { id: "parenting", title: "Дети и воспитание", titleEn: "Parenting" },
+  { id: "body", title: "Тело, спорт и здоровье", titleEn: "Body & health" },
+  { id: "career", title: "Работа и карьера", titleEn: "Work & career" },
+  { id: "travel", title: "Путешествия", titleEn: "Travel" },
+  { id: "beauty", title: "Стиль и красота", titleEn: "Style & beauty" },
+  { id: "people", title: "Люди и отношения", titleEn: "People & relationships" },
+];
+
+// Темы изучения (паки = блоки). Внутренняя разметка данных. Расширяемо.
 export const TOPICS: Topic[] = [
   { id: "core", title: "Частотный костяк", titleEn: "Core frequency" },
   { id: "phrasal", title: "Фразовые глаголы", titleEn: "Phrasal verbs" },

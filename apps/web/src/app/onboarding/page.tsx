@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { NATIVE_LANGUAGES, GOALS, LEVELS, TOPICS, type LangCode } from "@ie/core/data/catalog";
+import { NATIVE_LANGUAGES, GOALS, LEVELS, INTERESTS, type LangCode } from "@ie/core/data/catalog";
 import { savePrefs } from "@ie/core/prefs";
 import {
   buildCheckWords,
@@ -24,7 +24,7 @@ export default function Onboarding() {
 
   const [nativeLang, setNativeLang] = useState<LangCode>("ru");
   const [goal, setGoal] = useState<string>("");
-  const [topics, setTopics] = useState<string[]>(["core"]);
+  const [topics, setTopics] = useState<string[]>([]);
   const [level, setLevel] = useState<string>("");
   const [checking, setChecking] = useState(false);
 
@@ -117,14 +117,14 @@ export default function Onboarding() {
           </Section>
         )}
 
-        {/* Шаг 2: темы */}
+        {/* Шаг 2: интересы-смыслы (§8) — без методических категорий */}
         {step === 2 && (
           <Section
-            title="Что интересно изучать?"
-            note="Можно несколько. Слова придут пачками в контексте этих тем."
+            title="Про что тебе интересно?"
+            note="Выбери, что любишь, — слова, тексты и примеры придут из этих смыслов. Можно несколько."
           >
             <div className="flex flex-wrap gap-2">
-              {TOPICS.map((t) => {
+              {INTERESTS.map((t) => {
                 const on = topics.includes(t.id);
                 return (
                   <button

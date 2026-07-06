@@ -10,7 +10,14 @@ import { listEnglishVoices, speakEnglish } from "@ie/media/speech";
 import { fetchMe, logout, pushToCloud, pullFromCloud, type MeUser } from "@/lib/cloud";
 import { useSrsStats } from "@ie/core/srs";
 import { useTimeStats } from "@ie/core/timelog";
-import { NATIVE_LANGUAGES, GOALS, LEVELS, TOPICS, type LangCode } from "@ie/core/data/catalog";
+import {
+  NATIVE_LANGUAGES,
+  GOALS,
+  LEVELS,
+  INTERESTS,
+  TOPICS,
+  type LangCode,
+} from "@ie/core/data/catalog";
 
 // Локализация интерфейса профиля. Выбор English переключает профиль на английский.
 const STR = {
@@ -106,7 +113,9 @@ export default function Profile() {
   const level = levelObj ? (en ? levelObj.titleEn : levelObj.title) : t.none;
   const topicTitles = (prefs?.topics ?? [])
     .map((id) => {
-      const x = TOPICS.find((x) => x.id === id);
+      // Интересы-смыслы (новая классификация) + фолбэк на легаси-ярлыки TOPICS
+      // для профилей, настроенных до разделения осей.
+      const x = INTERESTS.find((x) => x.id === id) ?? TOPICS.find((x) => x.id === id);
       return x ? (en ? x.titleEn : x.title) : null;
     })
     .filter(Boolean)

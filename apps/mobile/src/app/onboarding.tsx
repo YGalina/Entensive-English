@@ -16,7 +16,7 @@ import {
   NATIVE_LANGUAGES,
   GOALS,
   LEVELS,
-  TOPICS,
+  INTERESTS,
   type LangCode,
 } from "@ie/core/data/catalog";
 import { savePrefs } from "@ie/core/prefs";
@@ -70,7 +70,8 @@ export default function Onboarding() {
   const [nativeLang, setNativeLang] = useState<LangCode>("ru");
   const [langOpen, setLangOpen] = useState(false);
   const [goal, setGoal] = useState("");
-  const [topics, setTopics] = useState<string[]>(["core"]);
+  // Интересы-смыслы (§8). Лексические слои метода не выбираются — они вшиты.
+  const [topics, setTopics] = useState<string[]>([]);
   const [level, setLevel] = useState("");
   const [checking, setChecking] = useState(false);
   const [aha, setAha] = useState(false);
@@ -245,11 +246,11 @@ export default function Onboarding() {
             {step === 2 && (
               <StepFade>
               <Section
-                title="Что интересно изучать?"
-                note="Можно несколько. Слова придут пачками в контексте этих тем."
+                title="Про что тебе интересно?"
+                note="Выбери, что любишь, — слова, тексты и примеры придут из этих смыслов. Можно несколько."
               >
                 <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-                  {TOPICS.map((t) => {
+                  {INTERESTS.map((t) => {
                     const on = topics.includes(t.id);
                     return (
                       <Pressable
