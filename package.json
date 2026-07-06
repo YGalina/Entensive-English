@@ -12,6 +12,9 @@
     "web:start": "npm run start --workspace @ie/web",
     "web:lint": "npm run lint --workspace @ie/web",
     "test:e2e": "npm run test:e2e --workspace @ie/web",
-    "test:unit": "npm run test --workspace @ie/core"
+    "test:unit": "npm run test --workspace @ie/core",
+    "mobile:start": "npm run start --workspace @ie/mobile",
+    "mobile:ios": "npm run ios --workspace @ie/mobile",
+    "mobile:android": "npm run android --workspace @ie/mobile"
   }
 }
