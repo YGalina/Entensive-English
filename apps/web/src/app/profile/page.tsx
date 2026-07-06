@@ -10,7 +10,7 @@ import { listEnglishVoices, speakEnglish } from "@/lib/speech";
 import { fetchMe, logout, pushToCloud, pullFromCloud, type MeUser } from "@/lib/cloud";
 import { useSrsStats } from "@/lib/srs";
 import { useTimeStats } from "@/lib/timelog";
-import { NATIVE_LANGUAGES, GOALS, LEVELS, TOPICS, type LangCode } from "@/data/catalog";
+import { NATIVE_LANGUAGES, GOALS, LEVELS, TOPICS, type LangCode } from "@ie/core/data/catalog";
 
 // Локализация интерфейса профиля. Выбор English переключает профиль на английский.
 const STR = {

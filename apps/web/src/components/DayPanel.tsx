@@ -2,7 +2,7 @@
 
 import { usePrefs, updatePrefs, useUILang } from "@/lib/prefs";
 import { useTimeStats } from "@/lib/timelog";
-import { PROGRAM, programDay } from "@/data/program";
+import { PROGRAM, programDay } from "@ie/core/data/program";
 import { ArrowRight, Check } from "./Icons";
 
 const UI = {

@@ -18,9 +18,9 @@ import {
   gutenbergChunkToStory,
   type GutenbergChunk,
   type GutenbergResponse,
-} from "@/data/gutenberg";
-import { storiesByLevel, wordCount, type Story } from "@/data/reading";
-import { LIBRARY, type Book as BookType } from "@/data/library";
+} from "@ie/core/data/gutenberg";
+import { storiesByLevel, wordCount, type Story } from "@ie/core/data/reading";
+import { LIBRARY, type Book as BookType } from "@ie/core/data/library";
 import { usePrefs, useUILang } from "@/lib/prefs";
 import { useActivityTimer } from "@/lib/timelog";
 import { recordWpm } from "@/lib/wpm";

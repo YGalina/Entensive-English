@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { today } from "@/data/packs";
+import { today } from "@ie/core/data/packs";
 import BottomNav from "@/components/BottomNav";
 import ThemeToggle from "@/components/ThemeToggle";
 import OnboardingGate from "@/components/OnboardingGate";

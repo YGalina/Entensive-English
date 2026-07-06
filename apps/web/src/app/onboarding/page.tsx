@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { NATIVE_LANGUAGES, GOALS, LEVELS, TOPICS, type LangCode } from "@/data/catalog";
+import { NATIVE_LANGUAGES, GOALS, LEVELS, TOPICS, type LangCode } from "@ie/core/data/catalog";
 import { savePrefs } from "@/lib/prefs";
 import { ArrowRight, Check, Spark, Sound } from "@/components/Icons";
 import { speakEnglish } from "@/lib/speech";
-import b1 from "@/data/vocab-b1.json";
-import b2 from "@/data/vocab-b2.json";
-import c1 from "@/data/vocab-c1.json";
+import b1 from "@ie/core/data/vocab-b1.json";
+import b2 from "@ie/core/data/vocab-b2.json";
+import c1 from "@ie/core/data/vocab-c1.json";
 
 const STEPS = ["Родной язык", "Цель", "Темы", "Уровень"] as const;
 

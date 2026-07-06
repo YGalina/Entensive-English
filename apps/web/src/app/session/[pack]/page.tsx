@@ -3,14 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { getPack, translate, translateExample, type Word } from "@/data/packs";
-import { getLevelPack } from "@/data/levelVocab";
+import { getPack, translate, translateExample, type Word } from "@ie/core/data/packs";
+import { getLevelPack } from "@ie/core/data/levelVocab";
 import { useNativeLang, usePace, useUILang } from "@/lib/prefs";
 import { speakEnglish, warmEnglishVoices, speechLooksSilent } from "@/lib/speech";
 import { recordAnswer } from "@/lib/srs";
 import { useActivityTimer } from "@/lib/timelog";
-import { LANG_DIR, type LangCode } from "@/data/catalog";
-import { AFFIRMATIONS, BREATH, BREATH_CYCLES_GOAL } from "@/data/affirmations";
+import { LANG_DIR, type LangCode } from "@ie/core/data/catalog";
+import { AFFIRMATIONS, BREATH, BREATH_CYCLES_GOAL } from "@ie/core/data/affirmations";
 import { startAmbient, stopAmbient } from "@/lib/ambient";
 import {
   Sound,

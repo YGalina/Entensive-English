@@ -2,7 +2,7 @@ import {
   chunkGutenbergText,
   gutenbergBookById,
   gutenbergTextCandidates,
-} from "@/data/gutenberg";
+} from "@ie/core/data/gutenberg";
 
 export const revalidate = 86400;
 

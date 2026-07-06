@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Nunito, Inter } from "next/font/google";
 import Script from "next/script";
+import { marina } from "@ie/tokens";
 import "./globals.css";
 
 const inter = Inter({
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1b3a6b",
+  themeColor: marina.themeColor,
   width: "device-width",
   initialScale: 1,
 };

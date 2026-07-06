@@ -5,8 +5,8 @@ import BottomNav from "@/components/BottomNav";
 import { Sound, Spark, Play, Pause, Prev, Next } from "@/components/Icons";
 import { speakEnglish } from "@/lib/speech";
 import { useActivityTimer } from "@/lib/timelog";
-import { READING_RULES, SPECIAL_SOUNDS } from "@/data/readingRules";
-import { DRILL_LESSONS, TEMPO_STEPS, type TempoStepId } from "@/data/pronunciationDrills";
+import { READING_RULES, SPECIAL_SOUNDS } from "@ie/core/data/readingRules";
+import { DRILL_LESSONS, TEMPO_STEPS, type TempoStepId } from "@ie/core/data/pronunciationDrills";
 import { useUILang } from "@/lib/prefs";
 
 // Протокол Шестова (методичка, стр. 7): тренируем не отдельные слова, а

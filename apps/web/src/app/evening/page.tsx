@@ -7,9 +7,9 @@ import { startAmbient, stopAmbient } from "@/lib/ambient";
 import { useActivityTimer } from "@/lib/timelog";
 import { useNativeLang, useUILang } from "@/lib/prefs";
 import { todaysTouchedCards, recentCards } from "@/lib/srs";
-import { findWord, getPack, translate, type Word } from "@/data/packs";
-import { LEVEL_PACKS } from "@/data/levelVocab";
-import { LANG_DIR } from "@/data/catalog";
+import { findWord, getPack, translate, type Word } from "@ie/core/data/packs";
+import { LEVEL_PACKS } from "@ie/core/data/levelVocab";
+import { LANG_DIR } from "@ie/core/data/catalog";
 import { Moon, Play, Pause, Sound, X } from "@/components/Icons";
 
 // Вечерний круг: тихий повтор дневного материала перед сном. Ничего не нужно

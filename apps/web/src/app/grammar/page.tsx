@@ -6,7 +6,7 @@ import { Sound, Spark, Play, Pause, Next, Repeat } from "@/components/Icons";
 import { speakEnglish } from "@/lib/speech";
 import { useActivityTimer } from "@/lib/timelog";
 import { useUILang } from "@/lib/prefs";
-import { GRAMMAR, assemble } from "@/data/grammar";
+import { GRAMMAR, assemble } from "@ie/core/data/grammar";
 
 type DrillStep = {
   en: string;

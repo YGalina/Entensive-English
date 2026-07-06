@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useSyncExternalStore } from "react";
-import type { LangCode } from "@/data/catalog";
+import type { LangCode } from "@ie/core/data/catalog";
 
 export type Prefs = {
   /** Родной язык ученика (слой перевода). Target всегда English. */

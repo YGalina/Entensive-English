@@ -6,7 +6,7 @@ import { Sound, Keyboard, Check, ArrowRight } from "@/components/Icons";
 import { speakEnglish, speakRussian } from "@/lib/speech";
 import { useActivityTimer } from "@/lib/timelog";
 import { useUILang } from "@/lib/prefs";
-import { DRILL_LESSONS } from "@/data/pronunciationDrills";
+import { DRILL_LESSONS } from "@ie/core/data/pronunciationDrills";
 
 // Модуль «Набор» — моторный канал метода (Шестов, TypeRIGHTing):
 // произнёс → безошибочно записал. Неверный символ НЕ вставляется (zero-error:

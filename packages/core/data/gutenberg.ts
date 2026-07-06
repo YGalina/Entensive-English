@@ -1,5 +1,5 @@
-import type { Book } from "@/data/library";
-import type { ReadingPara, Story } from "@/data/reading";
+import type { Book } from "./library";
+import type { ReadingPara, Story } from "./reading";
 
 type GutenbergGenre = Extract<Book["genre"], Story["genre"]>;
 

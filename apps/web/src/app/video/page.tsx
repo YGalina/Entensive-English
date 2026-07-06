@@ -8,7 +8,7 @@ import {
   CATEGORY_ORDER,
   scriptsByCategory,
   type ShadowScript,
-} from "@/data/shadowing";
+} from "@ie/core/data/shadowing";
 import { useActivityTimer } from "@/lib/timelog";
 import { useUILang } from "@/lib/prefs";
 

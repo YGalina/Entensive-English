@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { marina } from "@ie/tokens";
 
 // PWA-манифест: приложение ставится на телефон с домашнего экрана
 // (Поделиться → «На экран Домой») и открывается без браузерной рамки.
@@ -10,8 +11,8 @@ export default function manifest(): MetadataRoute.Manifest {
       "Сверхнасыщенный сеанс вместо карточек по одному слову: перегрузка → активизация в контексте → узнавание.",
     start_url: "/",
     display: "standalone",
-    background_color: "#f7f9fc",
-    theme_color: "#1b3a6b",
+    background_color: marina.color.light.bg,
+    theme_color: marina.themeColor,
     icons: [
       {
         src: "/icon.svg",
