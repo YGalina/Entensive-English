@@ -1,5 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  AccessibilityInfo,
+  Animated,
+  Modal,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -60,11 +68,14 @@ export default function Onboarding() {
 
   const [step, setStep] = useState(0);
   const [nativeLang, setNativeLang] = useState<LangCode>("ru");
+  const [langOpen, setLangOpen] = useState(false);
   const [goal, setGoal] = useState("");
   const [topics, setTopics] = useState<string[]>(["core"]);
   const [level, setLevel] = useState("");
   const [checking, setChecking] = useState(false);
   const [aha, setAha] = useState(false);
+
+  const curLang = NATIVE_LANGUAGES.find((l) => l.code === nativeLang) ?? NATIVE_LANGUAGES[0];
 
   const canNext =
     (step === 0 && !!nativeLang) ||
@@ -153,42 +164,86 @@ export default function Onboarding() {
             contentContainerStyle={{ padding: 20, paddingBottom: 24, gap: 10 }}
           >
             {step === 0 && (
-              <Section
-                title="Какой у тебя родной язык?"
-                note="Учим только английский. Переводы слов и примеров будут на этом языке."
-              >
-                {NATIVE_LANGUAGES.map((l) => (
-                  <OptionRow
-                    key={l.code}
-                    active={nativeLang === l.code}
+              <StepFade>
+                <Section
+                  title="Какой у тебя родной язык?"
+                  note="Учим только английский. Переводы слов и примеров будут на этом языке."
+                >
+                  {/* Не стена из 17 кнопок, а карточка + вылетающая шторка выбора. */}
+                  <Pressable
                     onPress={() => {
                       tap();
-                      setNativeLang(l.code);
+                      setLangOpen(true);
                     }}
-                    title={`${l.flag}  ${l.native}`}
-                  />
-                ))}
-              </Section>
+                    accessibilityRole="button"
+                    accessibilityLabel={`Родной язык: ${curLang.native}. Нажми, чтобы сменить`}
+                    style={({ pressed }) => ({
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: 14,
+                      minHeight: 72,
+                      paddingHorizontal: 16,
+                      paddingVertical: 14,
+                      borderRadius: radius.soft,
+                      borderWidth: 1,
+                      borderColor: c.brand,
+                      backgroundColor: c.brandSoft,
+                      transform: [{ scale: pressed ? 0.98 : 1 }],
+                    })}
+                  >
+                    <Text style={{ fontSize: 30 }}>{curLang.flag}</Text>
+                    <View style={{ flex: 1, gap: 2 }}>
+                      <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 18, color: c.ink }}>
+                        {curLang.native}
+                      </Text>
+                      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+                        переводы слов — на этом языке
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 4,
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderRadius: 16,
+                        backgroundColor: c.surface,
+                        borderWidth: 1,
+                        borderColor: c.line,
+                      }}
+                    >
+                      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13, color: c.brand }}>
+                        изменить
+                      </Text>
+                      <Ionicons name="chevron-down" size={14} color={c.brand} />
+                    </View>
+                  </Pressable>
+                </Section>
+              </StepFade>
             )}
 
             {step === 1 && (
-              <Section title="Зачем тебе английский?" note="Подберём контент и темп под цель.">
-                {GOALS.map((g) => (
-                  <OptionRow
-                    key={g.id}
-                    active={goal === g.id}
-                    onPress={() => {
-                      tap();
-                      setGoal(g.id);
-                    }}
-                    title={g.title}
-                    desc={g.desc}
-                  />
-                ))}
-              </Section>
+              <StepFade>
+                <Section title="Зачем тебе английский?" note="Подберём контент и темп под цель.">
+                  {GOALS.map((g) => (
+                    <OptionRow
+                      key={g.id}
+                      active={goal === g.id}
+                      onPress={() => {
+                        tap();
+                        setGoal(g.id);
+                      }}
+                      title={g.title}
+                      desc={g.desc}
+                    />
+                  ))}
+                </Section>
+              </StepFade>
             )}
 
             {step === 2 && (
+              <StepFade>
               <Section
                 title="Что интересно изучать?"
                 note="Можно несколько. Слова придут пачками в контексте этих тем."
@@ -227,9 +282,11 @@ export default function Onboarding() {
                   })}
                 </View>
               </Section>
+              </StepFade>
             )}
 
             {step === 3 && (
+              <StepFade>
               <Section
                 title="Какой у тебя уровень?"
                 note="Без экзамена. Не уверена — определим за минуту по словам."
@@ -272,8 +329,20 @@ export default function Onboarding() {
                   </Text>
                 </Pressable>
               </Section>
+              </StepFade>
             )}
           </ScrollView>
+
+          <LanguageSheet
+            open={langOpen}
+            value={nativeLang}
+            onSelect={(code) => {
+              tap();
+              setNativeLang(code);
+              setLangOpen(false);
+            }}
+            onClose={() => setLangOpen(false)}
+          />
 
           {/* Навигация */}
           <View
@@ -702,6 +771,162 @@ function AhaMoment({ level, onDone }: { level: string; onDone: () => void }) {
         <Ionicons name="arrow-forward" size={18} color="#ffffff" />
       </Pressable>
     </View>
+  );
+}
+
+/* ---------- Вылетающая шторка выбора родного языка (bottom sheet) ---------- */
+
+function LanguageSheet({
+  open,
+  value,
+  onSelect,
+  onClose,
+}: {
+  open: boolean;
+  value: LangCode;
+  onSelect: (code: LangCode) => void;
+  onClose: () => void;
+}) {
+  const { c } = useMarina();
+  const insets = useSafeAreaInsets();
+  return (
+    <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
+      {/* Скрим ~55% — фон гаснет, фокус на выборе (и тап по нему закрывает) */}
+      <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(8,14,26,0.55)" }}>
+        <Pressable style={{ flex: 1 }} onPress={onClose} accessibilityLabel="Закрыть выбор языка" />
+        <View
+          style={{
+            backgroundColor: c.surface,
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
+            maxHeight: "75%",
+            paddingBottom: insets.bottom + 8,
+          }}
+        >
+          <View
+            style={{
+              alignSelf: "center",
+              width: 40,
+              height: 4,
+              borderRadius: 2,
+              backgroundColor: c.line,
+              marginTop: 10,
+            }}
+          />
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              paddingHorizontal: 20,
+              paddingVertical: 12,
+            }}
+          >
+            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 18, color: c.ink }}>
+              Родной язык
+            </Text>
+            <Pressable
+              onPress={onClose}
+              accessibilityRole="button"
+              accessibilityLabel="Закрыть"
+              hitSlop={8}
+              style={({ pressed }) => ({
+                width: 32,
+                height: 32,
+                borderRadius: 16,
+                backgroundColor: c.brandSoft,
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: pressed ? 0.6 : 1,
+              })}
+            >
+              <Ionicons name="close" size={18} color={c.brandD} />
+            </Pressable>
+          </View>
+          <ScrollView contentContainerStyle={{ paddingHorizontal: 12, paddingBottom: 8 }}>
+            {NATIVE_LANGUAGES.map((l) => {
+              const active = l.code === value;
+              return (
+                <Pressable
+                  key={l.code}
+                  onPress={() => onSelect(l.code)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: active }}
+                  style={({ pressed }) => ({
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 12,
+                    minHeight: 54,
+                    paddingHorizontal: 12,
+                    borderRadius: 12,
+                    backgroundColor: pressed || active ? c.brandSoft : "transparent",
+                  })}
+                >
+                  <Text style={{ fontSize: 24 }}>{l.flag}</Text>
+                  <Text
+                    style={{
+                      flex: 1,
+                      fontFamily: active ? "Nunito_700Bold" : "Inter_400Regular",
+                      fontSize: 16,
+                      color: c.ink,
+                    }}
+                  >
+                    {l.native}
+                  </Text>
+                  {active && <Ionicons name="checkmark-circle" size={22} color={c.brand} />}
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+/* ---------- Плавное появление шага (уважает reduced motion) ---------- */
+
+function useReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    AccessibilityInfo.isReduceMotionEnabled?.()
+      .then((v) => {
+        if (alive) setReduced(!!v);
+      })
+      .catch(() => {});
+    const sub = AccessibilityInfo.addEventListener?.("reduceMotionChanged", (v) =>
+      setReduced(!!v)
+    );
+    return () => {
+      alive = false;
+      sub?.remove?.();
+    };
+  }, []);
+  return reduced;
+}
+
+function StepFade({ children }: { children: React.ReactNode }) {
+  const reduced = useReducedMotion();
+  const anim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (reduced) {
+      anim.setValue(1);
+      return;
+    }
+    Animated.timing(anim, { toValue: 1, duration: 220, useNativeDriver: true }).start();
+  }, [anim, reduced]);
+  return (
+    <Animated.View
+      style={{
+        opacity: anim,
+        transform: [
+          { translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [10, 0] }) },
+        ],
+      }}
+    >
+      {children}
+    </Animated.View>
   );
 }
 
