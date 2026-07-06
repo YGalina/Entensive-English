@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { usePrefs } from "@ie/core/prefs";
@@ -12,6 +13,7 @@ import { Breton } from "@/components/breton";
 export default function ProfileScreen() {
   const { c, radius, mode } = useMarina();
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const prefs = usePrefs();
   const time = useTimeStats();
   const [speaking, setSpeaking] = useState(false);
@@ -102,9 +104,34 @@ export default function ProfileScreen() {
         </Text>
       </Pressable>
 
+      <Pressable
+        onPress={() => {
+          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          router.push("/onboarding");
+        }}
+        accessibilityRole="button"
+        style={({ pressed }) => ({
+          minHeight: 52,
+          borderRadius: 16,
+          borderWidth: 1,
+          borderColor: c.line,
+          backgroundColor: c.surface,
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "row",
+          gap: 8,
+          transform: [{ scale: pressed ? 0.98 : 1 }],
+        })}
+      >
+        <Ionicons name="options" size={18} color={c.brand} />
+        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.brand }}>
+          Пройти настройку заново
+        </Text>
+      </Pressable>
+
       <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted }}>
-        Настройка под тебя (язык, цель, уровень) и вход по волшебной ссылке появятся в
-        следующем шаге мобильной версии. Полный кабинет — в веб-версии.
+        Вход по волшебной ссылке и облачный синк прогресса появятся в следующем шаге.
+        Полный кабинет — в веб-версии.
       </Text>
     </ScrollView>
   );

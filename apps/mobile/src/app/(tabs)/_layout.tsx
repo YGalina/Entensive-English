@@ -1,6 +1,7 @@
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import type { ColorValue } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { usePrefs } from "@ie/core/prefs";
 import { useMarina } from "@/theme";
 
 // Мобильная навигация: 5 табов (не 8, как на web) — рецептивное ядро v1.
@@ -16,6 +17,12 @@ function icon(name: IconName) {
 
 export default function TabsLayout() {
   const { c, sk } = useMarina();
+  const prefs = usePrefs();
+
+  // Первый вход: настроим под неё, прежде чем показывать план дня.
+  // Хранилище синхронное (kv-store), поэтому мигания «таб → онбординг» нет.
+  if (!prefs) return <Redirect href="/onboarding" />;
+
   return (
     <Tabs
       screenOptions={{
