@@ -10,6 +10,7 @@ import { useStreak } from "@ie/core/timelog";
 import { useOutcome } from "@ie/core/outcome";
 import { useWpmStats } from "@ie/core/wpm";
 import { usePrefs } from "@ie/core/prefs";
+import { useT } from "@/lib/i18n";
 import { useMarina, skillTone } from "@/theme";
 import { Breton } from "@/components/breton";
 
@@ -29,6 +30,7 @@ const STEP_ROUTE: Record<string, string> = {
 };
 
 const MONTHS_RU = ["январю","февралю","марту","апрелю","маю","июню","июлю","августу","сентябрю","октябрю","ноябрю","декабрю"];
+const MONTHS_EN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
 export default function TodayScreen() {
   const { c, sk, radius, mode } = useMarina();
@@ -36,6 +38,8 @@ export default function TodayScreen() {
   const router = useRouter();
   const plan = useDayPlan();
   const streak = useStreak();
+  const { t, lang } = useT();
+  const L = lang;
   const prefs = usePrefs();
   const outcome = useOutcome();
   const wpm = useWpmStats();
@@ -61,11 +65,7 @@ export default function TodayScreen() {
       router.push(route as never);
       return;
     }
-    Alert.alert(
-      title,
-      "Этот шаг скоро появится в мобильной версии. Сейчас он ждёт тебя в веб-версии — а здесь уже можно смотреть дорожку дня.",
-      [{ text: "Хорошо", style: "default" }]
-    );
+    Alert.alert(title, t.today.soonBody, [{ text: t.today.ok, style: "default" }]);
   }
 
   // Инсайт: темп → дата уровня → что осталось сегодня. Объясняем, не стыдим.
@@ -73,16 +73,15 @@ export default function TodayScreen() {
     const parts: string[] = [];
     if (outcome.paceMinPerDay >= 5 && outcome.levelEta) {
       const d = outcome.levelEta;
-      parts.push(
-        `Твой темп за неделю — ${outcome.paceMinPerDay} мин/день. Это дорога к ${outcome.levelNext.toUpperCase()} к ${MONTHS_RU[d.getMonth()]} ${d.getFullYear()}.`
-      );
+      const when = L === "en" ? `${MONTHS_EN[d.getMonth()]} ${d.getFullYear()}` : `${MONTHS_RU[d.getMonth()]} ${d.getFullYear()}`;
+      parts.push(t.today.insightPace(outcome.paceMinPerDay, outcome.levelNext.toUpperCase(), when));
     } else {
-      parts.push(`Прогноз уровня появится после первых дней практики — план на сегодня ${dailyGoal} мин.`);
+      parts.push(t.today.insightNoPace(dailyGoal));
     }
     if (leftMin > 0 && current) {
-      parts.push(`Сегодня осталось ${leftMin} мин — лучший шаг: ${current.ru.title}.`);
+      parts.push(t.today.insightLeft(leftMin, current[L].title));
     } else if (leftMin === 0) {
-      parts.push("План на сегодня собран. Вечерний круг перед сном закрепит день.");
+      parts.push(t.today.insightDone);
     }
     return parts.join(" ");
   })();
@@ -101,12 +100,12 @@ export default function TodayScreen() {
       <View style={{ gap: 6 }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
           <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.ink }}>
-            Сегодня
+            {t.today.title}
           </Text>
           {streak > 0 && (
             <View
               style={{ flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 16, backgroundColor: c.sun }}
-              accessibilityLabel={`Серия: ${streak} дней подряд`}
+              accessibilityLabel={t.today.streak(streak)}
             >
               <Ionicons name="flame" size={14} color="#5a3a12" />
               <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: "#5a3a12", fontVariant: ["tabular-nums"] }}>
@@ -124,20 +123,20 @@ export default function TodayScreen() {
         <DayRing pct={ringPct} doneMin={plan.todayMin} goalMin={dailyGoal} />
         <View style={{ flex: 1, gap: 10 }}>
           <MetricCard
-            label="скорость чтения"
+            label={t.today.wpmLabel}
             value={wpm.last != null ? String(wpm.last) : "—"}
             unit="WPM"
             pct={wpm.last != null ? Math.min(1, wpm.last / 240) : 0}
             barColor={c.brand}
-            onPress={() => openStep("reading", "Чтение")}
+            onPress={() => openStep("reading", t.today.wpmLabel)}
           />
           <MetricCard
-            label="слов в узнавании"
+            label={t.today.wordsLabel}
             value={String(outcome.wordsLearned)}
             unit={`/ ${outcome.wordsTarget}`}
             pct={Math.min(1, outcome.wordsLearned / outcome.wordsTarget)}
             barColor={c.accent}
-            onPress={() => openStep("session", "Сеанс дня")}
+            onPress={() => openStep("session", t.today.wordsLabel)}
           />
         </View>
       </View>
@@ -158,19 +157,19 @@ export default function TodayScreen() {
         style={{ borderRadius: radius.card, padding: 18, gap: 8 }}
       >
         <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11, letterSpacing: 0.6, textTransform: "uppercase", color: "#bfe0dd" }}>
-          {current ? `следующий шаг · ${current.goalMin > 0 ? `${current.goalMin} мин` : "повторы"}` : "день собран"}
+          {current ? (current.goalMin > 0 ? t.today.nextStep(current.goalMin) : t.today.nextStepReviews) : t.today.dayDone}
         </Text>
         <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 23, color: "#ffffff" }}>
-          {current ? current.ru.title : "Всё на сегодня сделано ✔"}
+          {current ? current[L].title : t.today.allDone}
         </Text>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13.5, color: "#cfe8e6" }}>
-          {current ? current.ru.note : "Мозг доучит ночью — вечерний круг и сон делают своё."}
+          {current ? current[L].note : t.today.allDoneNote}
         </Text>
         {current && (
           <Pressable
-            onPress={() => openStep(current.id, current.ru.title)}
+            onPress={() => openStep(current.id, current[L].title)}
             accessibilityRole="button"
-            accessibilityLabel={`Начать: ${current.ru.title}`}
+            accessibilityLabel={`${t.today.start}: ${current[L].title}`}
             style={({ pressed }) => ({
               marginTop: 8,
               minHeight: 48,
@@ -184,7 +183,7 @@ export default function TodayScreen() {
             })}
           >
             <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: "#ffffff" }}>
-              Начать
+              {t.today.start}
             </Text>
             <Ionicons name="arrow-forward" size={18} color="#ffffff" />
           </Pressable>
@@ -198,7 +197,7 @@ export default function TodayScreen() {
           router.push("/three" as never);
         }}
         accessibilityRole="button"
-        accessibilityLabel="Три минутки: дыхание, две фразы, установка"
+        accessibilityLabel={t.today.threeA11y}
         style={({ pressed }) => ({
           flexDirection: "row",
           alignItems: "center",
@@ -215,10 +214,10 @@ export default function TodayScreen() {
         <Ionicons name="timer" size={20} color={sk.video} />
         <View style={{ flex: 1, paddingVertical: 10 }}>
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink }}>
-            Есть 3 минуты?
+            {t.today.three}
           </Text>
           <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
-            дыхание под музыку → две фразы вслух → установка
+            {t.today.threeNote}
           </Text>
         </View>
         <Ionicons name="chevron-forward" size={16} color={c.muted} />
@@ -227,7 +226,7 @@ export default function TodayScreen() {
       {/* Дорожка дня: компактные этапы-точки */}
       <View style={{ gap: 10 }}>
         <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
-          Дорожка дня
+          {t.today.trail}
         </Text>
         <View
           style={{
@@ -247,9 +246,9 @@ export default function TodayScreen() {
             return (
               <Pressable
                 key={s.id}
-                onPress={() => openStep(s.id, s.ru.title)}
+                onPress={() => openStep(s.id, s[L].title)}
                 accessibilityRole="button"
-                accessibilityLabel={`${s.ru.title}: ${s.done ? "готово" : isCurrent ? "текущий шаг" : `${s.pct}%`}`}
+                accessibilityLabel={`${s[L].title}: ${s.done ? t.today.stepDone : isCurrent ? t.today.stepCurrent : `${s.pct}%`}`}
                 hitSlop={6}
                 style={({ pressed }) => ({ alignItems: "center", gap: 5, flex: 1, opacity: pressed ? 0.6 : 1 })}
               >
@@ -275,7 +274,7 @@ export default function TodayScreen() {
                   numberOfLines={1}
                   style={{ fontFamily: "Inter_600SemiBold", fontSize: 9.5, color: s.done || isCurrent ? c.ink : c.muted }}
                 >
-                  {s.ru.title.split(" ")[0]}
+                  {s[L].title.split(" ")[0]}
                 </Text>
               </Pressable>
             );
@@ -290,6 +289,7 @@ export default function TodayScreen() {
 
 function DayRing({ pct, doneMin, goalMin }: { pct: number; doneMin: number; goalMin: number }) {
   const { c } = useMarina();
+  const { t } = useT();
   const size = 128;
   const stroke = 12;
   const r = (size - stroke) / 2;
@@ -299,7 +299,7 @@ function DayRing({ pct, doneMin, goalMin }: { pct: number; doneMin: number; goal
   return (
     <View
       style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}
-      accessibilityLabel={`План дня: ${doneMin} из ${goalMin} минут`}
+      accessibilityLabel={t.today.ringA11y(doneMin, goalMin)}
     >
       <Svg width={size} height={size}>
         <Circle cx={cx} cy={cx} r={r} stroke={c.brandSoft} strokeWidth={stroke} fill="none" />
@@ -321,7 +321,7 @@ function DayRing({ pct, doneMin, goalMin }: { pct: number; doneMin: number; goal
           {Math.round(pct * 100)}%
         </Text>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 10.5, color: c.muted, fontVariant: ["tabular-nums"] }}>
-          {doneMin} из {goalMin} мин
+          {t.today.ringOf(doneMin, goalMin)}
         </Text>
       </View>
     </View>

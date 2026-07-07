@@ -9,6 +9,7 @@ import { useTimeStats, useStreak } from "@ie/core/timelog";
 import { useOutcome, HOURS_PER_LEVEL } from "@ie/core/outcome";
 import { GOALS, LEVELS } from "@ie/core/data/catalog";
 import { speakEnglish } from "@ie/media/speech";
+import { useT } from "@/lib/i18n";
 import { useMarina, useThemePref, setThemePref, type ThemePref } from "@/theme";
 import { Breton } from "@/components/breton";
 
@@ -16,8 +17,11 @@ import { Breton } from "@/components/breton";
 // Тон — по методу: цифры честные (из реальной практики), пропуски не стыдим.
 
 const MONTHS_RU = ["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
-function fmtDate(d: Date): string {
-  return `${d.getDate()} ${MONTHS_RU[d.getMonth()]} ${d.getFullYear()}`;
+const MONTHS_EN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function fmtDate(d: Date, en = false): string {
+  return en
+    ? `${MONTHS_EN[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`
+    : `${d.getDate()} ${MONTHS_RU[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 /** Вехи постоянства: мягкие, без «сгоревших» состояний. */
@@ -32,6 +36,8 @@ export default function ProfileScreen() {
   const time = useTimeStats();
   const streak = useStreak();
   const outcome = useOutcome();
+  const { t, lang } = useT();
+  const en = lang === "en";
   const [speaking, setSpeaking] = useState(false);
 
   function tap() {
@@ -47,8 +53,9 @@ export default function ProfileScreen() {
     });
   }
 
-  const goalTitle = GOALS.find((g) => g.id === prefs?.goal)?.title ?? "после настройки";
-  const levelTitle = prefs?.level ? prefs.level.toUpperCase() : "после настройки";
+  const goalObj = GOALS.find((g) => g.id === prefs?.goal);
+  const goalTitle = goalObj ? (en ? goalObj.titleEn : goalObj.title) : t.profile.afterSetup;
+  const levelTitle = prefs?.level ? prefs.level.toUpperCase() : t.profile.afterSetup;
 
   // «Если заниматься X минут в день» — месяцы до следующего уровня.
   const monthsAt = (minPerDay: number) =>
@@ -67,24 +74,24 @@ export default function ProfileScreen() {
       }}
     >
       <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.ink }}>
-        Профиль
+        {t.profile.title}
       </Text>
       <Breton red />
 
       {/* ---------- Я в программе ---------- */}
-      <Card title="Мой курс">
-        <Row first label="Уровень сейчас" value={levelTitle} />
-        <Row label="Цель" value={goalTitle} />
+      <Card title={t.profile.myCourse}>
+        <Row first label={t.profile.levelNow} value={levelTitle} />
+        <Row label={t.profile.goal} value={goalTitle} />
         <Row
-          label="План на день"
-          value={prefs?.dailyGoalMin ? `${prefs.dailyGoalMin} мин` : "в настройке"}
+          label={t.profile.dailyPlan}
+          value={prefs?.dailyGoalMin ? t.profile.dailyPlanVal(prefs.dailyGoalMin) : t.profile.inSetup}
         />
-        <Row label="Часов практики" value={outcome.hoursDone.toFixed(1)} />
-        <Row label="Дней с практикой" value={String(outcome.daysPracticed)} />
+        <Row label={t.profile.hours} value={outcome.hoursDone.toFixed(1)} />
+        <Row label={t.profile.days} value={String(outcome.daysPracticed)} />
       </Card>
 
       {/* ---------- Программа и ожидаемый результат ---------- */}
-      <Card title="Программа и горизонт">
+      <Card title={t.profile.program}>
         {/* Прогресс к уровню — крупно, в языке Welltory */}
         <View style={{ paddingVertical: 14, gap: 8 }}>
           <View style={{ flexDirection: "row", alignItems: "baseline", justifyContent: "space-between" }}>
@@ -99,35 +106,32 @@ export default function ProfileScreen() {
             <View style={{ width: `${outcome.pct}%`, height: 8, borderRadius: 4, backgroundColor: c.accent }} />
           </View>
           <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
-            {outcome.hoursDone.toFixed(0)} из {outcome.hoursGoal} ч направленной практики (стандарт
-            Cambridge ≈{HOURS_PER_LEVEL} ч/уровень). Прогноз — из твоего реального темпа.
+            {t.profile.progressCaption(Number(outcome.hoursDone.toFixed(0)), outcome.hoursGoal, HOURS_PER_LEVEL)}
           </Text>
         </View>
         <Row
-          label="Темп за 7 дней"
-          value={outcome.paceMinPerDay > 0 ? `${outcome.paceMinPerDay} мин/день` : "ещё копится"}
+          label={t.profile.pace7}
+          value={outcome.paceMinPerDay > 0 ? t.profile.paceVal(outcome.paceMinPerDay) : t.profile.paceGathering}
         />
         <Row
-          label="Уровень — прогноз"
-          value={outcome.levelEta ? fmtDate(outcome.levelEta) : "нужен темп от 5 мин/день"}
+          label={t.profile.forecast}
+          value={outcome.levelEta ? fmtDate(outcome.levelEta, en) : t.profile.needPace}
         />
         <Row
-          label="Слов в узнавании"
-          value={`${outcome.wordsLearned} · цель ${outcome.wordsTarget}`}
+          label={t.profile.wordsRecog}
+          value={t.profile.wordsVal(outcome.wordsLearned, outcome.wordsTarget)}
         />
         <Row
-          label="Речь всплывёт сама"
-          value={outcome.speechEta ? `≈ ${fmtDate(outcome.speechEta)}` : "с первого дня практики"}
+          label={t.profile.speechSelf}
+          value={outcome.speechEta ? `≈ ${fmtDate(outcome.speechEta, en)}` : t.profile.speechFrom}
         />
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, paddingVertical: 10 }}>
-          Ориентир: 30 мин в день ≈ {monthsAt(30)} мес на уровень · 60 мин ≈ {monthsAt(60)} мес ·
-          120 мин ≈ {monthsAt(120)} мес. Говорение не форсируем: по Крашену оно приходит само
-          после ~6 месяцев хорошего входа.
+          {t.profile.benchmarks(monthsAt(30), monthsAt(60), monthsAt(120))}
         </Text>
       </Card>
 
       {/* ---------- Постоянство (мягкие ачивки) ---------- */}
-      <Card title="Постоянство">
+      <Card title={t.profile.consistency}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 12 }}>
           <View
             style={{
@@ -143,10 +147,10 @@ export default function ProfileScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 18, color: c.ink }}>
-              {streak > 0 ? `${streak} ${plural(streak, "день", "дня", "дней")} подряд` : "серия начнётся сегодня"}
+              {streak > 0 ? t.profile.streakN(streak, plural(streak, ...t.profile.dayWords)) : t.profile.streakStart}
             </Text>
             <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
-              Английский любит регулярность больше, чем подвиги.
+              {t.profile.regular}
             </Text>
           </View>
         </View>
@@ -170,22 +174,21 @@ export default function ProfileScreen() {
               >
                 <Ionicons name={got ? "star" : "star-outline"} size={13} color={got ? c.sun : c.muted} />
                 <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: got ? c.ink : c.muted }}>
-                  {m} {plural(m, "день", "дня", "дней")}
+                  {m} {plural(m, ...t.profile.dayWords)}
                 </Text>
               </View>
             );
           })}
         </View>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, paddingBottom: 12 }}>
-          Пропустила день — ничего не сгорает и никто не ругает. Просто вернись: следующий
-          маленький шаг важнее идеальной серии.
+          {t.profile.noBurn}
         </Text>
       </Card>
 
       {/* ---------- Интерфейс ---------- */}
-      <Card title="Интерфейс">
+      <Card title={t.profile.ui}>
         <ChoiceRow
-          label="Язык приложения"
+          label={t.profile.appLang}
           options={[
             { id: "ru", title: "Русский" },
             { id: "en", title: "English" },
@@ -197,15 +200,14 @@ export default function ProfileScreen() {
           }}
         />
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, lineHeight: 16, color: c.muted, paddingBottom: 8 }}>
-          English пока переключает подписи табов; остальные экраны переведём следующим шагом.
-          Язык переводов слов не меняется — он задан родным языком.
+          {t.profile.langNote}
         </Text>
         <ChoiceRow
-          label="Тема"
+          label={t.profile.theme}
           options={[
-            { id: "system", title: "Системная" },
-            { id: "light", title: "Светлая" },
-            { id: "dark", title: "Тёмная" },
+            { id: "system", title: t.profile.themeSystem },
+            { id: "light", title: t.profile.themeLight },
+            { id: "dark", title: t.profile.themeDark },
           ]}
           value={themePref}
           onPick={(id) => {
@@ -213,7 +215,7 @@ export default function ProfileScreen() {
             setThemePref(id as ThemePref);
           }}
         />
-        <Row label="Сейчас" value={mode === "dark" ? "полночь над морем" : "хрустящий белый"} />
+        <Row label={t.profile.themeNow} value={mode === "dark" ? t.profile.themeNowDark : t.profile.themeNowLight} />
       </Card>
 
       {/* ---------- Действия ---------- */}
@@ -221,7 +223,7 @@ export default function ProfileScreen() {
         onPress={testVoice}
         disabled={speaking}
         accessibilityRole="button"
-        accessibilityLabel="Проверить английский голос"
+        accessibilityLabel={t.profile.testVoiceA11y}
         style={({ pressed }) => ({
           minHeight: 52,
           borderRadius: 16,
@@ -236,7 +238,7 @@ export default function ProfileScreen() {
       >
         <Ionicons name="volume-high" size={20} color="#ffffff" />
         <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: "#ffffff" }}>
-          {speaking ? "Говорю…" : "Проверить голос"}
+          {speaking ? t.profile.speaking : t.profile.testVoice}
         </Text>
       </Pressable>
 
@@ -261,13 +263,12 @@ export default function ProfileScreen() {
       >
         <Ionicons name="options" size={18} color={c.brand} />
         <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.brand }}>
-          Пройти настройку заново
+          {t.profile.redo}
         </Text>
       </Pressable>
 
       <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted }}>
-        Вход по волшебной ссылке и облачный синк прогресса появятся в следующем шаге.
-        Полный кабинет — в веб-версии.
+        {t.profile.foot}
       </Text>
     </ScrollView>
   );
