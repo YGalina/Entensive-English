@@ -29,6 +29,12 @@ export const LIBRARY: Book[] = [
   { id: "happy-prince", title: "The Happy Prince and Other Tales", author: "Oscar Wilde", genre: "fantasy", level: "b1", kind: "pd", url: G(902) },
   { id: "grimm", title: "Grimms' Fairy Tales", author: "Brothers Grimm", genre: "fantasy", level: "a2", kind: "pd", url: G(2591) },
   { id: "three-men", title: "Three Men in a Boat", author: "Jerome K. Jerome", genre: "humor", level: "b2", kind: "pd", url: G(308) },
+  { id: "andersen", title: "Andersen's Fairy Tales", author: "Hans Christian Andersen", genre: "fantasy", level: "a2", kind: "pd", url: G(1597) },
+  { id: "tom-sawyer", title: "The Adventures of Tom Sawyer", author: "Mark Twain", genre: "humor", level: "b1", kind: "pd", url: G(74) },
+  { id: "pride", title: "Pride and Prejudice", author: "Jane Austen", genre: "classic", level: "b2", kind: "pd", url: G(1342) },
+  { id: "emma", title: "Emma", author: "Jane Austen", genre: "classic", level: "b2", kind: "pd", url: G(158) },
+  { id: "around-world", title: "Around the World in Eighty Days", author: "Jules Verne", genre: "classic", level: "b1", kind: "pd", url: G(103) },
+  { id: "meditations", title: "Meditations", author: "Marcus Aurelius", genre: "growth", level: "c1", kind: "pd", url: G(2680) },
 
   // ——— Под защитой авторских прав (ссылка + «своя копия») ———
   { id: "hobbit", title: "The Hobbit", author: "J. R. R. Tolkien", genre: "fantasy", level: "b2", kind: "protected", url: Q("The Hobbit Tolkien") },

@@ -10,6 +10,8 @@ export type GutenbergBook = {
   author: string;
   level: Book["level"];
   genre: GutenbergGenre;
+  /** Интересы-смыслы (id из catalog.INTERESTS) — для полки и подбора под вкусы. */
+  interests: string[];
 };
 
 export type GutenbergChunk = {
@@ -30,18 +32,48 @@ export type GutenbergResponse = {
 };
 
 export const GUTENBERG_BOOKS: GutenbergBook[] = [
-  { bookId: "alice", gutenbergId: 11, title: "Alice's Adventures in Wonderland", author: "Lewis Carroll", level: "b1", genre: "fantasy" },
-  { bookId: "looking-glass", gutenbergId: 12, title: "Through the Looking-Glass", author: "Lewis Carroll", level: "b1", genre: "fantasy" },
-  { bookId: "oz", gutenbergId: 55, title: "The Wonderful Wizard of Oz", author: "L. Frank Baum", level: "a2", genre: "fantasy" },
-  { bookId: "willows", gutenbergId: 289, title: "The Wind in the Willows", author: "Kenneth Grahame", level: "b2", genre: "fantasy" },
-  { bookId: "peter-pan", gutenbergId: 16, title: "Peter Pan", author: "J. M. Barrie", level: "b1", genre: "fantasy" },
-  { bookId: "happy-prince", gutenbergId: 902, title: "The Happy Prince and Other Tales", author: "Oscar Wilde", level: "b1", genre: "fantasy" },
-  { bookId: "grimm", gutenbergId: 2591, title: "Grimms' Fairy Tales", author: "Brothers Grimm", level: "a2", genre: "fantasy" },
-  { bookId: "three-men", gutenbergId: 308, title: "Three Men in a Boat", author: "Jerome K. Jerome", level: "b2", genre: "humor" },
+  // ——— Сказки и красивые истории ———
+  { bookId: "alice", gutenbergId: 11, title: "Alice's Adventures in Wonderland", author: "Lewis Carroll", level: "b1", genre: "fantasy", interests: ["stories"] },
+  { bookId: "looking-glass", gutenbergId: 12, title: "Through the Looking-Glass", author: "Lewis Carroll", level: "b1", genre: "fantasy", interests: ["stories"] },
+  { bookId: "oz", gutenbergId: 55, title: "The Wonderful Wizard of Oz", author: "L. Frank Baum", level: "a2", genre: "fantasy", interests: ["stories", "parenting"] },
+  { bookId: "willows", gutenbergId: 289, title: "The Wind in the Willows", author: "Kenneth Grahame", level: "b2", genre: "fantasy", interests: ["stories", "parenting"] },
+  { bookId: "peter-pan", gutenbergId: 16, title: "Peter Pan", author: "J. M. Barrie", level: "b1", genre: "fantasy", interests: ["stories", "parenting"] },
+  { bookId: "happy-prince", gutenbergId: 902, title: "The Happy Prince and Other Tales", author: "Oscar Wilde", level: "b1", genre: "fantasy", interests: ["stories", "spirit"] },
+  { bookId: "grimm", gutenbergId: 2591, title: "Grimms' Fairy Tales", author: "Brothers Grimm", level: "a2", genre: "fantasy", interests: ["stories", "parenting"] },
+  { bookId: "andersen", gutenbergId: 1597, title: "Andersen's Fairy Tales", author: "Hans Christian Andersen", level: "a2", genre: "fantasy", interests: ["stories", "parenting"] },
+  // ——— Английский юмор ———
+  { bookId: "three-men", gutenbergId: 308, title: "Three Men in a Boat", author: "Jerome K. Jerome", level: "b2", genre: "humor", interests: ["humor", "travel"] },
+  { bookId: "tom-sawyer", gutenbergId: 74, title: "The Adventures of Tom Sawyer", author: "Mark Twain", level: "b1", genre: "humor", interests: ["humor", "stories"] },
+  // ——— Люди и отношения ———
+  { bookId: "pride", gutenbergId: 1342, title: "Pride and Prejudice", author: "Jane Austen", level: "b2", genre: "classic", interests: ["people", "stories"] },
+  { bookId: "emma", gutenbergId: 158, title: "Emma", author: "Jane Austen", level: "b2", genre: "classic", interests: ["people"] },
+  // ——— Путешествия ———
+  { bookId: "around-world", gutenbergId: 103, title: "Around the World in Eighty Days", author: "Jules Verne", level: "b1", genre: "classic", interests: ["travel", "stories"] },
+  // ——— Духовный рост и мышление ———
+  { bookId: "meditations", gutenbergId: 2680, title: "Meditations", author: "Marcus Aurelius", level: "c1", genre: "classic", interests: ["spirit", "psychology"] },
 ];
 
 export function gutenbergBookById(bookId: string): GutenbergBook | undefined {
   return GUTENBERG_BOOKS.find((b) => b.bookId === bookId);
+}
+
+const LEVEL_ORDER = ["a1", "a2", "b1", "b2", "c1", "c2"];
+
+/**
+ * Книги для читалки, отсортированные под ученицу: совпадение интересов важнее,
+ * затем близость к её уровню. Полный список (ничего не прячем) — просто порядок.
+ */
+export function booksForReader(interests: string[], level?: string): GutenbergBook[] {
+  const want = new Set(interests);
+  const li = level ? LEVEL_ORDER.indexOf(level.toLowerCase()) : -1;
+  return [...GUTENBERG_BOOKS]
+    .map((b) => {
+      const match = b.interests.filter((i) => want.has(i)).length;
+      const near = li >= 0 ? -Math.abs(LEVEL_ORDER.indexOf(b.level) - li) : 0;
+      return { b, score: match * 10 + near };
+    })
+    .sort((a, z) => z.score - a.score)
+    .map((x) => x.b);
 }
 
 export function gutenbergPageUrl(gutenbergId: number): string {
