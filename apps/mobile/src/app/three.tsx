@@ -10,6 +10,7 @@ import { useActivityTimer } from "@ie/core/timelog";
 import { speakEnglish } from "@ie/media/speech";
 import { useCalmMusic } from "@/lib/calm-music";
 import { BotanicalFrame } from "@/components/botanical";
+import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
 
 // «3-минутка» — супер-короткий ритуал для метро/очереди/перед сном:
@@ -42,6 +43,7 @@ export default function ThreeMinutes() {
   const [stage, setStage] = useState<Stage>("breath");
   const [done, setDone] = useState(false);
   const music = useCalmMusic();
+  const { t } = useT();
 
   // Короткая практика целиком идёт в копилку shadowing-минут дня.
   useActivityTimer(done ? null : "shadowing");
@@ -122,7 +124,7 @@ export default function ThreeMinutes() {
         <Pressable
           onPress={close}
           accessibilityRole="button"
-          accessibilityLabel="Закрыть"
+          accessibilityLabel={t.threeX.close}
           hitSlop={10}
           style={({ pressed }) => ({
             width: 36,
@@ -178,6 +180,7 @@ export default function ThreeMinutes() {
 
 function Breath({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) {
   const { c, sk } = useMarina();
+  const { t } = useT();
   const scale = useRef(new Animated.Value(1)).current;
   const [phase, setPhase] = useState<"in" | "hold" | "out">("in");
   const [cycle, setCycle] = useState(1);
@@ -225,12 +228,12 @@ function Breath({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const label = phase === "in" ? "Вдох…" : phase === "hold" ? "Задержи…" : "Выдох…";
+  const label = phase === "in" ? t.sessionX.inhale : phase === "hold" ? t.sessionX.hold : t.sessionX.exhale;
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 28 }}>
       <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.muted }}>
-        круг {cycle} из {BREATH_CYCLES}
+        {t.threeX.circleOf(cycle, BREATH_CYCLES)}
       </Text>
       <Animated.View
         style={{
@@ -259,11 +262,11 @@ function Breath({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) 
           maxWidth: 280,
         }}
       >
-        Дыши вместе с кругом: вдох 4 — пауза 2 — выдох 6. Плечи вниз, лицо мягкое.
+        {t.threeX.breathe}
       </Text>
       <Pressable onPress={onSkip} accessibilityRole="button" style={{ minHeight: 44, justifyContent: "center" }}>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
-          пропустить →
+          {t.common.skip}
         </Text>
       </Pressable>
     </View>
@@ -274,6 +277,7 @@ function Breath({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) 
 
 function Bridge({ onDone }: { onDone: () => void }) {
   const { c, sk } = useMarina();
+  const { t } = useT();
   const anim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(anim, { toValue: 1, duration: 700, useNativeDriver: true }).start();
@@ -294,7 +298,7 @@ function Bridge({ onDone }: { onDone: () => void }) {
           maxWidth: 300,
         }}
       >
-        Хорошо. Теперь — две живые фразы.
+        {t.threeX.bridgeTitle}
       </Text>
       <Text
         style={{
@@ -306,7 +310,7 @@ function Bridge({ onDone }: { onDone: () => void }) {
           maxWidth: 300,
         }}
       >
-        Просто слушай… и повторяй вслух в свою паузу. Музыка останется с тобой.
+        {t.threeX.bridgeBody}
       </Text>
     </Animated.View>
   );
@@ -328,8 +332,9 @@ function Phrases({
   onSkip: () => void;
 }) {
   const { c, sk, radius } = useMarina();
+  const { t } = useT();
   const [idx, setIdx] = useState(0);
-  const [hint, setHint] = useState("Слушай…");
+  const [hint, setHint] = useState("");
   const phrase = phrases[idx];
 
   useEffect(() => {
@@ -338,15 +343,15 @@ function Phrases({
     const guard = (fn: () => void) => () => {
       if (session.current === my) fn();
     };
-    setHint("Слушай…");
+    setHint(t.threeX.listenHint);
     speakEnglish(phrase.en, {
       rate: 0.95,
       interrupt: true,
       onEnd: guard(() => {
-        setHint("Теперь повтори вслух — в свою паузу");
+        setHint(t.threeX.repeatHint);
         timer.current = setTimeout(
           guard(() => {
-            setHint("Вместе, чуть медленнее");
+            setHint(t.threeX.togetherHint);
             speakEnglish(phrase.en, {
               rate: 0.7,
               interrupt: true,
@@ -373,7 +378,7 @@ function Phrases({
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 20 }}>
       <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.muted }}>
-        фраза {idx + 1} из {phrases.length}
+        {t.threeX.phraseOf(idx + 1, phrases.length)}
       </Text>
       <View
         style={{
@@ -401,7 +406,7 @@ function Phrases({
       </View>
       <Pressable onPress={onSkip} accessibilityRole="button" style={{ minHeight: 44, justifyContent: "center" }}>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
-          пропустить →
+          {t.common.skip}
         </Text>
       </Pressable>
     </View>
@@ -412,6 +417,7 @@ function Phrases({
 
 function Affirm({ text, onDone }: { text: { ru: string; en: string }; onDone: () => void }) {
   const { c, radius } = useMarina();
+  const { t } = useT();
   useEffect(() => {
     const t = setTimeout(onDone, 9000);
     return () => clearTimeout(t);
@@ -438,11 +444,11 @@ function Affirm({ text, onDone }: { text: { ru: string; en: string }; onDone: ()
         </Text>
       </View>
       <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
-        Просто побудь с этой мыслью…
+        {t.threeX.stay}
       </Text>
       <Pressable onPress={onDone} accessibilityRole="button" style={{ minHeight: 44, justifyContent: "center" }}>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
-          дальше →
+          {t.threeX.further}
         </Text>
       </Pressable>
     </View>
@@ -453,6 +459,7 @@ function Affirm({ text, onDone }: { text: { ru: string; en: string }; onDone: ()
 
 function Finale({ onClose }: { onClose: () => void }) {
   const { c, sk } = useMarina();
+  const { t } = useT();
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 18 }}>
       <View
@@ -468,7 +475,7 @@ function Finale({ onClose }: { onClose: () => void }) {
         <Ionicons name="checkmark" size={30} color={sk.video} />
       </View>
       <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, color: c.ink, textAlign: "center" }}>
-        Три минуты — твои
+        {t.threeX.finTitle}
       </Text>
       <Text
         style={{
@@ -480,7 +487,7 @@ function Finale({ onClose }: { onClose: () => void }) {
           maxWidth: 280,
         }}
       >
-        Маленький шаг сделан, ритуал жив. Английский любит регулярность больше, чем подвиги.
+        {t.threeX.finBody}
       </Text>
       <Pressable
         onPress={onClose}
@@ -496,7 +503,7 @@ function Finale({ onClose }: { onClose: () => void }) {
         })}
       >
         <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
-          Готово
+          {t.common.done}
         </Text>
       </Pressable>
     </View>

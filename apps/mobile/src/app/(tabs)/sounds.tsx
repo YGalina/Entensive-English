@@ -52,7 +52,7 @@ export default function SoundsScreen() {
   const { c, sk, radius } = useMarina();
   const insets = useSafeAreaInsets();
   const focused = useIsFocused();
-  const { t } = useT();
+  const { t, lang } = useT();
 
   const [li, setLi] = useState(0);
   const [pi, setPi] = useState(0);
@@ -198,7 +198,7 @@ export default function SoundsScreen() {
     >
       <View style={{ gap: 4 }}>
         <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.ink }}>
-          Звуки
+          {t.soundsX.title}
         </Text>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
           {t.sounds.intro}
@@ -233,7 +233,7 @@ export default function SoundsScreen() {
                   color: on ? c.onBrand : c.ink,
                 }}
               >
-                {l.title}
+                {lang === "en" ? l.titleEn : l.title}
               </Text>
             </Pressable>
           );
@@ -253,7 +253,7 @@ export default function SoundsScreen() {
       >
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: tone, textTransform: "uppercase", letterSpacing: 0.5 }}>
-            ключевое слово · {phrase.key}
+            {t.soundsX.keyWord} · {phrase.key}
           </Text>
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
             {pi + 1} / {lesson.phrases.length}
@@ -293,14 +293,14 @@ export default function SoundsScreen() {
                     color: on ? (speaking || auto ? c.onBrand : c.brandD) : c.muted,
                   }}
                 >
-                  {STEP_UI[s.id].label}
+                  {t.soundsX.steps[s.id].label}
                 </Text>
               </Pressable>
             );
           })}
         </View>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted }}>
-          {STEP_UI[step.id].hint}
+          {t.soundsX.steps[step.id].hint}
         </Text>
       </View>
 
@@ -308,7 +308,7 @@ export default function SoundsScreen() {
       <Pressable
         onPress={toggleAuto}
         accessibilityRole="button"
-        accessibilityLabel={auto ? "Остановить автопоток" : "Запустить автопоток"}
+        accessibilityLabel={auto ? t.soundsX.autoA11yOff : t.soundsX.autoA11yOn}
         style={({ pressed }) => ({
           minHeight: 56,
           borderRadius: 16,
@@ -324,18 +324,18 @@ export default function SoundsScreen() {
       >
         <Ionicons name={auto ? "stop" : "play"} size={18} color={auto ? c.ink : "#ffffff"} />
         <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: auto ? c.ink : "#ffffff" }}>
-          {auto ? "Стоп" : "Автопоток"}
+          {auto ? t.soundsX.stop : t.soundsX.auto}
         </Text>
       </Pressable>
       <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, textAlign: "center" }}>
-        Все 4 шага сами, с паузами на повтор. Пройди фразу минимум 3 круга.
+        {t.soundsX.autoHint}
       </Text>
 
       <View style={{ flexDirection: "row", gap: 10 }}>
         <Pressable
           onPress={() => pickPhrase(-1)}
           accessibilityRole="button"
-          accessibilityLabel="Предыдущая фраза"
+          accessibilityLabel={t.soundsX.prev}
           style={({ pressed }) => ({
             flex: 1,
             minHeight: 48,
@@ -351,12 +351,12 @@ export default function SoundsScreen() {
           })}
         >
           <Ionicons name="arrow-back" size={16} color={c.muted} />
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>назад</Text>
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>{t.soundsX.prev}</Text>
         </Pressable>
         <Pressable
           onPress={() => pickPhrase(1)}
           accessibilityRole="button"
-          accessibilityLabel="Следующая фраза"
+          accessibilityLabel={t.soundsX.next}
           style={({ pressed }) => ({
             flex: 1,
             minHeight: 48,
@@ -371,7 +371,7 @@ export default function SoundsScreen() {
             transform: [{ scale: pressed ? 0.98 : 1 }],
           })}
         >
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>вперёд</Text>
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>{t.soundsX.next}</Text>
           <Ionicons name="arrow-forward" size={16} color={c.muted} />
         </Pressable>
       </View>

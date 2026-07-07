@@ -16,19 +16,13 @@ import { usePrefs } from "@ie/core/prefs";
 import { useActivityTimer } from "@ie/core/timelog";
 import { recordWpm, useWpmStats } from "@ie/core/wpm";
 import { nowMs } from "@ie/core/now";
+import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
 
 // «Читать» — массив текста потоком, не по слову. Замер WPM — главный
 // измеримый KPI метода. Два уровня: короткие тексты (вшиты, с переводом) и
 // ЦЕЛЫЕ КНИГИ — реальный текст Project Gutenberg главами (загрузка на лету,
 // разбивка — общий с web конвейер @ie/core). Читаем ради удовольствия.
-
-const GENRE: Record<Story["genre"], string> = {
-  fable: "басня",
-  fantasy: "фэнтези",
-  humor: "юмор",
-  classic: "классика",
-};
 
 function wordCount(s: Story): number {
   return s.paras.reduce((a, p) => a + p.en.split(/\s+/).filter(Boolean).length, 0);
@@ -41,6 +35,7 @@ export default function ReadScreen() {
   const tone = sk.reading;
   const wpmStats = useWpmStats();
   const prefs = usePrefs();
+  const { t } = useT();
 
   const books = useMemo(
     () => booksForReader(prefs?.topics ?? [], prefs?.level),
@@ -115,7 +110,7 @@ export default function ReadScreen() {
       if (cs.length === 0) throw new Error("no chunks");
       setChunks(cs);
     } catch {
-      setBookError("Не удалось загрузить книгу. Проверь интернет и попробуй ещё раз.");
+      setBookError("err");
     } finally {
       setLoadingBook(false);
     }
@@ -144,13 +139,13 @@ export default function ReadScreen() {
         <Pressable
           onPress={closeReader}
           accessibilityRole="button"
-          accessibilityLabel={book ? "К главам книги" : "К списку текстов"}
+          accessibilityLabel={book ? t.readX.toChapters : t.readX.toTexts}
           hitSlop={8}
           style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: 6, minHeight: 44, opacity: pressed ? 0.6 : 1 })}
         >
           <Ionicons name="chevron-back" size={18} color={c.muted} />
           <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>
-            {book ? "к главам" : "к текстам"}
+            {book ? t.readX.toChapters : t.readX.toTexts}
           </Text>
         </Pressable>
 
@@ -159,7 +154,7 @@ export default function ReadScreen() {
             {s.title}
           </Text>
           <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
-            {s.author} · {words} слов · {GENRE[s.genre]} · {s.level.toUpperCase()}
+            {s.author} · {words} {t.readX.words} · {t.readX.genres[s.genre]} · {s.level.toUpperCase()}
           </Text>
         </View>
 
@@ -202,7 +197,7 @@ export default function ReadScreen() {
               >
                 <Ionicons name="language" size={16} color={c.brandD} />
                 <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.brandD }}>
-                  {showRu ? "скрыть перевод" : "показать перевод"}
+                  {showRu ? t.readX.hideRu : t.readX.showRu}
                 </Text>
               </Pressable>
             ) : null}
@@ -223,11 +218,11 @@ export default function ReadScreen() {
             >
               <Ionicons name="checkmark" size={18} color="#ffffff" />
               <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
-                Дочитала
+                {t.readX.finished}
               </Text>
             </Pressable>
             <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, textAlign: "center" }}>
-              Читай потоком, не застревая на словах. Жми, когда дочитаешь, — посчитаем скорость.
+              {t.readX.flowHint}
             </Text>
           </>
         ) : (
@@ -238,14 +233,10 @@ export default function ReadScreen() {
             <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 40, color: tone, fontVariant: ["tabular-nums"] }}>
               {resultWpm}
             </Text>
-            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink }}>слов в минуту</Text>
+            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink }}>{t.readX.wpmUnit}</Text>
             <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 20, color: c.muted, textAlign: "center" }}>
-              {resultWpm >= 200
-                ? "Темп носителя — блестяще!"
-                : resultWpm >= 140
-                  ? "Отличный рабочий темп. Скорость растёт с каждым текстом."
-                  : "Хорошее начало. Метод разгонит темп сам — просто читай каждый день."}
-              {wpmStats.best && resultWpm >= wpmStats.best ? " Это твой рекорд 🎉" : ""}
+              {resultWpm >= 200 ? t.readX.praiseHigh : resultWpm >= 140 ? t.readX.praiseMid : t.readX.praiseLow}
+              {wpmStats.best && resultWpm >= wpmStats.best ? t.readX.record : ""}
             </Text>
             <Pressable
               onPress={closeReader}
@@ -253,7 +244,7 @@ export default function ReadScreen() {
               style={({ pressed }) => ({ alignSelf: "stretch", minHeight: 52, borderRadius: 16, backgroundColor: c.accent, alignItems: "center", justifyContent: "center", marginTop: 6, transform: [{ scale: pressed ? 0.98 : 1 }] })}
             >
               <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: "#ffffff" }}>
-                {book ? "Следующая глава" : "Ещё текст"}
+                {book ? t.readX.nextChapter : t.readX.anotherText}
               </Text>
             </Pressable>
           </View>
@@ -272,12 +263,12 @@ export default function ReadScreen() {
         <Pressable
           onPress={closeBook}
           accessibilityRole="button"
-          accessibilityLabel="К библиотеке"
+          accessibilityLabel={t.readX.toLibrary}
           hitSlop={8}
           style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: 6, minHeight: 44, opacity: pressed ? 0.6 : 1 })}
         >
           <Ionicons name="chevron-back" size={18} color={c.muted} />
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>к библиотеке</Text>
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>{t.readX.toLibrary}</Text>
         </Pressable>
 
         <View style={{ gap: 4 }}>
@@ -293,34 +284,34 @@ export default function ReadScreen() {
           <View style={{ alignItems: "center", justifyContent: "center", paddingVertical: 40, gap: 12 }}>
             <ActivityIndicator color={tone} />
             <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
-              Загружаю книгу…
+              {t.readX.loading}
             </Text>
           </View>
         ) : bookError ? (
           <View style={{ backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, padding: 20, gap: 12, alignItems: "center" }}>
             <Ionicons name="cloud-offline-outline" size={28} color={c.muted} />
             <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center" }}>
-              {bookError}
+              {t.readX.loadError}
             </Text>
             <Pressable
               onPress={() => openBook(book)}
               accessibilityRole="button"
               style={({ pressed }) => ({ minHeight: 48, paddingHorizontal: 22, borderRadius: 14, backgroundColor: c.accent, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
             >
-              <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: "#ffffff" }}>Попробовать снова</Text>
+              <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: "#ffffff" }}>{t.common.retry}</Text>
             </Pressable>
           </View>
         ) : (
           <>
             <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
-              {chunks.length} глав · читаем частями, каждая — со своим замером скорости
+              {t.readX.chaptersMeta(chunks.length)}
             </Text>
             {chunks.map((ch, i) => (
               <Pressable
                 key={ch.id}
                 onPress={() => openStory(ch)}
                 accessibilityRole="button"
-                accessibilityLabel={`Глава ${i + 1}`}
+                accessibilityLabel={t.readX.chapterN(i + 1)}
                 style={({ pressed }) => ({
                   flexDirection: "row",
                   alignItems: "center",
@@ -339,10 +330,10 @@ export default function ReadScreen() {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.ink }}>
-                    Глава {i + 1}
+                    {t.readX.chapterN(i + 1)}
                   </Text>
                   <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
-                    ~{wordCount(ch)} слов
+                    {t.readX.approxWords(wordCount(ch))}
                   </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={16} color={c.muted} />
@@ -361,15 +352,15 @@ export default function ReadScreen() {
       contentContainerStyle={{ padding: 20, paddingTop: insets.top + 16, paddingBottom: 32, gap: 12 }}
     >
       <View style={{ gap: 4 }}>
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.ink }}>Читать</Text>
+        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.ink }}>{t.readX.title}</Text>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
-          Читаем ради удовольствия — язык придёт следом. В конце текста покажу скорость.
-          {wpmStats.last ? ` Последний замер: ${wpmStats.last} WPM.` : ""}
+          {t.readX.subtitle}
+          {wpmStats.last ? t.readX.lastWpm(wpmStats.last) : ""}
         </Text>
       </View>
 
       {/* Книги целиком (реальный текст Gutenberg главами), под интересы */}
-      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 17, color: c.ink, marginTop: 6 }}>Книги</Text>
+      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 17, color: c.ink, marginTop: 6 }}>{t.readX.books}</Text>
       {books.map((b) => (
         <Pressable
           key={b.bookId}
@@ -395,7 +386,7 @@ export default function ReadScreen() {
           <View style={{ flex: 1, gap: 2 }}>
             <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.ink }}>{b.title}</Text>
             <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
-              {b.author} · {b.level.toUpperCase()} · читать главами
+              {b.author} · {b.level.toUpperCase()} · {t.readX.byChapters}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={16} color={c.muted} />
@@ -404,7 +395,7 @@ export default function ReadScreen() {
 
       {/* Короткие тексты (с переводом) */}
       <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 17, color: c.ink, marginTop: 10 }}>
-        Короткие тексты
+        {t.readX.shorts}
       </Text>
       {STORIES.map((s) => (
         <Pressable
@@ -433,7 +424,7 @@ export default function ReadScreen() {
           <View style={{ flex: 1, gap: 2 }}>
             <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.ink }}>{s.title}</Text>
             <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
-              {s.author} · {wordCount(s)} слов · {GENRE[s.genre]} · {s.excerpt ? "фрагмент" : "целиком"}
+              {s.author} · {wordCount(s)} {t.readX.words} · {t.readX.genres[s.genre]} · {s.excerpt ? t.readX.fragment : t.readX.whole}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={16} color={c.muted} />

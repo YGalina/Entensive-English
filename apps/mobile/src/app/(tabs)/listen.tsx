@@ -13,6 +13,7 @@ import {
   type ShadowScript,
 } from "@ie/core/data/shadowing";
 import { useActivityTimer } from "@ie/core/timelog";
+import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
 
 // Shadowing: смотришь живого носителя и ПОВТОРЯЕШЬ ВСЛУХ. Видео закреплено
@@ -27,6 +28,7 @@ export default function ListenScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const tone = sk.video;
+  const { t } = useT();
 
   const [videoId, setVideoId] = useState<string | null>(null);
   const [showRu, setShowRu] = useState(false);
@@ -85,7 +87,7 @@ export default function ListenScreen() {
                 setVideoId(null);
               }}
               accessibilityRole="button"
-              accessibilityLabel="К списку видео"
+              accessibilityLabel={t.listenX.toVideos}
               hitSlop={8}
               style={({ pressed }) => ({
                 flexDirection: "row",
@@ -97,7 +99,7 @@ export default function ListenScreen() {
             >
               <Ionicons name="chevron-back" size={18} color={c.muted} />
               <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>
-                к видео
+                {t.listenX.toVideos}
               </Text>
             </Pressable>
             <Text
@@ -108,7 +110,7 @@ export default function ListenScreen() {
                 fontVariant: ["tabular-nums"],
               }}
             >
-              {activeIdx != null ? `строка ${activeIdx + 1} / ${script.lines.length}` : `${script.lines.length} строк`}
+              {activeIdx != null ? t.listenX.lineOf(activeIdx + 1, script.lines.length) : t.listenX.linesN(script.lines.length)}
             </Text>
           </View>
 
@@ -127,8 +129,7 @@ export default function ListenScreen() {
           >
             <Ionicons name="mic" size={16} color={tone} />
             <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 17, color: c.brandInk }}>
-              Повторяй вслух за голосом. Текущая фраза подсветится сама; тап по строке —
-              перемотка к ней.
+              {t.listenX.hint}
             </Text>
             <Pressable
               onPress={() => {
@@ -136,7 +137,7 @@ export default function ListenScreen() {
                 setShowRu((v) => !v);
               }}
               accessibilityRole="button"
-              accessibilityLabel={showRu ? "Скрыть перевод" : "Показать перевод"}
+              accessibilityLabel={showRu ? t.readX.hideRu : t.readX.showRu}
               hitSlop={8}
               style={({ pressed }) => ({
                 paddingHorizontal: 10,
@@ -179,7 +180,7 @@ export default function ListenScreen() {
                   setActiveIdx(i);
                 }}
                 accessibilityRole="button"
-                accessibilityLabel={`Строка ${i + 1}: ${l.en}`}
+                accessibilityLabel={t.listenX.lineA11y(i + 1, l.en)}
                 style={({ pressed }) => ({
                   borderRadius: 12,
                   paddingHorizontal: 12,
@@ -225,11 +226,10 @@ export default function ListenScreen() {
     >
       <View style={{ gap: 4 }}>
         <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.ink }}>
-          Слушать
+          {t.listenX.title}
         </Text>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
-          Shadowing: повторяй вслух за живым носителем. Вход по Крашену — говорение придёт
-          само.
+          {t.listenX.subtitle}
         </Text>
       </View>
 
@@ -240,7 +240,7 @@ export default function ListenScreen() {
           router.push("/three" as never);
         }}
         accessibilityRole="button"
-        accessibilityLabel="Три минутки: дыхание, две фразы, установка"
+        accessibilityLabel={t.today.threeA11y}
         style={({ pressed }) => ({
           flexDirection: "row",
           alignItems: "center",
@@ -255,10 +255,10 @@ export default function ListenScreen() {
         <Ionicons name="timer" size={24} color={c.onBrand} />
         <View style={{ flex: 1, gap: 2 }}>
           <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: c.onBrand }}>
-            3-минутка
+            {t.listenX.three}
           </Text>
           <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.onBrand }}>
-            дыхание под музыку → две фразы вслух → установка
+            {t.listenX.threeNote}
           </Text>
         </View>
         <Ionicons name="chevron-forward" size={18} color={c.onBrand} />
@@ -270,7 +270,7 @@ export default function ListenScreen() {
         return (
           <View key={cat} style={{ gap: 10 }}>
             <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
-              {CATEGORY_LABEL[cat]}
+              {t.listenX.cats[cat] ?? CATEGORY_LABEL[cat]}
             </Text>
             {items.map((s) => (
               <Pressable
@@ -308,7 +308,7 @@ export default function ListenScreen() {
                     {s.title}
                   </Text>
                   <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
-                    {s.author} · {s.level.toUpperCase()} · {s.lines.length} строк
+                    {s.author} · {s.level.toUpperCase()} · {t.listenX.linesN(s.lines.length)}
                   </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={16} color={c.muted} />

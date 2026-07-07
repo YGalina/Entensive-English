@@ -12,6 +12,7 @@ import { recordAnswer } from "@ie/core/srs";
 import { useActivityTimer } from "@ie/core/timelog";
 import { speakEnglish } from "@ie/media/speech";
 import { useCalmMusic } from "@/lib/calm-music";
+import { useT } from "@/lib/i18n";
 import { BotanicalFrame } from "@/components/botanical";
 import { useMarina } from "@/theme";
 
@@ -49,6 +50,7 @@ export default function SessionScreen() {
   const router = useRouter();
   const prefs = usePrefs();
   const music = useCalmMusic();
+  const { t } = useT();
 
   const pack = useMemo(() => getLevelPack(levelPackId(prefs?.level))!, [prefs?.level]);
   const words = pack.words;
@@ -88,15 +90,15 @@ export default function SessionScreen() {
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>
           {phase === "attune" || phase === "bridge"
-            ? "Настройка"
+            ? t.sessionX.attune
             : phase === "flow"
               ? pack.title
-              : "Сеанс завершён"}
+              : t.sessionX.done}
         </Text>
         <Pressable
           onPress={leave}
           accessibilityRole="button"
-          accessibilityLabel="Выйти из сеанса"
+          accessibilityLabel={t.sessionX.exit}
           hitSlop={10}
           style={({ pressed }) => ({
             width: 36,
@@ -163,8 +165,9 @@ export default function SessionScreen() {
 
 function Attune({ onDone }: { onDone: () => void }) {
   const { c, sk } = useMarina();
+  const { t } = useT();
   const scale = useRef(new Animated.Value(1)).current;
-  const [label, setLabel] = useState("Вдох…");
+  const [label, setLabel] = useState(t.sessionX.inhale);
   const [cycle, setCycle] = useState(1);
   const [affIdx, setAffIdx] = useState(() => Math.floor(Math.random() * AFFIRMATIONS.length));
   const alive = useRef(true);
@@ -180,13 +183,13 @@ function Attune({ onDone }: { onDone: () => void }) {
     let left = BREATH_CYCLES;
     const run = () => {
       if (!alive.current) return;
-      setLabel("Вдох…");
+      setLabel(t.sessionX.inhale);
       Animated.timing(scale, { toValue: 1.4, duration: INHALE, easing: Easing.inOut(Easing.ease), useNativeDriver: true }).start(() => {
         if (!alive.current) return;
-        setLabel("Задержи…");
+        setLabel(t.sessionX.hold);
         setTimeout(() => {
           if (!alive.current) return;
-          setLabel("Выдох…");
+          setLabel(t.sessionX.exhale);
           Animated.timing(scale, { toValue: 1, duration: EXHALE, easing: Easing.inOut(Easing.ease), useNativeDriver: true }).start(() => {
             if (!alive.current) return;
             left--;
@@ -211,7 +214,7 @@ function Attune({ onDone }: { onDone: () => void }) {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 26 }}>
       <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.muted }}>
-        круг {cycle} из {BREATH_CYCLES} · музыка ведёт
+        {t.sessionX.circleOf(cycle, BREATH_CYCLES)}
       </Text>
       <Animated.View
         style={{
@@ -249,7 +252,7 @@ function Attune({ onDone }: { onDone: () => void }) {
       </View>
       <Pressable onPress={onDone} accessibilityRole="button" style={{ minHeight: 44, justifyContent: "center" }}>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
-          я готова →
+          {t.common.ready}
         </Text>
       </Pressable>
     </View>
@@ -260,6 +263,7 @@ function Attune({ onDone }: { onDone: () => void }) {
 
 function Bridge({ onDone }: { onDone: () => void }) {
   const { c } = useMarina();
+  const { t } = useT();
   const anim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.timing(anim, { toValue: 1, duration: 700, useNativeDriver: true }).start();
@@ -280,7 +284,7 @@ function Bridge({ onDone }: { onDone: () => void }) {
           maxWidth: 300,
         }}
       >
-        Сейчас через тебя пойдёт поток слов.
+        {t.sessionX.bridgeTitle}
       </Text>
       <Text
         style={{
@@ -292,8 +296,7 @@ function Bridge({ onDone }: { onDone: () => void }) {
           maxWidth: 300,
         }}
       >
-        Ничего не запоминай специально. Просто смотри и слушай — как кино. Узнавание придёт
-        само.
+        {t.sessionX.bridgeBody}
       </Text>
     </Animated.View>
   );
@@ -329,6 +332,7 @@ function Flow({
   onFinish: () => void;
 }) {
   const { c, sk, radius } = useMarina();
+  const { t } = useT();
   const tempo = TEMPOS[tempoIdx];
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -387,10 +391,10 @@ function Flow({
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.brand, fontVariant: ["tabular-nums"] }}>
-            {knownCount > 0 ? `узнала: ${knownCount}` : " "}
+            {knownCount > 0 ? t.sessionX.knownN(knownCount) : " "}
           </Text>
           <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
-            {idx + 1} / {words.length} слов
+            {t.sessionX.wordsOf(idx + 1, words.length)}
           </Text>
         </View>
       </View>
@@ -438,7 +442,7 @@ function Flow({
       <Pressable
         onPress={markKnown}
         accessibilityRole="button"
-        accessibilityLabel={`Знаю слово ${w.en}`}
+        accessibilityLabel={t.sessionX.knowA11y(w.en)}
         style={({ pressed }) => ({
           minHeight: 50,
           borderRadius: 14,
@@ -455,7 +459,7 @@ function Flow({
           <>
             <Ionicons name="checkmark-circle" size={19} color={pressed ? c.onBrand : c.brandD} />
             <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: pressed ? c.onBrand : c.brandD }}>
-              Знаю это слово
+              {t.sessionX.know}
             </Text>
           </>
         )}
@@ -463,11 +467,11 @@ function Flow({
 
       {/* Темп */}
       <View style={{ flexDirection: "row", gap: 8 }}>
-        {TEMPOS.map((t, i) => {
+        {TEMPOS.map((tp, i) => {
           const on = i === tempoIdx;
           return (
             <Pressable
-              key={t.id}
+              key={tp.id}
               onPress={() => {
                 void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 setTempoIdx(i);
@@ -493,14 +497,14 @@ function Flow({
                   color: on ? c.onBrand : c.ink,
                 }}
               >
-                {t.label}
+                {t.sessionX.tempos[tp.id]}
               </Text>
             </Pressable>
           );
         })}
       </View>
       <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, lineHeight: 16, color: c.muted, textAlign: "center" }}>
-        «Вал» быстрее сознания — так и задумано: массив ложится в узнавание.
+        {t.sessionX.waveNote}
       </Text>
 
       {/* Пуск/пауза */}
@@ -522,7 +526,7 @@ function Flow({
       >
         <Ionicons name={running ? "pause" : "play"} size={18} color={running ? c.ink : "#ffffff"} />
         <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: running ? c.ink : "#ffffff"}}>
-          {running ? "Пауза" : idx === 0 ? "Поехали" : "Продолжить"}
+          {running ? t.sessionX.pause : idx === 0 ? t.sessionX.go : t.sessionX.resume}
         </Text>
       </Pressable>
     </View>
@@ -533,6 +537,7 @@ function Flow({
 
 function Done({ count, known, onClose }: { count: number; known: number; onClose: () => void }) {
   const { c, sk } = useMarina();
+  const { t } = useT();
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 18 }}>
       <View
@@ -548,7 +553,7 @@ function Done({ count, known, onClose }: { count: number; known: number; onClose
         <Ionicons name="checkmark" size={30} color={sk.words} />
       </View>
       <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, color: c.ink, textAlign: "center" }}>
-        Через тебя прошло {count} слов
+        {t.sessionX.doneTitle(count)}
       </Text>
       <Text
         style={{
@@ -560,11 +565,8 @@ function Done({ count, known, onClose }: { count: number; known: number; onClose
           maxWidth: 300,
         }}
       >
-        {known > 0
-          ? `Из них ${known} ты узнала сразу — они уже в плане повторов. `
-          : ""}
-        Сознание и не должно было выучить всё. Массив лёг в узнавание — слова начнут
-        всплывать сами: в текстах, в видео, в повторах. Так работает метод.
+        {known > 0 ? t.sessionX.doneKnown(known) : ""}
+        {t.sessionX.doneBody}
       </Text>
       <Pressable
         onPress={onClose}
@@ -580,7 +582,7 @@ function Done({ count, known, onClose }: { count: number; known: number; onClose
         })}
       >
         <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
-          Завершить
+          {t.sessionX.finish}
         </Text>
       </Pressable>
     </View>
