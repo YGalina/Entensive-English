@@ -21,9 +21,9 @@ export async function sendMagicLink(email: string, link: string): Promise<MailRe
       subject: "Вход в Intensive English",
       html: `
         <div style="font-family:Arial,sans-serif;max-width:420px;margin:0 auto;padding:24px">
-          <h2 style="color:#1b3a6b">Intensive English</h2>
+          <h2 style="color:#147e86">Intensive English</h2>
           <p>Нажми кнопку, чтобы войти. Ссылка действует 15 минут.</p>
-          <a href="${link}" style="display:inline-block;background:#d62839;color:#fff;
+          <a href="${link}" style="display:inline-block;background:#f26a54;color:#fff;
              padding:14px 28px;border-radius:14px;text-decoration:none;font-weight:bold">
             Войти
           </a>

@@ -1,13 +1,13 @@
 // ===== Дизайн-система «Марина» — ЕДИНЫЙ источник истины =====
-// Французская ривьера + Ralph Lauren preppy: глубокий navy, сигнальный красный,
-// хрустящий белый, латунь. Бретонская полоска — фирменный декор. Без бежа,
-// без индиго-фиолетового. У каждого навыка свой сигнальный цвет.
+// Палитра «Морская волна» (утв. Галиной 2026-07-07): тёплый teal морской волны,
+// живой коралл для CTA, латунь для радости, тёплый морской белый. Женственно,
+// спокойно, с воздухом — НЕ сухо и не по-мужски. Без бежа, без индиго/фиолета,
+// без неона. У каждого навыка свой сигнальный цвет, гармоничный с teal+коралл.
 //
 // Отсюда питаются ОБЕ платформы:
 //   • web  — CSS-переменные в globals.css (значения обязаны совпадать с этим файлом;
 //            marinaGlobalsCss() умеет их сгенерировать для будущего codegen-шага);
-//   • mobile — конфиг NativeWind + ThemeProvider читают этот объект напрямую.
-// Значения ниже 1:1 повторяют текущий apps/web/src/app/globals.css.
+//   • mobile — ThemeProvider (useMarina) читает этот объект напрямую.
 
 export type MarinaMode = "light" | "dark";
 
@@ -41,58 +41,58 @@ export type SkillFlags = {
 };
 
 const light: MarinaColors = {
-  brand: "#1b3a6b", // морской navy
-  brandD: "#12294e", // глубже — мелкий текст, ховеры
-  brandSoft: "#e9f0f9", // ледяная волна — подложки пилюль
-  brandInk: "#0e2240", // чернила капитана
-  accent: "#d62839", // сигнальный красный (CTA)
-  accentD: "#ab1f2e",
-  sun: "#f2c14e", // латунь/золото фурнитуры
-  bg: "#f7f9fc", // хрустящий холодный белый, НЕ беж
+  brand: "#147e86", // teal морской волны
+  brandD: "#0e5f66", // глубже — мелкий текст, ховеры
+  brandSoft: "#e1f1f0", // пена волны — подложки пилюль
+  brandInk: "#0c4a50", // морская глубина
+  accent: "#f26a54", // живой коралл (CTA)
+  accentD: "#d9503f",
+  sun: "#e8b36a", // латунь/золото — радость, стрик
+  bg: "#f5f9f8", // тёплый морской белый, НЕ беж
   surface: "#ffffff",
-  ink: "#14213d",
-  muted: "#5c6b84", // стальной
-  line: "#e3e9f2",
-  ok: "#178a50",
-  warn: "#b45309",
-  warnSoft: "#fef3e2",
+  ink: "#17383a", // чернила с teal-подтоном
+  muted: "#5e7a7b", // морская сталь
+  line: "#e2efed",
+  ok: "#0f9c79", // морская зелень успеха
+  warn: "#b4791f",
+  warnSoft: "#fbf0de",
 };
 
 const dark: MarinaColors = {
-  // Ночная палуба: глубокий полночный navy + светлые сигнальные акценты
-  brand: "#7ca7e8",
-  brandD: "#a5c4f0",
-  brandSoft: "#1b2b47",
-  brandInk: "#dce8fa",
-  accent: "#ff5a6e",
-  accentD: "#ff8291",
-  sun: "#f2c14e",
-  bg: "#0b1526", // полночь над морем
-  surface: "#14213a",
-  ink: "#eff3fa",
-  muted: "#93a3bc",
-  line: "#24334e",
+  // Ночь над морем: глубокий teal-чёрный + светлые aqua/коралл акценты
+  brand: "#5fc7c2",
+  brandD: "#8ad8d3",
+  brandSoft: "#123b3e",
+  brandInk: "#d8f2ef",
+  accent: "#ff7a63",
+  accentD: "#ff9683",
+  sun: "#ecbe77",
+  bg: "#0c1e20", // тёмная вода
+  surface: "#14292c",
+  ink: "#eaf4f2",
+  muted: "#90aeac",
+  line: "#244341",
   ok: "#34d399",
   warn: "#f0b860",
   warnSoft: "#2c2516",
 };
 
 const skillLight: SkillFlags = {
-  words: "#1b3a6b", // словарь/сеанс — navy
-  sounds: "#d62839", // звуки/говорение — сигнальный красный
-  typing: "#a06b1e", // набор — латунь
-  grammar: "#177245", // времена — охотничий зелёный
-  reading: "#8d2942", // чтение — бордо библиотеки
-  video: "#0e7c7b", // shadowing — морская волна
+  words: "#147e86", // словарь/сеанс — teal (бренд)
+  sounds: "#e0553d", // звуки/говорение — коралл
+  typing: "#b7791f", // набор — латунь/охра
+  grammar: "#2e8b6b", // времена — морская зелень
+  reading: "#a8465f", // чтение — ягодная роза
+  video: "#1e6e8c", // shadowing — петроль (глубокая вода)
 };
 
 const skillDark: SkillFlags = {
-  words: "#7ca7e8",
-  sounds: "#ff6b7a",
+  words: "#5fc7c2",
+  sounds: "#ff8a73",
   typing: "#e0b252",
-  grammar: "#35b37e",
-  reading: "#e07a94",
-  video: "#3fbdbb",
+  grammar: "#4fbf9a",
+  reading: "#e28aa0",
+  video: "#66b8d0",
 };
 
 export const marina = {

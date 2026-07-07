@@ -29,10 +29,17 @@ const STEP_ROUTE: Record<string, string> = {
 };
 
 export default function TodayScreen() {
-  const { c, sk, radius } = useMarina();
+  const { c, sk, radius, mode } = useMarina();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const plan = useDayPlan();
+
+  // Морской герой: тёмный teal-градиент под белый текст в ОБЕИХ темах
+  // (в тёмной бренд-цвет светлый, поэтому берём фиксированную глубину).
+  const heroGradient =
+    mode === "dark"
+      ? (["#155055", "#0f3033", "#0a2224"] as const)
+      : (["#1a97a0", "#147e86", "#0c5259"] as const);
   const srs = useSrsStats();
   const streak = useStreak();
   const prefs = usePrefs();
@@ -82,12 +89,12 @@ export default function TodayScreen() {
               }}
               accessibilityLabel={`Серия: ${streak} дней подряд`}
             >
-              <Ionicons name="flame" size={14} color="#12294e" />
+              <Ionicons name="flame" size={14} color="#5a3a12" />
               <Text
                 style={{
                   fontFamily: "Nunito_800ExtraBold",
                   fontSize: 13,
-                  color: "#12294e",
+                  color: "#5a3a12",
                   fontVariant: ["tabular-nums"],
                 }}
               >
@@ -107,7 +114,7 @@ export default function TodayScreen() {
 
       {/* Герой: текущий шаг дня */}
       <LinearGradient
-        colors={["#234a85", "#1b3a6b", "#12294e"]}
+        colors={heroGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 0.6, y: 1 }}
         style={{ borderRadius: radius.card, padding: 20, gap: 10 }}
@@ -118,7 +125,7 @@ export default function TodayScreen() {
             fontSize: 12,
             letterSpacing: 0.6,
             textTransform: "uppercase",
-            color: "#bcd0ee",
+            color: "#bfe0dd",
           }}
         >
           {current ? "Следующий шаг" : "День собран"}
@@ -126,18 +133,18 @@ export default function TodayScreen() {
         <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, color: "#ffffff" }}>
           {current ? current.ru.title : "Всё на сегодня сделано ✔"}
         </Text>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: "#dbe6f7" }}>
+        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: "#cfe8e6" }}>
           {current
             ? current.ru.note
             : "Мозг доучит ночью — вечерний круг и сон делают своё."}
         </Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 }}>
-          <Ionicons name="time-outline" size={16} color="#f2c14e" />
+          <Ionicons name="time-outline" size={16} color={c.sun} />
           <Text
             style={{
               fontFamily: "Inter_600SemiBold",
               fontSize: 13,
-              color: "#f2c14e",
+              color: c.sun,
               fontVariant: ["tabular-nums"],
             }}
           >
@@ -153,7 +160,7 @@ export default function TodayScreen() {
               marginTop: 10,
               minHeight: 48,
               borderRadius: 14,
-              backgroundColor: "#d62839",
+              backgroundColor: c.accent,
               alignItems: "center",
               justifyContent: "center",
               flexDirection: "row",
