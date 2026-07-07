@@ -99,6 +99,37 @@ const ru = {
   sounds: {
     intro: "Моторно-фонетический метод: фраза целиком — сначала очень медленно, потом быстрее, потом как носитель.",
   },
+  today: {
+    title: "Сегодня",
+    streak: (n: number) => `Серия: ${n} дней подряд`,
+    ringOf: (done: number, goal: number) => `${done} из ${goal} мин`,
+    ringA11y: (done: number, goal: number) => `План дня: ${done} из ${goal} минут`,
+    wpmLabel: "скорость чтения",
+    wordsLabel: "слов в узнавании",
+    nextStep: (min: number) => `следующий шаг · ${min} мин`,
+    nextStepReviews: "следующий шаг · повторы",
+    dayDone: "день собран",
+    allDone: "Всё на сегодня сделано ✔",
+    allDoneNote: "Мозг доучит ночью — вечерний круг и сон делают своё.",
+    start: "Начать",
+    three: "Есть 3 минуты?",
+    threeNote: "дыхание под музыку → две фразы вслух → установка",
+    threeA11y: "Три минутки: дыхание, две фразы, установка",
+    trail: "Дорожка дня",
+    stepDone: "готово",
+    stepCurrent: "текущий шаг",
+    soonTitle: "Скоро на телефоне",
+    soonBody:
+      "Этот шаг скоро появится в мобильной версии. Сейчас он ждёт тебя в веб-версии — а здесь уже можно смотреть дорожку дня.",
+    ok: "Хорошо",
+    insightPace: (min: number, lvl: string, when: string) =>
+      `Твой темп за неделю — ${min} мин/день. Это дорога к ${lvl} к ${when}.`,
+    insightNoPace: (goal: number) =>
+      `Прогноз уровня появится после первых дней практики — план на сегодня ${goal} мин.`,
+    insightLeft: (min: number, step: string) =>
+      `Сегодня осталось ${min} мин — лучший шаг: ${step}.`,
+    insightDone: "План на сегодня собран. Вечерний круг перед сном закрепит день.",
+  },
 };
 
 type Dict = typeof ru;
@@ -193,6 +224,37 @@ const en: Dict = {
   },
   sounds: {
     intro: "The motor-phonetic method: the whole phrase — very slow first, then faster, then like a native.",
+  },
+  today: {
+    title: "Today",
+    streak: (n: number) => `Streak: ${n} days in a row`,
+    ringOf: (done: number, goal: number) => `${done} of ${goal} min`,
+    ringA11y: (done: number, goal: number) => `Daily plan: ${done} of ${goal} minutes`,
+    wpmLabel: "reading speed",
+    wordsLabel: "words recognised",
+    nextStep: (min: number) => `next step · ${min} min`,
+    nextStepReviews: "next step · reviews",
+    dayDone: "day complete",
+    allDone: "Everything's done for today ✔",
+    allDoneNote: "Your brain finishes the job overnight — the evening circle and sleep do their part.",
+    start: "Start",
+    three: "Got 3 minutes?",
+    threeNote: "breathing with music → two phrases aloud → a mindset line",
+    threeA11y: "Three minutes: breathing, two phrases, mindset",
+    trail: "Day trail",
+    stepDone: "done",
+    stepCurrent: "current step",
+    soonTitle: "Coming to mobile",
+    soonBody:
+      "This step is coming to the mobile app soon. For now it lives in the web version — and you can already follow your day trail here.",
+    ok: "Got it",
+    insightPace: (min: number, lvl: string, when: string) =>
+      `Your 7-day pace is ${min} min/day. That's the road to ${lvl} by ${when}.`,
+    insightNoPace: (goal: number) =>
+      `Your level forecast appears after the first days of practice — today's plan is ${goal} min.`,
+    insightLeft: (min: number, step: string) =>
+      `${min} min left today — best next step: ${step}.`,
+    insightDone: "Today's plan is complete. An evening circle before sleep will seal the day.",
   },
 };
 

@@ -85,16 +85,24 @@ export default function ProfileScreen() {
 
       {/* ---------- Программа и ожидаемый результат ---------- */}
       <Card title="Программа и горизонт">
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 20, color: c.muted, paddingVertical: 10 }}>
-          Переход на следующий уровень (например, {outcome.levelNow.toUpperCase()} →{" "}
-          {outcome.levelNext.toUpperCase()}) — это ≈{HOURS_PER_LEVEL} часов направленной
-          практики (стандарт Cambridge). Прогноз ниже считается из твоего реального темпа,
-          а не из обещаний.
-        </Text>
-        <Row
-          label={`К уровню ${outcome.levelNext.toUpperCase()}`}
-          value={`${outcome.pct}% · ${outcome.hoursDone.toFixed(0)} из ${outcome.hoursGoal} ч`}
-        />
+        {/* Прогресс к уровню — крупно, в языке Welltory */}
+        <View style={{ paddingVertical: 14, gap: 8 }}>
+          <View style={{ flexDirection: "row", alignItems: "baseline", justifyContent: "space-between" }}>
+            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 34, color: c.accent, fontVariant: ["tabular-nums"] }}>
+              {outcome.pct}%
+            </Text>
+            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 13, color: c.ink }}>
+              {outcome.levelNow.toUpperCase()} → {outcome.levelNext.toUpperCase()}
+            </Text>
+          </View>
+          <View style={{ height: 8, borderRadius: 4, backgroundColor: c.brandSoft, overflow: "hidden" }}>
+            <View style={{ width: `${outcome.pct}%`, height: 8, borderRadius: 4, backgroundColor: c.accent }} />
+          </View>
+          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
+            {outcome.hoursDone.toFixed(0)} из {outcome.hoursGoal} ч направленной практики (стандарт
+            Cambridge ≈{HOURS_PER_LEVEL} ч/уровень). Прогноз — из твоего реального темпа.
+          </Text>
+        </View>
         <Row
           label="Темп за 7 дней"
           value={outcome.paceMinPerDay > 0 ? `${outcome.paceMinPerDay} мин/день` : "ещё копится"}

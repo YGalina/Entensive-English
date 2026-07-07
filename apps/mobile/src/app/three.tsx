@@ -9,6 +9,7 @@ import { AFFIRMATIONS } from "@ie/core/data/affirmations";
 import { useActivityTimer } from "@ie/core/timelog";
 import { speakEnglish } from "@ie/media/speech";
 import { useCalmMusic } from "@/lib/calm-music";
+import { BotanicalFrame } from "@/components/botanical";
 import { useMarina } from "@/theme";
 
 // «3-минутка» — супер-короткий ритуал для метро/очереди/перед сном:
@@ -138,6 +139,8 @@ export default function ThreeMinutes() {
           <Ionicons name="close" size={18} color={c.muted} />
         </Pressable>
       </View>
+
+      {!done && (stage === "breath" || stage === "bridge") && <BotanicalFrame />}
 
       {done ? (
         <Finale onClose={close} />

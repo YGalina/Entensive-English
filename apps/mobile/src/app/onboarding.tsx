@@ -32,6 +32,7 @@ import b1 from "@ie/core/data/vocab-b1.json";
 import b2 from "@ie/core/data/vocab-b2.json";
 import c1 from "@ie/core/data/vocab-c1.json";
 import { dict, type UiLang } from "@/lib/i18n";
+import { BotanicalFrame } from "@/components/botanical";
 import { useMarina } from "@/theme";
 
 // Онбординг-квиз: не анкета, а первый урок доверия. Чередуем вопросы и
@@ -729,6 +730,7 @@ function AhaMoment({ level, onDone }: { level: string; onDone: () => void }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg, padding: 20, paddingTop: insets.top + 12, paddingBottom: insets.bottom + 12 }}>
+      <BotanicalFrame />
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 18 }}>
         <View style={{ width: 60, height: 60, borderRadius: 30, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center" }}>
           <Ionicons name="ear" size={28} color={c.brand} />

@@ -8,9 +8,11 @@ import { getLevelPack } from "@ie/core/data/levelVocab";
 import { translate, type Word } from "@ie/core/data/packs";
 import { AFFIRMATIONS } from "@ie/core/data/affirmations";
 import { usePrefs } from "@ie/core/prefs";
+import { recordAnswer } from "@ie/core/srs";
 import { useActivityTimer } from "@ie/core/timelog";
 import { speakEnglish } from "@ie/media/speech";
 import { useCalmMusic } from "@/lib/calm-music";
+import { BotanicalFrame } from "@/components/botanical";
 import { useMarina } from "@/theme";
 
 // Сеанс дня — мобильный киносеанс по Петрусинскому. Ядро метода — ВАЛ:
@@ -55,6 +57,7 @@ export default function SessionScreen() {
   const [running, setRunning] = useState(false);
   const [idx, setIdx] = useState(0);
   const [tempoIdx, setTempoIdx] = useState(0);
+  const [knownCount, setKnownCount] = useState(0);
 
   // Реальные минуты киносеанса → шаг «Сеанс дня» в плане.
   useActivityTimer(phase === "flow" && running ? "flash" : null);
@@ -111,6 +114,8 @@ export default function SessionScreen() {
         </Pressable>
       </View>
 
+      {(phase === "attune" || phase === "bridge") && <BotanicalFrame />}
+
       {phase === "attune" && (
         <Attune
           onDone={() => {
@@ -138,6 +143,9 @@ export default function SessionScreen() {
           tempoIdx={tempoIdx}
           setTempoIdx={setTempoIdx}
           nativeLang={prefs?.nativeLang ?? "ru"}
+          packId={pack.id}
+          onKnown={() => setKnownCount((n) => n + 1)}
+          knownCount={knownCount}
           onFinish={() => {
             music.duck(0.3);
             void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -146,7 +154,7 @@ export default function SessionScreen() {
         />
       )}
 
-      {phase === "done" && <Done count={words.length} onClose={leave} />}
+      {phase === "done" && <Done count={words.length} known={knownCount} onClose={leave} />}
     </View>
   );
 }
@@ -302,6 +310,9 @@ function Flow({
   tempoIdx,
   setTempoIdx,
   nativeLang,
+  packId,
+  onKnown,
+  knownCount,
   onFinish,
 }: {
   words: Word[];
@@ -312,6 +323,9 @@ function Flow({
   tempoIdx: number;
   setTempoIdx: (i: number) => void;
   nativeLang: string;
+  packId: string;
+  onKnown: () => void;
+  knownCount: number;
   onFinish: () => void;
 }) {
   const { c, sk, radius } = useMarina();
@@ -356,6 +370,14 @@ function Flow({
     setRunning(!running);
   }
 
+  // «Знаю»: узнавание прямо в потоке — слово уходит в SRS (Good) и в
+  // счётчик «слов в узнавании». Поток НЕ останавливается: метод любит ритм.
+  function markKnown() {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    recordAnswer(packId, w.en, true);
+    onKnown();
+  }
+
   return (
     <View style={{ flex: 1, gap: 14, paddingTop: 12 }}>
       {/* Прогресс массива */}
@@ -363,17 +385,14 @@ function Flow({
         <View style={{ height: 6, borderRadius: 3, backgroundColor: c.line, overflow: "hidden" }}>
           <View style={{ width: `${pct}%`, height: 6, backgroundColor: sk.words }} />
         </View>
-        <Text
-          style={{
-            fontFamily: "Inter_600SemiBold",
-            fontSize: 12,
-            color: c.muted,
-            fontVariant: ["tabular-nums"],
-            textAlign: "right",
-          }}
-        >
-          {idx + 1} / {words.length} слов
-        </Text>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.brand, fontVariant: ["tabular-nums"] }}>
+            {knownCount > 0 ? `узнала: ${knownCount}` : " "}
+          </Text>
+          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
+            {idx + 1} / {words.length} слов
+          </Text>
+        </View>
       </View>
 
       {/* Кадр киносеанса */}
@@ -414,6 +433,33 @@ function Flow({
           {tr.text}
         </Text>
       </View>
+
+      {/* Узнавание в потоке: «это слово я знаю» */}
+      <Pressable
+        onPress={markKnown}
+        accessibilityRole="button"
+        accessibilityLabel={`Знаю слово ${w.en}`}
+        style={({ pressed }) => ({
+          minHeight: 50,
+          borderRadius: 14,
+          borderWidth: 1.5,
+          borderColor: c.brand,
+          backgroundColor: pressed ? c.brand : c.brandSoft,
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "row",
+          gap: 8,
+        })}
+      >
+        {({ pressed }) => (
+          <>
+            <Ionicons name="checkmark-circle" size={19} color={pressed ? c.onBrand : c.brandD} />
+            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: pressed ? c.onBrand : c.brandD }}>
+              Знаю это слово
+            </Text>
+          </>
+        )}
+      </Pressable>
 
       {/* Темп */}
       <View style={{ flexDirection: "row", gap: 8 }}>
@@ -485,7 +531,7 @@ function Flow({
 
 /* ---------- Завершение ---------- */
 
-function Done({ count, onClose }: { count: number; onClose: () => void }) {
+function Done({ count, known, onClose }: { count: number; known: number; onClose: () => void }) {
   const { c, sk } = useMarina();
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 18 }}>
@@ -514,7 +560,10 @@ function Done({ count, onClose }: { count: number; onClose: () => void }) {
           maxWidth: 300,
         }}
       >
-        Сознание и не должно было их выучить. Массив лёг в узнавание — слова начнут
+        {known > 0
+          ? `Из них ${known} ты узнала сразу — они уже в плане повторов. `
+          : ""}
+        Сознание и не должно было выучить всё. Массив лёг в узнавание — слова начнут
         всплывать сами: в текстах, в видео, в повторах. Так работает метод.
       </Text>
       <Pressable
