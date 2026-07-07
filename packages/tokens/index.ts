@@ -17,6 +17,10 @@ export type MarinaColors = {
   brandD: string;
   brandSoft: string;
   brandInk: string;
+  /** Текст/иконки ПОВЕРХ заливки brand или флага навыка. В светлой теме тона
+   *  тёмные → белый; в тёмной тона светлые → глубокий морской. Никогда не
+   *  хардкодить #fff на цветной заливке — иначе в тёмной теме не читается. */
+  onBrand: string;
   accent: string;
   accentD: string;
   sun: string;
@@ -45,6 +49,7 @@ const light: MarinaColors = {
   brandD: "#0e5f66", // глубже — мелкий текст, ховеры
   brandSoft: "#e1f1f0", // пена волны — подложки пилюль
   brandInk: "#0c4a50", // морская глубина
+  onBrand: "#ffffff", // текст на тёмной teal-заливке
   accent: "#f26a54", // живой коралл (CTA)
   accentD: "#d9503f",
   sun: "#e8b36a", // латунь/золото — радость, стрик
@@ -59,20 +64,23 @@ const light: MarinaColors = {
 };
 
 const dark: MarinaColors = {
-  // Ночь над морем: глубокий teal-чёрный + светлые aqua/коралл акценты
-  brand: "#5fc7c2",
-  brandD: "#8ad8d3",
-  brandSoft: "#123b3e",
-  brandInk: "#d8f2ef",
+  // Ночь над морем: глубокая СИНЯЯ морская ночь (не зелёно-мятная!) +
+  // голубая волна и тёплый коралл. Фидбэк Галины 2026-07-07: прежняя тёмная
+  // уходила в мяту и текст на светлых тонах не читался (см. onBrand).
+  brand: "#54b9d8", // голубая волна (не мятный)
+  brandD: "#7ecde6",
+  brandSoft: "#0f3346", // глубокая волна — подложки
+  brandInk: "#d7eef7",
+  onBrand: "#07222c", // тёмный морской текст на СВЕТЛОЙ заливке волны
   accent: "#ff7a63",
   accentD: "#ff9683",
   sun: "#ecbe77",
-  bg: "#0c1e20", // тёмная вода
-  surface: "#14292c",
-  ink: "#eaf4f2",
-  muted: "#90aeac",
-  line: "#244341",
-  ok: "#34d399",
+  bg: "#0a1b26", // синяя ночь над морем
+  surface: "#122735",
+  ink: "#e9f2f7",
+  muted: "#8fa9b8", // сине-серый
+  line: "#224052",
+  ok: "#37d0a0",
   warn: "#f0b860",
   warnSoft: "#2c2516",
 };
@@ -87,12 +95,12 @@ const skillLight: SkillFlags = {
 };
 
 const skillDark: SkillFlags = {
-  words: "#5fc7c2",
-  sounds: "#ff8a73",
-  typing: "#e0b252",
-  grammar: "#4fbf9a",
-  reading: "#e28aa0",
-  video: "#66b8d0",
+  words: "#54b9d8", // голубая волна
+  sounds: "#ff8a73", // коралл
+  typing: "#e2b45e", // латунь
+  grammar: "#45c69b", // морская зелень (только флаг, не общий тон)
+  reading: "#e88ba6", // ягодная роза
+  video: "#6fbede", // петроль-голубой
 };
 
 export const marina = {
@@ -120,6 +128,7 @@ const CSS_NAME: Record<keyof MarinaColors, string> = {
   brandD: "--brand-d",
   brandSoft: "--brand-soft",
   brandInk: "--brand-ink",
+  onBrand: "--on-brand",
   accent: "--accent",
   accentD: "--accent-d",
   sun: "--sun",

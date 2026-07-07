@@ -296,10 +296,10 @@ export default function Onboarding() {
                             transform: [{ scale: pressed ? 0.97 : 1 }],
                           })}
                         >
-                          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: on ? "#fff" : c.ink }}>
+                          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: on ? c.onBrand : c.ink }}>
                             {m}
                           </Text>
-                          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 10, color: on ? "#e3f2f1" : c.muted }}>
+                          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 10, color: on ? c.onBrand : c.muted }}>
                             {t.common.minutes}
                           </Text>
                         </Pressable>
@@ -378,7 +378,7 @@ export default function Onboarding() {
                             transform: [{ scale: pressed ? 0.97 : 1 }],
                           })}
                         >
-                          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 13, color: on ? "#ffffff" : c.ink }}>
+                          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 13, color: on ? c.onBrand : c.ink }}>
                             {en ? it.titleEn : it.title}
                           </Text>
                         </Pressable>
@@ -697,8 +697,8 @@ function LevelCheck({
           accessibilityRole="button"
           style={({ pressed }) => ({ flex: 1, minHeight: 56, borderRadius: 16, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, transform: [{ scale: pressed ? 0.98 : 1 }] })}
         >
-          <Ionicons name="checkmark" size={18} color="#ffffff" />
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: "#ffffff" }}>
+          <Ionicons name="checkmark" size={18} color={c.onBrand} />
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>
             {t.onb.checkKnow}
           </Text>
         </Pressable>
@@ -950,7 +950,7 @@ function OptionRow({
           justifyContent: "center",
         }}
       >
-        {active && <Ionicons name="checkmark" size={14} color="#ffffff" />}
+        {active && <Ionicons name="checkmark" size={14} color={c.onBrand} />}
       </View>
     </Pressable>
   );

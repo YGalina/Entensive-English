@@ -10,6 +10,7 @@
   --brand-d: #0e5f66; /* глубже — мелкий текст, ховеры */
   --brand-soft: #e1f1f0; /* пена волны — подложки пилюль */
   --brand-ink: #0c4a50; /* морская глубина */
+  --on-brand: #ffffff; /* текст на заливке brand/флага навыка */
   --accent: #f26a54; /* живой коралл (CTA) */
   --accent-d: #d9503f;
   --sun: #e8b36a; /* латунь/золото — стрик, радость */
@@ -34,31 +35,33 @@
 }
 
 .dark {
-  /* Ночь над морем: глубокий teal-чёрный + светлые aqua/коралл акценты */
-  --brand: #5fc7c2;
-  --brand-d: #8ad8d3;
-  --brand-soft: #123b3e;
-  --brand-ink: #d8f2ef;
+  /* Ночь над морем: глубокая СИНЯЯ морская ночь (не мятная) + голубая волна
+     и коралл. Значения = packages/tokens/index.ts (единый источник). */
+  --brand: #54b9d8;
+  --brand-d: #7ecde6;
+  --brand-soft: #0f3346;
+  --brand-ink: #d7eef7;
+  --on-brand: #07222c;
   --accent: #ff7a63;
   --accent-d: #ff9683;
   --sun: #ecbe77;
-  --bg: #0c1e20; /* тёмная вода */
-  --surface: #14292c;
-  --ink: #eaf4f2;
-  --muted: #90aeac;
-  --line: #244341;
-  --ok: #34d399;
+  --bg: #0a1b26; /* синяя ночь над морем */
+  --surface: #122735;
+  --ink: #e9f2f7;
+  --muted: #8fa9b8;
+  --line: #224052;
+  --ok: #37d0a0;
   --warn: #f0b860;
   --warn-soft: #2c2516;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.45), 0 18px 48px rgba(0, 0, 0, 0.6);
 
-  --sk-words: #5fc7c2;
+  --sk-words: #54b9d8;
   --sk-sounds: #ff8a73;
-  --sk-typing: #e0b252;
-  --sk-grammar: #4fbf9a;
-  --sk-reading: #e28aa0;
-  --sk-video: #66b8d0;
+  --sk-typing: #e2b45e;
+  --sk-grammar: #45c69b;
+  --sk-reading: #e88ba6;
+  --sk-video: #6fbede;
 }
 
 @theme inline {
@@ -66,6 +69,7 @@
   --color-brand-d: var(--brand-d);
   --color-brand-soft: var(--brand-soft);
   --color-brand-ink: var(--brand-ink);
+  --color-on-brand: var(--on-brand);
   --color-accent: var(--accent);
   --color-accent-d: var(--accent-d);
   --color-sun: var(--sun);
@@ -108,7 +112,7 @@ body {
   background-image: linear-gradient(160deg, #1a97a0 0%, #147e86 45%, #0c5259 100%);
 }
 .dark .bg-marine {
-  background-image: linear-gradient(160deg, #123b3e 0%, #0f3033 45%, #0a2224 100%);
+  background-image: linear-gradient(160deg, #12455c 0%, #0e3346 45%, #0a2230 100%);
 }
 
 /* Бретонская полоска — фирменный декор (тонкая лента, как тельняшка) */

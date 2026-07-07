@@ -230,7 +230,7 @@ export default function SoundsScreen() {
                 style={{
                   fontFamily: "Inter_600SemiBold",
                   fontSize: 13,
-                  color: on ? "#ffffff" : c.ink,
+                  color: on ? c.onBrand : c.ink,
                 }}
               >
                 {l.title}
@@ -290,7 +290,7 @@ export default function SoundsScreen() {
                   style={{
                     fontFamily: "Inter_600SemiBold",
                     fontSize: 12,
-                    color: on ? (speaking || auto ? "#ffffff" : c.brandD) : c.muted,
+                    color: on ? (speaking || auto ? c.onBrand : c.brandD) : c.muted,
                   }}
                 >
                   {STEP_UI[s.id].label}
@@ -312,7 +312,9 @@ export default function SoundsScreen() {
         style={({ pressed }) => ({
           minHeight: 56,
           borderRadius: 16,
-          backgroundColor: auto ? c.brandInk : c.accent,
+          backgroundColor: auto ? c.surface : c.accent,
+          borderWidth: auto ? 1 : 0,
+          borderColor: c.line,
           alignItems: "center",
           justifyContent: "center",
           flexDirection: "row",
@@ -320,8 +322,8 @@ export default function SoundsScreen() {
           transform: [{ scale: pressed ? 0.98 : 1 }],
         })}
       >
-        <Ionicons name={auto ? "stop" : "play"} size={18} color="#ffffff" />
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+        <Ionicons name={auto ? "stop" : "play"} size={18} color={auto ? c.ink : "#ffffff"} />
+        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: auto ? c.ink : "#ffffff" }}>
           {auto ? "Стоп" : "Автопоток"}
         </Text>
       </Pressable>

@@ -40,9 +40,10 @@ export default function TodayScreen() {
   const outcome = useOutcome();
   const wpm = useWpmStats();
 
+  // Тёмная = синяя морская ночь (не зелёная) — в тон tokens.dark.
   const heroGradient =
     mode === "dark"
-      ? (["#155055", "#0f3033", "#0a2224"] as const)
+      ? (["#12455c", "#0e3346", "#0a2230"] as const)
       : (["#1a97a0", "#147e86", "#0c5259"] as const);
 
   const steps = plan.steps.filter((s) => !WEB_ONLY_STEPS.has(s.id));
@@ -265,7 +266,7 @@ export default function TodayScreen() {
                   }}
                 >
                   {s.done ? (
-                    <Ionicons name="checkmark" size={15} color="#ffffff" />
+                    <Ionicons name="checkmark" size={15} color={c.onBrand} />
                   ) : isCurrent ? (
                     <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: c.accent }} />
                   ) : null}

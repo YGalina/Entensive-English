@@ -366,7 +366,7 @@ function ChoiceRow({
                 style={{
                   fontFamily: "Inter_600SemiBold",
                   fontSize: 13,
-                  color: on ? "#ffffff" : c.ink,
+                  color: on ? c.onBrand : c.ink,
                 }}
               >
                 {o.title}

@@ -444,7 +444,7 @@ function Flow({
                 style={{
                   fontFamily: "Inter_600SemiBold",
                   fontSize: 13,
-                  color: on ? "#ffffff" : c.ink,
+                  color: on ? c.onBrand : c.ink,
                 }}
               >
                 {t.label}
@@ -464,7 +464,9 @@ function Flow({
         style={({ pressed }) => ({
           minHeight: 56,
           borderRadius: 16,
-          backgroundColor: running ? c.brandInk : c.accent,
+          backgroundColor: running ? c.surface : c.accent,
+          borderWidth: running ? 1 : 0,
+          borderColor: c.line,
           alignItems: "center",
           justifyContent: "center",
           flexDirection: "row",
@@ -472,8 +474,8 @@ function Flow({
           transform: [{ scale: pressed ? 0.98 : 1 }],
         })}
       >
-        <Ionicons name={running ? "pause" : "play"} size={18} color="#ffffff" />
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+        <Ionicons name={running ? "pause" : "play"} size={18} color={running ? c.ink : "#ffffff"} />
+        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: running ? c.ink : "#ffffff"}}>
           {running ? "Пауза" : idx === 0 ? "Поехали" : "Продолжить"}
         </Text>
       </Pressable>

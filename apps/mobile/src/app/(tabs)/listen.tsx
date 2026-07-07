@@ -152,7 +152,7 @@ export default function ListenScreen() {
                 style={{
                   fontFamily: "Nunito_700Bold",
                   fontSize: 12,
-                  color: showRu ? "#ffffff" : c.brandD,
+                  color: showRu ? c.onBrand : c.brandD,
                 }}
               >
                 RU
@@ -252,16 +252,16 @@ export default function ListenScreen() {
           transform: [{ scale: pressed ? 0.98 : 1 }],
         })}
       >
-        <Ionicons name="timer" size={24} color="#ffffff" />
+        <Ionicons name="timer" size={24} color={c.onBrand} />
         <View style={{ flex: 1, gap: 2 }}>
-          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: c.onBrand }}>
             3-минутка
           </Text>
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: "#e6f4f4" }}>
+          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.onBrand }}>
             дыхание под музыку → две фразы вслух → установка
           </Text>
         </View>
-        <Ionicons name="chevron-forward" size={18} color="#ffffff" />
+        <Ionicons name="chevron-forward" size={18} color={c.onBrand} />
       </Pressable>
 
       {CATEGORY_ORDER.map((cat) => {
