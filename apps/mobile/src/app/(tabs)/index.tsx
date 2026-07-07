@@ -6,6 +6,9 @@ import Svg, { Circle } from "react-native-svg";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useDayPlan } from "@ie/core/dayplan";
+import { booksForReader } from "@ie/core/data/gutenberg";
+import { SHADOWING } from "@ie/core/data/shadowing";
+import { STORIES } from "@ie/core/data/reading";
 import { useStreak } from "@ie/core/timelog";
 import { useOutcome } from "@ie/core/outcome";
 import { useWpmStats } from "@ie/core/wpm";
@@ -67,6 +70,21 @@ export default function TodayScreen() {
     }
     Alert.alert(title, t.today.soonBody, [{ text: t.today.ok, style: "default" }]);
   }
+
+  // «Полка дня»: конечная (НЕ лента) — три двери в смыслы на сегодня.
+  // Детерминированно от даты: у всех ровно три приглашения, завтра — новые.
+  const shelf = (() => {
+    const day = Math.floor(Date.now() / 864e5);
+    const books = booksForReader(prefs?.topics ?? [], prefs?.level);
+    const book = books.length ? books[day % Math.min(3, books.length)] : null;
+    const video = SHADOWING.length ? SHADOWING[day % SHADOWING.length] : null;
+    const lvl = (prefs?.level ?? "b1").toLowerCase();
+    const order = ["a1", "a2", "b1", "b2", "c1"];
+    const li = Math.max(0, order.indexOf(lvl));
+    const stories = STORIES.filter((st) => Math.abs(order.indexOf(st.level) - li) <= 1);
+    const story = stories.length ? stories[day % stories.length] : STORIES[day % STORIES.length];
+    return { book, video, story };
+  })();
 
   // Инсайт: темп → дата уровня → что осталось сегодня. Объясняем, не стыдим.
   const insight = (() => {
@@ -147,6 +165,56 @@ export default function TodayScreen() {
         <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19.5, color: c.brandInk }}>
           {insight}
         </Text>
+      </View>
+
+      {/* Полка дня: три двери в смыслы (конечная, не лента) */}
+      <View style={{ gap: 8 }}>
+        <View style={{ flexDirection: "row", alignItems: "baseline", gap: 8 }}>
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+            {t.today.shelf}
+          </Text>
+          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, color: c.muted }}>
+            {t.today.shelfNote}
+          </Text>
+        </View>
+        <View style={{ flexDirection: "row", gap: 8 }}>
+          {shelf.book && (
+            <ShelfCard
+              icon="book"
+              kind={t.today.shelfBook}
+              title={shelf.book.title}
+              tone={sk.reading}
+              onPress={() => {
+                void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                router.push({ pathname: "/read", params: { book: shelf.book!.bookId } } as never);
+              }}
+            />
+          )}
+          {shelf.video && (
+            <ShelfCard
+              icon="play"
+              kind={t.today.shelfVideo}
+              title={shelf.video.title}
+              tone={sk.video}
+              onPress={() => {
+                void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                router.push({ pathname: "/listen", params: { video: shelf.video!.id } } as never);
+              }}
+            />
+          )}
+          {shelf.story && (
+            <ShelfCard
+              icon="document-text"
+              kind={t.today.shelfText}
+              title={shelf.story.title}
+              tone={c.brand}
+              onPress={() => {
+                void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                router.push({ pathname: "/read", params: { story: shelf.story!.id } } as never);
+              }}
+            />
+          )}
+        </View>
       </View>
 
       {/* Герой: следующий шаг */}
@@ -282,6 +350,55 @@ export default function TodayScreen() {
         </View>
       </View>
     </ScrollView>
+  );
+}
+
+/* ---------- Карточка полки ---------- */
+
+function ShelfCard({
+  icon,
+  kind,
+  title,
+  tone,
+  onPress,
+}: {
+  icon: string;
+  kind: string;
+  title: string;
+  tone: string;
+  onPress: () => void;
+}) {
+  const { c, radius } = useMarina();
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`${kind}: ${title}`}
+      style={({ pressed }) => ({
+        flex: 1,
+        backgroundColor: pressed ? c.brandSoft : c.surface,
+        borderRadius: radius.soft,
+        borderWidth: 1,
+        borderColor: c.line,
+        padding: 10,
+        gap: 6,
+        minHeight: 92,
+        transform: [{ scale: pressed ? 0.98 : 1 }],
+      })}
+    >
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+        <Ionicons name={icon as never} size={13} color={tone} />
+        <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 9.5, letterSpacing: 0.4, textTransform: "uppercase", color: c.muted }}>
+          {kind}
+        </Text>
+      </View>
+      <Text
+        numberOfLines={3}
+        style={{ fontFamily: "Nunito_700Bold", fontSize: 12.5, lineHeight: 17, color: c.ink }}
+      >
+        {title}
+      </Text>
+    </Pressable>
   );
 }
 

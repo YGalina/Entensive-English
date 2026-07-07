@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { YouTube, type YouTubeHandle } from "@/components/youtube";
@@ -65,6 +65,15 @@ export default function ListenScreen() {
 
   // Минуты shadowing идут в план дня, пока открыт плеер на этом табе.
   useActivityTimer(focused && script ? "shadowing" : null);
+
+  // Полка дня: открыть видео по deep-link параметру (однократно).
+  const params = useLocalSearchParams<{ video?: string }>();
+  const consumed = useRef<string | null>(null);
+  useEffect(() => {
+    if (!params.video || consumed.current === params.video) return;
+    consumed.current = params.video;
+    if (SHADOWING.some((s) => s.id === params.video)) setVideoId(params.video);
+  }, [params.video]);
 
   const playerH = Math.round(((width - 40) * 9) / 16);
 

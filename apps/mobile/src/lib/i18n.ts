@@ -276,6 +276,11 @@ const ru = {
     insightLeft: (min: number, step: string) =>
       `Сегодня осталось ${min} мин — лучший шаг: ${step}.`,
     insightDone: "План на сегодня собран. Вечерний круг перед сном закрепит день.",
+    shelf: "Полка дня",
+    shelfNote: "три входа под твои смыслы — выбери один",
+    shelfBook: "книга",
+    shelfVideo: "видео",
+    shelfText: "текст",
   },
 };
 
@@ -549,6 +554,11 @@ const en: Dict = {
     insightLeft: (min: number, step: string) =>
       `${min} min left today — best next step: ${step}.`,
     insightDone: "Today's plan is complete. An evening circle before sleep will seal the day.",
+    shelf: "Today's shelf",
+    shelfNote: "three doors into your interests — pick one",
+    shelfBook: "book",
+    shelfVideo: "video",
+    shelfText: "text",
   },
 };
 

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
+import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { STORIES, type Story } from "@ie/core/data/reading";
@@ -126,6 +127,23 @@ export default function ReadScreen() {
   useEffect(() => {
     if (!focused && reading) setStartedAt(nowMs());
   }, [focused, reading]);
+
+  // Полка дня: открыть книгу/текст по deep-link параметру (однократно).
+  const params = useLocalSearchParams<{ book?: string; story?: string }>();
+  const consumed = useRef<string | null>(null);
+  useEffect(() => {
+    const key = `${params.book ?? ""}|${params.story ?? ""}`;
+    if (!key.replace("|", "") || consumed.current === key) return;
+    consumed.current = key;
+    if (params.book) {
+      const b = books.find((x) => x.bookId === params.book);
+      if (b) void openBook(b);
+    } else if (params.story) {
+      const st = STORIES.find((x) => x.id === params.story);
+      if (st) openStory(st);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.book, params.story]);
 
   /* ---------- Читалка (короткий текст или глава книги) ---------- */
   if (activeStory) {
