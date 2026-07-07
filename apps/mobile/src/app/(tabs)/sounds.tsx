@@ -11,6 +11,7 @@ import {
 } from "@ie/core/data/pronunciationDrills";
 import { useActivityTimer } from "@ie/core/timelog";
 import { speakEnglish } from "@ie/media/speech";
+import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
 
 // Постановка звука по Шестову — мобильный тренажёр. Протокол тот же, что на
@@ -51,6 +52,7 @@ export default function SoundsScreen() {
   const { c, sk, radius } = useMarina();
   const insets = useSafeAreaInsets();
   const focused = useIsFocused();
+  const { t } = useT();
 
   const [li, setLi] = useState(0);
   const [pi, setPi] = useState(0);
@@ -199,8 +201,7 @@ export default function SoundsScreen() {
           Звуки
         </Text>
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
-          Метод Шестова: фраза целиком — сначала очень медленно, потом быстрее, потом как
-          носитель.
+          {t.sounds.intro}
         </Text>
       </View>
 

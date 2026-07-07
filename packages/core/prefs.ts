@@ -16,6 +16,8 @@ export type Prefs = {
   programDay?: number;
   /** Темп прохождения сеанса по умолчанию: обычный или медленный */
   pace?: "normal" | "slow";
+  /** Планируемые минуты практики в день (из онбординг-квиза; для прогнозов) */
+  dailyGoalMin?: number;
   /** Имя выбранного голоса озвучки (SpeechSynthesisVoice.name) */
   voiceName?: string;
 };

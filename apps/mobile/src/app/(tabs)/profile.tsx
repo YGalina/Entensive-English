@@ -75,6 +75,10 @@ export default function ProfileScreen() {
       <Card title="Мой курс">
         <Row first label="Уровень сейчас" value={levelTitle} />
         <Row label="Цель" value={goalTitle} />
+        <Row
+          label="План на день"
+          value={prefs?.dailyGoalMin ? `${prefs.dailyGoalMin} мин` : "в настройке"}
+        />
         <Row label="Часов практики" value={outcome.hoursDone.toFixed(1)} />
         <Row label="Дней с практикой" value={String(outcome.daysPracticed)} />
       </Card>
