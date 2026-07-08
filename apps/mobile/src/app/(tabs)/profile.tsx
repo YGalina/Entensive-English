@@ -218,6 +218,21 @@ export default function ProfileScreen() {
         <Row label={t.profile.themeNow} value={mode === "dark" ? t.profile.themeNowDark : t.profile.themeNowLight} />
       </Card>
 
+      {/* ---------- Аккаунт и подписка (честные статусы до релиза) ---------- */}
+      <Card title={t.profile.account}>
+        <Row first label={t.profile.plan} value={t.profile.planFree} />
+        <Row label={t.profile.planPro} value={t.profile.planProVal} />
+        <Row label={t.profile.signIn} value={t.profile.signInVal} />
+        <Row label={t.profile.payment} value={t.profile.paymentVal} />
+      </Card>
+
+      {/* ---------- Безопасность ---------- */}
+      <Card title={t.profile.security}>
+        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 19, color: c.muted, paddingVertical: 12 }}>
+          {t.profile.securityNote}
+        </Text>
+      </Card>
+
       {/* ---------- Действия ---------- */}
       <Pressable
         onPress={testVoice}

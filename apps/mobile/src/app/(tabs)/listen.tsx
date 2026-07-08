@@ -48,9 +48,16 @@ export default function ListenScreen() {
     lineY.current.clear();
     setActiveIdx(null);
     const id = setInterval(async () => {
-      const t = await playerRef.current?.getCurrentTime();
-      if (t == null) return;
-      const i = script.lines.findIndex((l) => t >= l.start && t < l.end);
+      const tSec = await playerRef.current?.getCurrentTime();
+      if (tSec == null) return;
+      // Активная = ПОСЛЕДНЯЯ начавшаяся строка: подсветка живёт и в паузах
+      // между репликами (раньше гасла между end и следующим start — казалось,
+      // что караоке «не работает»).
+      let i = -1;
+      for (let k = 0; k < script.lines.length; k++) {
+        if (tSec >= script.lines[k].start) i = k;
+        else break;
+      }
       setActiveIdx((prev) => {
         const next = i >= 0 ? i : prev;
         if (next !== prev && next != null) {
@@ -59,7 +66,7 @@ export default function ListenScreen() {
         }
         return next;
       });
-    }, 500);
+    }, 400);
     return () => clearInterval(id);
   }, [script, focused]);
 

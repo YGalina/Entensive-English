@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { NATIVE_LANGUAGES, GOALS, LEVELS, INTERESTS, type LangCode } from "@ie/core/data/catalog";
+import { NATIVE_LANGUAGES, GOALS, LEVELS, INTEREST_GROUPS, type LangCode } from "@ie/core/data/catalog";
 import { savePrefs } from "@ie/core/prefs";
 import {
-  buildCheckWords,
-  scoreLevel,
+  buildCheckItems,
+  scoreCheck,
   type CheckLevel,
+  type CheckResult,
   type RawWord,
 } from "@ie/core/levelcheck";
 import { ArrowRight, Check, Spark, Sound } from "@/components/Icons";
@@ -123,23 +124,32 @@ export default function Onboarding() {
             title="Про что тебе интересно?"
             note="Выбери, что любишь, — слова, тексты и примеры придут из этих смыслов. Можно несколько."
           >
-            <div className="flex flex-wrap gap-2">
-              {INTERESTS.map((t) => {
-                const on = topics.includes(t.id);
-                return (
-                  <button
-                    key={t.id}
-                    onClick={() => toggleTopic(t.id)}
-                    className={`rounded-full border px-3.5 py-2 text-sm font-semibold transition-colors ${
-                      on
-                        ? "border-brand bg-brand text-white"
-                        : "border-line bg-surface text-ink hover:border-brand/40"
-                    }`}
-                  >
-                    {t.title}
-                  </button>
-                );
-              })}
+            <div className="space-y-4">
+              {INTEREST_GROUPS.map((g) => (
+                <div key={g.id}>
+                  <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">
+                    {g.title}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {g.items.map((t) => {
+                      const on = topics.includes(t.id);
+                      return (
+                        <button
+                          key={t.id}
+                          onClick={() => toggleTopic(t.id)}
+                          className={`rounded-full border px-3.5 py-2 text-sm font-semibold transition-colors ${
+                            on
+                              ? "border-brand bg-brand text-white"
+                              : "border-line bg-surface text-ink hover:border-brand/40"
+                          }`}
+                        >
+                          {t.title}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
           </Section>
         )}
@@ -215,7 +225,7 @@ export default function Onboarding() {
 /* ---------- Мини-определение уровня по словам (yes/no vocabulary check) ----------
    Логика — в @ie/core/levelcheck (общая с mobile); здесь только UI. */
 
-const CHECK_WORDS = buildCheckWords({
+const CHECK_WORDS = buildCheckItems({
   b1: b1 as RawWord[],
   b2: b2 as RawWord[],
   c1: c1 as RawWord[],
@@ -234,13 +244,19 @@ function LevelCheck({
     b2: 0,
     c1: 0,
   });
+  const [fakes, setFakes] = useState(0);
   const item = CHECK_WORDS[i];
   const finished = i >= CHECK_WORDS.length;
-  const result = finished ? scoreLevel(known) : null;
-  const resultTitle = result ? LEVELS.find((l) => l.id === result)?.title ?? result : "";
+  const result: CheckResult | null = finished ? scoreCheck(known, fakes) : null;
+  const resultTitle = result
+    ? LEVELS.find((l) => l.id === result.level)?.title ?? result.level
+    : "";
 
   function answer(yes: boolean) {
-    if (yes) setKnown((k) => ({ ...k, [item.lvl]: k[item.lvl] + 1 }));
+    if (yes) {
+      if (item.kind === "fake") setFakes((f) => f + 1);
+      else setKnown((k) => ({ ...k, [item.lvl]: k[item.lvl] + 1 }));
+    }
     setI((p) => p + 1);
   }
 
@@ -252,15 +268,18 @@ function LevelCheck({
             <Check className="h-7 w-7" />
           </span>
           <h1 className="mt-4 font-heading text-2xl font-extrabold text-ink">
-            Похоже, твой уровень — {result.toUpperCase()}
+            Словарный ориентир — {result.level.toUpperCase()}
           </h1>
           <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-muted">
-            {resultTitle}. Это стартовая настройка, не приговор: программа сама
-            подстроится по мере практики.
+            {result.unreliable
+              ? "Похоже, часть ответов была наугад — так бывает 🙂 По словам уровень не определить. Начнём с B1: программа подстроится за первые дни."
+              : result.cappedHigh
+                ? "Словарь уверенно выше B2. Но уровень выше подтверждается только практикой — стартуем с B2, и программа быстро это увидит."
+                : `${resultTitle}. Это ориентир по словарю, не экзамен: грамматику, слух и чтение покажет практика первых дней.`}
           </p>
         </div>
         <button
-          onClick={() => onDone(result)}
+          onClick={() => onDone(result.level)}
           data-testid="level-check-accept"
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)]"
         >

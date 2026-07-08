@@ -16,15 +16,16 @@ import {
   NATIVE_LANGUAGES,
   GOALS,
   LEVELS,
-  INTERESTS,
+  INTEREST_GROUPS,
   type LangCode,
 } from "@ie/core/data/catalog";
 import { usePrefs, savePrefs } from "@ie/core/prefs";
 import { HOURS_PER_LEVEL } from "@ie/core/outcome";
 import {
-  buildCheckWords,
-  scoreLevel,
+  buildCheckItems,
+  scoreCheck,
   type CheckLevel,
+  type CheckResult,
   type RawWord,
 } from "@ie/core/levelcheck";
 import { speakEnglish } from "@ie/media/speech";
@@ -359,32 +360,41 @@ export default function Onboarding() {
 
               {step === "interests" && (
                 <Section title={t.onb.qInterestsTitle} note={t.onb.qInterestsNote}>
-                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-                    {INTERESTS.map((it) => {
-                      const on = topics.includes(it.id);
-                      return (
-                        <Pressable
-                          key={it.id}
-                          onPress={() => toggleTopic(it.id)}
-                          accessibilityRole="button"
-                          accessibilityState={{ selected: on }}
-                          style={({ pressed }) => ({
-                            minHeight: 44,
-                            borderRadius: 22,
-                            borderWidth: 1,
-                            paddingHorizontal: 14,
-                            justifyContent: "center",
-                            borderColor: on ? c.brand : c.line,
-                            backgroundColor: on ? c.brand : c.surface,
-                            transform: [{ scale: pressed ? 0.97 : 1 }],
+                  <View style={{ gap: 14 }}>
+                    {INTEREST_GROUPS.map((g) => (
+                      <View key={g.id} style={{ gap: 8 }}>
+                        <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11, letterSpacing: 0.5, textTransform: "uppercase", color: c.muted }}>
+                          {en ? g.titleEn : g.title}
+                        </Text>
+                        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+                          {g.items.map((it) => {
+                            const on = topics.includes(it.id);
+                            return (
+                              <Pressable
+                                key={it.id}
+                                onPress={() => toggleTopic(it.id)}
+                                accessibilityRole="button"
+                                accessibilityState={{ selected: on }}
+                                style={({ pressed }) => ({
+                                  minHeight: 44,
+                                  borderRadius: 22,
+                                  borderWidth: 1,
+                                  paddingHorizontal: 14,
+                                  justifyContent: "center",
+                                  borderColor: on ? c.brand : c.line,
+                                  backgroundColor: on ? c.brand : c.surface,
+                                  transform: [{ scale: pressed ? 0.97 : 1 }],
+                                })}
+                              >
+                                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 13, color: on ? c.onBrand : c.ink }}>
+                                  {en ? it.titleEn : it.title}
+                                </Text>
+                              </Pressable>
+                            );
                           })}
-                        >
-                          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 13, color: on ? c.onBrand : c.ink }}>
-                            {en ? it.titleEn : it.title}
-                          </Text>
-                        </Pressable>
-                      );
-                    })}
+                        </View>
+                      </View>
+                    ))}
                   </View>
                 </Section>
               )}
@@ -558,11 +568,13 @@ export default function Onboarding() {
 
 function FactBadge() {
   const { c } = useMarina();
+  const prefs = usePrefs();
+  const t = dict(prefs?.uiLang === "en" ? "en" : "ru");
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6, alignSelf: "flex-start", backgroundColor: c.warnSoft, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 5 }}>
       <Ionicons name="flask" size={13} color={c.warn} />
       <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11, color: c.warn, letterSpacing: 0.4, textTransform: "uppercase" }}>
-        наука метода
+        {t.onb.factBadge}
       </Text>
     </View>
   );
@@ -584,19 +596,23 @@ function LevelCheck({
   const t = dict(uiLang);
   const en = uiLang === "en";
   const words = useMemo(
-    () => buildCheckWords({ b1: b1 as RawWord[], b2: b2 as RawWord[], c1: c1 as RawWord[] }),
+    () => buildCheckItems({ b1: b1 as RawWord[], b2: b2 as RawWord[], c1: c1 as RawWord[] }),
     []
   );
   const [i, setI] = useState(0);
   const [known, setKnown] = useState<Record<CheckLevel, number>>({ b1: 0, b2: 0, c1: 0 });
+  const [fakes, setFakes] = useState(0);
 
   const finished = i >= words.length;
-  const result = finished ? scoreLevel(known) : null;
+  const result: CheckResult | null = finished ? scoreCheck(known, fakes) : null;
   const item = finished ? null : words[i];
 
   function answer(yes: boolean) {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (yes && item) setKnown((k) => ({ ...k, [item.lvl]: k[item.lvl] + 1 }));
+    if (yes && item) {
+      if (item.kind === "fake") setFakes((f) => f + 1);
+      else setKnown((k) => ({ ...k, [item.lvl]: k[item.lvl] + 1 }));
+    }
     setI((p) => p + 1);
   }
 
@@ -605,8 +621,13 @@ function LevelCheck({
   }, [finished]);
 
   if (finished && result) {
-    const lv = LEVELS.find((l) => l.id === result);
-    const title = lv ? (en ? lv.titleEn : lv.title) : result.toUpperCase();
+    const lv = LEVELS.find((l) => l.id === result.level);
+    const title = lv ? (en ? lv.titleEn : lv.title) : result.level.toUpperCase();
+    const note = result.unreliable
+      ? t.onb.checkUnreliable
+      : result.cappedHigh
+        ? t.onb.checkCapped
+        : `${title}. ${t.onb.checkResultNote}`;
     return (
       <View style={{ flex: 1, padding: 20, paddingBottom: insets.bottom + 12 }}>
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 12 }}>
@@ -614,14 +635,14 @@ function LevelCheck({
             <Ionicons name="checkmark" size={30} color={c.brand} />
           </View>
           <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, color: c.ink, textAlign: "center" }}>
-            {t.onb.checkResult(result.toUpperCase())}
+            {t.onb.checkResult(result.level.toUpperCase())}
           </Text>
           <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center", maxWidth: 300 }}>
-            {title}. {t.onb.checkResultNote}
+            {note}
           </Text>
         </View>
         <Pressable
-          onPress={() => onDone(result)}
+          onPress={() => onDone(result.level)}
           accessibilityRole="button"
           style={({ pressed }) => ({
             minHeight: 54,

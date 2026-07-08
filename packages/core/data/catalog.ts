@@ -58,18 +58,67 @@ export type Topic = { id: string; title: string; titleEn: string };
  * человеку в выборе не показываются.
  */
 export type Interest = { id: string; title: string; titleEn: string };
-export const INTERESTS: Interest[] = [
-  { id: "psychology", title: "Психология и мозг", titleEn: "Psychology & brain" },
-  { id: "spirit", title: "Духовный рост и предназначение", titleEn: "Inner growth & purpose" },
-  { id: "stories", title: "Сказки и красивые истории", titleEn: "Fairy tales & stories" },
-  { id: "humor", title: "Английский юмор", titleEn: "British humour" },
-  { id: "parenting", title: "Дети и воспитание", titleEn: "Parenting" },
-  { id: "body", title: "Тело, спорт и здоровье", titleEn: "Body & health" },
-  { id: "career", title: "Работа и карьера", titleEn: "Work & career" },
-  { id: "travel", title: "Путешествия", titleEn: "Travel" },
-  { id: "beauty", title: "Стиль и красота", titleEn: "Style & beauty" },
-  { id: "people", title: "Люди и отношения", titleEn: "People & relationships" },
+export type InterestGroup = { id: string; title: string; titleEn: string; items: Interest[] };
+
+/** Единый классификатор: рубрика → темы. Плоский INTERESTS собирается из групп. */
+export const INTEREST_GROUPS: InterestGroup[] = [
+  {
+    id: "mind",
+    title: "Душа и разум",
+    titleEn: "Mind & soul",
+    items: [
+      { id: "psychology", title: "Психология и мозг", titleEn: "Psychology & brain" },
+      { id: "spirit", title: "Духовный рост и предназначение", titleEn: "Inner growth & purpose" },
+      { id: "people", title: "Люди и отношения", titleEn: "People & relationships" },
+    ],
+  },
+  {
+    id: "stories",
+    title: "Истории и культура",
+    titleEn: "Stories & culture",
+    items: [
+      { id: "stories", title: "Сказки и красивые истории", titleEn: "Fairy tales & stories" },
+      { id: "film", title: "Кино и сериалы", titleEn: "Films & series" },
+      { id: "culture", title: "Культура и искусство", titleEn: "Culture & art" },
+      { id: "humor", title: "Английский юмор", titleEn: "British humour" },
+    ],
+  },
+  {
+    id: "life",
+    title: "Жизнь и дом",
+    titleEn: "Life & home",
+    items: [
+      { id: "parenting", title: "Дети и воспитание", titleEn: "Kids & parenting" },
+      { id: "home", title: "Дом и уют", titleEn: "Home & cosiness" },
+      { id: "food", title: "Еда и кухня", titleEn: "Food & cooking" },
+      { id: "travel", title: "Путешествия", titleEn: "Travel" },
+      { id: "beauty", title: "Стиль и красота", titleEn: "Style & beauty" },
+      { id: "body", title: "Тело, спорт и здоровье", titleEn: "Body & health" },
+    ],
+  },
+  {
+    id: "work",
+    title: "Дело и наука",
+    titleEn: "Work & science",
+    items: [
+      { id: "career", title: "Работа и карьера", titleEn: "Work & career" },
+      { id: "tech", title: "Технологии", titleEn: "Technology" },
+      { id: "ai", title: "Искусственный интеллект", titleEn: "Artificial intelligence" },
+      { id: "science", title: "Наука и космос", titleEn: "Science & space" },
+    ],
+  },
+  {
+    id: "hands",
+    title: "Творчество руками",
+    titleEn: "Hands & crafts",
+    items: [
+      { id: "crafts", title: "Рукоделие и творчество", titleEn: "Crafts & making" },
+      { id: "garden", title: "Сад и растения", titleEn: "Garden & plants" },
+    ],
+  },
 ];
+
+export const INTERESTS: Interest[] = INTEREST_GROUPS.flatMap((g) => g.items);
 
 // Темы изучения (паки = блоки). Внутренняя разметка данных. Расширяемо.
 export const TOPICS: Topic[] = [
