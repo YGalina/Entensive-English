@@ -23,10 +23,15 @@ export type CalmMusic = {
   stop: () => void;
 };
 
+// Две мелодии (обе CC0, тот же альбом) — случайная на каждый ритуал,
+// чтобы Ария не «затиралась» ухом.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const TRACKS = [require("../../assets/audio/bach-aria.mp3"), require("../../assets/audio/bach-var13.mp3")];
+
 export function useCalmMusic(): CalmMusic {
   ensureAudioMode();
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const player = useAudioPlayer(require("../../assets/audio/bach-aria.mp3"));
+  const trackRef = useRef(TRACKS[Math.floor(Math.random() * TRACKS.length)]);
+  const player = useAudioPlayer(trackRef.current);
   const fade = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const api = useMemo<CalmMusic>(() => {

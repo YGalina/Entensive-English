@@ -14,8 +14,10 @@ export type YouTubeHandle = {
   seekTo: (sec: number) => void;
 };
 
-export const YouTube = forwardRef<YouTubeHandle, { id: string; height: number }>(
-  function YouTube({ id, height }, ref) {
+export const YouTube = forwardRef<
+  YouTubeHandle,
+  { id: string; height: number; onStateChange?: (state: string) => void }
+>(function YouTube({ id, height, onStateChange }, ref) {
     const player = useRef<YoutubeIframeRef | null>(null);
 
     useImperativeHandle(ref, () => ({
@@ -40,10 +42,10 @@ export const YouTube = forwardRef<YouTubeHandle, { id: string; height: number }>
           ref={player}
           videoId={id}
           height={height}
+          onChangeState={onStateChange}
           webViewProps={{ allowsInlineMediaPlayback: true }}
           initialPlayerParams={{ cc_lang_pref: "en", rel: false }}
         />
       </View>
     );
-  }
-);
+});

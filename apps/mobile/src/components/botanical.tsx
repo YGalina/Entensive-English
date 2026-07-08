@@ -55,6 +55,42 @@ function Branch({ leaf, berry, flip = false }: { leaf: string; berry: string; fl
   );
 }
 
+/** Пятилепестковый цветок (рисуется в точке cx,cy родного viewBox ветви). */
+function Flower({ cx, cy, petal, heart, size = 7 }: { cx: number; cy: number; petal: string; heart: string; size?: number }) {
+  const petals = Array.from({ length: 5 }, (_, i) => {
+    const a = (i * 72 * Math.PI) / 180;
+    return (
+      <Ellipse
+        key={i}
+        cx={cx + Math.cos(a) * size * 0.9}
+        cy={cy + Math.sin(a) * size * 0.9}
+        rx={size * 0.75}
+        ry={size * 0.45}
+        fill={petal}
+        opacity={0.75}
+        transform={`rotate(${i * 72} ${cx + Math.cos(a) * size * 0.9} ${cy + Math.sin(a) * size * 0.9})`}
+      />
+    );
+  });
+  return (
+    <G>
+      {petals}
+      <Circle cx={cx} cy={cy} r={size * 0.42} fill={heart} opacity={0.9} />
+    </G>
+  );
+}
+
+/** Одинокая тонкая веточка с парой листьев (viewBox 0 0 80 80). */
+function Sprig({ leaf, tilt = 0 }: { leaf: string; tilt?: number }) {
+  return (
+    <G transform={`rotate(${tilt} 40 40)`}>
+      <Path d="M40,72 C40,54 42,38 40,16" stroke={leaf} strokeWidth={1.8} fill="none" strokeLinecap="round" opacity={0.45} />
+      <Ellipse cx={33} cy={46} rx={10} ry={4} fill={leaf} opacity={0.4} transform="rotate(-40 33 46)" />
+      <Ellipse cx={47} cy={32} rx={9} ry={3.6} fill={leaf} opacity={0.34} transform="rotate(35 47 32)" />
+    </G>
+  );
+}
+
 /** Бабочка тонкой линии с коралловыми крыльями (viewBox 0 0 100 80). */
 function Butterfly({ wing, body, dot }: { wing: string; body: string; dot: string }) {
   return (
@@ -113,9 +149,19 @@ export function BotanicalFrame() {
       {/* Ветви: нижние углы */}
       <Svg width={170} height={170} viewBox="0 0 160 160" style={{ position: "absolute", left: -14, bottom: -10 }}>
         <Branch leaf={c.brand} berry={c.sun} />
+        <Flower cx={52} cy={96} petal={c.accent} heart={c.sun} size={8} />
+        <Flower cx={98} cy={44} petal={sk.reading} heart={c.sun} size={6} />
       </Svg>
       <Svg width={150} height={150} viewBox="0 0 160 160" style={{ position: "absolute", right: -16, bottom: -14 }}>
         <Branch leaf={c.brand} berry={c.accent} flip />
+        <Flower cx={104} cy={90} petal={c.accent} heart={c.sun} size={7} />
+      </Svg>
+      {/* Одинокие веточки — воздух и живость в свободных местах */}
+      <Svg width={70} height={70} viewBox="0 0 80 80" style={{ position: "absolute", left: 18, top: height * 0.40 }}>
+        <Sprig leaf={c.brand} tilt={-18} />
+      </Svg>
+      <Svg width={60} height={60} viewBox="0 0 80 80" style={{ position: "absolute", right: 24, top: height * 0.55 }}>
+        <Sprig leaf={c.brand} tilt={24} />
       </Svg>
       {/* Верхняя тонкая ветвь справа */}
       <Svg width={120} height={120} viewBox="0 0 160 160" style={{ position: "absolute", right: -22, top: 64, transform: [{ rotate: "160deg" }] }}>

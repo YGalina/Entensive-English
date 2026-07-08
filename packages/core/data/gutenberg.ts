@@ -51,6 +51,19 @@ export const GUTENBERG_BOOKS: GutenbergBook[] = [
   { bookId: "around-world", gutenbergId: 103, title: "Around the World in Eighty Days", author: "Jules Verne", level: "b1", genre: "classic", interests: ["travel", "stories"] },
   // ——— Духовный рост и мышление ———
   { bookId: "meditations", gutenbergId: 2680, title: "Meditations", author: "Marcus Aurelius", level: "c1", genre: "classic", interests: ["spirit", "psychology"] },
+  // ——— Расширение библиотеки (фидбэк «маленькая») ———
+  { bookId: "secret-garden", gutenbergId: 113, title: "The Secret Garden", author: "Frances Hodgson Burnett", level: "b1", genre: "classic", interests: ["stories", "parenting", "garden"] },
+  { bookId: "little-princess", gutenbergId: 146, title: "A Little Princess", author: "Frances Hodgson Burnett", level: "b1", genre: "classic", interests: ["stories", "parenting"] },
+  { bookId: "anne-green-gables", gutenbergId: 45, title: "Anne of Green Gables", author: "L. M. Montgomery", level: "b1", genre: "classic", interests: ["stories", "parenting", "people"] },
+  { bookId: "little-women", gutenbergId: 514, title: "Little Women", author: "Louisa May Alcott", level: "b1", genre: "classic", interests: ["people", "parenting"] },
+  { bookId: "jane-eyre", gutenbergId: 1260, title: "Jane Eyre", author: "Charlotte Brontë", level: "b2", genre: "classic", interests: ["people", "stories"] },
+  { bookId: "wuthering", gutenbergId: 768, title: "Wuthering Heights", author: "Emily Brontë", level: "c1", genre: "classic", interests: ["people"] },
+  { bookId: "sherlock", gutenbergId: 1661, title: "The Adventures of Sherlock Holmes", author: "Arthur Conan Doyle", level: "b2", genre: "classic", interests: ["stories", "psychology"] },
+  { bookId: "dorian-gray", gutenbergId: 174, title: "The Picture of Dorian Gray", author: "Oscar Wilde", level: "c1", genre: "classic", interests: ["culture", "people"] },
+  { bookId: "treasure-island", gutenbergId: 120, title: "Treasure Island", author: "Robert Louis Stevenson", level: "b1", genre: "classic", interests: ["stories", "travel"] },
+  { bookId: "huck-finn", gutenbergId: 76, title: "Adventures of Huckleberry Finn", author: "Mark Twain", level: "b2", genre: "humor", interests: ["humor", "travel"] },
+  { bookId: "frankenstein", gutenbergId: 84, title: "Frankenstein", author: "Mary Shelley", level: "b2", genre: "classic", interests: ["stories", "science"] },
+  { bookId: "jekyll-hyde", gutenbergId: 43, title: "The Strange Case of Dr Jekyll and Mr Hyde", author: "Robert Louis Stevenson", level: "b2", genre: "classic", interests: ["psychology", "stories"] },
 ];
 
 export function gutenbergBookById(bookId: string): GutenbergBook | undefined {

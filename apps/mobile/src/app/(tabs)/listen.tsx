@@ -42,18 +42,50 @@ export default function ListenScreen() {
     [videoId]
   );
 
-  // Караоке: поллим текущее время плеера, пока экран в фокусе.
+  // Караоке: время берём у плеера, а если он молчит (замечен случай на
+  // устройстве) — ведём РЕЗЕРВНЫЕ ЧАСЫ от событий play/pause и синхронизируем
+  // их каждым удачным ответом getCurrentTime и каждым тапом по строке.
   const playerRef = useRef<YouTubeHandle | null>(null);
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const linesScroll = useRef<ScrollView | null>(null);
   const lineY = useRef<Map<number, number>>(new Map());
+  const clock = useRef({ base: 0, wall: 0, playing: false });
+
+  function onPlayerState(state: string) {
+    const now = Date.now();
+    const ck = clock.current;
+    if (state === "playing") {
+      if (!ck.playing) {
+        ck.playing = true;
+        ck.wall = now;
+      }
+    } else if (ck.playing) {
+      ck.base += (now - ck.wall) / 1000;
+      ck.playing = false;
+    }
+  }
 
   useEffect(() => {
     if (!script || !focused) return;
     lineY.current.clear();
     setActiveIdx(null);
+    clock.current = { base: 0, wall: 0, playing: false };
     const id = setInterval(async () => {
-      const tSec = await playerRef.current?.getCurrentTime();
+      // Плеер отвечает не всегда: ждём не дольше 250мс, иначе часы.
+      const fromPlayer = await Promise.race<number | null>([
+        playerRef.current?.getCurrentTime() ?? Promise.resolve(null),
+        new Promise<null>((r) => setTimeout(() => r(null), 250)),
+      ]).catch(() => null);
+      const ck = clock.current;
+      let tSec: number | null = null;
+      if (typeof fromPlayer === "number" && fromPlayer > 0) {
+        tSec = fromPlayer;
+        // синхронизируем часы настоящим временем
+        ck.base = fromPlayer;
+        ck.wall = Date.now();
+      } else if (ck.playing || ck.base > 0) {
+        tSec = ck.base + (ck.playing ? (Date.now() - ck.wall) / 1000 : 0);
+      }
       if (tSec == null) return;
       // Активная = ПОСЛЕДНЯЯ начавшаяся строка: подсветка живёт и в паузах
       // между репликами (раньше гасла между end и следующим start — казалось,
@@ -170,7 +202,7 @@ export default function ListenScreen() {
             </Text>
           </View>
 
-          <YouTube ref={playerRef} id={script.youtubeId} height={playerH} />
+          <YouTube ref={playerRef} id={script.youtubeId} height={playerH} onStateChange={onPlayerState} />
 
           <View
             style={{
@@ -233,6 +265,9 @@ export default function ListenScreen() {
                 onPress={() => {
                   void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   playerRef.current?.seekTo(l.start);
+                  clock.current.base = l.start;
+                  clock.current.wall = Date.now();
+                  clock.current.playing = true;
                   setActiveIdx(i);
                 }}
                 accessibilityRole="button"

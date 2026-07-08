@@ -129,7 +129,7 @@ export default function SessionScreen() {
       {phase === "bridge" && (
         <Bridge
           onDone={() => {
-            music.duck(0.14);
+            music.duck(0.06);
             setPhase("flow");
           }}
         />
@@ -212,10 +212,13 @@ function Attune({ onDone }: { onDone: () => void }) {
   const aff = AFFIRMATIONS[affIdx];
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 26 }}>
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 8 }}>
       <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.muted }}>
         {t.sessionX.circleOf(cycle, BREATH_CYCLES)}
       </Text>
+      {/* Зона круга фиксирована: на вдохе (scale 1.4) он растёт внутри неё,
+          не наезжая на подписи — воздух сохраняется. */}
+      <View style={{ height: 240, alignItems: "center", justifyContent: "center" }}>
       <Animated.View
         style={{
           width: 150,
@@ -233,7 +236,8 @@ function Attune({ onDone }: { onDone: () => void }) {
           {label}
         </Text>
       </Animated.View>
-      <View style={{ gap: 6, alignItems: "center", minHeight: 70 }}>
+      </View>
+      <View style={{ gap: 6, alignItems: "center", minHeight: 70, paddingTop: 6 }}>
         <Text
           style={{
             fontFamily: "Nunito_700Bold",

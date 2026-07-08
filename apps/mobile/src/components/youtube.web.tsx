@@ -8,8 +8,10 @@ import type { YouTubeHandle } from "./youtube";
 
 export type { YouTubeHandle } from "./youtube";
 
-export const YouTube = forwardRef<YouTubeHandle, { id: string; height: number }>(
-  function YouTube({ id, height }, ref) {
+export const YouTube = forwardRef<
+  YouTubeHandle,
+  { id: string; height: number; onStateChange?: (state: string) => void }
+>(function YouTube({ id, height }, ref) {
     useImperativeHandle(ref, () => ({
       getCurrentTime: async () => null,
       seekTo: () => {},

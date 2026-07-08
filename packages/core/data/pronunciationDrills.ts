@@ -162,6 +162,36 @@ export const DRILL_LESSONS: DrillLesson[] = [
       },
     ],
   },
+  {
+    id: "feelings",
+    title: "Урок · Чувства вслух",
+    titleEn: "Lesson · Feelings aloud",
+    phrases: [
+      { key: "breathe", en: "Just breathe and take your time.", ru: "Просто дыши и не торопись." },
+      { key: "proud", en: "I'm really proud of you.", ru: "Я тобой по-настоящему горжусь." },
+      { key: "worry", en: "Don't worry, we'll figure it out.", ru: "Не волнуйся, мы разберёмся." },
+      { key: "together", en: "We're in this together.", ru: "Мы в этом вместе." },
+      { key: "enough", en: "You are more than enough.", ru: "Тебя более чем достаточно." },
+      { key: "gentle", en: "Be gentle with yourself today.", ru: "Будь сегодня мягче к себе." },
+      { key: "through", en: "We'll get through this.", ru: "Мы это переживём." },
+      { key: "warmth", en: "Her voice was full of warmth.", ru: "Её голос был полон тепла." },
+    ],
+  },
+  {
+    id: "city",
+    title: "Урок · Город и дорога",
+    titleEn: "Lesson · City & road",
+    phrases: [
+      { key: "straight", en: "Go straight and turn left at the lights.", ru: "Идите прямо, на светофоре — налево." },
+      { key: "crowded", en: "The train gets crowded after five.", ru: "После пяти в поезде людно." },
+      { key: "corner", en: "There's a lovely café on the corner.", ru: "На углу — чудесное кафе." },
+      { key: "miss", en: "Hurry up, or we'll miss the bus.", ru: "Поторопись, а то опоздаем на автобус." },
+      { key: "window", en: "May I have a window seat, please?", ru: "Можно мне место у окна, пожалуйста?" },
+      { key: "weather", en: "Lovely weather for a walk, isn't it?", ru: "Чудесная погода для прогулки, правда?" },
+      { key: "further", en: "The museum is a bit further down the road.", ru: "Музей чуть дальше по улице." },
+      { key: "journey", en: "Enjoy the journey, not just the arrival.", ru: "Наслаждайся дорогой, а не только прибытием." },
+    ],
+  },
 ];
 
 /**

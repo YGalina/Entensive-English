@@ -151,7 +151,7 @@ export default function ThreeMinutes() {
       ) : stage === "bridge" ? (
         <Bridge
           onDone={() => {
-            music.duck(0.12);
+            music.duck(0.05);
             nextStage("phrases");
           }}
         />
@@ -231,10 +231,11 @@ function Breath({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) 
   const label = phase === "in" ? t.sessionX.inhale : phase === "hold" ? t.sessionX.hold : t.sessionX.exhale;
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 28 }}>
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 8 }}>
       <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.muted }}>
         {t.threeX.circleOf(cycle, BREATH_CYCLES)}
       </Text>
+      <View style={{ height: 250, alignItems: "center", justifyContent: "center" }}>
       <Animated.View
         style={{
           width: 160,
@@ -252,6 +253,7 @@ function Breath({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) 
           {label}
         </Text>
       </Animated.View>
+      </View>
       <Text
         style={{
           fontFamily: "Inter_400Regular",
