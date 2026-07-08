@@ -13,6 +13,8 @@ import {
   type ShadowScript,
 } from "@ie/core/data/shadowing";
 import { useActivityTimer } from "@ie/core/timelog";
+import { useMyLibrary, addMyVideo, removeMyVideo, parseYoutubeId } from "@ie/core/mylibrary";
+import { AddLinkSheet } from "@/components/add-link-sheet";
 import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
 
@@ -31,6 +33,9 @@ export default function ListenScreen() {
   const { t } = useT();
 
   const [videoId, setVideoId] = useState<string | null>(null);
+  const [custom, setCustom] = useState<{ youtubeId: string; title: string } | null>(null);
+  const [addOpen, setAddOpen] = useState(false);
+  const myLib = useMyLibrary();
   const [showRu, setShowRu] = useState(false);
   const script = useMemo<ShadowScript | null>(
     () => SHADOWING.find((s) => s.id === videoId) ?? null,
@@ -71,7 +76,7 @@ export default function ListenScreen() {
   }, [script, focused]);
 
   // Минуты shadowing идут в план дня, пока открыт плеер на этом табе.
-  useActivityTimer(focused && script ? "shadowing" : null);
+  useActivityTimer(focused && (script || custom) ? "shadowing" : null);
 
   // Полка дня: открыть видео по deep-link параметру (однократно).
   const params = useLocalSearchParams<{ video?: string }>();
@@ -88,6 +93,41 @@ export default function ListenScreen() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setVideoId(id);
     setShowRu(false);
+  }
+
+  /* ---------- Своё видео: плеер + инструкция (без караоке) ---------- */
+  if (custom) {
+    return (
+      <View style={{ flex: 1, backgroundColor: c.bg, paddingTop: insets.top + 8 }}>
+        <View style={{ paddingHorizontal: 20, gap: 10 }}>
+          <Pressable
+            onPress={() => {
+              void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setCustom(null);
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={t.listenX.toVideos}
+            hitSlop={8}
+            style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: 6, minHeight: 40, opacity: pressed ? 0.6 : 1 })}
+          >
+            <Ionicons name="chevron-back" size={18} color={c.muted} />
+            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>
+              {t.listenX.toVideos}
+            </Text>
+          </Pressable>
+          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 20, lineHeight: 26, color: c.ink }} numberOfLines={2}>
+            {custom.title}
+          </Text>
+          <YouTube id={custom.youtubeId} height={playerH} />
+          <View style={{ flexDirection: "row", gap: 8, backgroundColor: c.brandSoft, borderRadius: radius.soft, padding: 12 }}>
+            <Ionicons name="mic" size={16} color={tone} style={{ marginTop: 1 }} />
+            <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.brandInk }}>
+              {t.listenX.customNote}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
   }
 
   /* ---------- Плеер (закреплён) + строки-караоке (скроллятся) ---------- */
@@ -279,6 +319,103 @@ export default function ListenScreen() {
         </View>
         <Ionicons name="chevron-forward" size={18} color={c.onBrand} />
       </Pressable>
+
+      {/* Мои видео: своя лента */}
+      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+        {t.listenX.myVideos}
+      </Text>
+      {myLib.videos.map((mv) => (
+        <Pressable
+          key={mv.youtubeId}
+          onPress={() => {
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            setCustom({ youtubeId: mv.youtubeId, title: mv.title });
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={mv.title}
+          style={({ pressed }) => ({
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            backgroundColor: pressed ? c.brandSoft : c.surface,
+            borderRadius: radius.soft,
+            borderWidth: 1,
+            borderColor: c.line,
+            padding: 14,
+            minHeight: 60,
+            transform: [{ scale: pressed ? 0.99 : 1 }],
+          })}
+        >
+          <View style={{ width: 42, height: 42, borderRadius: 12, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center" }}>
+            <Ionicons name="logo-youtube" size={18} color={tone} />
+          </View>
+          <Text style={{ flex: 1, fontFamily: "Nunito_700Bold", fontSize: 14.5, color: c.ink }} numberOfLines={2}>
+            {mv.title}
+          </Text>
+          <Pressable
+            onPress={() => {
+              void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              removeMyVideo(mv.youtubeId);
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={t.readX.removeA11y}
+            hitSlop={10}
+            style={({ pressed }) => ({ padding: 6, opacity: pressed ? 0.5 : 1 })}
+          >
+            <Ionicons name="close-circle" size={20} color={c.muted} />
+          </Pressable>
+        </Pressable>
+      ))}
+      <Pressable
+        onPress={() => {
+          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          setAddOpen(true);
+        }}
+        accessibilityRole="button"
+        style={({ pressed }) => ({
+          minHeight: 52,
+          borderRadius: radius.soft,
+          borderWidth: 1.5,
+          borderColor: c.brand,
+          borderStyle: "dashed",
+          backgroundColor: pressed ? c.brandSoft : "transparent",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "row",
+          gap: 8,
+        })}
+      >
+        <Ionicons name="add" size={18} color={c.brandD} />
+        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.brandD }}>
+          {t.listenX.addVideo}
+        </Text>
+      </Pressable>
+
+      <AddLinkSheet
+        open={addOpen}
+        title={t.listenX.addVideo}
+        placeholder={t.listenX.addVideoPh}
+        hint={t.listenX.addVideoHint}
+        errorText={t.listenX.addVideoErr}
+        onClose={() => setAddOpen(false)}
+        onSubmit={(v) => {
+          const id = parseYoutubeId(v);
+          if (!id) return false;
+          addMyVideo(id, t.listenX.myVideoDefault);
+          void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          // Название подтягиваем через oEmbed (без ключа); не критично при ошибке.
+          fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((j: { title?: string } | null) => {
+              if (j?.title) {
+                removeMyVideo(id);
+                addMyVideo(id, j.title);
+              }
+            })
+            .catch(() => {});
+          return true;
+        }}
+      />
 
       {CATEGORY_ORDER.map((cat) => {
         const items = SHADOWING.filter((s) => s.category === cat);

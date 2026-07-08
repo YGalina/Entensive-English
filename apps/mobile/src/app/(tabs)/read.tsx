@@ -14,6 +14,15 @@ import {
   type GutenbergBook,
 } from "@ie/core/data/gutenberg";
 import { usePrefs } from "@ie/core/prefs";
+import {
+  useMyLibrary,
+  addMyBook,
+  removeMyBook,
+  setMyBookTitle,
+  parseGutenbergId,
+  titleFromGutenbergRaw,
+} from "@ie/core/mylibrary";
+import { AddLinkSheet } from "@/components/add-link-sheet";
 import { useActivityTimer } from "@ie/core/timelog";
 import { recordWpm, useWpmStats } from "@ie/core/wpm";
 import { nowMs } from "@ie/core/now";
@@ -37,6 +46,8 @@ export default function ReadScreen() {
   const wpmStats = useWpmStats();
   const prefs = usePrefs();
   const { t } = useT();
+  const myLib = useMyLibrary();
+  const [addOpen, setAddOpen] = useState(false);
 
   const books = useMemo(
     () => booksForReader(prefs?.topics ?? [], prefs?.level),
@@ -107,6 +118,10 @@ export default function ReadScreen() {
         } catch {}
       }
       if (!raw) throw new Error("no text");
+      if (b.bookId.startsWith("my-")) {
+        const title = titleFromGutenbergRaw(raw);
+        if (title) setMyBookTitle(b.gutenbergId, title);
+      }
       const cs = chunkGutenbergText(b, raw).map(gutenbergChunkToStory);
       if (cs.length === 0) throw new Error("no chunks");
       setChunks(cs);
@@ -410,6 +425,105 @@ export default function ReadScreen() {
           <Ionicons name="chevron-forward" size={16} color={c.muted} />
         </Pressable>
       ))}
+
+      {/* Мои книги: своя лента (Gutenberg по ссылке) */}
+      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 17, color: c.ink, marginTop: 10 }}>
+        {t.readX.myBooks}
+      </Text>
+      {myLib.books.map((mb) => (
+        <Pressable
+          key={mb.gutenbergId}
+          onPress={() =>
+            openBook({
+              bookId: `my-${mb.gutenbergId}`,
+              gutenbergId: mb.gutenbergId,
+              title: mb.title,
+              author: "Project Gutenberg",
+              level: (prefs?.level as never) ?? "b1",
+              genre: "classic",
+              interests: [],
+            })
+          }
+          accessibilityRole="button"
+          accessibilityLabel={mb.title}
+          style={({ pressed }) => ({
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            backgroundColor: pressed ? c.brandSoft : c.surface,
+            borderRadius: radius.soft,
+            borderWidth: 1,
+            borderColor: c.line,
+            padding: 14,
+            minHeight: 64,
+            transform: [{ scale: pressed ? 0.99 : 1 }],
+          })}
+        >
+          <View style={{ width: 42, height: 42, borderRadius: 12, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center" }}>
+            <Ionicons name="bookmark" size={19} color={tone} />
+          </View>
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.ink }} numberOfLines={2}>
+              {mb.title}
+            </Text>
+            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+              Project Gutenberg · {t.readX.byChapters}
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => {
+              void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              removeMyBook(mb.gutenbergId);
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={t.readX.removeA11y}
+            hitSlop={10}
+            style={({ pressed }) => ({ padding: 6, opacity: pressed ? 0.5 : 1 })}
+          >
+            <Ionicons name="close-circle" size={20} color={c.muted} />
+          </Pressable>
+        </Pressable>
+      ))}
+      <Pressable
+        onPress={() => {
+          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          setAddOpen(true);
+        }}
+        accessibilityRole="button"
+        style={({ pressed }) => ({
+          minHeight: 52,
+          borderRadius: radius.soft,
+          borderWidth: 1.5,
+          borderColor: c.brand,
+          borderStyle: "dashed",
+          backgroundColor: pressed ? c.brandSoft : "transparent",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "row",
+          gap: 8,
+        })}
+      >
+        <Ionicons name="add" size={18} color={c.brandD} />
+        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.brandD }}>
+          {t.readX.addBook}
+        </Text>
+      </Pressable>
+
+      <AddLinkSheet
+        open={addOpen}
+        title={t.readX.addBook}
+        placeholder={t.readX.addBookPh}
+        hint={t.readX.addBookHint}
+        errorText={t.readX.addBookErr}
+        onClose={() => setAddOpen(false)}
+        onSubmit={(v) => {
+          const id = parseGutenbergId(v);
+          if (!id) return false;
+          addMyBook(id, t.readX.myBookDefault(id));
+          void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          return true;
+        }}
+      />
 
       {/* Короткие тексты (с переводом) */}
       <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 17, color: c.ink, marginTop: 10 }}>
