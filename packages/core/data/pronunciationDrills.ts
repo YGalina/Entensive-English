@@ -168,10 +168,13 @@ export const DRILL_LESSONS: DrillLesson[] = [
  * Лестница темпа по протоколу Шестова. wordByWord — сверхмедленный сегмент:
  * фраза по словам с паузами (веб-приближение 10–30-кратного замедления).
  */
+// Скорости РАЗВЕДЕНЫ ощутимо (фидбэк: 0.95/0.7/1.0 на слух сливались).
+// Шаги 1 и 4 нарочно звучат одинаково — меняется РОЛЬ ученицы (слушать → 
+// говорить синхронно), это замысел метода, а не ошибка.
 export const TEMPO_STEPS = [
-  { id: "listen", rate: 0.95, wordByWord: false },
-  { id: "ultra", rate: 0.55, wordByWord: true },
-  { id: "slow", rate: 0.7, wordByWord: false },
+  { id: "listen", rate: 1.0, wordByWord: false },
+  { id: "ultra", rate: 0.5, wordByWord: true },
+  { id: "slow", rate: 0.68, wordByWord: false },
   { id: "native", rate: 1.0, wordByWord: false },
 ] as const;
 

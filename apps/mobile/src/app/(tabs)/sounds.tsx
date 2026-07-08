@@ -19,11 +19,12 @@ import { useMarina } from "@/theme";
 // лестница темпа: слушай → сверхмедленно по словам → вместе → носитель.
 // Автопоток гоняет все 4 шага с паузами на повтор, минимум 3 круга на фразу.
 
-const STEP_UI: Record<TempoStepId, { label: string; hint: string }> = {
-  listen: { label: "1 · Слушай", hint: "Просто слушай, глазами по тексту." },
-  ultra: { label: "2 · Сверхмедленно", hint: "Повторяй за голосом, следи за артикуляцией — губы, язык." },
-  slow: { label: "3 · Вместе", hint: "Проговаривай вместе с диктором. Сфальшивила — тихо подхвати со следующего слова." },
-  native: { label: "4 · Носитель", hint: "Синхронно, в полный темп, с интонацией." },
+/** Иконка роли шага: молчу-слушаю / повторяю за словом / говорю вместе / синхронно. */
+const STEP_ICON: Record<TempoStepId, string> = {
+  listen: "ear",
+  ultra: "footsteps",
+  slow: "people",
+  native: "flash",
 };
 
 function repeatPause(text: string, stepId: TempoStepId): number {
@@ -299,9 +300,14 @@ export default function SoundsScreen() {
             );
           })}
         </View>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted }}>
-          {t.soundsX.steps[step.id].hint}
-        </Text>
+        {/* Роль шага — заметно, а не мелким серым: в 1 и 4 звук одинаков,
+            меняется именно роль (слушаю → говорю синхронно) */}
+        <View style={{ flexDirection: "row", gap: 10, alignItems: "flex-start", backgroundColor: c.brandSoft, borderRadius: 12, padding: 12 }}>
+          <Ionicons name={STEP_ICON[step.id] as never} size={18} color={tone} style={{ marginTop: 1 }} />
+          <Text style={{ flex: 1, fontFamily: "Inter_600SemiBold", fontSize: 13, lineHeight: 19, color: c.brandInk }}>
+            {t.soundsX.steps[step.id].hint}
+          </Text>
+        </View>
       </View>
 
       {/* Управление */}
