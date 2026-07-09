@@ -6,7 +6,8 @@ import Svg, { Circle } from "react-native-svg";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useDayPlan } from "@ie/core/dayplan";
-import { useArtifacts } from "@ie/core/output";
+import { useArtifacts, useOutputStats } from "@ie/core/output";
+import { speakingDue, useAssessVersion } from "@ie/core/assess";
 import { booksForReader } from "@ie/core/data/gutenberg";
 import { SHADOWING } from "@ie/core/data/shadowing";
 import { STORIES } from "@ie/core/data/reading";
@@ -57,6 +58,10 @@ export default function TodayScreen() {
   const reviewDue =
     (weekday === 0 || weekday === 6) &&
     !artifacts.some((a) => a.type === "review" && a.createdAt >= Date.now() - 6 * 864e5);
+  // Срез речи: первый — после недели вывода, дальше раз в ~месяц.
+  const outStats = useOutputStats();
+  useAssessVersion();
+  const checkupDue = speakingDue(outStats.activeDays);
 
   // Тёмная = синяя морская ночь (не зелёная) — в тон tokens.dark.
   const heroGradient =
@@ -309,6 +314,41 @@ export default function TodayScreen() {
           </Pressable>
         )}
       </LinearGradient>
+
+      {/* Срез речи — раз в месяц, точка на пути */}
+      {checkupDue && (
+        <Pressable
+          onPress={() => {
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            router.push("/checkup" as never);
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={t.checkX.todayTitle}
+          style={({ pressed }) => ({
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            backgroundColor: pressed ? c.brandSoft : c.surface,
+            borderRadius: radius.soft,
+            borderWidth: 1,
+            borderColor: c.sun,
+            paddingHorizontal: 14,
+            minHeight: 56,
+            transform: [{ scale: pressed ? 0.99 : 1 }],
+          })}
+        >
+          <Ionicons name="pulse-outline" size={20} color={c.sun} />
+          <View style={{ flex: 1, paddingVertical: 10 }}>
+            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink }}>
+              {t.checkX.todayTitle}
+            </Text>
+            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+              {t.checkX.todayNote}
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={16} color={c.muted} />
+        </Pressable>
+      )}
 
       {/* Разбор недели с тренером — по выходным */}
       {reviewDue && (
