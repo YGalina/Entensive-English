@@ -10,6 +10,7 @@ import { booksForReader } from "@ie/core/data/gutenberg";
 import { SHADOWING } from "@ie/core/data/shadowing";
 import { STORIES } from "@ie/core/data/reading";
 import { useStreak } from "@ie/core/timelog";
+import { useSrsStats } from "@ie/core/srs";
 import { useOutcome } from "@ie/core/outcome";
 import { useWpmStats } from "@ie/core/wpm";
 import { usePrefs } from "@ie/core/prefs";
@@ -47,6 +48,7 @@ export default function TodayScreen() {
   const prefs = usePrefs();
   const outcome = useOutcome();
   const wpm = useWpmStats();
+  const srs = useSrsStats();
 
   // Тёмная = синяя морская ночь (не зелёная) — в тон tokens.dark.
   const heroGradient =
@@ -170,6 +172,41 @@ export default function TodayScreen() {
 
       {/* Речевой контур: утренняя фраза / статус дня — ежедневный маленький вывод */}
       <OutputCard />
+
+      {/* Продуктивное извлечение: слова, готовые выйти в речь */}
+      {srs.produceDue > 0 && (
+        <Pressable
+          onPress={() => {
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            router.push("/produce" as never);
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={t.today.produceA11y(srs.produceDue)}
+          style={({ pressed }) => ({
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            backgroundColor: pressed ? c.brandSoft : c.surface,
+            borderRadius: radius.soft,
+            borderWidth: 1,
+            borderColor: c.line,
+            paddingHorizontal: 14,
+            minHeight: 56,
+            transform: [{ scale: pressed ? 0.99 : 1 }],
+          })}
+        >
+          <Ionicons name="mic-outline" size={20} color={c.accent} />
+          <View style={{ flex: 1, paddingVertical: 10 }}>
+            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink }}>
+              {t.today.produceTitle}
+            </Text>
+            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+              {t.today.produceNote(srs.produceDue)}
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={16} color={c.muted} />
+        </Pressable>
+      )}
 
       {/* Полка дня: три двери в смыслы (конечная, не лента) */}
       <View style={{ gap: 8 }}>
