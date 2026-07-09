@@ -155,6 +155,15 @@ export function donePractices(): Record<string, string> {
   return read().done;
 }
 
+/** Сводка встреч для экрана «Путь»: когда встречен каждый страж и сколько практик пройдено. */
+export function guardianStats(): {
+  met: Partial<Record<GuardianId, string>>;
+  doneCount: number;
+} {
+  const l = read();
+  return { met: l.lastByGuardian, doneCount: Object.keys(l.done).length };
+}
+
 function subscribe(cb: () => void) {
   listeners.add(cb);
   const unExternal = storage().subscribeExternal(cb);

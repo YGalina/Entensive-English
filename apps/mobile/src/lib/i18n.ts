@@ -332,6 +332,16 @@ const ru = {
       shorter: "Разбей на короткие предложения — «Пиши, сокращай».",
     } as Record<string, string>,
   },
+  pathX: {
+    title: "Путь",
+    close: "Закрыть",
+    whereTo: "куда иду",
+    noGoal: "Цель появится после настройки",
+    budget: (a: number, b: number, done: number) => `бюджет ≈ ${a}–${b} ч · пройдено ${done} ч`,
+    milestones: (u: number, n: number) => `Вехи пути · ${u} из ${n}`,
+    guardians: (done: number) => `Стражи пути · практик пройдено: ${done}`,
+    guardiansNote: "Стражи приходят сами — когда путь по-настоящему начался. Встреченный страж — знак движения, не ошибки.",
+  },
   rolesX: {
     title: "Роли",
     close: "Закрыть",
@@ -741,6 +751,16 @@ const en: Dict = {
       "past-marker": "Yesterday means past tense: try V2 (did, went, was).",
       shorter: "Split it into short sentences.",
     } as Record<string, string>,
+  },
+  pathX: {
+    title: "The Path",
+    close: "Close",
+    whereTo: "where I'm going",
+    noGoal: "Your goal appears after setup",
+    budget: (a: number, b: number, done: number) => `budget ≈ ${a}–${b} h · walked ${done} h`,
+    milestones: (u: number, n: number) => `Milestones · ${u} of ${n}`,
+    guardians: (done: number) => `Guardians of the path · practices done: ${done}`,
+    guardiansNote: "Guardians arrive on their own — once the journey has truly begun. Meeting one is a sign of movement, not failure.",
   },
   rolesX: {
     title: "Roles",

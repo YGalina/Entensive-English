@@ -170,6 +170,19 @@ export default function ProfileScreen() {
             </View>
           ))}
         </View>
+        <Pressable
+          onPress={() => {
+            tap();
+            router.push("/path" as never);
+          }}
+          accessibilityRole="button"
+          style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, minHeight: 44, marginBottom: 12, borderRadius: 12, backgroundColor: pressed ? c.brandSoft : "transparent", borderWidth: 1, borderColor: c.line })}
+        >
+          <Ionicons name="trail-sign-outline" size={15} color={c.brand} />
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13.5, color: c.brand }}>
+            {t.pathX.title} →
+          </Text>
+        </Pressable>
       </Card>
 
       {/* ---------- Постоянство (мягкие ачивки) ---------- */}
