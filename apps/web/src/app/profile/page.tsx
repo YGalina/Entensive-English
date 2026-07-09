@@ -41,6 +41,11 @@ const STR = {
     login: "Войти по волшебной ссылке",
     loggedAs: "Ты вошла как",
     cloudSave: "Сохранить в облако",
+    consentsTitle: "Приватность",
+    consentTexts: "Синк текстов дневника и статусов",
+    consentAudio: "Синк голосовых записей",
+    consentLlm: "AI-подсказки к моим текстам",
+    consentsNote: "По умолчанию всё выключено: дневник и голос живут только на устройстве. Каждое согласие можно отозвать здесь же.",
     cloudLoad: "Забрать из облака",
     cloudSaved: "Прогресс в облаке ✓",
     cloudLoaded: "Прогресс загружен — обновляю…",
@@ -79,6 +84,11 @@ const STR = {
     login: "Sign in with a magic link",
     loggedAs: "Signed in as",
     cloudSave: "Save to cloud",
+    consentsTitle: "Privacy",
+    consentTexts: "Sync diary texts and statuses",
+    consentAudio: "Sync voice recordings",
+    consentLlm: "AI hints on my texts",
+    consentsNote: "Everything is off by default: your diary and voice live on the device only. Any consent can be revoked right here.",
     cloudLoad: "Load from cloud",
     cloudSaved: "Progress is in the cloud ✓",
     cloudLoaded: "Progress loaded — refreshing…",
@@ -299,10 +309,18 @@ function AccountCard({ t }: { t: (typeof STR)["ru"] | (typeof STR)["en"] }) {
   const [loaded, setLoaded] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
+  const [consents, setConsents] = useState<Record<string, boolean>>({});
+
   useEffect(() => {
     fetchMe().then((u) => {
       setUser(u);
       setLoaded(true);
+      if (u) {
+        fetch("/api/consents")
+          .then((r) => r.json())
+          .then((j: { consents?: Record<string, boolean> }) => setConsents(j.consents ?? {}))
+          .catch(() => {});
+      }
     });
   }, []);
 
@@ -368,6 +386,43 @@ function AccountCard({ t }: { t: (typeof STR)["ru"] | (typeof STR)["en"] }) {
         </button>
       </div>
       {msg && <p className="mt-2 text-xs font-semibold text-muted">{msg}</p>}
+
+      {/* Согласия: приватность по умолчанию, каждый канал — явный переключатель */}
+      <div className="mt-4 rounded-2xl border border-line bg-surface p-4">
+        <p className="font-heading text-sm font-bold text-ink">{t.consentsTitle}</p>
+        {(
+          [
+            ["sync-texts", t.consentTexts],
+            ["sync-audio", t.consentAudio],
+            ["llm-feedback", t.consentLlm],
+          ] as const
+        ).map(([kind, label]) => (
+          <label key={kind} className="mt-3 flex cursor-pointer items-center justify-between gap-3 text-sm">
+            <span className="text-ink">{label}</span>
+            <input
+              type="checkbox"
+              data-testid={`consent-${kind}`}
+              checked={consents[kind] ?? false}
+              onChange={async (e) => {
+                const granted = e.target.checked;
+                setConsents((c) => ({ ...c, [kind]: granted }));
+                try {
+                  await fetch("/api/consents", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ kind, granted }),
+                  });
+                } catch {
+                  setConsents((c) => ({ ...c, [kind]: !granted }));
+                }
+              }}
+              className="h-5 w-5 accent-[var(--brand)]"
+            />
+          </label>
+        ))}
+        <p className="mt-3 text-xs leading-relaxed text-muted">{t.consentsNote}</p>
+      </div>
+
       <button onClick={out} className="mt-2 w-full py-2 text-center text-xs font-semibold text-muted">
         {t.logout}
       </button>
