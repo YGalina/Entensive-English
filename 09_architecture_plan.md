@@ -1,6 +1,11 @@
 # План разработки новой архитектуры «Intensive English»
 
 Дата: 2026-07-09.
+
+## Прогресс
+- ✅ **Фаза A — Output-контур локально** (коммиты 4e40d07, ece96d5): `@ie/core/output` (OutputArtifact, ie_output), `@ie/core/feedback` (prompts-эвристики L1), SRS v2 (produce-направление + конвейер), `@ie/media/recorder` (web+native), карточка «Утренняя фраза/Статус дня» на «Сегодня», экран «Скажи сама» (/produce), счётчики «Речевой контур» в профиле, шаг «Статус дня» в вечернем круге web. 42 юнита.
+- ✅ **Честность обещаний** (6c80dde, из Фазы B §5): SPEECH_EMERGES_DAYS/speechEta удалены; Horizon показывает факты вывода; онбординг-копия без «2–10 раз»/«×2,5»/«всплывёт сама».
+- ⏳ **Дальше**: Фаза B — goal.ts + генератор ProgramV2, онбординг v3 цель-first (порядок из §«Онбординг»), capability-вехи, рефрейм стрика в тренировочный режим. Затем C (Postgres+синк) и E (TeacherBlock, chunks-паки).
 Основания: аудиты `08_product_audit_v3_codex.md` и `Research for EE/06_product_audit/AUDIT_intensive-english_2026-07-09_RU.md` (два независимых аудитора, сошлись почти по всем пунктам); рыночный синтез `Research for EE/04_layer3_synthesis/L3_claude-fable5_2026-07-08_RU.md`; научный синтез `Research for EE/03_science_language_brain_research/L3_science_claude-fable5_2026-07-09_RU.md`; отчёт по рецептивно-продуктивному разрыву `Research for EE/05_receptive_productive_gap/GAP_gemini_2026-07-09_RU.md`.
 
 ---
