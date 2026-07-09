@@ -16,6 +16,7 @@ export type OutputType =
   | "essay" // свободный текст/дневник
   | "explanation" // «объясни слово/мысль своими словами»
   | "role" // сыгранная роль в сцене (produce в маске героя)
+  | "review" // еженедельный разбор с тренером (self-guided)
   | "speech"; // голосовая запись (audioRef)
 
 export type OutputArtifact = {
