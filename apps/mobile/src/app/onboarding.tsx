@@ -33,6 +33,7 @@ import b1 from "@ie/core/data/vocab-b1.json";
 import b2 from "@ie/core/data/vocab-b2.json";
 import c1 from "@ie/core/data/vocab-c1.json";
 import { dict, type UiLang } from "@/lib/i18n";
+import { saveGoal, domainFromLegacyGoal, type Level } from "@ie/core/goal";
 import { BotanicalFrame } from "@/components/botanical";
 import { useMarina } from "@/theme";
 
@@ -144,6 +145,19 @@ export default function Onboarding() {
       topics,
       level,
       dailyGoalMin: dailyMin,
+    });
+    // Цель-first (Фаза B): рядом с prefs сохраняем Goal — домен, уровни,
+    // недельный бюджет. Полный цель-first онбординг заменит это поле честнее.
+    const lvl = ((level || "b1") as Level);
+    const order: Level[] = ["a1", "a2", "b1", "b2", "c1", "c2"];
+    const target = order[Math.min(order.indexOf(lvl) + 1, order.length - 1)];
+    const goalObj = GOALS.find((g) => g.id === goal);
+    saveGoal({
+      lifeGoal: goalObj ? (uiLang === "en" ? goalObj.titleEn : goalObj.title) : goal,
+      domain: domainFromLegacyGoal(goal),
+      currentLevel: lvl,
+      targetLevel: target,
+      weeklyMinutes: dailyMin * 7,
     });
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setAha(true);
