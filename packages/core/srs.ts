@@ -10,6 +10,7 @@ import {
   type Card as FsrsCard,
 } from "ts-fsrs";
 import { storage } from "./storage";
+import { emitEvent } from "./events";
 
 // Кибернетическое ядро метода: система планирует «узнавание» слов на будущее.
 // Алгоритм — FSRS (современнее SM-2): интервалы считаются по стабильности и
@@ -109,6 +110,7 @@ export function recordAnswer(packId: string, en: string, known: boolean) {
     s[pk] = { ...createEmptyCard(now), en, packId, direction: "produce" };
   }
   write(s);
+  emitEvent("srs-answer", { en, packId, known, direction: "recognize" });
 }
 
 /** Записать результат ПРОДУКТИВНОГО извлечения (значение → форма). */
@@ -122,6 +124,7 @@ export function recordProduceAnswer(packId: string, en: string, known: boolean) 
   const { card: next } = f.next(card, now, grade);
   s[pk] = { ...next, en, packId, direction: "produce" };
   write(s);
+  emitEvent("srs-answer", { en, packId, known, direction: "produce" });
 }
 
 /** Продуктивная очередь на сейчас: слова, которые пора произвести самой. */

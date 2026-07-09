@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useSyncExternalStore } from "react";
 import { storage } from "./storage";
+import { emitEvent } from "./events";
 
 // Учёт времени по практикам (почасовка). Кибернетика метода: система считает часы —
 // это и обратная связь, и база для честной гарантии результата.
@@ -38,6 +39,7 @@ export function addTime(activity: string, seconds: number) {
   l[d] = l[d] || {};
   l[d][activity] = (l[d][activity] || 0) + seconds;
   write(l);
+  emitEvent("time-add", { day: d, activity, seconds: Math.round(seconds) });
 }
 
 export type TimeStats = {

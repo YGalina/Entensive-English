@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { storage } from "./storage";
 import { nowMs } from "./now";
+import { emitEvent } from "./events";
 
 // Контур вывода — то, что человек ПРОИЗВЁЛ сам (Фаза A новой архитектуры,
 // 09_architecture_plan.md §2.2). Наука корпуса: рецептивно-продуктивный разрыв
@@ -75,6 +76,9 @@ export function addArtifact(input: {
     privacy: "private",
   };
   write([...read(), a]);
+  // Синк v2: текст артефакта в событие НЕ кладём (приватность до согласий) —
+  // только метаданные; тело доедет снапшотом после consent.
+  emitEvent("artifact-created", { artifactId: a.id, type: a.type, words: a.words.length });
   return a;
 }
 

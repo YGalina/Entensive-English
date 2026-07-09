@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { storage } from "./storage";
+import { emitEvent } from "./events";
 import { HOURS_PER_LEVEL } from "./outcome";
 
 // Цель → Программа → Способности (Фаза B, 09_architecture_plan.md §2.1, §2.5).
@@ -139,6 +140,7 @@ const listeners = new Set<() => void>();
 export function saveGoal(g: Goal) {
   storage().setItem(KEY, JSON.stringify(g));
   listeners.forEach((l) => l());
+  emitEvent("goal-set", { ...g });
 }
 
 export function loadGoal(): Goal | null {
