@@ -147,8 +147,9 @@ export default function CheckupScreen() {
             >
               <Ionicons name={rec.recording ? "stop" : "mic"} size={40} color={c.onBrand} />
             </Pressable>
-            {!rec.supported && (
-              <Pressable onPress={() => setStage("rate")} accessibilityRole="button">
+            {/* Всегда доступный обход: нет разрешения на микрофон — срез всё равно случится */}
+            {!rec.recording && (
+              <Pressable onPress={() => setStage("rate")} accessibilityRole="button" hitSlop={8}>
                 <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 13, color: c.muted }}>
                   {k.skipRecord}
                 </Text>
