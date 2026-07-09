@@ -38,6 +38,9 @@ const UI = {
     statusSave: "Сохранить и спать",
     statusSkip: "Не сегодня",
     hintTitle: "Мягкая подсказка — поправь сама:",
+    aiBtn: "Разбор тренера (AI)",
+    aiWait: "Тренер читает…",
+    aiUnavailable: "AI-разбор появится после входа, согласия в профиле и настройки ключа.",
     praise: "Живая фраза. Именно так рождается речь.",
     hints: {
       "do-decision": "Решение по-английски «делают» иначе: make a decision.",
@@ -71,6 +74,9 @@ const UI = {
     statusSave: "Save and sleep",
     statusSkip: "Not tonight",
     hintTitle: "A gentle hint — fix it yourself:",
+    aiBtn: "Coach review (AI)",
+    aiWait: "The coach is reading…",
+    aiUnavailable: "AI review unlocks after sign-in, consent in profile, and key setup.",
     praise: "A living phrase. This is how speech is born.",
     hints: {
       "do-decision": "In English decisions are made: make a decision.",
@@ -102,6 +108,7 @@ export default function Evening() {
   const [amb, setAmb] = useState(false);
   const [statusText, setStatusText] = useState("");
   const [hints, setHints] = useState<FeedbackHint[] | null>(null);
+  const [ai, setAi] = useState<{ state: "idle" | "busy" | "off" | "done"; hints: { title: string; hint: string }[]; praise: string }>({ state: "idle", hints: [], praise: "" });
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useActivityTimer(stage === "flow" && running ? "evening" : null);
@@ -350,6 +357,50 @@ export default function Evening() {
                   {t.praise}
                 </p>
               ))}
+
+            {/* AI-разбор тренера — по согласию llm-feedback (Фаза D) */}
+            {hints !== null && statusText.trim() && ai.state !== "done" && (
+              <button
+                onClick={async () => {
+                  setAi((a) => ({ ...a, state: "busy" }));
+                  try {
+                    const res = await fetch("/api/feedback", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ text: statusText.trim() }),
+                    });
+                    if (!res.ok) {
+                      setAi({ state: "off", hints: [], praise: "" });
+                      return;
+                    }
+                    const j = (await res.json()) as { hints: { title: string; hint: string }[]; praise: string };
+                    setAi({ state: "done", hints: j.hints ?? [], praise: j.praise ?? "" });
+                  } catch {
+                    setAi({ state: "off", hints: [], praise: "" });
+                  }
+                }}
+                disabled={ai.state === "busy"}
+                className="mt-3 rounded-full bg-white/15 px-4 py-2 text-xs font-bold text-white/85 disabled:opacity-50"
+              >
+                {ai.state === "busy" ? t.aiWait : t.aiBtn}
+              </button>
+            )}
+            {ai.state === "off" && (
+              <p className="mt-2 max-w-[300px] text-[11px] leading-relaxed text-white/50">{t.aiUnavailable}</p>
+            )}
+            {ai.state === "done" && (
+              <div className="mt-3 w-full rounded-2xl bg-white/10 px-4 py-3 text-left">
+                {ai.hints.length > 0 ? (
+                  ai.hints.map((h, i) => (
+                    <p key={i} className="mt-1 text-sm leading-relaxed text-white/85">
+                      • <b>{h.title}:</b> {h.hint}
+                    </p>
+                  ))
+                ) : (
+                  <p className="text-sm leading-relaxed text-white/85">{ai.praise}</p>
+                )}
+              </div>
+            )}
             <Link
               href="/"
               className="mt-8 w-full rounded-2xl bg-white px-5 py-4 text-center font-heading text-base font-extrabold text-brand-ink"
