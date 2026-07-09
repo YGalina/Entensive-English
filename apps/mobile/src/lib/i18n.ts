@@ -332,6 +332,13 @@ const ru = {
       shorter: "Разбей на короткие предложения — «Пиши, сокращай».",
     } as Record<string, string>,
   },
+  guardX: {
+    met: "Встреча на пути",
+    practice: "Практика",
+    done: "Практику прошла",
+    later: "Не сейчас",
+    passed: "Страж пройден. Дорога свободна — продолжаем путь.",
+  },
   produceX: {
     title: "Скажи сама",
     close: "Закрыть",
@@ -714,6 +721,13 @@ const en: Dict = {
       "past-marker": "Yesterday means past tense: try V2 (did, went, was).",
       shorter: "Split it into short sentences.",
     } as Record<string, string>,
+  },
+  guardX: {
+    met: "A meeting on the path",
+    practice: "Practice",
+    done: "Practice complete",
+    later: "Not now",
+    passed: "Guardian passed. The road is clear — onward.",
   },
   produceX: {
     title: "Say it yourself",

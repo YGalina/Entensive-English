@@ -18,6 +18,7 @@ import { useT } from "@/lib/i18n";
 import { useMarina, skillTone } from "@/theme";
 import { Breton } from "@/components/breton";
 import { OutputCard } from "@/components/output-card";
+import { GuardianCard } from "@/components/guardian-card";
 
 // «Сегодня» — дашборд дня в языке Welltory: кольцо плана, крупные метрики,
 // инсайт-карточка (объясняем, не просто показываем), герой следующего шага и
@@ -169,6 +170,9 @@ export default function TodayScreen() {
           {insight}
         </Text>
       </View>
+
+      {/* Стражи пути: психологическая поддержка изменения (по детектору, ≤1/день) */}
+      <GuardianCard />
 
       {/* Речевой контур: утренняя фраза / статус дня — ежедневный маленький вывод */}
       <OutputCard />
