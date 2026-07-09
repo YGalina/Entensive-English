@@ -1,11 +1,14 @@
 "use client";
 
 // «Горизонт»: зачем всё это и что будет. Цель-уровень, честный прогноз от
-// реального темпа, вехи (слова, речь по Крашену) и строка «почему мы так
+// реального темпа, вехи (слова, речевой контур) и строка «почему мы так
 // считаем». Не обещание — обратная связь: темп твой, прогноз пересчитывается.
+// «Речь всплывёт сама» убрано по аудиту: речь показываем фактами вывода.
 
 import Link from "next/link";
 import { useOutcome } from "@ie/core/outcome";
+import { useOutputStats } from "@ie/core/output";
+import { useSrsStats } from "@ie/core/srs";
 import { useWpmStats } from "@ie/core/wpm";
 import { useUILang } from "@ie/core/prefs";
 import { Spark, ArrowRight } from "./Icons";
@@ -22,17 +25,17 @@ const UI = {
     words: "Слова в узнавании",
     wordsVal: (l: number, w: number, t: number) =>
       `${l} усвоено · ${w} в работе · цель ${t.toLocaleString("ru-RU")}`,
-    speech: "Речь",
-    speechVal: (date: string) =>
-      `начнёт всплывать сама ~к ${date} (тихий период по Крашену)`,
-    speechNone: "начнёт всплывать сама через ~6 месяцев входа (Крашен)",
+    speech: "Речь (твой вывод)",
+    speechVal: (statuses: number, active: number) =>
+      `${statuses} статусов · ${active} слов в активе`,
+    speechNone: "начнётся с первого статуса дня — вечером, 1–3 предложения",
     days: "Дней в пути",
     program: "вся программа",
     wpm: "Скорость чтения",
     wpmRange: (f: number, l: number) => `${f} → ${l} сл/мин`,
     wpmOne: (l: number) => `${l} сл/мин`,
     wpmNone: "появится после первого текста в «Чтении»",
-    why: "Почему так: ≈200 направленных часов = +1 уровень CEFR (Cambridge); словарь B2 ≈ 4 000 слов в узнавании; при постоянном понятном входе речь появляется сама через ~6 месяцев — её не надо выдавливать.",
+    why: "Почему так: ≈180–220 направленных часов = +1 уровень CEFR (ориентир Cambridge, не обещание); словарь B2 ≈ 4 000 слов в узнавании; вход даёт материал, а речь строится ежедневным маленьким выводом — статус, фразы, голос.",
   },
   en: {
     title: "Horizon",
@@ -44,16 +47,17 @@ const UI = {
     words: "Words recognized",
     wordsVal: (l: number, w: number, t: number) =>
       `${l} learned · ${w} in work · target ${t.toLocaleString("en-US")}`,
-    speech: "Speech",
-    speechVal: (date: string) => `emerges on its own ~by ${date} (Krashen's silent period)`,
-    speechNone: "emerges on its own after ~6 months of input (Krashen)",
+    speech: "Speech (your output)",
+    speechVal: (statuses: number, active: number) =>
+      `${statuses} statuses · ${active} active words`,
+    speechNone: "starts with your first status of the day — 1–3 sentences tonight",
     days: "Days on the path",
     program: "full program",
     wpm: "Reading speed",
     wpmRange: (f: number, l: number) => `${f} → ${l} wpm`,
     wpmOne: (l: number) => `${l} wpm`,
     wpmNone: "appears after your first text in Reading",
-    why: "Why: ≈200 guided hours = +1 CEFR level (Cambridge); B2 vocabulary ≈ 4,000 recognized words; with steady comprehensible input, speech emerges by itself after ~6 months — it must not be forced.",
+    why: "Why: ≈180–220 guided hours = +1 CEFR level (a Cambridge benchmark, not a promise); B2 vocabulary ≈ 4,000 recognized words; input supplies the material — speech is built by a small daily output: status, phrases, voice.",
   },
 } as const;
 
@@ -66,6 +70,8 @@ function fmtDate(d: Date, ui: "ru" | "en"): string {
 
 export default function Horizon() {
   const o = useOutcome();
+  const out = useOutputStats();
+  const srs = useSrsStats();
   const w = useWpmStats();
   const ui = useUILang();
   const t = UI[ui];
@@ -110,7 +116,9 @@ export default function Horizon() {
         <li className="flex items-start justify-between gap-3 text-sm">
           <span className="text-muted">{t.speech}</span>
           <span className="text-right font-medium text-ink">
-            {o.speechEta ? t.speechVal(fmtDate(o.speechEta, ui)) : t.speechNone}
+            {(out.byType.status ?? 0) > 0 || srs.activeWords > 0
+              ? t.speechVal(out.byType.status ?? 0, srs.activeWords)
+              : t.speechNone}
           </span>
         </li>
         <li className="flex items-start justify-between gap-3 text-sm">

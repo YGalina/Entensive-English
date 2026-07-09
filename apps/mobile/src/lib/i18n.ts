@@ -44,15 +44,15 @@ const ru = {
     factMethodItems: [
       {
         name: "Георгий Лозанов — суггестопедия",
-        text: "Барьеры «я не способна» блокируют память сильнее, чем незнание слов. Сначала состояние: расслабление, музыка ~60 уд/мин, разрешение на ошибку. Усвоение ускоряется в 2–10 раз.",
+        text: "Барьеры «я не способна» блокируют память сильнее, чем незнание слов. Сначала состояние: расслабление, музыка ~60 уд/мин, разрешение на ошибку. Снятый барьер освобождает память — учиться легче и спокойнее.",
       },
       {
         name: "Вячеслав Петрусинский — массивный ввод",
-        text: "Не по слову в день, а валом: до 1000 слов за сеанс. Сознание не должно всё «выучить» — массив ложится в узнавание и всплывает сам. Скорость чтения в его экспериментах — ×2,5 за 2 недели.",
+        text: "Не по слову в день, а валом: большие массивы за сеанс. Сознание не должно всё «выучить» — массив ложится в узнавание, и английский перестаёт быть чужим шумом. Дальше узнанное выводится в речь.",
       },
       {
         name: "Стивен Крашен — понятный вход",
-        text: "Язык усваивается из входа чуть выше твоего уровня — чтение и слушание того, что интересно. Речь приходит сама, примерно через 6 месяцев входа. Её нельзя форсировать — и не нужно.",
+        text: "Язык усваивается из входа чуть выше твоего уровня — чтение и слушание того, что интересно. Вход даёт материал для речи, а говорить помогает ежедневный маленький вывод — без давления.",
       },
       {
         name: "Моторно-фонетический канал",
@@ -237,10 +237,10 @@ const ru = {
     needPace: "нужен темп от 5 мин/день",
     wordsRecog: "Слов в узнавании",
     wordsVal: (n: number, target: number) => `${n} · цель ${target}`,
-    speechSelf: "Речь всплывёт сама",
+    speechSelf: "Речь (твой вывод)",
     speechFrom: "с первого дня практики",
     benchmarks: (m30: number, m60: number, m120: number) =>
-      `Ориентир: 30 мин в день ≈ ${m30} мес на уровень · 60 мин ≈ ${m60} мес · 120 мин ≈ ${m120} мес. Говорение не форсируем: по Крашену оно приходит само после ~6 месяцев хорошего входа.`,
+      `Ориентир: 30 мин в день ≈ ${m30} мес на уровень · 60 мин ≈ ${m60} мес · 120 мин ≈ ${m120} мес. Это ориентир Cambridge, не обещание: прогноз пересчитывается от твоего реального темпа.`,
     consistency: "Постоянство",
     streakN: (n: number, word: string) => `${n} ${word} подряд`,
     dayWords: ["день", "дня", "дней"] as [string, string, string],
@@ -405,15 +405,15 @@ const en: Dict = {
     factMethodItems: [
       {
         name: "Georgi Lozanov — suggestopedia",
-        text: "“I'm not capable” blocks memory harder than missing words. State first: relaxation, ~60 bpm music, permission to make mistakes. Learning speeds up 2–10×.",
+        text: "“I'm not capable” blocks memory harder than missing words. State first: relaxation, ~60 bpm music, permission to make mistakes. A lifted barrier frees memory — learning gets easier and calmer.",
       },
       {
         name: "Vyacheslav Petrusinsky — massive input",
-        text: "Not a word a day but a wave: up to 1000 words per session. Consciousness isn't meant to memorise it all — the mass settles into recognition and surfaces on its own. Reading speed in his experiments: ×2.5 in 2 weeks.",
+        text: "Not a word a day but a wave: large masses per session. Consciousness isn't meant to memorise it all — the mass settles into recognition and English stops being foreign noise. Then what you recognize gets produced in speech.",
       },
       {
         name: "Stephen Krashen — comprehensible input",
-        text: "Language is acquired from input slightly above your level — reading and listening to what you love. Speech emerges by itself after about 6 months of input. It can't be forced — and needn't be.",
+        text: "Language is acquired from input slightly above your level — reading and listening to what you love. Input supplies the material for speech; a small daily output helps you speak — no pressure.",
       },
       {
         name: "The motor-phonetic channel",
@@ -597,10 +597,10 @@ const en: Dict = {
     needPace: "needs a 5 min/day pace",
     wordsRecog: "Words recognised",
     wordsVal: (n: number, target: number) => `${n} · target ${target}`,
-    speechSelf: "Speech emerges",
+    speechSelf: "Speech (your output)",
     speechFrom: "from the first day of practice",
     benchmarks: (m30: number, m60: number, m120: number) =>
-      `Reference: 30 min a day ≈ ${m30} months per level · 60 min ≈ ${m60} · 120 min ≈ ${m120}. We don't force speaking: per Krashen it emerges by itself after ~6 months of good input.`,
+      `Reference: 30 min a day ≈ ${m30} months per level · 60 min ≈ ${m60} · 120 min ≈ ${m120}. A Cambridge benchmark, not a promise: the forecast recalculates from your real pace.`,
     consistency: "Consistency",
     streakN: (n: number, word: string) => `${n} ${word} in a row`,
     dayWords: ["day", "days", "days"] as [string, string, string],

@@ -8,8 +8,8 @@
 // • Переход на следующий уровень CEFR ≈ 180–220 направленных часов
 //   (Cambridge English: guided learning hours). Берём 200 ч.
 // • Словарь уровней (узнавание): B1 ≈ 2500, B2 ≈ 4000, C1 ≈ 8000 слов.
-// • Крашен: при постоянном понятном входе спонтанная речь «всплывает» сама
-//   примерно через 6 месяцев практики (тихий период).
+// • Речь НЕ «всплывает сама» — она строится ежедневным выводом (см. output.ts);
+//   обещание «через 6 месяцев» убрано по аудиту 2026-07.
 // • Скорочтение: рабочая цель — от ~120–150 к 200–250 слов/мин (носитель).
 
 import { useTimeStats } from "./timelog";
@@ -17,8 +17,7 @@ import { useSrsStats } from "./srs";
 import { usePrefs } from "./prefs";
 import { nowMs } from "./now";
 
-export const HOURS_PER_LEVEL = 200;
-export const SPEECH_EMERGES_DAYS = 180; // ~6 месяцев по Крашену
+export const HOURS_PER_LEVEL = 200; // середина ориентира 180–220 ч (Cambridge GLH)
 
 const LEVELS = ["a1", "a2", "b1", "b2", "c1", "c2"] as const;
 const VOCAB_TARGET: Record<string, number> = {
@@ -44,8 +43,7 @@ export type Outcome = {
   wordsLearned: number;
   wordsInWork: number;
   wordsTarget: number;
-  /** Дата, когда по Крашену речь начнёт всплывать сама (от первого дня практики) */
-  speechEta: Date | null;
+  /** Сколько дней была практика */
   daysPracticed: number;
 };
 
@@ -76,9 +74,6 @@ export function useOutcome(): Outcome {
       ? new Date(now + ((hoursLeft * 60) / paceMinPerDay) * 24 * 3600 * 1000)
       : null;
 
-  const speechEta = time.firstDay
-    ? new Date(new Date(time.firstDay).getTime() + SPEECH_EMERGES_DAYS * 24 * 3600 * 1000)
-    : null;
 
   return {
     levelNow,
@@ -91,7 +86,6 @@ export function useOutcome(): Outcome {
     wordsLearned: srs.learned,
     wordsInWork: srs.total,
     wordsTarget: VOCAB_TARGET[levelNext] ?? 4000,
-    speechEta,
     daysPracticed: Object.keys(time.byDay).length,
   };
 }
