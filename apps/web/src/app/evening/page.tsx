@@ -6,6 +6,8 @@ import { speakEnglish } from "@ie/media/speech";
 import { startAmbient, stopAmbient } from "@ie/media/ambient";
 import { useActivityTimer } from "@ie/core/timelog";
 import { useNativeLang, useUILang } from "@ie/core/prefs";
+import { addArtifact, outputStats } from "@ie/core/output";
+import { feedbackFor, type FeedbackHint } from "@ie/core/feedback";
 import { todaysTouchedCards, recentCards } from "@ie/core/srs";
 import { findWord, getPack, translate, type Word } from "@ie/core/data/packs";
 import { LEVEL_PACKS } from "@ie/core/data/levelVocab";
@@ -30,6 +32,25 @@ const UI = {
       "Круг пройден. Дальше — работа сна: мозг сам проиграет и уложит сегодняшние слова. Увидимся утром.",
     home: "Домой",
     words: (n: number) => `${n} слов дня`,
+    statusTitle: "Статус дня",
+    statusIntro: "1–3 предложения по-английски: как прошёл день. Это твой артефакт дня — приватный.",
+    statusPlaceholder: "Today I practiced… I noticed…",
+    statusSave: "Сохранить и спать",
+    statusSkip: "Не сегодня",
+    hintTitle: "Мягкая подсказка — поправь сама:",
+    praise: "Живая фраза. Именно так рождается речь.",
+    hints: {
+      "do-decision": "Решение по-английски «делают» иначе: make a decision.",
+      "feel-myself": "После feel — сразу состояние: I feel good (без myself).",
+      "depends-from": "Depends дружит с on: it depends on…",
+      "discuss-about": "Discuss — без about: discuss the plan.",
+      "married-on": "Married to: she is married to…",
+      "in-weekday": "Дни недели — с on: on Monday.",
+      "very-like": "Глагол усиливает really: I really like it.",
+      "capital-i": "«Я» по-английски всегда с большой: I.",
+      "past-marker": "Вчера — прошедшее время: попробуй V2 (did, went, was).",
+      shorter: "Разбей на короткие предложения — «Пиши, сокращай».",
+    } as Record<string, string>,
   },
   en: {
     title: "Evening circle",
@@ -44,6 +65,25 @@ const UI = {
       "The circle is complete. Sleep does the rest: your brain will replay today's words and settle them. See you in the morning.",
     home: "Home",
     words: (n: number) => `${n} words of the day`,
+    statusTitle: "Status of the day",
+    statusIntro: "1–3 sentences in English: how the day went. Your artifact of the day — private.",
+    statusPlaceholder: "Today I practiced… I noticed…",
+    statusSave: "Save and sleep",
+    statusSkip: "Not tonight",
+    hintTitle: "A gentle hint — fix it yourself:",
+    praise: "A living phrase. This is how speech is born.",
+    hints: {
+      "do-decision": "In English decisions are made: make a decision.",
+      "feel-myself": "After feel goes the state itself: I feel good (no myself).",
+      "depends-from": "Depends pairs with on: it depends on…",
+      "discuss-about": "Discuss takes no about: discuss the plan.",
+      "married-on": "Married to: she is married to…",
+      "in-weekday": "Weekdays take on: on Monday.",
+      "very-like": "Boost a verb with really: I really like it.",
+      "capital-i": "The English 'I' is always capital.",
+      "past-marker": "Yesterday means past tense: try V2 (did, went, was).",
+      shorter: "Split it into short sentences.",
+    } as Record<string, string>,
   },
 } as const;
 
@@ -56,10 +96,12 @@ export default function Evening() {
   const lang = useNativeLang();
   const t = UI[ui];
 
-  const [stage, setStage] = useState<"intro" | "flow" | "done">("intro");
+  const [stage, setStage] = useState<"intro" | "flow" | "status" | "done">("intro");
   const [i, setI] = useState(0);
   const [running, setRunning] = useState(false);
   const [amb, setAmb] = useState(false);
+  const [statusText, setStatusText] = useState("");
+  const [hints, setHints] = useState<FeedbackHint[] | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useActivityTimer(stage === "flow" && running ? "evening" : null);
@@ -100,7 +142,9 @@ export default function Evening() {
     timer.current = setTimeout(() => {
       setI((p) => {
         if (p >= words.length - 1) {
-          setStage("done");
+          // После тихого круга — маленький вывод: статус дня (артефакт).
+          // Если статус сегодня уже написан, сразу «Спокойной ночи».
+          setStage(outputStats().statusToday ? "done" : "status");
           setRunning(false);
           return p;
         }
@@ -237,6 +281,51 @@ export default function Evening() {
           </div>
         )}
 
+        {stage === "status" && (
+          <div className="flex flex-1 flex-col items-center justify-center text-center">
+            <h2 className="font-heading text-2xl font-extrabold">{t.statusTitle}</h2>
+            <p className="mt-2 max-w-[320px] text-sm leading-relaxed text-white/75">
+              {t.statusIntro}
+            </p>
+            <textarea
+              value={statusText}
+              onChange={(e) => setStatusText(e.target.value)}
+              placeholder={t.statusPlaceholder}
+              rows={3}
+              data-testid="evening-status-input"
+              className="mt-5 w-full resize-none rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-base text-white placeholder:text-white/40 focus:border-white/50 focus:outline-none"
+            />
+            <button
+              onClick={() => {
+                const text = statusText.trim();
+                if (text) {
+                  const low = text.toLowerCase();
+                  addArtifact({
+                    type: "status",
+                    text,
+                    words: todaysTouchedCards()
+                      .map((c) => c.en)
+                      .filter((en) => low.includes(en.toLowerCase())),
+                  });
+                  setHints(feedbackFor(text));
+                }
+                setStage("done");
+              }}
+              disabled={!statusText.trim()}
+              data-testid="evening-status-save"
+              className="mt-5 w-full rounded-2xl bg-white px-5 py-4 font-heading text-base font-extrabold text-brand-ink transition-transform active:scale-[0.98] disabled:opacity-40"
+            >
+              {t.statusSave}
+            </button>
+            <button
+              onClick={() => setStage("done")}
+              className="mt-3 rounded-full px-4 py-1.5 text-xs font-bold text-white/60 hover:text-white/85"
+            >
+              {t.statusSkip}
+            </button>
+          </div>
+        )}
+
         {stage === "done" && (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
@@ -246,6 +335,21 @@ export default function Evening() {
             <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-white/75">
               {t.doneNote}
             </p>
+            {hints !== null &&
+              (hints.length > 0 ? (
+                <div className="mt-4 w-full rounded-2xl bg-white/10 px-4 py-3 text-left">
+                  <p className="text-xs font-bold text-white/70">{t.hintTitle}</p>
+                  {hints.map((h) => (
+                    <p key={h.id} className="mt-1 text-sm leading-relaxed text-white/85">
+                      • {t.hints[h.id] ?? h.id}
+                    </p>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-4 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold text-white/85">
+                  {t.praise}
+                </p>
+              ))}
             <Link
               href="/"
               className="mt-8 w-full rounded-2xl bg-white px-5 py-4 text-center font-heading text-base font-extrabold text-brand-ink"

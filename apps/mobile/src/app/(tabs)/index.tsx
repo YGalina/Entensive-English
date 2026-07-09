@@ -16,6 +16,7 @@ import { usePrefs } from "@ie/core/prefs";
 import { useT } from "@/lib/i18n";
 import { useMarina, skillTone } from "@/theme";
 import { Breton } from "@/components/breton";
+import { OutputCard } from "@/components/output-card";
 
 // «Сегодня» — дашборд дня в языке Welltory: кольцо плана, крупные метрики,
 // инсайт-карточка (объясняем, не просто показываем), герой следующего шага и
@@ -166,6 +167,9 @@ export default function TodayScreen() {
           {insight}
         </Text>
       </View>
+
+      {/* Речевой контур: утренняя фраза / статус дня — ежедневный маленький вывод */}
+      <OutputCard />
 
       {/* Полка дня: три двери в смыслы (конечная, не лента) */}
       <View style={{ gap: 8 }}>

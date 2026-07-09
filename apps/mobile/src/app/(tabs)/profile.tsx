@@ -7,6 +7,8 @@ import * as Haptics from "expo-haptics";
 import { usePrefs, updatePrefs } from "@ie/core/prefs";
 import { useTimeStats, useStreak } from "@ie/core/timelog";
 import { useOutcome, HOURS_PER_LEVEL } from "@ie/core/outcome";
+import { useOutputStats } from "@ie/core/output";
+import { useSrsStats } from "@ie/core/srs";
 import { GOALS, LEVELS } from "@ie/core/data/catalog";
 import { speakEnglish } from "@ie/media/speech";
 import { useT } from "@/lib/i18n";
@@ -36,6 +38,8 @@ export default function ProfileScreen() {
   const time = useTimeStats();
   const streak = useStreak();
   const outcome = useOutcome();
+  const output = useOutputStats();
+  const srs = useSrsStats();
   const { t, lang } = useT();
   const en = lang === "en";
   const [speaking, setSpeaking] = useState(false);
@@ -121,13 +125,17 @@ export default function ProfileScreen() {
           label={t.profile.wordsRecog}
           value={t.profile.wordsVal(outcome.wordsLearned, outcome.wordsTarget)}
         />
-        <Row
-          label={t.profile.speechSelf}
-          value={outcome.speechEta ? `≈ ${fmtDate(outcome.speechEta, en)}` : t.profile.speechFrom}
-        />
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, paddingVertical: 10 }}>
           {t.profile.benchmarks(monthsAt(30), monthsAt(60), monthsAt(120))}
         </Text>
+      </Card>
+
+      {/* ---------- Речевой контур: что произведено самой (не «речь придёт сама») ---------- */}
+      <Card title={t.profile.outputTitle}>
+        <Row first label={t.profile.outputStatuses} value={String(output.byType.status ?? 0)} />
+        <Row label={t.profile.outputSpeech} value={String(output.speech)} />
+        <Row label={t.profile.outputActiveWords} value={String(srs.activeWords)} />
+        <Row label={t.profile.outputDays} value={String(output.activeDays)} />
       </Card>
 
       {/* ---------- Постоянство (мягкие ачивки) ---------- */}
