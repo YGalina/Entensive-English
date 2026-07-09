@@ -1013,7 +1013,7 @@ function Relax({ count, onFinish }: { count: number; onFinish: () => void }) {
             <p className="tnum font-heading text-2xl font-extrabold text-accent-d">
               +1
             </p>
-            <p className="text-xs text-muted">блок к стрику</p>
+            <p className="text-xs text-muted">блок в режим дня</p>
           </div>
         </div>
       </div>

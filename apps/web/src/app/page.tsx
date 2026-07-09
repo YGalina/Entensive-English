@@ -117,7 +117,10 @@ export default function Today() {
           </div>
           <div className="flex items-center gap-2">
             {/* Латунный чип: текст всегда тёмный — на жёлтом светлое нечитаемо */}
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-sun px-3 py-2 text-sm font-bold text-[#3b2c07] shadow-card">
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full bg-sun px-3 py-2 text-sm font-bold text-[#3b2c07] shadow-card"
+              title={`Тренировочный режим: ${streak} дней подряд`}
+            >
               <Flame className="h-4 w-4" />
               <span className="tnum">{streak}</span>
             </span>

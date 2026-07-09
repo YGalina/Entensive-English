@@ -251,9 +251,9 @@ const ru = {
     benchmarks: (m30: number, m60: number, m120: number) =>
       `Ориентир: 30 мин в день ≈ ${m30} мес на уровень · 60 мин ≈ ${m60} мес · 120 мин ≈ ${m120} мес. Это ориентир Cambridge, не обещание: прогноз пересчитывается от твоего реального темпа.`,
     consistency: "Постоянство",
-    streakN: (n: number, word: string) => `${n} ${word} подряд`,
+    streakN: (n: number, word: string) => `В режиме: ${n} ${word} подряд`,
     dayWords: ["день", "дня", "дней"] as [string, string, string],
-    streakStart: "серия начнётся сегодня",
+    streakStart: "режим начнётся с сегодняшней практики",
     regular: "Английский любит регулярность больше, чем подвиги.",
     noBurn: "Пропустила день — ничего не сгорает и никто не ругает. Просто вернись: следующий маленький шаг важнее идеальной серии.",
     ui: "Интерфейс",
@@ -350,7 +350,7 @@ const ru = {
   },
   today: {
     title: "Сегодня",
-    streak: (n: number) => `Серия: ${n} дней подряд`,
+    streak: (n: number) => `Тренировочный режим: ${n} дней подряд`,
     ringOf: (done: number, goal: number) => `${done} из ${goal} мин`,
     ringA11y: (done: number, goal: number) => `План дня: ${done} из ${goal} минут`,
     wpmLabel: "скорость чтения",
@@ -634,9 +634,9 @@ const en: Dict = {
     benchmarks: (m30: number, m60: number, m120: number) =>
       `Reference: 30 min a day ≈ ${m30} months per level · 60 min ≈ ${m60} · 120 min ≈ ${m120}. A Cambridge benchmark, not a promise: the forecast recalculates from your real pace.`,
     consistency: "Consistency",
-    streakN: (n: number, word: string) => `${n} ${word} in a row`,
+    streakN: (n: number, word: string) => `In training: ${n} ${word} in a row`,
     dayWords: ["day", "days", "days"] as [string, string, string],
-    streakStart: "your streak starts today",
+    streakStart: "your training mode starts with today's practice",
     regular: "English loves regularity more than heroics.",
     noBurn: "Missed a day? Nothing burns and nobody scolds. Just come back: the next small step matters more than a perfect streak.",
     ui: "Interface",
