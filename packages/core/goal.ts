@@ -115,14 +115,18 @@ export function capabilityProgress(
   );
 }
 
-/** Легаси-цель онбординга (prefs.goal) → домен, пока нет цель-first UI. */
+/** Цель онбординга (prefs.goal, вкл. легаси-id ранних пользователей) → домен. */
 export function domainFromLegacyGoal(goalId: string | undefined): GoalDomain {
   switch (goalId) {
     case "work": return "work";
+    case "move": return "move";
+    case "meetings": return "meetings";
     case "travel": return "travel";
-    case "exam": return "study";
-    case "vocab": return "unlock-speech";
-    case "speak":
+    case "exam":
+    case "study": return "study";
+    case "speaking":
+    case "vocab":
+    case "unlock-speech":
     default: return "unlock-speech";
   }
 }

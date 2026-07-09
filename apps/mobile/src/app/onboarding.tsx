@@ -33,7 +33,7 @@ import b1 from "@ie/core/data/vocab-b1.json";
 import b2 from "@ie/core/data/vocab-b2.json";
 import c1 from "@ie/core/data/vocab-c1.json";
 import { dict, type UiLang } from "@/lib/i18n";
-import { saveGoal, domainFromLegacyGoal, type Level } from "@ie/core/goal";
+import { saveGoal, domainFromLegacyGoal, hoursBudget, type Goal as LifeGoal, type Level } from "@ie/core/goal";
 import { BotanicalFrame } from "@/components/botanical";
 import { useMarina } from "@/theme";
 
@@ -51,17 +51,20 @@ type Step =
   | "interests"
   | "skills"
   | "level"
+  | "deadline"
   | "summary";
 
+// Цель-first (аудит §13): сначала «зачем в жизни», потом «сколько времени».
 const FLOW: Step[] = [
   "welcome",
   "lang",
-  "hours",
   "goal",
+  "hours",
   "method",
   "interests",
   "skills",
   "level",
+  "deadline",
   "summary",
 ];
 
@@ -111,10 +114,29 @@ export default function Onboarding() {
   const [goal, setGoal] = useState(prefs?.goal ?? "");
   const [topics, setTopics] = useState<string[]>(prefs?.topics ?? []);
   const [level, setLevel] = useState(prefs?.level ?? "");
+  const [deadlineMonths, setDeadlineMonths] = useState<number | null>(null);
   const [checking, setChecking] = useState(false);
   const [aha, setAha] = useState(false);
 
   const curLang = NATIVE_LANGUAGES.find((l) => l.code === nativeLang) ?? NATIVE_LANGUAGES[0];
+
+  // Честный бюджет часов до цели (Cambridge GLH) — для summary.
+  const budget = (() => {
+    const lvl = ((level || "b1") as Level);
+    const order: Level[] = ["a1", "a2", "b1", "b2", "c1", "c2"];
+    const target = order[Math.min(order.indexOf(lvl) + 1, order.length - 1)];
+    const g: LifeGoal = {
+      lifeGoal: goal,
+      domain: domainFromLegacyGoal(goal),
+      currentLevel: lvl,
+      targetLevel: target,
+      deadline: deadlineMonths
+        ? new Date(Date.now() + deadlineMonths * 30.4 * 24 * 3600 * 1000).toISOString()
+        : undefined,
+      weeklyMinutes: dailyMin * 7,
+    };
+    return hoursBudget(g);
+  })();
 
   const canNext =
     step === "lang" ? !!nativeLang
@@ -157,6 +179,9 @@ export default function Onboarding() {
       domain: domainFromLegacyGoal(goal),
       currentLevel: lvl,
       targetLevel: target,
+      deadline: deadlineMonths
+        ? new Date(Date.now() + deadlineMonths * 30.4 * 24 * 3600 * 1000).toISOString()
+        : undefined,
       weeklyMinutes: dailyMin * 7,
     });
     void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -477,6 +502,59 @@ export default function Onboarding() {
                 </Section>
               )}
 
+              {step === "deadline" && (
+                <View style={{ gap: 12 }}>
+                  <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 26, lineHeight: 32, color: c.ink }}>
+                    {t.onb.qDeadlineTitle}
+                  </Text>
+                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.muted }}>
+                    {t.onb.qDeadlineNote}
+                  </Text>
+                  <View style={{ gap: 10 }}>
+                    {[6, 9, 12].map((m) => (
+                      <Pressable
+                        key={m}
+                        onPress={() => { tap(); setDeadlineMonths(m); }}
+                        accessibilityRole="button"
+                        style={({ pressed }) => ({
+                          minHeight: 54,
+                          borderRadius: radius.soft,
+                          borderWidth: 2,
+                          borderColor: deadlineMonths === m ? c.brand : c.line,
+                          backgroundColor: deadlineMonths === m ? c.brandSoft : pressed ? c.brandSoft : c.surface,
+                          paddingHorizontal: 16,
+                          justifyContent: "center",
+                        })}
+                      >
+                        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+                          {t.onb.deadlineOpt(m)}
+                        </Text>
+                      </Pressable>
+                    ))}
+                    <Pressable
+                      onPress={() => { tap(); setDeadlineMonths(null); }}
+                      accessibilityRole="button"
+                      style={({ pressed }) => ({
+                        minHeight: 54,
+                        borderRadius: radius.soft,
+                        borderWidth: 2,
+                        borderColor: deadlineMonths === null ? c.brand : c.line,
+                        backgroundColor: deadlineMonths === null ? c.brandSoft : pressed ? c.brandSoft : c.surface,
+                        paddingHorizontal: 16,
+                        justifyContent: "center",
+                      })}
+                    >
+                      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+                        {t.onb.deadlineNone}
+                      </Text>
+                      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+                        {t.onb.deadlineNoneNote}
+                      </Text>
+                    </Pressable>
+                  </View>
+                </View>
+              )}
+
               {step === "summary" && (
                 <View style={{ gap: 12 }}>
                   <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center" }}>
@@ -497,7 +575,14 @@ export default function Onboarding() {
                     />
                     <SummaryRow label={t.onb.summaryPace} value={t.onb.summaryDaily(dailyMin)} />
                     <SummaryRow label={t.onb.summaryEta} value={etaLabel(dailyMin, uiLang)} />
+                    <SummaryRow label={t.onb.summaryBudget} value={t.onb.summaryBudgetVal(budget.range[0], budget.range[1])} />
                   </View>
+                  {budget.weeklyMinutesForDeadline !== null &&
+                    budget.weeklyMinutesForDeadline > dailyMin * 7 && (
+                      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.accent }}>
+                        {t.onb.summaryDeadlinePace(Math.ceil(budget.weeklyMinutesForDeadline / 7 / 5) * 5)}
+                      </Text>
+                    )}
                   <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>
                     {t.onb.summaryFoot}
                   </Text>

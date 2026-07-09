@@ -142,12 +142,16 @@ export const TOPICS: Topic[] = [
 
 export type Goal = { id: string; title: string; titleEn: string; desc: string };
 
+// Жизненные цели (id = домены @ie/core/goal): человек покупает результат в
+// жизни, не «учить слова». Старые id (speaking/vocab/exam) живут в prefs у
+// ранних пользователей — их понимает domainFromLegacyGoal.
 export const GOALS: Goal[] = [
-  { id: "speaking", title: "Заговорить", titleEn: "Start speaking", desc: "снять барьер, говорить свободно" },
-  { id: "vocab", title: "Расширить словарь", titleEn: "Grow vocabulary", desc: "много слов в пассив и актив" },
-  { id: "work", title: "Для работы", titleEn: "For work", desc: "профессиональный английский" },
-  { id: "travel", title: "Для путешествий", titleEn: "For travel", desc: "бытовое общение в поездках" },
-  { id: "exam", title: "Подготовка к экзамену", titleEn: "Exam prep", desc: "школа, IELTS, TOEFL" },
+  { id: "unlock-speech", title: "Заговорить", titleEn: "Unlock speech", desc: "понимаю, но не говорю — закрыть разрыв" },
+  { id: "work", title: "Работа и собеседования", titleEn: "Work & interviews", desc: "пройти интервью, работать на английском" },
+  { id: "move", title: "Переезд и жизнь в среде", titleEn: "Move & live abroad", desc: "банк, врач, школа, работа — уверенно" },
+  { id: "meetings", title: "Совещания и презентации", titleEn: "Meetings & talks", desc: "говорить на встречах без паники" },
+  { id: "study", title: "Учёба или экзамен", titleEn: "Study or exam", desc: "IELTS, TOEFL, учёба на английском" },
+  { id: "travel", title: "Путешествия", titleEn: "Travel", desc: "бытовая свобода в поездках" },
 ];
 
 export type Level = { id: string; title: string; titleEn: string; desc: string };
