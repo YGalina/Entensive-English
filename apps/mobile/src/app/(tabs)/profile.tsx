@@ -9,6 +9,7 @@ import { useTimeStats, useStreak } from "@ie/core/timelog";
 import { useOutcome, HOURS_PER_LEVEL } from "@ie/core/outcome";
 import { useOutputStats } from "@ie/core/output";
 import { useSrsStats } from "@ie/core/srs";
+import { capabilityProgress, domainFromLegacyGoal } from "@ie/core/goal";
 import { GOALS, LEVELS } from "@ie/core/data/catalog";
 import { speakEnglish } from "@ie/media/speech";
 import { useT } from "@/lib/i18n";
@@ -136,6 +137,39 @@ export default function ProfileScreen() {
         <Row label={t.profile.outputSpeech} value={String(output.speech)} />
         <Row label={t.profile.outputActiveWords} value={String(srs.activeWords)} />
         <Row label={t.profile.outputDays} value={String(output.activeDays)} />
+      </Card>
+
+      {/* ---------- Способности: «что я могу», а не «сколько стрик» ---------- */}
+      <Card title={t.profile.canTitle}>
+        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, paddingTop: 10 }}>
+          {t.profile.canNote}
+        </Text>
+        <View style={{ gap: 10, paddingVertical: 12 }}>
+          {capabilityProgress(domainFromLegacyGoal(prefs?.goal), {
+            statuses: output.byType.status ?? 0,
+            activeWords: srs.activeWords,
+            speech: output.speech,
+          }).map((cap) => (
+            <View key={cap.id} style={{ gap: 4 }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+                <Ionicons
+                  name={cap.unlocked ? "checkmark-circle" : "ellipse-outline"}
+                  size={16}
+                  color={cap.unlocked ? c.brand : c.muted}
+                />
+                <Text style={{ flex: 1, fontFamily: "Inter_600SemiBold", fontSize: 13, color: cap.unlocked ? c.ink : c.muted }}>
+                  {t.profile.canNames[cap.id] ?? cap.id}
+                </Text>
+                <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, color: c.muted, fontVariant: ["tabular-nums"] }}>
+                  {cap.pct}%
+                </Text>
+              </View>
+              <View style={{ height: 4, borderRadius: 2, backgroundColor: c.brandSoft, overflow: "hidden", marginLeft: 24 }}>
+                <View style={{ width: `${cap.pct}%`, height: 4, borderRadius: 2, backgroundColor: cap.unlocked ? c.brand : c.accent }} />
+              </View>
+            </View>
+          ))}
+        </View>
       </Card>
 
       {/* ---------- Постоянство (мягкие ачивки) ---------- */}

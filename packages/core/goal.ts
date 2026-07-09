@@ -115,6 +115,18 @@ export function capabilityProgress(
   );
 }
 
+/** Легаси-цель онбординга (prefs.goal) → домен, пока нет цель-first UI. */
+export function domainFromLegacyGoal(goalId: string | undefined): GoalDomain {
+  switch (goalId) {
+    case "work": return "work";
+    case "travel": return "travel";
+    case "exam": return "study";
+    case "vocab": return "unlock-speech";
+    case "speak":
+    default: return "unlock-speech";
+  }
+}
+
 // ——— Хранение цели (local-first, ключ ie_goal) ———
 
 const KEY = "ie_goal";
