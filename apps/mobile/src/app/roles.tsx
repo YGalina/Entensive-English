@@ -8,6 +8,7 @@ import { ROLE_SCENES, type RoleScene } from "@ie/core/data/roleScenes";
 import { addArtifact } from "@ie/core/output";
 import { useActivityTimer } from "@ie/core/timelog";
 import { speakEnglish } from "@ie/media/speech";
+import { useVoiceRecorder } from "@ie/media/recorder";
 import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
 
@@ -34,6 +35,8 @@ export default function RolesScreen() {
   const [i, setI] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [saidCount, setSaidCount] = useState(0);
+  const rec = useVoiceRecorder();
+  const [audioRef, setAudioRef] = useState<string | null>(null);
 
   const line = scene?.lines[i];
   const mine = line?.who === myRole;
@@ -78,6 +81,7 @@ export default function RolesScreen() {
         type: "role",
         promptId: scene?.id,
         text: scene ? `${scene.titleEn} — played ${myRole === "a" ? scene.roleA : scene.roleB}` : undefined,
+        audioRef: audioRef ?? undefined,
       });
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setStage("done");
@@ -192,23 +196,44 @@ export default function RolesScreen() {
             </View>
 
             {mine ? (
-              revealed ? (
-                <Pressable
-                  onPress={() => advance(true)}
-                  accessibilityRole="button"
-                  style={({ pressed }) => ({ minHeight: 52, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
-                >
-                  <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>{r.saidIt}</Text>
-                </Pressable>
-              ) : (
-                <Pressable
-                  onPress={() => { tap(); setRevealed(true); speakEnglish(line.en, { rate: 0.92, interrupt: true }); }}
-                  accessibilityRole="button"
-                  style={({ pressed }) => ({ minHeight: 52, borderRadius: 14, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center", opacity: pressed ? 0.85 : 1 })}
-                >
-                  <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.brandInk }}>{r.check}</Text>
-                </Pressable>
-              )
+              <View style={{ flexDirection: "row", gap: 8 }}>
+                {/* Голос в роли: записать свою реплику (приватно, остаётся в артефакте сцены) */}
+                {rec.supported && !revealed && (
+                  <Pressable
+                    onPress={async () => {
+                      if (rec.recording) {
+                        const uri = await rec.stop();
+                        if (uri) setAudioRef(uri);
+                      } else {
+                        tap();
+                        await rec.start();
+                      }
+                    }}
+                    accessibilityRole="button"
+                    accessibilityLabel={rec.recording ? r.stopRec : r.recLine}
+                    style={({ pressed }) => ({ width: 52, minHeight: 52, borderRadius: 14, borderWidth: 1, borderColor: rec.recording ? c.accent : c.line, backgroundColor: rec.recording ? c.accent : c.surface, alignItems: "center", justifyContent: "center", opacity: pressed ? 0.85 : 1 })}
+                  >
+                    <Ionicons name={rec.recording ? "stop" : "mic"} size={18} color={rec.recording ? c.onBrand : c.brand} />
+                  </Pressable>
+                )}
+                {revealed ? (
+                  <Pressable
+                    onPress={() => advance(true)}
+                    accessibilityRole="button"
+                    style={({ pressed }) => ({ flex: 1, minHeight: 52, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
+                  >
+                    <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>{r.saidIt}</Text>
+                  </Pressable>
+                ) : (
+                  <Pressable
+                    onPress={() => { tap(); setRevealed(true); speakEnglish(line.en, { rate: 0.92, interrupt: true }); }}
+                    accessibilityRole="button"
+                    style={({ pressed }) => ({ flex: 1, minHeight: 52, borderRadius: 14, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center", opacity: pressed ? 0.85 : 1 })}
+                  >
+                    <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.brandInk }}>{r.check}</Text>
+                  </Pressable>
+                )}
+              </View>
             ) : (
               <Pressable
                 onPress={() => advance(false)}

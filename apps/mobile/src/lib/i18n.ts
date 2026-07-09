@@ -375,6 +375,8 @@ const ru = {
     doneTitle: "Сцена сыграна",
     doneNote: (said: number, total: number) =>
       `Ты произнесла ${said} из ${total} реплик своего героя. Голос в роли — это уже твоя речь.`,
+    recLine: "Записать реплику голосом",
+    stopRec: "Остановить запись",
     another: "Ещё сцену",
     home: "Готово",
     todayTitle: "Сыграй сцену",
@@ -813,6 +815,8 @@ const en: Dict = {
     doneTitle: "Scene complete",
     doneNote: (said: number, total: number) =>
       `You spoke ${said} of ${total} of your hero's lines. A voice in a role is already your speech.`,
+    recLine: "Record your line",
+    stopRec: "Stop recording",
     another: "Another scene",
     home: "Done",
     todayTitle: "Play a scene",
