@@ -303,6 +303,39 @@ export default function TodayScreen() {
         )}
       </LinearGradient>
 
+      {/* Роли: сцена героя — эмоция + безопасный output в маске */}
+      <Pressable
+        onPress={() => {
+          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          router.push("/roles" as never);
+        }}
+        accessibilityRole="button"
+        accessibilityLabel={t.rolesX.todayTitle}
+        style={({ pressed }) => ({
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 12,
+          backgroundColor: pressed ? c.brandSoft : c.surface,
+          borderRadius: radius.soft,
+          borderWidth: 1,
+          borderColor: c.line,
+          paddingHorizontal: 14,
+          minHeight: 56,
+          transform: [{ scale: pressed ? 0.99 : 1 }],
+        })}
+      >
+        <Ionicons name="film-outline" size={20} color={sk.video} />
+        <View style={{ flex: 1, paddingVertical: 10 }}>
+          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink }}>
+            {t.rolesX.todayTitle}
+          </Text>
+          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+            {t.rolesX.todayNote}
+          </Text>
+        </View>
+        <Ionicons name="chevron-forward" size={16} color={c.muted} />
+      </Pressable>
+
       {/* «3-минутка» */}
       <Pressable
         onPress={() => {

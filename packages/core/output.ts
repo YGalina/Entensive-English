@@ -15,6 +15,7 @@ export type OutputType =
   | "status" // вечерний статус дня, 1–3 предложения
   | "essay" // свободный текст/дневник
   | "explanation" // «объясни слово/мысль своими словами»
+  | "role" // сыгранная роль в сцене (produce в маске героя)
   | "speech"; // голосовая запись (audioRef)
 
 export type OutputArtifact = {
