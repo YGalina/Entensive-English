@@ -137,6 +137,19 @@ export default function ProfileScreen() {
         <Row label={t.profile.outputSpeech} value={String(output.speech)} />
         <Row label={t.profile.outputActiveWords} value={String(srs.activeWords)} />
         <Row label={t.profile.outputDays} value={String(output.activeDays)} />
+        <Pressable
+          onPress={() => {
+            tap();
+            router.push("/diary" as never);
+          }}
+          accessibilityRole="button"
+          style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, minHeight: 44, marginBottom: 12, borderRadius: 12, backgroundColor: pressed ? c.brandSoft : "transparent", borderWidth: 1, borderColor: c.line })}
+        >
+          <Ionicons name="book-outline" size={15} color={c.brand} />
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13.5, color: c.brand }}>
+            {t.diaryX.title} →
+          </Text>
+        </Pressable>
       </Card>
 
       {/* ---------- Способности: «что я могу», а не «сколько стрик» ---------- */}
