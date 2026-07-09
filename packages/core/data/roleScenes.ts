@@ -79,6 +79,41 @@ export const ROLE_SCENES: RoleScene[] = [
       { who: "b", en: "Oh! Then please do it quickly. I need my shadow tonight.", ru: "О! Тогда, пожалуйста, поскорее. Тень нужна мне сегодня ночью." },
     ],
   },
+  {
+    id: "dorothy-scarecrow",
+    source: "L. Frank Baum — The Wonderful Wizard of Oz (public domain, adapted)",
+    level: "a2",
+    title: "Дороти и Страшила",
+    titleEn: "Dorothy and the Scarecrow",
+    roleA: "Dorothy",
+    roleB: "Scarecrow",
+    lines: [
+      { who: "a", en: "Good day. Did you speak, or am I dreaming?", ru: "Добрый день. Это вы сказали — или мне снится?" },
+      { who: "b", en: "Certainly I spoke. How do you do?", ru: "Конечно, я сказал. Как поживаете?" },
+      { who: "a", en: "I'm pretty well, thank you. And who are you?", ru: "Неплохо, спасибо. А вы кто?" },
+      { who: "b", en: "I am a Scarecrow. And I want brains more than anything.", ru: "Я — Страшила. И больше всего на свете я хочу мозги." },
+      { who: "a", en: "Then come with me. The Wizard of Oz can help you.", ru: "Тогда идём со мной. Волшебник из Оз может тебе помочь." },
+      { who: "b", en: "Really? Then I will go with you, wherever the road leads.", ru: "Правда? Тогда я пойду с тобой, куда бы ни вела дорога." },
+    ],
+  },
+  {
+    id: "darcy-elizabeth",
+    source: "Jane Austen — Pride and Prejudice (public domain, adapted)",
+    level: "b2",
+    title: "Элизабет и мистер Дарси",
+    titleEn: "Elizabeth and Mr Darcy",
+    roleA: "Elizabeth",
+    roleB: "Mr Darcy",
+    lines: [
+      { who: "b", en: "May I have the honour of the next dance, Miss Bennet?", ru: "Могу ли я иметь честь пригласить вас на следующий танец, мисс Беннет?" },
+      { who: "a", en: "You surprise me, sir. I thought you found this evening rather dull.", ru: "Вы меня удивляете, сэр. Я думала, этот вечер кажется вам довольно скучным." },
+      { who: "b", en: "An evening may improve. Company changes everything.", ru: "Вечер может стать лучше. Общество меняет всё." },
+      { who: "a", en: "And yet an hour ago you would not dance with anyone.", ru: "И всё же час назад вы не желали танцевать ни с кем." },
+      { who: "b", en: "An hour ago I had not heard you laugh at me.", ru: "Час назад я ещё не слышал, как вы надо мной смеётесь." },
+      { who: "a", en: "Then I shall laugh more often. It seems to do you good.", ru: "Тогда я буду смеяться чаще. Похоже, вам это на пользу." },
+      { who: "b", en: "In that case, Miss Bennet, I shall try to deserve it.", ru: "В таком случае, мисс Беннет, я постараюсь этого заслуживать." },
+    ],
+  },
 ];
 
 export function sceneById(id: string): RoleScene | undefined {
