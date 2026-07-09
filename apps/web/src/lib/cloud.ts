@@ -1,9 +1,22 @@
 "use client";
 
+import { flushEvents, type SyncEvent } from "@ie/core/events";
+
 // Клиент облачного синка: собрать локальный прогресс → отправить; забрать →
 // разложить по localStorage. Ключи — весь учебный прогресс приложения.
+// Пуш инициируется кнопкой в профиле — явное действие пользователя, поэтому
+// снапшот несёт и тексты вывода (дневник); фоновый журнал событий текстов
+// не содержит (приватность, см. @ie/core/events).
 
-const KEYS = ["ie_prefs", "ie_srs", "ie_time", "ie_wpm"] as const;
+const KEYS = [
+  "ie_prefs",
+  "ie_srs",
+  "ie_time",
+  "ie_wpm",
+  "ie_output",
+  "ie_goal",
+  "ie_guardians",
+] as const;
 
 export type MeUser = { email: string; plan: "free" | "pro" } | null;
 
@@ -34,8 +47,22 @@ function collect(): Record<string, unknown> {
   return out;
 }
 
+/** Отправить локальную очередь событий (синк v2) — идемпотентно, батчами. */
+export async function flushEventQueue(): Promise<number> {
+  return flushEvents(async (events: SyncEvent[]) => {
+    const res = await fetch("/api/sync/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ events }),
+    });
+    return { ok: res.ok };
+  });
+}
+
 export async function pushToCloud(): Promise<boolean> {
   try {
+    // Сначала журнал (точные доменные события), затем снапшот-fallback.
+    await flushEventQueue();
     const res = await fetch("/api/sync", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

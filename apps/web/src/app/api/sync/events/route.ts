@@ -1,5 +1,6 @@
 import { getSessionUser } from "@/lib/server/auth";
 import { db, schema } from "@/lib/server/db";
+import { applyEvent } from "@/lib/server/db/apply";
 import { eq, gt, and, asc } from "drizzle-orm";
 
 // Синк v2 (Фаза C): журнал событий вместо затирающего снапшота.
@@ -50,6 +51,16 @@ export async function POST(request: Request) {
       .onConflictDoNothing()
       .returning({ id: schema.syncEvents.id });
     accepted += res.length;
+    // Применяем в доменные таблицы ТОЛЬКО свежепринятые (идемпотентность):
+    // повторная доставка того же id не инкрементит время второй раз.
+    if (res.length > 0) {
+      await applyEvent({
+        userId: user.id,
+        type: String(e.type),
+        payload: e.payload ?? {},
+        clientTs: new Date(e.clientTs),
+      });
+    }
   }
   return Response.json({ accepted });
 }
