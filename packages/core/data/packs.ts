@@ -248,10 +248,38 @@ const work: Pack = {
   ],
 };
 
+
+// Ловушки перевода: chunks, где русский калькирует ошибку (интерференция L1 —
+// главный источник фразеологического разрыва по GAP-отчёту). Учим целым куском:
+// правильный предлог/глагол внутри, ловушка — в русском примере.
+const traps: Pack = {
+  id: "traps",
+  topic: "collocations",
+  title: "Ловушки перевода",
+  context: "Там, где русский подставляет не то слово",
+  words: [
+    { en: "depends on the weather", ipa: "/dɪˈpendz ɒn/", def: "is decided by the weather", exEn: "Our plan depends on the weather.", tr: { ru: { tr: "зависит от погоды (не from!)", ex: "Наш план зависит от погоды." } } },
+    { en: "married to a doctor", ipa: "/ˈmærid tuː/", def: "having a doctor as a spouse", exEn: "She is married to a doctor.", tr: { ru: { tr: "замужем за врачом (to, не on)", ex: "Она замужем за врачом." } } },
+    { en: "listen to music", ipa: "/ˈlɪsn tuː/", def: "to hear music with attention", exEn: "I listen to music every morning.", tr: { ru: { tr: "слушать музыку (listen + to)", ex: "Я слушаю музыку каждое утро." } } },
+    { en: "wait for the bus", ipa: "/weɪt fɔːr/", def: "to stay until the bus comes", exEn: "We waited for the bus for ages.", tr: { ru: { tr: "ждать автобус (wait + for)", ex: "Мы целую вечность ждали автобус." } } },
+    { en: "good at English", ipa: "/ɡʊd æt/", def: "skilled in English", exEn: "You are getting good at English.", tr: { ru: { tr: "хороша в английском (at, не in)", ex: "У тебя всё лучше получается английский." } } },
+    { en: "afraid of the dark", ipa: "/əˈfreɪd ɒv/", def: "feeling fear of darkness", exEn: "The kid is afraid of the dark.", tr: { ru: { tr: "бояться темноты (afraid + of)", ex: "Ребёнок боится темноты." } } },
+    { en: "interested in art", ipa: "/ˈɪntrəstɪd ɪn/", def: "curious about art", exEn: "She is interested in modern art.", tr: { ru: { tr: "интересуется искусством (in)", ex: "Она интересуется современным искусством." } } },
+    { en: "agree with you", ipa: "/əˈɡriː wɪð/", def: "to share your opinion", exEn: "I completely agree with you.", tr: { ru: { tr: "согласна с тобой (agree + with)", ex: "Я полностью с тобой согласна." } } },
+    { en: "on Monday", ipa: "/ɒn ˈmʌndeɪ/", def: "when Monday comes", exEn: "See you on Monday.", tr: { ru: { tr: "в понедельник (on, не in!)", ex: "Увидимся в понедельник." } } },
+    { en: "in the morning", ipa: "/ɪn ðə ˈmɔːrnɪŋ/", def: "during the morning", exEn: "I practice in the morning.", tr: { ru: { tr: "утром (in the morning)", ex: "Я занимаюсь утром." } } },
+    { en: "at night", ipa: "/æt naɪt/", def: "during the night", exEn: "The city is quiet at night.", tr: { ru: { tr: "ночью (at night — исключение)", ex: "Ночью город тихий." } } },
+    { en: "tell the truth", ipa: "/tel ðə truːθ/", def: "to say what is true", exEn: "Just tell me the truth.", tr: { ru: { tr: "сказать правду (tell, не say)", ex: "Просто скажи мне правду." } } },
+    { en: "ask a question", ipa: "/ɑːsk ə ˈkwestʃən/", def: "to request an answer", exEn: "May I ask a question?", tr: { ru: { tr: "задать вопрос (ask, не set)", ex: "Можно задать вопрос?" } } },
+    { en: "feel great", ipa: "/fiːl ɡreɪt/", def: "to be in a very good state", exEn: "I feel great today.", tr: { ru: { tr: "чувствовать себя отлично (без myself!)", ex: "Я сегодня отлично себя чувствую." } } },
+  ],
+};
+
 export const ALL_PACKS: Pack[] = [
   health,
   phrasal,
   collocations,
+  traps,
   prepositions,
   anatomy,
   home,
