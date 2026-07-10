@@ -91,3 +91,26 @@ test("Again в produce возвращает слово в продуктивну
   const all = dueProduceCards();
   assert.equal(all.length, 0, "не сегодня — интенсив мыслит днями");
 });
+
+// ——— noticing (цикл вал → узнал → произнёс → заметил) ———
+import { noticeableWords, recordNoticed } from "../srs";
+import { storage } from "../storage";
+
+function noticedCount(): number {
+  const raw = JSON.parse(storage().getItem("ie_srs") ?? "{}") as Record<string, { noticed?: number }>;
+  return Object.entries(raw).filter(([k, c]) => k.startsWith("p:") && (c.noticed ?? 0) > 0).length;
+}
+
+test("noticeableWords: только вышедшие в актив produce-слова; recordNoticed считает", () => {
+  recordAnswer("health", "recover", true);
+  recordAnswer("health", "recover", true);
+  const set = noticeableWords();
+  assert.ok(set.has("recover"), "активное слово попадает в набор для замечания");
+  assert.ok(!set.has("neverseen"));
+
+  assert.equal(noticedCount(), 0);
+  recordNoticed("Recover"); // регистр не важен
+  assert.equal(noticedCount(), 1);
+  recordNoticed("recover"); // повторное — то же слово, не второе
+  assert.equal(noticedCount(), 1);
+});

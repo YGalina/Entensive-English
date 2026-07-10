@@ -14,6 +14,7 @@ import {
   type GutenbergBook,
 } from "@ie/core/data/gutenberg";
 import { usePrefs } from "@ie/core/prefs";
+import { noticeableWords, recordNoticed } from "@ie/core/srs";
 import {
   useMyLibrary,
   addMyBook,
@@ -59,6 +60,17 @@ export default function ReadScreen() {
   const [showRu, setShowRu] = useState(false);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [resultWpm, setResultWpm] = useState<number | null>(null);
+  // Слова «на замечание» фиксируем при открытии текста (не дёргаются при тапах).
+  const [noticeSet, setNoticeSet] = useState<Set<string>>(new Set());
+  const [noticedNow, setNoticedNow] = useState<Set<string>>(new Set());
+
+  function handleNotice(word: string) {
+    const w = word.toLowerCase();
+    if (noticedNow.has(w)) return;
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    recordNoticed(w);
+    setNoticedNow((s) => new Set(s).add(w));
+  }
 
   // Режим книги: выбранная книга + её главы (фрагменты).
   const [book, setBook] = useState<GutenbergBook | null>(null);
@@ -79,6 +91,8 @@ export default function ReadScreen() {
     setShowRu(false);
     setResultWpm(null);
     setStartedAt(nowMs());
+    setNoticeSet(noticeableWords());
+    setNoticedNow(new Set());
     scrollRef.current?.scrollTo({ y: 0, animated: false });
   }
 
@@ -193,12 +207,19 @@ export default function ReadScreen() {
 
         {resultWpm === null ? (
           <>
+            {/* Подсказка про noticing: только если есть что замечать */}
+            {noticeSet.size > 0 && (
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: c.brandSoft, borderRadius: radius.soft, paddingHorizontal: 12, paddingVertical: 10 }}>
+                <Ionicons name="sparkles" size={14} color={c.brand} />
+                <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.brandInk }}>
+                  {noticedNow.size > 0 ? t.readX.noticedCount(noticedNow.size) : t.readX.noticeHint}
+                </Text>
+              </View>
+            )}
             <View style={{ backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, padding: 20, gap: 16 }}>
               {s.paras.map((p, i) => (
                 <View key={i} style={{ gap: 8 }}>
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 17, lineHeight: 27, color: c.ink }}>
-                    {p.en}
-                  </Text>
+                  <NoticingParagraph text={p.en} words={noticeSet} onNotice={handleNotice} />
                   {showRu && p.ru ? (
                     <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.muted }}>
                       {p.ru}
@@ -563,5 +584,52 @@ export default function ReadScreen() {
         </Pressable>
       ))}
     </ScrollView>
+  );
+}
+
+/* ---------- Абзац с «замечанием» активных слов (noticing) ---------- */
+// Разбивает текст на токены; слова из набора «на замечание» (вышли в актив)
+// подсвечиваются и кликабельны. Тап = «я заметила это слово в тексте» —
+// метрика noticing, замыкающая цикл «вал → узнал → произнёс → заметил».
+function NoticingParagraph({
+  text,
+  words,
+  onNotice,
+}: {
+  text: string;
+  words: Set<string>;
+  onNotice: (word: string) => void;
+}) {
+  const { c } = useMarina();
+  // Токенизация с сохранением пробелов/пунктуации: слово = буквы/апостроф/дефис.
+  const tokens = useMemo(() => text.split(/(\b[A-Za-z][A-Za-z'-]*\b)/), [text]);
+  const hasAny = words.size > 0;
+
+  if (!hasAny) {
+    return (
+      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 17, lineHeight: 27, color: c.ink }}>
+        {text}
+      </Text>
+    );
+  }
+
+  return (
+    <Text style={{ fontFamily: "Inter_400Regular", fontSize: 17, lineHeight: 27, color: c.ink }}>
+      {tokens.map((tok, i) => {
+        const low = tok.toLowerCase();
+        if (words.has(low)) {
+          return (
+            <Text
+              key={i}
+              onPress={() => onNotice(low)}
+              style={{ color: c.brand, fontFamily: "Nunito_700Bold" }}
+            >
+              {tok}
+            </Text>
+          );
+        }
+        return <Text key={i}>{tok}</Text>;
+      })}
+    </Text>
   );
 }

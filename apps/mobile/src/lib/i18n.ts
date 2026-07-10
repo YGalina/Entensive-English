@@ -150,7 +150,7 @@ const ru = {
     resume: "Продолжить",
     doneTitle: (n: number) => `Через тебя прошло ${n} слов`,
     doneKnown: (n: number) => `Из них ${n} ты узнала сразу — они уже в плане повторов. `,
-    doneBody: "Сознание и не должно было выучить всё. Массив лёг в узнавание — слова начнут всплывать сами: в текстах, в видео, в повторах. Так работает метод.",
+    doneBody: "Массив лёг в узнавание. Дальше — цикл: «Скажи сама» переводит узнанное в активную речь, а в «Читать» твои слова подсвечены — встретишь, отметишь. Так вход становится твоим.",
     finish: "Завершить",
   },
   threeX: {
@@ -171,6 +171,8 @@ const ru = {
   readX: {
     title: "Читать",
     subtitle: "Читаем ради удовольствия — язык придёт следом. В конце текста покажу скорость.",
+    noticeHint: "Твои активные слова подсвечены. Встретила — нажми: так слово из «сказала» становится «живёт в жизни».",
+    noticedCount: (n: number) => `Замечено сегодня: ${n}. Каждое замечание закрепляет слово надёжнее повтора.`,
     lastWpm: (n: number) => ` Последний замер: ${n} WPM.`,
     books: "Книги",
     byChapters: "читать главами",
@@ -303,6 +305,7 @@ const ru = {
     outputStatuses: "статусов написано",
     outputSpeech: "записей голоса",
     outputActiveWords: "слов в активе",
+    outputNoticed: "замечено в текстах",
     outputDays: "дней с речью",
   },
   output: {
@@ -708,6 +711,8 @@ const en: Dict = {
   readX: {
     title: "Read",
     subtitle: "We read for pleasure — the language follows. Your speed appears at the end.",
+    noticeHint: "Your active words are highlighted. Spot one — tap it: that's how a word moves from “said it” to “lives in life”.",
+    noticedCount: (n: number) => `Noticed today: ${n}. Each noticing anchors a word better than a repeat.`,
     lastWpm: (n: number) => ` Last measure: ${n} WPM.`,
     books: "Books",
     byChapters: "read by chapters",
@@ -840,6 +845,7 @@ const en: Dict = {
     outputStatuses: "statuses written",
     outputSpeech: "voice notes",
     outputActiveWords: "active words",
+    outputNoticed: "noticed in texts",
     outputDays: "days with speech",
   },
   output: {

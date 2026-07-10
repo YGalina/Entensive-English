@@ -39,6 +39,12 @@ export type Card = FsrsCard & {
    * (все старые карточки).
    */
   direction?: "recognize" | "produce";
+  /**
+   * Сколько раз слово ЗАМЕЧЕНО в дикой природе — в тексте, видео, роли
+   * (гипотеза замечания Шмидта: noticing = мост вход → усвоение). Замыкает
+   * цикл «вал → узнал → произнёс → заметил». Живёт на produce-карте.
+   */
+  noticed?: number;
 };
 
 type Store = Record<string, Card>;
@@ -127,6 +133,30 @@ export function recordProduceAnswer(packId: string, en: string, known: boolean) 
   emitEvent("srs-answer", { en, packId, known, direction: "produce" });
 }
 
+/** Слова, которые стоит замечать в текстах: все, что вышли в produce-конвейер
+ * (замечание и продуктивное извлечение усиливают друг друга параллельно). */
+export function noticeableWords(): Set<string> {
+  const set = new Set<string>();
+  for (const [k, c] of Object.entries(read())) {
+    if (isProduceKey(k)) set.add(c.en.toLowerCase());
+  }
+  return set;
+}
+
+/** Отметить, что слово ЗАМЕЧЕНО в дикой природе (текст/видео/роль). */
+export function recordNoticed(en: string) {
+  const s = read();
+  const pk = PRODUCE_PREFIX + en.toLowerCase();
+  // ключ мог быть с исходным регистром — ищем без учёта регистра
+  const key = s[pk]
+    ? pk
+    : Object.keys(s).find((k) => isProduceKey(k) && k.slice(2).toLowerCase() === en.toLowerCase());
+  if (!key || !s[key]) return;
+  s[key] = { ...s[key], noticed: (s[key].noticed ?? 0) + 1 };
+  write(s);
+  emitEvent("word-noticed", { en: en.toLowerCase() });
+}
+
 /** Продуктивная очередь на сейчас: слова, которые пора произвести самой. */
 export function dueProduceCards(limit?: number): Card[] {
   const now = Date.now();
@@ -150,6 +180,8 @@ export type Stats = {
   produceDue: number;
   /** слов вышло в активный запас: произведены ≥2 раз */
   activeWords: number;
+  /** слов замечено в дикой природе хоть раз (мост вход → усвоение) */
+  noticedWords: number;
 };
 
 /** Рецептивные карточки стора (без produce-двойников). */
@@ -172,6 +204,7 @@ function snapshot(): string {
     dueToday: cards.filter((c) => dueMs(c) <= now).length,
     produceDue: produce.filter((c) => dueMs(c) <= now).length,
     activeWords: produce.filter((c) => c.reps >= 2).length,
+    noticedWords: produce.filter((c) => (c.noticed ?? 0) > 0).length,
   };
   return JSON.stringify(stats);
 }
@@ -214,7 +247,7 @@ function subscribe(cb: () => void) {
 
 export function useSrsStats(): Stats {
   const raw = useSyncExternalStore(subscribe, snapshot, () =>
-    JSON.stringify({ total: 0, learned: 0, dueToday: 0, produceDue: 0, activeWords: 0 })
+    JSON.stringify({ total: 0, learned: 0, dueToday: 0, produceDue: 0, activeWords: 0, noticedWords: 0 })
   );
   return JSON.parse(raw) as Stats;
 }

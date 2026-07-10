@@ -136,6 +136,7 @@ export default function ProfileScreen() {
         <Row first label={t.profile.outputStatuses} value={String(output.byType.status ?? 0)} />
         <Row label={t.profile.outputSpeech} value={String(output.speech)} />
         <Row label={t.profile.outputActiveWords} value={String(srs.activeWords)} />
+        <Row label={t.profile.outputNoticed} value={String(srs.noticedWords)} />
         <Row label={t.profile.outputDays} value={String(output.activeDays)} />
         <Pressable
           onPress={() => {
