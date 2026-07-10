@@ -19,7 +19,7 @@ export type AiFeedbackResult =
  */
 export async function requestAiFeedback(
   text: string,
-  opts: { baseURL: string | null; artifactId?: string }
+  opts: { baseURL: string | null; artifactId?: string; headers?: Record<string, string> }
 ): Promise<AiFeedbackResult> {
   if (opts.baseURL === null) return { state: "no-config" };
   const trimmed = text.trim();
@@ -27,7 +27,8 @@ export async function requestAiFeedback(
   try {
     const res = await fetch(`${opts.baseURL}/api/feedback`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      // Web — cookie-сессия (credentials); mobile — Authorization: Bearer.
+      headers: { "Content-Type": "application/json", ...(opts.headers ?? {}) },
       credentials: "include",
       body: JSON.stringify({ text: trimmed, artifactId: opts.artifactId }),
     });

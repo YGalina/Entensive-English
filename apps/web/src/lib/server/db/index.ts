@@ -99,9 +99,36 @@ CREATE TABLE IF NOT EXISTS sync_events (
 
 // PGlite — один инстанс на процесс. globalThis-кэш переживает пересборку
 // route-бандлов в dev (та же причина, что честное чтение в store.ts).
-const g = globalThis as unknown as { __ieDb?: ReturnType<typeof drizzle<typeof schema>>; __iePg?: PGlite };
+type Drizzle = ReturnType<typeof drizzle<typeof schema>>;
+const g = globalThis as unknown as { __ieDb?: Drizzle; __iePg?: PGlite };
 
 async function init() {
+  if (g.__ieDb) return g.__ieDb;
+
+  // PROD: настоящий Postgres (Neon/Supabase) по DATABASE_URL. Требует `npm i pg`
+  // в apps/web. Схема и запросы те же — меняется лишь драйвер. Динамический
+  // импорт по переменной-спецификатору: без DATABASE_URL модуль pg не грузится,
+  // и web-сборка зелёная даже когда пакет не установлен (dev/CI).
+  const url = process.env.DATABASE_URL;
+  if (url) {
+    // turbopackIgnore: не трассировать эти модули при сборке — pg ставится
+    // только на проде (см. 12_deploy_runbook.md). pgSpec — переменная, чтобы и
+    // tsc не искал типы pg в dev. node-postgres тянет pg транзитивно, потому
+    // тоже под ignore.
+    const pgSpec = "pg";
+    const pg = (await import(/* turbopackIgnore: true */ pgSpec)) as { Pool: new (o: unknown) => { query: (q: string) => Promise<unknown> } };
+    const { drizzle: pgDrizzle } = await import(/* turbopackIgnore: true */ "drizzle-orm/node-postgres");
+    const needsSsl = /sslmode=require|neon\.tech|supabase\./.test(url);
+    const pool = new pg.Pool({
+      connectionString: url,
+      ssl: needsSsl ? { rejectUnauthorized: false } : undefined,
+    });
+    await pool.query(DDL);
+    g.__ieDb = pgDrizzle(pool as never, { schema }) as unknown as Drizzle;
+    return g.__ieDb;
+  }
+
+  // DEV: встроенный PGlite, ноль внешней инфраструктуры.
   if (!g.__iePg) {
     g.__iePg = new PGlite(DATA_DIR);
     await g.__iePg.exec(DDL);

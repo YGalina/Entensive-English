@@ -14,9 +14,10 @@ import { todaysTouchedCards } from "@ie/core/srs";
 import { useVoiceRecorder, playRecording } from "@ie/media/recorder";
 import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
+import { authHeader } from "@/lib/session";
 
-// Серверный адрес для AI-разбора. На телефоне заработает, когда появится
-// EXPO_PUBLIC_API_URL + вход по magic-link (иначе честное «пока недоступно»).
+// Серверный адрес для AI-разбора. На телефоне работает при заданном
+// EXPO_PUBLIC_API_URL + входе по magic-link (иначе честное «пока недоступно»).
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? null;
 
 export function OutputCard() {
@@ -253,7 +254,7 @@ function AiReview({ text }: { text: string }) {
 
   async function run() {
     setState("busy");
-    const res = await requestAiFeedback(text, { baseURL: API_URL });
+    const res = await requestAiFeedback(text, { baseURL: API_URL, headers: authHeader() });
     if (res.state === "ok") {
       setResult({ hints: res.hints, praise: res.praise });
       setState("done");

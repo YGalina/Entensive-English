@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import * as Linking from "expo-linking";
 import { usePrefs, updatePrefs } from "@ie/core/prefs";
 import { useTimeStats, useStreak } from "@ie/core/timelog";
 import { useOutcome, HOURS_PER_LEVEL } from "@ie/core/outcome";
@@ -15,6 +16,16 @@ import { speakEnglish } from "@ie/media/speech";
 import { useT } from "@/lib/i18n";
 import { useMarina, useThemePref, setThemePref, type ThemePref } from "@/theme";
 import { Breton } from "@/components/breton";
+import { useLoggedIn, clearSessionToken } from "@/lib/session";
+import {
+  apiConfigured,
+  fetchMe,
+  requestMagicLink,
+  pushToCloud,
+  pullFromCloud,
+  pendingCount,
+  type MeUser,
+} from "@/lib/cloud";
 
 // Профиль: кто я в программе, куда иду и как настроено моё пространство.
 // Тон — по методу: цифры честные (из реальной практики), пропуски не стыдим.
@@ -287,13 +298,8 @@ export default function ProfileScreen() {
         <Row label={t.profile.themeNow} value={mode === "dark" ? t.profile.themeNowDark : t.profile.themeNowLight} />
       </Card>
 
-      {/* ---------- Аккаунт и подписка (честные статусы до релиза) ---------- */}
-      <Card title={t.profile.account}>
-        <Row first label={t.profile.plan} value={t.profile.planFree} />
-        <Row label={t.profile.planPro} value={t.profile.planProVal} />
-        <Row label={t.profile.signIn} value={t.profile.signInVal} />
-        <Row label={t.profile.payment} value={t.profile.paymentVal} />
-      </Card>
+      {/* ---------- Аккаунт: реальный вход по волшебной ссылке + синк ---------- */}
+      <AccountCard />
 
       {/* ---------- Безопасность ---------- */}
       <Card title={t.profile.security}>
@@ -355,6 +361,224 @@ export default function ProfileScreen() {
         {t.profile.foot}
       </Text>
     </ScrollView>
+  );
+}
+
+/* ---------- Аккаунт: вход по волшебной ссылке + синк ---------- */
+
+type AcStatus =
+  | "idle"
+  | "sending"
+  | "sent"
+  | "dev"
+  | "bad"
+  | "syncing"
+  | "pushed"
+  | "pulled"
+  | "fail";
+
+function AccountCard() {
+  const { c } = useMarina();
+  const { t } = useT();
+  const loggedIn = useLoggedIn();
+  const configured = apiConfigured();
+
+  const [me, setMe] = useState<MeUser>(null);
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<AcStatus>("idle");
+  const [devLink, setDevLink] = useState<string | null>(null);
+  const [queue, setQueue] = useState(0);
+
+  useEffect(() => {
+    setQueue(pendingCount());
+    if (loggedIn) {
+      void fetchMe().then(setMe);
+    } else {
+      setMe(null);
+    }
+  }, [loggedIn]);
+
+  function tap() {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  }
+
+  async function send() {
+    tap();
+    const e = email.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)) {
+      setStatus("bad");
+      return;
+    }
+    setStatus("sending");
+    const r = await requestMagicLink(e);
+    if (!r.ok) {
+      setStatus("fail");
+      return;
+    }
+    if (r.devLink) {
+      setDevLink(r.devLink);
+      setStatus("dev");
+    } else {
+      setStatus("sent");
+    }
+  }
+
+  async function doPush() {
+    tap();
+    setStatus("syncing");
+    const ok = await pushToCloud();
+    setQueue(pendingCount());
+    setStatus(ok ? "pushed" : "fail");
+  }
+
+  async function doPull() {
+    tap();
+    setStatus("syncing");
+    const ok = await pullFromCloud();
+    setStatus(ok ? "pulled" : "fail");
+  }
+
+  function doLogout() {
+    tap();
+    clearSessionToken();
+    setMe(null);
+    setStatus("idle");
+    setDevLink(null);
+    setEmail("");
+  }
+
+  // Сервер синка не задан — честный статус, как раньше.
+  if (!configured) {
+    return (
+      <Card title={t.profile.account}>
+        <Row first label={t.profile.plan} value={t.profile.planFree} />
+        <Row label={t.profile.planPro} value={t.profile.planProVal} />
+        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 19, color: c.muted, paddingVertical: 12 }}>
+          {t.profile.acNoServer}
+        </Text>
+      </Card>
+    );
+  }
+
+  // Вошла — показываем аккаунт и синк.
+  if (loggedIn) {
+    return (
+      <Card title={t.profile.account}>
+        <Row first label={t.profile.acSignedIn} value={me?.email ?? "…"} />
+        <Row label={t.profile.plan} value={me?.plan === "pro" ? t.profile.planPro : t.profile.planFree} />
+        <View style={{ paddingVertical: 12, gap: 10 }}>
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13.5, color: c.ink }}>
+            {t.profile.acSyncTitle}
+          </Text>
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <AcBtn icon="cloud-upload-outline" label={t.profile.acPush} onPress={doPush} disabled={status === "syncing"} />
+            <AcBtn icon="cloud-download-outline" label={t.profile.acPull} onPress={doPull} disabled={status === "syncing"} />
+          </View>
+          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
+            {t.profile.acQueue(queue)}
+          </Text>
+          <AcStatusLine status={status} />
+        </View>
+        <Pressable
+          onPress={doLogout}
+          accessibilityRole="button"
+          style={({ pressed }) => ({ minHeight: 44, marginBottom: 12, borderRadius: 12, borderWidth: 1, borderColor: c.line, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 6, backgroundColor: pressed ? c.surface : "transparent" })}
+        >
+          <Ionicons name="log-out-outline" size={16} color={c.muted} />
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13.5, color: c.muted }}>{t.profile.acLogout}</Text>
+        </Pressable>
+      </Card>
+    );
+  }
+
+  // Не вошла — форма входа по email.
+  return (
+    <Card title={t.profile.account}>
+      <Row first label={t.profile.plan} value={t.profile.planFree} />
+      <View style={{ paddingVertical: 12, gap: 10 }}>
+        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 19, color: c.muted }}>
+          {t.profile.acLoginNote}
+        </Text>
+        <TextInput
+          value={email}
+          onChangeText={(v) => {
+            setEmail(v);
+            if (status === "bad") setStatus("idle");
+          }}
+          placeholder={t.profile.acEmail}
+          placeholderTextColor={c.muted}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          autoComplete="email"
+          style={{ minHeight: 44, borderRadius: 12, borderWidth: 1, borderColor: c.line, paddingHorizontal: 14, fontFamily: "Inter_400Regular", fontSize: 14, color: c.ink, backgroundColor: c.surface }}
+        />
+        {status === "dev" && devLink ? (
+          <>
+            <Pressable
+              onPress={() => {
+                tap();
+                void Linking.openURL(devLink);
+              }}
+              accessibilityRole="button"
+              style={({ pressed }) => ({ minHeight: 48, borderRadius: 14, backgroundColor: c.accent, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, transform: [{ scale: pressed ? 0.98 : 1 }] })}
+            >
+              <Ionicons name="open-outline" size={18} color={c.onBrand} />
+              <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>{t.profile.acOpenLink}</Text>
+            </Pressable>
+            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted }}>
+              {t.profile.acLinkHint}
+            </Text>
+          </>
+        ) : (
+          <Pressable
+            onPress={send}
+            disabled={status === "sending"}
+            accessibilityRole="button"
+            style={({ pressed }) => ({ minHeight: 48, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, opacity: status === "sending" ? 0.6 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}
+          >
+            <Ionicons name="mail-outline" size={18} color={c.onBrand} />
+            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>
+              {status === "sending" ? t.profile.acSending : t.profile.acSend}
+            </Text>
+          </Pressable>
+        )}
+        {status === "bad" && <AcNote text={t.profile.acBadEmail} tone="warn" />}
+        {status === "sent" && <AcNote text={t.profile.acSentMail} tone="ok" />}
+        {status === "fail" && <AcNote text={t.profile.acSyncFail} tone="warn" />}
+      </View>
+    </Card>
+  );
+}
+
+function AcBtn({ icon, label, onPress, disabled }: { icon: string; label: string; onPress: () => void; disabled?: boolean }) {
+  const { c } = useMarina();
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      accessibilityRole="button"
+      style={({ pressed }) => ({ flex: 1, minHeight: 44, borderRadius: 12, borderWidth: 1, borderColor: c.line, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 6, opacity: disabled ? 0.5 : 1, backgroundColor: pressed ? c.brandSoft : "transparent" })}
+    >
+      <Ionicons name={icon as never} size={15} color={c.brand} />
+      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 12.5, color: c.brand }}>{label}</Text>
+    </Pressable>
+  );
+}
+
+function AcStatusLine({ status }: { status: AcStatus }) {
+  const { t } = useT();
+  if (status === "syncing") return <AcNote text={t.profile.acSyncing} tone="muted" />;
+  if (status === "pushed") return <AcNote text={t.profile.acPushed} tone="ok" />;
+  if (status === "pulled") return <AcNote text={t.profile.acPulled} tone="ok" />;
+  if (status === "fail") return <AcNote text={t.profile.acSyncFail} tone="warn" />;
+  return null;
+}
+
+function AcNote({ text, tone }: { text: string; tone: "ok" | "warn" | "muted" }) {
+  const { c } = useMarina();
+  const color = tone === "ok" ? c.brand : tone === "warn" ? c.accent : c.muted;
+  return (
+    <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12.5, lineHeight: 18, color }}>{text}</Text>
   );
 }
 
