@@ -634,7 +634,7 @@ export default function Onboarding() {
                 flex: 1,
                 minHeight: 54,
                 borderRadius: 16,
-                backgroundColor: c.accent,
+                backgroundColor: c.brand,
                 alignItems: "center",
                 justifyContent: "center",
                 flexDirection: "row",
@@ -643,7 +643,7 @@ export default function Onboarding() {
                 transform: [{ scale: pressed && canNext ? 0.98 : 1 }],
               })}
             >
-              <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+              <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: c.onBrand }}>
                 {step === "welcome"
                   ? t.onb.welcomeCta
                   : step === "summary"
@@ -653,7 +653,7 @@ export default function Onboarding() {
               <Ionicons
                 name={step === "summary" ? "checkmark" : "arrow-forward"}
                 size={18}
-                color="#ffffff"
+                color={c.onBrand}
               />
             </Pressable>
           </View>
@@ -746,7 +746,7 @@ function LevelCheck({
           style={({ pressed }) => ({
             minHeight: 54,
             borderRadius: 16,
-            backgroundColor: c.accent,
+            backgroundColor: c.brand,
             alignItems: "center",
             justifyContent: "center",
             flexDirection: "row",
@@ -754,10 +754,10 @@ function LevelCheck({
             transform: [{ scale: pressed ? 0.98 : 1 }],
           })}
         >
-          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: c.onBrand }}>
             {t.onb.checkAccept}
           </Text>
-          <Ionicons name="checkmark" size={18} color="#ffffff" />
+          <Ionicons name="checkmark" size={18} color={c.onBrand} />
         </Pressable>
         <Pressable
           onPress={onCancel}
@@ -786,7 +786,7 @@ function LevelCheck({
       </View>
 
       <View style={{ flex: 1, backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, alignItems: "center", justifyContent: "center", padding: 24, gap: 12 }}>
-        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 34, color: c.accent, textAlign: "center" }}>
+        <Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 36, color: c.ink, textAlign: "center" }}>
           {item.w.en}
         </Text>
         <Pressable
@@ -856,7 +856,7 @@ function AhaMoment({ level, onDone }: { level: string; onDone: () => void }) {
           <Ionicons name="ear" size={28} color={c.brand} />
         </View>
         <View style={{ backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, padding: 24, gap: 14, alignSelf: "stretch" }}>
-          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, lineHeight: 32, color: c.ink, textAlign: "center" }}>
+          <Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 25, lineHeight: 34, color: c.ink, textAlign: "center" }}>
             {phrase.en}
           </Text>
           <Pressable
@@ -881,12 +881,12 @@ function AhaMoment({ level, onDone }: { level: string; onDone: () => void }) {
       <Pressable
         onPress={onDone}
         accessibilityRole="button"
-        style={({ pressed }) => ({ minHeight: 56, borderRadius: 16, backgroundColor: c.accent, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, transform: [{ scale: pressed ? 0.98 : 1 }] })}
+        style={({ pressed }) => ({ minHeight: 56, borderRadius: 16, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, transform: [{ scale: pressed ? 0.98 : 1 }] })}
       >
-        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: c.onBrand }}>
           В приложение · Let's go
         </Text>
-        <Ionicons name="arrow-forward" size={18} color="#ffffff" />
+        <Ionicons name="arrow-forward" size={18} color={c.onBrand} />
       </Pressable>
     </View>
   );

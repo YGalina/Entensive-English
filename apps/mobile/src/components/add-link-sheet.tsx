@@ -96,7 +96,7 @@ export function AddLinkSheet({
             style={({ pressed }) => ({
               minHeight: 52,
               borderRadius: 16,
-              backgroundColor: c.accent,
+              backgroundColor: c.brand,
               alignItems: "center",
               justifyContent: "center",
               flexDirection: "row",
@@ -104,8 +104,8 @@ export function AddLinkSheet({
               transform: [{ scale: pressed ? 0.98 : 1 }],
             })}
           >
-            <Ionicons name="add" size={18} color="#ffffff" />
-            <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 15, color: "#ffffff" }}>
+            <Ionicons name="add" size={18} color={c.onBrand} />
+            <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 15, color: c.onBrand }}>
               {title}
             </Text>
           </Pressable>

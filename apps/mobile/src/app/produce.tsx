@@ -130,7 +130,7 @@ export default function ProduceScreen() {
                   accessibilityLabel={cur.word.en}
                   style={{ alignItems: "center", gap: 4 }}
                 >
-                  <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 30, color: c.brand }}>
+                  <Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 32, color: c.ink }}>
                     {cur.word.en}
                   </Text>
                   {!!cur.word.ipa && (

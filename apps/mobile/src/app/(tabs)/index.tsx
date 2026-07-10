@@ -284,7 +284,7 @@ export default function TodayScreen() {
         <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 11, letterSpacing: 0.6, textTransform: "uppercase", color: "#bfe0dd" }}>
           {current ? (current.goalMin > 0 ? t.today.nextStep(current.goalMin) : t.today.nextStepReviews) : t.today.dayDone}
         </Text>
-        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 23, color: "#ffffff" }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 23, color: c.onBrand }}>
           {current ? current[L].title : t.today.allDone}
         </Text>
         <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, color: "#cfe8e6" }}>
@@ -299,7 +299,7 @@ export default function TodayScreen() {
               marginTop: 8,
               minHeight: 48,
               borderRadius: 14,
-              backgroundColor: c.accent,
+              backgroundColor: c.brand,
               alignItems: "center",
               justifyContent: "center",
               flexDirection: "row",
@@ -307,10 +307,10 @@ export default function TodayScreen() {
               transform: [{ scale: pressed ? 0.98 : 1 }],
             })}
           >
-            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: "#ffffff" }}>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.onBrand }}>
               {t.today.start}
             </Text>
-            <Ionicons name="arrow-forward" size={18} color="#ffffff" />
+            <Ionicons name="arrow-forward" size={18} color={c.onBrand} />
           </Pressable>
         )}
       </LinearGradient>
@@ -495,7 +495,7 @@ export default function TodayScreen() {
                   {s.done ? (
                     <Ionicons name="checkmark" size={15} color={c.onBrand} />
                   ) : isCurrent ? (
-                    <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: c.accent }} />
+                    <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: c.brand }} />
                   ) : null}
                 </View>
                 <Text

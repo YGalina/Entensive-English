@@ -234,7 +234,7 @@ export default function RolesScreen() {
                 // Читать вслух: английский сразу, снизу перевод, «послушать образец»
                 <>
                   <Pressable onPress={() => speakEnglish(line.en, { rate: 0.92, interrupt: true })} accessibilityRole="button" accessibilityLabel={line.en}>
-                    <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 19, lineHeight: 27, color: c.brand }}>
+                    <Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 20, lineHeight: 29, color: c.ink }}>
                       {line.en}
                     </Text>
                   </Pressable>
@@ -262,7 +262,7 @@ export default function RolesScreen() {
                 </>
               ) : (
                 <>
-                  <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 18, lineHeight: 26, color: c.ink }}>
+                  <Text style={{ fontFamily: "Lora_500Medium", fontSize: 19, lineHeight: 28, color: c.ink }}>
                     {line.en}
                   </Text>
                   <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>

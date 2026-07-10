@@ -317,7 +317,7 @@ export default function ProfileScreen() {
         style={({ pressed }) => ({
           minHeight: 52,
           borderRadius: 16,
-          backgroundColor: c.accent,
+          backgroundColor: c.brand,
           alignItems: "center",
           justifyContent: "center",
           flexDirection: "row",
@@ -326,8 +326,8 @@ export default function ProfileScreen() {
           transform: [{ scale: pressed ? 0.98 : 1 }],
         })}
       >
-        <Ionicons name="volume-high" size={20} color="#ffffff" />
-        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: "#ffffff" }}>
+        <Ionicons name="volume-high" size={20} color={c.onBrand} />
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.onBrand }}>
           {speaking ? t.profile.speaking : t.profile.testVoice}
         </Text>
       </Pressable>
@@ -520,7 +520,7 @@ function AccountCard() {
                 void Linking.openURL(devLink);
               }}
               accessibilityRole="button"
-              style={({ pressed }) => ({ minHeight: 48, borderRadius: 14, backgroundColor: c.accent, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, transform: [{ scale: pressed ? 0.98 : 1 }] })}
+              style={({ pressed }) => ({ minHeight: 48, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, transform: [{ scale: pressed ? 0.98 : 1 }] })}
             >
               <Ionicons name="open-outline" size={18} color={c.onBrand} />
               <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.onBrand }}>{t.profile.acOpenLink}</Text>

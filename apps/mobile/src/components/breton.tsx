@@ -15,7 +15,7 @@ export function Breton({ red = false, height = 8 }: { red?: boolean; height?: nu
       {Array.from({ length: 60 }, (_, i) => (
         <View
           key={i}
-          style={{ width: 6, backgroundColor: i % 2 === 0 ? "#ffffff" : tone }}
+          style={{ width: 6, backgroundColor: i % 2 === 0 ? c.onBrand : tone }}
         />
       ))}
     </View>

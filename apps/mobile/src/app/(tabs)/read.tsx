@@ -264,7 +264,7 @@ export default function ReadScreen() {
               style={({ pressed }) => ({
                 minHeight: 56,
                 borderRadius: 16,
-                backgroundColor: c.accent,
+                backgroundColor: c.brand,
                 alignItems: "center",
                 justifyContent: "center",
                 flexDirection: "row",
@@ -272,8 +272,8 @@ export default function ReadScreen() {
                 transform: [{ scale: pressed ? 0.98 : 1 }],
               })}
             >
-              <Ionicons name="checkmark" size={18} color="#ffffff" />
-              <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+              <Ionicons name="checkmark" size={18} color={c.onBrand} />
+              <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: c.onBrand }}>
                 {t.readX.finished}
               </Text>
             </Pressable>
@@ -297,9 +297,9 @@ export default function ReadScreen() {
             <Pressable
               onPress={closeReader}
               accessibilityRole="button"
-              style={({ pressed }) => ({ alignSelf: "stretch", minHeight: 52, borderRadius: 16, backgroundColor: c.accent, alignItems: "center", justifyContent: "center", marginTop: 6, transform: [{ scale: pressed ? 0.98 : 1 }] })}
+              style={({ pressed }) => ({ alignSelf: "stretch", minHeight: 52, borderRadius: 16, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", marginTop: 6, transform: [{ scale: pressed ? 0.98 : 1 }] })}
             >
-              <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 15, color: "#ffffff" }}>
+              <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 15, color: c.onBrand }}>
                 {book ? t.readX.nextChapter : t.readX.anotherText}
               </Text>
             </Pressable>
@@ -352,9 +352,9 @@ export default function ReadScreen() {
             <Pressable
               onPress={() => openBook(book)}
               accessibilityRole="button"
-              style={({ pressed }) => ({ minHeight: 48, paddingHorizontal: 22, borderRadius: 14, backgroundColor: c.accent, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
+              style={({ pressed }) => ({ minHeight: 48, paddingHorizontal: 22, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
             >
-              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: "#ffffff" }}>{t.common.retry}</Text>
+              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.onBrand }}>{t.common.retry}</Text>
             </Pressable>
           </View>
         ) : (
@@ -584,16 +584,17 @@ function NoticingParagraph({
   const tokens = useMemo(() => text.split(/(\b[A-Za-z][A-Za-z'-]*\b)/), [text]);
   const hasAny = words.size > 0;
 
+  // Дизайн-система: чтение — Lora; новое слово = амбер-заливка (тап = заметил).
   if (!hasAny) {
     return (
-      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 17, lineHeight: 27, color: c.ink }}>
+      <Text style={{ fontFamily: "Lora_400Regular", fontSize: 18, lineHeight: 31, color: c.ink }}>
         {text}
       </Text>
     );
   }
 
   return (
-    <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 17, lineHeight: 27, color: c.ink }}>
+    <Text style={{ fontFamily: "Lora_400Regular", fontSize: 18, lineHeight: 31, color: c.ink }}>
       {tokens.map((tok, i) => {
         const low = tok.toLowerCase();
         if (words.has(low)) {
@@ -601,7 +602,7 @@ function NoticingParagraph({
             <Text
               key={i}
               onPress={() => onNotice(low)}
-              style={{ color: c.brand, fontFamily: "GolosText_700Bold" }}
+              style={{ color: c.ink, backgroundColor: c.amber, fontFamily: "Lora_500Medium" }}
             >
               {tok}
             </Text>

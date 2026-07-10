@@ -498,13 +498,13 @@ function Finale({ onClose }: { onClose: () => void }) {
           alignSelf: "stretch",
           minHeight: 54,
           borderRadius: 16,
-          backgroundColor: c.accent,
+          backgroundColor: c.brand,
           alignItems: "center",
           justifyContent: "center",
           transform: [{ scale: pressed ? 0.98 : 1 }],
         })}
       >
-        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: c.onBrand }}>
           {t.common.done}
         </Text>
       </Pressable>

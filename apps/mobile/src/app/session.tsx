@@ -425,8 +425,8 @@ function Flow({
       >
         <Text
           style={{
-            fontFamily: "GolosText_800ExtraBold",
-            fontSize: 42,
+            fontFamily: "Lora_600SemiBold",
+            fontSize: 40,
             lineHeight: 50,
             color: c.ink,
             textAlign: "center",
@@ -534,8 +534,8 @@ function Flow({
           transform: [{ scale: pressed ? 0.98 : 1 }],
         })}
       >
-        <Ionicons name={running ? "pause" : "play"} size={18} color={running ? c.ink : "#ffffff"} />
-        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: running ? c.ink : "#ffffff"}}>
+        <Ionicons name={running ? "pause" : "play"} size={18} color={running ? c.ink : c.onBrand} />
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: running ? c.ink : c.onBrand}}>
           {running ? t.sessionX.pause : idx === 0 ? t.sessionX.go : t.sessionX.resume}
         </Text>
       </Pressable>
@@ -585,13 +585,13 @@ function Done({ count, known, onClose }: { count: number; known: number; onClose
           alignSelf: "stretch",
           minHeight: 54,
           borderRadius: 16,
-          backgroundColor: c.accent,
+          backgroundColor: c.brand,
           alignItems: "center",
           justifyContent: "center",
           transform: [{ scale: pressed ? 0.98 : 1 }],
         })}
       >
-        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: c.onBrand }}>
           {t.sessionX.finish}
         </Text>
       </Pressable>

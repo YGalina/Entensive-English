@@ -328,8 +328,8 @@ export default function SoundsScreen() {
           transform: [{ scale: pressed ? 0.98 : 1 }],
         })}
       >
-        <Ionicons name={auto ? "stop" : "play"} size={18} color={auto ? c.ink : "#ffffff"} />
-        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: auto ? c.ink : "#ffffff" }}>
+        <Ionicons name={auto ? "stop" : "play"} size={18} color={auto ? c.ink : c.onBrand} />
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: auto ? c.ink : c.onBrand }}>
           {auto ? t.soundsX.stop : t.soundsX.auto}
         </Text>
       </Pressable>

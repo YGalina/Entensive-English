@@ -572,7 +572,7 @@ function VideoCard({
           <Ionicons name="logo-youtube" size={26} color={sk.video} />
         )}
         <View style={{ position: "absolute", width: 34, height: 34, borderRadius: 17, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" }}>
-          <Ionicons name="play" size={16} color="#fff" />
+          <Ionicons name="play" size={16} color={c.onBrand} />
         </View>
       </View>
       <View style={{ flex: 1, justifyContent: "center", gap: 3 }}>
