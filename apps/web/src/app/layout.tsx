@@ -1,19 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Nunito, Inter } from "next/font/google";
+import { Golos_Text, Lora } from "next/font/google";
 import Script from "next/script";
 import { marina } from "@ie/tokens";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+// Дизайн-система «Living Content»: Golos Text — голос интерфейса,
+// Lora — голос языка (английские слова, фразы, чтение).
+const golos = Golos_Text({
+  variable: "--font-golos",
   subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-const nunito = Nunito({
-  variable: "--font-nunito",
+const lora = Lora({
+  variable: "--font-lora",
   subsets: ["latin", "cyrillic"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -37,7 +41,7 @@ export default function RootLayout({
   return (
     <html
       lang="ru"
-      className={`${inter.variable} ${nunito.variable} h-full antialiased`}
+      className={`${golos.variable} ${lora.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full">

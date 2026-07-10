@@ -89,8 +89,9 @@
   --color-warn: var(--warn);
   --color-warn-soft: var(--warn-soft);
 
-  --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-heading: var(--font-nunito), system-ui, sans-serif;
+  --font-sans: var(--font-golos), system-ui, sans-serif;
+  --font-heading: var(--font-golos), system-ui, sans-serif;
+  --font-english: var(--font-lora), Georgia, serif;
 
   --radius-card: 16px;
   --radius-soft: 12px;
@@ -107,7 +108,12 @@
 body {
   background: var(--bg);
   color: var(--ink);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-golos), system-ui, sans-serif;
+}
+
+/* Голос языка: английские слова, фразы, чтение — Lora (дизайн-система §03) */
+.font-english {
+  font-family: var(--font-english);
 }
 
 /* Табличные цифры для таймеров и счётчиков — без «прыжков» */
