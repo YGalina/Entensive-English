@@ -4,7 +4,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { getLevelPack } from "@ie/core/data/levelVocab";
+import { sessionWords, sessionLevelLabel } from "@ie/core/data/levelVocab";
+import { knownWordSet } from "@ie/core/srs";
 import { translate, type Word } from "@ie/core/data/packs";
 import { AFFIRMATIONS } from "@ie/core/data/affirmations";
 import { usePrefs } from "@ie/core/prefs";
@@ -52,8 +53,13 @@ export default function SessionScreen() {
   const music = useCalmMusic();
   const { t } = useT();
 
-  const pack = useMemo(() => getLevelPack(levelPackId(prefs?.level))!, [prefs?.level]);
-  const words = pack.words;
+  // Вал с ростом i+1: твой уровень + подмешиваем следующий, новые слова
+  // вперёд, узнанные — на повтор. Так массив ведёт вверх (B1→B2→C1).
+  const words = useMemo(
+    () => sessionWords(prefs?.level, knownWordSet(), 40),
+    [prefs?.level]
+  );
+  const levelLabel = sessionLevelLabel(prefs?.level);
 
   const [phase, setPhase] = useState<Phase>("attune");
   const [running, setRunning] = useState(false);
@@ -92,7 +98,7 @@ export default function SessionScreen() {
           {phase === "attune" || phase === "bridge"
             ? t.sessionX.attune
             : phase === "flow"
-              ? pack.title
+              ? levelLabel
               : t.sessionX.done}
         </Text>
         <Pressable
@@ -145,7 +151,7 @@ export default function SessionScreen() {
           tempoIdx={tempoIdx}
           setTempoIdx={setTempoIdx}
           nativeLang={prefs?.nativeLang ?? "ru"}
-          packId={pack.id}
+          packId="level"
           onKnown={() => setKnownCount((n) => n + 1)}
           knownCount={knownCount}
           onFinish={() => {

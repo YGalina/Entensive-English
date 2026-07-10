@@ -133,6 +133,16 @@ export function recordProduceAnswer(packId: string, en: string, known: boolean) 
   emitEvent("srs-answer", { en, packId, known, direction: "produce" });
 }
 
+/** Множество узнанных слов (reps ≥ 1) — чтобы вал не повторял их, а дополнял
+ * новыми и подмешивал i+1. Отвечает на «новые дополняются?» — да. */
+export function knownWordSet(): Set<string> {
+  const set = new Set<string>();
+  for (const [k, c] of Object.entries(read())) {
+    if (!isProduceKey(k) && c.reps >= 1) set.add(c.en.toLowerCase());
+  }
+  return set;
+}
+
 /** Слова, которые стоит замечать в текстах: все, что вышли в produce-конвейер
  * (замечание и продуктивное извлечение усиливают друг друга параллельно). */
 export function noticeableWords(): Set<string> {

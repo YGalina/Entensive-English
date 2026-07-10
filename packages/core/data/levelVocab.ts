@@ -49,3 +49,50 @@ export const LEVEL_PACKS: Pack[] = [
 export function getLevelPack(id: string): Pack | undefined {
   return LEVEL_PACKS.find((p) => p.id === id);
 }
+
+// Списки по уровням в порядке роста — для подбора «i+1» (Крашен: вход чуть
+// ВЫШЕ уровня). Отвечает на «как я выучу B2, если дают только B1»: вал берёт
+// твой уровень И подмешивает следующий, приоритет — ещё не узнанным словам.
+const LEVEL_LISTS: { level: string; words: Word[] }[] = [
+  { level: "b1", words: B1 },
+  { level: "b2", words: B2 },
+  { level: "c1", words: C1 },
+];
+
+function baseLevelIndex(level?: string): number {
+  const l = (level ?? "b1").toLowerCase();
+  if (l === "c1" || l === "c2") return 2;
+  if (l === "b2") return 1;
+  return 0; // a1/a2/b1
+}
+
+/**
+ * Слова для сеанса (вал) с ростом i+1. Берёт текущий уровень + следующий,
+ * ставит ВПЕРЁД ещё не узнанные (known — множество en в нижнем регистре),
+ * освоенные уходят в конец на повтор. Так новые слова дополняются, а массив
+ * ведёт вверх по уровням, а не топчется на месте.
+ */
+export function sessionWords(level: string | undefined, known: Set<string>, limit = 40): Word[] {
+  const base = baseLevelIndex(level);
+  const cur = LEVEL_LISTS[base]?.words ?? B1;
+  const next = LEVEL_LISTS[base + 1]?.words ?? []; // i+1: следующий уровень
+  // Пул: сперва текущий, затем подмешиваем следующий (i+1).
+  const pool = [...cur, ...next];
+  const fresh: Word[] = [];
+  const seen: Word[] = [];
+  for (const w of pool) {
+    if (known.has(w.en.toLowerCase())) seen.push(w);
+    else fresh.push(w);
+  }
+  // Новые вперёд (в т.ч. i+1), освоенные — хвостом на повтор.
+  const ordered = [...fresh, ...seen];
+  return ordered.slice(0, limit);
+}
+
+/** Метка уровня для заголовка сеанса — показывает, что массив ведёт вверх. */
+export function sessionLevelLabel(level: string | undefined): string {
+  const base = baseLevelIndex(level);
+  const cur = LEVEL_LISTS[base]?.level.toUpperCase() ?? "B1";
+  const nxt = LEVEL_LISTS[base + 1]?.level.toUpperCase();
+  return nxt ? `${cur}→${nxt}` : cur;
+}
