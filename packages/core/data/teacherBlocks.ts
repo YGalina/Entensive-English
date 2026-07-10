@@ -84,6 +84,39 @@ export const TEACHER_BLOCKS: TeacherBlock[] = [
     outputPrompt: "Что значит «fake it till you become it»? Объясни мысль Кадди своими словами по-английски.",
     outputPromptEn: "What does “fake it till you become it” mean? Explain Cuddy's idea in your own words in English.",
   },
+  {
+    id: "block-jobs",
+    shadowingId: "jobs-dots",
+    topic: "Как соединяются точки твоего пути",
+    topicEn: "How the dots of your path connect",
+    chunks: [
+      { en: "connecting the dots", ru: "соединять точки" },
+      { en: "I dropped out of college", ru: "я бросил колледж" },
+      { en: "you can't connect the dots looking forward", ru: "нельзя соединить точки, глядя вперёд" },
+      { en: "you can only connect them looking backwards", ru: "их можно соединить, только оглядываясь назад" },
+      { en: "you have to trust that the dots will connect", ru: "нужно верить, что точки соединятся" },
+      { en: "trust in something — your gut, destiny, life", ru: "верить во что-то — в чутьё, судьбу, жизнь" },
+      { en: "this approach has never let me down", ru: "этот подход меня ни разу не подвёл" },
+    ],
+    outputPrompt: "Почему Джобс говорит, что точки соединяются только «оглядываясь назад»? Объясни своими словами по-английски.",
+    outputPromptEn: "Why does Jobs say the dots connect only “looking backwards”? Explain in your own words in English.",
+  },
+  {
+    id: "block-crashcourse",
+    shadowingId: "crashcourse-psych",
+    topic: "Что вообще изучает психология",
+    topicEn: "What psychology actually studies",
+    chunks: [
+      { en: "the study of the mind and behavior", ru: "наука о разуме и поведении" },
+      { en: "why we think and feel the way we do", ru: "почему мы думаем и чувствуем именно так" },
+      { en: "nature versus nurture", ru: "природа против воспитания" },
+      { en: "how the brain works", ru: "как работает мозг" },
+      { en: "it's a science, not just common sense", ru: "это наука, а не просто здравый смысл" },
+      { en: "we're going to look at the evidence", ru: "мы будем смотреть на доказательства" },
+    ],
+    outputPrompt: "Что для тебя интереснее — «природа» или «воспитание» — и почему? Ответь по-английски своими словами.",
+    outputPromptEn: "What's more interesting to you — “nature” or “nurture” — and why? Answer in English in your own words.",
+  },
 ];
 
 export function teacherBlockById(id: string): TeacherBlock | undefined {
