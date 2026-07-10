@@ -9,10 +9,15 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { addArtifact, useOutputStats } from "@ie/core/output";
 import { feedbackFor, type FeedbackHint } from "@ie/core/feedback";
+import { requestAiFeedback, type AiHint } from "@ie/core/aiFeedback";
 import { todaysTouchedCards } from "@ie/core/srs";
 import { useVoiceRecorder } from "@ie/media/recorder";
 import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
+
+// Серверный адрес для AI-разбора. На телефоне заработает, когда появится
+// EXPO_PUBLIC_API_URL + вход по magic-link (иначе честное «пока недоступно»).
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? null;
 
 export function OutputCard() {
   const { c, radius } = useMarina();
@@ -23,6 +28,7 @@ export function OutputCard() {
   const [text, setText] = useState("");
   const [audioRef, setAudioRef] = useState<string | null>(null);
   const [hints, setHints] = useState<FeedbackHint[] | null>(null);
+  const [savedText, setSavedText] = useState("");
   const [micError, setMicError] = useState(false);
 
   // Режим: утро → фраза; после неё (или с вечера) → статус. Вечером статус
@@ -73,6 +79,7 @@ export function OutputCard() {
       words: usedWords,
     });
     setHints(text.trim() ? feedbackFor(text) : []);
+    setSavedText(text.trim());
     setText("");
     setAudioRef(null);
   }
@@ -88,6 +95,7 @@ export function OutputCard() {
           {o.doneNote(stats.today)}
         </Text>
         {hints !== null && (hints.length > 0 ? <Hints hints={hints} /> : <Praise />)}
+        {hints !== null && savedText.length > 0 && <AiReview text={savedText} />}
       </View>
     );
   }
@@ -101,6 +109,7 @@ export function OutputCard() {
       <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.muted }}>{prompt}</Text>
 
       {hints !== null && (hints.length > 0 ? <Hints hints={hints} /> : <Praise />)}
+      {hints !== null && savedText.length > 0 && <AiReview text={savedText} />}
 
       <TextInput
         value={text}
@@ -208,6 +217,65 @@ function Hints({ hints }: { hints: FeedbackHint[] }) {
           • {t.output.hints[h.id] ?? h.id}
         </Text>
       ))}
+    </View>
+  );
+}
+
+// AI-разбор тренера: локальные подсказки уже показаны выше — это надстройка
+// по согласию. Заработает на телефоне с EXPO_PUBLIC_API_URL + входом; пока
+// его нет — честно объясняет, а не притворяется.
+function AiReview({ text }: { text: string }) {
+  const { c } = useMarina();
+  const { t } = useT();
+  const o = t.output;
+  const [state, setState] = useState<"idle" | "busy" | "off" | "done">("idle");
+  const [result, setResult] = useState<{ hints: AiHint[]; praise: string }>({ hints: [], praise: "" });
+
+  async function run() {
+    setState("busy");
+    const res = await requestAiFeedback(text, { baseURL: API_URL });
+    if (res.state === "ok") {
+      setResult({ hints: res.hints, praise: res.praise });
+      setState("done");
+    } else {
+      setState("off");
+    }
+  }
+
+  if (state === "done") {
+    return (
+      <View style={{ backgroundColor: c.brandSoft, borderRadius: 12, padding: 10, gap: 4 }}>
+        {result.hints.length > 0 ? (
+          result.hints.map((h, i) => (
+            <Text key={i} style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.brandInk }}>
+              • <Text style={{ fontFamily: "Inter_600SemiBold" }}>{h.title}:</Text> {h.hint}
+            </Text>
+          ))
+        ) : (
+          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12.5, color: c.brandInk }}>{result.praise}</Text>
+        )}
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ gap: 4 }}>
+      <Pressable
+        onPress={run}
+        disabled={state === "busy"}
+        accessibilityRole="button"
+        style={({ pressed }) => ({ alignSelf: "flex-start", minHeight: 38, paddingHorizontal: 14, borderRadius: 12, borderWidth: 1, borderColor: c.line, backgroundColor: c.surface, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 6, opacity: pressed || state === "busy" ? 0.7 : 1 })}
+      >
+        <Ionicons name="sparkles-outline" size={14} color={c.brand} />
+        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 12.5, color: c.brand }}>
+          {state === "busy" ? o.aiWait : o.aiBtn}
+        </Text>
+      </Pressable>
+      {state === "off" && (
+        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, lineHeight: 16, color: c.muted }}>
+          {o.aiUnavailable}
+        </Text>
+      )}
     </View>
   );
 }
