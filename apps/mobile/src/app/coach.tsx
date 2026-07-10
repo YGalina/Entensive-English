@@ -9,6 +9,7 @@ import { guardianStats } from "@ie/core/barriers";
 import { useSrsStats } from "@ie/core/srs";
 import { useTimeStats } from "@ie/core/timelog";
 import { useActivityTimer } from "@ie/core/timelog";
+import { saveInterest, useLatestInterest, type CheckinFormat, type CheckinPace } from "@ie/core/checkin";
 import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
 
@@ -142,9 +143,116 @@ export default function CoachScreen() {
                 {k.save}
               </Text>
             </Pressable>
+
+            {/* Живой разбор с тренером — MVP-A: честный сбор интереса */}
+            <LiveCheckinBlock />
           </>
         )}
       </ScrollView>
+    </View>
+  );
+}
+
+/* ---------- Живой разбор с тренером (лист ожидания, MVP-A) ---------- */
+
+function LiveCheckinBlock() {
+  const { c, radius } = useMarina();
+  const { t } = useT();
+  const k = t.coachX;
+  const existing = useLatestInterest();
+  const [open, setOpen] = useState(false);
+  const [format, setFormat] = useState<CheckinFormat>("small-group");
+  const [pace, setPace] = useState<CheckinPace>("weekly");
+  const [note, setNote] = useState("");
+
+  if (existing && !open) {
+    return (
+      <View style={{ marginTop: 8, backgroundColor: c.brandSoft, borderRadius: radius.soft, padding: 14, gap: 4 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <Ionicons name="people" size={16} color={c.brand} />
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.brandInk }}>{k.liveJoined}</Text>
+        </View>
+        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.brandInk }}>
+          {k.liveJoinedNote}
+        </Text>
+      </View>
+    );
+  }
+
+  const FORMATS: { id: CheckinFormat; label: string }[] = [
+    { id: "one", label: k.fmtOne },
+    { id: "pair", label: k.fmtPair },
+    { id: "small-group", label: k.fmtGroup },
+  ];
+  const PACES: { id: CheckinPace; label: string }[] = [
+    { id: "weekly", label: k.paceWeekly },
+    { id: "biweekly", label: k.paceBiweekly },
+    { id: "monthly", label: k.paceMonthly },
+  ];
+
+  return (
+    <View style={{ marginTop: 12, backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, padding: 16, gap: 10 }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+        <Ionicons name="people-outline" size={18} color={c.brand} />
+        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: c.ink }}>{k.liveTitle}</Text>
+      </View>
+      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
+        {k.liveNote}
+      </Text>
+
+      {!open ? (
+        <Pressable
+          onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setOpen(true); }}
+          accessibilityRole="button"
+          style={({ pressed }) => ({ minHeight: 46, borderRadius: 12, borderWidth: 1, borderColor: c.brand, alignItems: "center", justifyContent: "center", opacity: pressed ? 0.85 : 1 })}
+        >
+          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.brand }}>{k.liveCta}</Text>
+        </Pressable>
+      ) : (
+        <>
+          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.muted }}>{k.liveFormat}</Text>
+          <View style={{ flexDirection: "row", gap: 6 }}>
+            {FORMATS.map((f) => (
+              <Pressable
+                key={f.id}
+                onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setFormat(f.id); }}
+                accessibilityRole="button"
+                style={{ flex: 1, minHeight: 40, borderRadius: 10, borderWidth: 2, borderColor: format === f.id ? c.brand : c.line, backgroundColor: format === f.id ? c.brandSoft : c.surface, alignItems: "center", justifyContent: "center", paddingHorizontal: 4 }}
+              >
+                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11.5, color: format === f.id ? c.brand : c.muted, textAlign: "center" }}>{f.label}</Text>
+              </Pressable>
+            ))}
+          </View>
+          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.muted }}>{k.livePace}</Text>
+          <View style={{ flexDirection: "row", gap: 6 }}>
+            {PACES.map((pp) => (
+              <Pressable
+                key={pp.id}
+                onPress={() => { void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setPace(pp.id); }}
+                accessibilityRole="button"
+                style={{ flex: 1, minHeight: 40, borderRadius: 10, borderWidth: 2, borderColor: pace === pp.id ? c.brand : c.line, backgroundColor: pace === pp.id ? c.brandSoft : c.surface, alignItems: "center", justifyContent: "center" }}
+              >
+                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11.5, color: pace === pp.id ? c.brand : c.muted }}>{pp.label}</Text>
+              </Pressable>
+            ))}
+          </View>
+          <TextInput
+            value={note}
+            onChangeText={setNote}
+            placeholder={k.livePlaceholder}
+            placeholderTextColor={c.muted}
+            multiline
+            style={{ minHeight: 48, borderRadius: 10, borderWidth: 1, borderColor: c.line, backgroundColor: c.bg, padding: 10, fontFamily: "Inter_400Regular", fontSize: 14, color: c.ink, textAlignVertical: "top" }}
+          />
+          <Pressable
+            onPress={() => { void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); saveInterest({ format, pace, note }); }}
+            accessibilityRole="button"
+            style={({ pressed }) => ({ minHeight: 46, borderRadius: 12, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
+          >
+            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.onBrand }}>{k.liveSubmit}</Text>
+          </Pressable>
+        </>
+      )}
     </View>
   );
 }
