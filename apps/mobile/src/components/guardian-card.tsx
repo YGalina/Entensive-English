@@ -72,7 +72,7 @@ export function GuardianCard() {
     return (
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8, backgroundColor: c.brandSoft, borderRadius: radius.soft, padding: 14 }}>
         <Ionicons name="shield-checkmark" size={18} color={c.brand} />
-        <Text style={{ flex: 1, fontFamily: "Inter_600SemiBold", fontSize: 13, color: c.brandInk }}>
+        <Text style={{ flex: 1, fontFamily: "GolosText_600SemiBold", fontSize: 13, color: c.brandInk }}>
           {t.guardX.passed}
         </Text>
       </View>
@@ -88,26 +88,26 @@ export function GuardianCard() {
     <View style={{ backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, padding: 16, gap: 10 }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
         <Ionicons name="shield-half" size={18} color={c.accent} />
-        <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 10.5, letterSpacing: 0.6, textTransform: "uppercase", color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 10.5, letterSpacing: 0.6, textTransform: "uppercase", color: c.muted }}>
           {t.guardX.met}
         </Text>
       </View>
-      <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 19, color: c.ink }}>
+      <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 19, color: c.ink }}>
         {en ? g.nameEn : g.name}
       </Text>
-      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted, fontStyle: "italic" }}>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted, fontStyle: "italic" }}>
         {en ? g.voiceEn : g.voice}
       </Text>
-      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13.5, lineHeight: 20, color: c.ink }}>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 20, color: c.ink }}>
         {en ? g.truthEn : g.truth}
       </Text>
 
       <View style={{ backgroundColor: c.brandSoft, borderRadius: 12, padding: 12, gap: 6 }}>
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.brandInk }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.brandInk }}>
           {t.guardX.practice} · {en ? practice.titleEn : practice.title} · {practice.durationMin} {t.common.minutes}
         </Text>
         {(en ? practice.stepsEn : practice.steps).map((step, i) => (
-          <Text key={i} style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.brandInk }}>
+          <Text key={i} style={{ fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19, color: c.brandInk }}>
             {i + 1}. {step}
           </Text>
         ))}
@@ -122,7 +122,7 @@ export function GuardianCard() {
           accessibilityRole="button"
           style={({ pressed }) => ({ paddingHorizontal: 14, minHeight: 44, borderRadius: 12, borderWidth: 1, borderColor: c.line, alignItems: "center", justifyContent: "center", opacity: pressed ? 0.7 : 1 })}
         >
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13.5, color: c.muted }}>{t.guardX.later}</Text>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13.5, color: c.muted }}>{t.guardX.later}</Text>
         </Pressable>
         <Pressable
           onPress={() => {
@@ -133,7 +133,7 @@ export function GuardianCard() {
           accessibilityRole="button"
           style={({ pressed }) => ({ flex: 1, minHeight: 44, borderRadius: 12, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
         >
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14.5, color: c.onBrand }}>{t.guardX.done}</Text>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14.5, color: c.onBrand }}>{t.guardX.done}</Text>
         </Pressable>
       </View>
     </View>

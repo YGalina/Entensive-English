@@ -59,7 +59,7 @@ export function AddLinkSheet({
           }}
         >
           <View style={{ alignSelf: "center", width: 40, height: 4, borderRadius: 2, backgroundColor: c.line }} />
-          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 18, color: c.ink }}>
+          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 18, color: c.ink }}>
             {title}
           </Text>
           <TextInput
@@ -82,12 +82,12 @@ export function AddLinkSheet({
               borderColor: error ? c.accent : c.line,
               backgroundColor: c.bg,
               paddingHorizontal: 14,
-              fontFamily: "Inter_400Regular",
+              fontFamily: "GolosText_400Regular",
               fontSize: 15,
               color: c.ink,
             }}
           />
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 17, color: error ? c.accent : c.muted }}>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, lineHeight: 17, color: error ? c.accent : c.muted }}>
             {error ? errorText : hint}
           </Text>
           <Pressable
@@ -105,7 +105,7 @@ export function AddLinkSheet({
             })}
           >
             <Ionicons name="add" size={18} color="#ffffff" />
-            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: "#ffffff" }}>
+            <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 15, color: "#ffffff" }}>
               {title}
             </Text>
           </Pressable>

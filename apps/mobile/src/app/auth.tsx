@@ -34,7 +34,7 @@ export default function AuthLanding() {
       {ok === false ? (
         <>
           <Ionicons name="alert-circle" size={40} color={c.accent} />
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 17, color: c.ink, textAlign: "center" }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 17, color: c.ink, textAlign: "center" }}>
             {t.authX.failed}
           </Text>
         </>
@@ -45,7 +45,7 @@ export default function AuthLanding() {
           ) : (
             <ActivityIndicator color={c.brand} />
           )}
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 17, color: c.ink, textAlign: "center" }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 17, color: c.ink, textAlign: "center" }}>
             {ok ? t.authX.done : t.authX.signing}
           </Text>
         </>

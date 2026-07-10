@@ -232,7 +232,7 @@ function Breath({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) 
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 8 }}>
-      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.muted }}>
+      <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.muted }}>
         {t.threeX.circleOf(cycle, BREATH_CYCLES)}
       </Text>
       <View style={{ height: 250, alignItems: "center", justifyContent: "center" }}>
@@ -249,14 +249,14 @@ function Breath({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) 
           transform: [{ scale }],
         }}
       >
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 20, color: c.brandD }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 20, color: c.brandD }}>
           {label}
         </Text>
       </Animated.View>
       </View>
       <Text
         style={{
-          fontFamily: "Inter_400Regular",
+          fontFamily: "GolosText_400Regular",
           fontSize: 14,
           lineHeight: 21,
           color: c.muted,
@@ -267,7 +267,7 @@ function Breath({ onDone, onSkip }: { onDone: () => void; onSkip: () => void }) 
         {t.threeX.breathe}
       </Text>
       <Pressable onPress={onSkip} accessibilityRole="button" style={{ minHeight: 44, justifyContent: "center" }}>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted }}>
           {t.common.skip}
         </Text>
       </Pressable>
@@ -292,7 +292,7 @@ function Bridge({ onDone }: { onDone: () => void }) {
       <Ionicons name="musical-notes" size={26} color={sk.video} />
       <Text
         style={{
-          fontFamily: "Nunito_700Bold",
+          fontFamily: "GolosText_700Bold",
           fontSize: 18,
           lineHeight: 27,
           color: c.ink,
@@ -304,7 +304,7 @@ function Bridge({ onDone }: { onDone: () => void }) {
       </Text>
       <Text
         style={{
-          fontFamily: "Inter_400Regular",
+          fontFamily: "GolosText_400Regular",
           fontSize: 14,
           lineHeight: 21,
           color: c.muted,
@@ -379,7 +379,7 @@ function Phrases({
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 20 }}>
-      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.muted }}>
+      <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.muted }}>
         {t.threeX.phraseOf(idx + 1, phrases.length)}
       </Text>
       <View
@@ -393,21 +393,21 @@ function Phrases({
           gap: 12,
         }}
       >
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, lineHeight: 33, color: c.ink }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, lineHeight: 33, color: c.ink }}>
           {phrase.en}
         </Text>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 20, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 20, color: c.muted }}>
           {phrase.ru}
         </Text>
       </View>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
         <Ionicons name="mic" size={16} color={sk.video} />
-        <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: sk.video }}>
+        <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: sk.video }}>
           {hint}
         </Text>
       </View>
       <Pressable onPress={onSkip} accessibilityRole="button" style={{ minHeight: 44, justifyContent: "center" }}>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted }}>
           {t.common.skip}
         </Text>
       </Pressable>
@@ -438,18 +438,18 @@ function Affirm({ text, onDone }: { text: { ru: string; en: string }; onDone: ()
           gap: 12,
         }}
       >
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, lineHeight: 34, color: c.ink, textAlign: "center" }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, lineHeight: 34, color: c.ink, textAlign: "center" }}>
           {text.ru}
         </Text>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center" }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center" }}>
           {text.en}
         </Text>
       </View>
-      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted }}>
         {t.threeX.stay}
       </Text>
       <Pressable onPress={onDone} accessibilityRole="button" style={{ minHeight: 44, justifyContent: "center" }}>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted }}>
           {t.threeX.further}
         </Text>
       </Pressable>
@@ -476,12 +476,12 @@ function Finale({ onClose }: { onClose: () => void }) {
       >
         <Ionicons name="checkmark" size={30} color={sk.video} />
       </View>
-      <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, color: c.ink, textAlign: "center" }}>
+      <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, color: c.ink, textAlign: "center" }}>
         {t.threeX.finTitle}
       </Text>
       <Text
         style={{
-          fontFamily: "Inter_400Regular",
+          fontFamily: "GolosText_400Regular",
           fontSize: 14,
           lineHeight: 21,
           color: c.muted,
@@ -504,7 +504,7 @@ function Finale({ onClose }: { onClose: () => void }) {
           transform: [{ scale: pressed ? 0.98 : 1 }],
         })}
       >
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
           {t.common.done}
         </Text>
       </Pressable>

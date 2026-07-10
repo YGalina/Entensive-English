@@ -133,7 +133,7 @@ export default function TodayScreen() {
       {/* Шапка */}
       <View style={{ gap: 6 }}>
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.ink }}>
+          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 30, color: c.ink }}>
             {t.today.title}
           </Text>
           {streak > 0 && (
@@ -142,7 +142,7 @@ export default function TodayScreen() {
               accessibilityLabel={t.today.streak(streak)}
             >
               <Ionicons name="flame" size={14} color="#5a3a12" />
-              <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: "#5a3a12", fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 13, color: "#5a3a12", fontVariant: ["tabular-nums"] }}>
                 {streak}
               </Text>
             </View>
@@ -178,7 +178,7 @@ export default function TodayScreen() {
       {/* Инсайт: объясняем цифры человеческим языком */}
       <View style={{ flexDirection: "row", gap: 10, backgroundColor: c.brandSoft, borderRadius: radius.soft, padding: 14 }}>
         <Ionicons name="sparkles" size={16} color={c.brand} style={{ marginTop: 2 }} />
-        <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19.5, color: c.brandInk }}>
+        <Text style={{ flex: 1, fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19.5, color: c.brandInk }}>
           {insight}
         </Text>
       </View>
@@ -213,10 +213,10 @@ export default function TodayScreen() {
         >
           <Ionicons name="mic-outline" size={20} color={c.accent} />
           <View style={{ flex: 1, paddingVertical: 10 }}>
-            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink }}>
+            <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.ink }}>
               {t.today.produceTitle}
             </Text>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
               {t.today.produceNote(srs.produceDue)}
             </Text>
           </View>
@@ -227,10 +227,10 @@ export default function TodayScreen() {
       {/* Полка дня: три двери в смыслы (конечная, не лента) */}
       <View style={{ gap: 8 }}>
         <View style={{ flexDirection: "row", alignItems: "baseline", gap: 8 }}>
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
             {t.today.shelf}
           </Text>
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, color: c.muted }}>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11, color: c.muted }}>
             {t.today.shelfNote}
           </Text>
         </View>
@@ -281,13 +281,13 @@ export default function TodayScreen() {
         end={{ x: 0.6, y: 1 }}
         style={{ borderRadius: radius.card, padding: 18, gap: 8 }}
       >
-        <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11, letterSpacing: 0.6, textTransform: "uppercase", color: "#bfe0dd" }}>
+        <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 11, letterSpacing: 0.6, textTransform: "uppercase", color: "#bfe0dd" }}>
           {current ? (current.goalMin > 0 ? t.today.nextStep(current.goalMin) : t.today.nextStepReviews) : t.today.dayDone}
         </Text>
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 23, color: "#ffffff" }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 23, color: "#ffffff" }}>
           {current ? current[L].title : t.today.allDone}
         </Text>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13.5, color: "#cfe8e6" }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, color: "#cfe8e6" }}>
           {current ? current[L].note : t.today.allDoneNote}
         </Text>
         {current && (
@@ -307,7 +307,7 @@ export default function TodayScreen() {
               transform: [{ scale: pressed ? 0.98 : 1 }],
             })}
           >
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: "#ffffff" }}>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: "#ffffff" }}>
               {t.today.start}
             </Text>
             <Ionicons name="arrow-forward" size={18} color="#ffffff" />
@@ -339,10 +339,10 @@ export default function TodayScreen() {
         >
           <Ionicons name="pulse-outline" size={20} color={c.sun} />
           <View style={{ flex: 1, paddingVertical: 10 }}>
-            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink }}>
+            <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.ink }}>
               {t.checkX.todayTitle}
             </Text>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
               {t.checkX.todayNote}
             </Text>
           </View>
@@ -374,10 +374,10 @@ export default function TodayScreen() {
         >
           <Ionicons name="clipboard-outline" size={20} color={c.brand} />
           <View style={{ flex: 1, paddingVertical: 10 }}>
-            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink }}>
+            <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.ink }}>
               {t.coachX.todayTitle}
             </Text>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
               {t.coachX.todayNote}
             </Text>
           </View>
@@ -408,10 +408,10 @@ export default function TodayScreen() {
       >
         <Ionicons name="film-outline" size={20} color={sk.video} />
         <View style={{ flex: 1, paddingVertical: 10 }}>
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink }}>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.ink }}>
             {t.rolesX.todayTitle}
           </Text>
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
             {t.rolesX.todayNote}
           </Text>
         </View>
@@ -441,10 +441,10 @@ export default function TodayScreen() {
       >
         <Ionicons name="timer" size={20} color={sk.video} />
         <View style={{ flex: 1, paddingVertical: 10 }}>
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink }}>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.ink }}>
             {t.today.three}
           </Text>
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
             {t.today.threeNote}
           </Text>
         </View>
@@ -453,7 +453,7 @@ export default function TodayScreen() {
 
       {/* Дорожка дня: компактные этапы-точки */}
       <View style={{ gap: 10 }}>
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
           {t.today.trail}
         </Text>
         <View
@@ -500,7 +500,7 @@ export default function TodayScreen() {
                 </View>
                 <Text
                   numberOfLines={1}
-                  style={{ fontFamily: "Inter_600SemiBold", fontSize: 9.5, color: s.done || isCurrent ? c.ink : c.muted }}
+                  style={{ fontFamily: "GolosText_600SemiBold", fontSize: 9.5, color: s.done || isCurrent ? c.ink : c.muted }}
                 >
                   {s[L].title.split(" ")[0]}
                 </Text>
@@ -548,13 +548,13 @@ function ShelfCard({
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
         <Ionicons name={icon as never} size={13} color={tone} />
-        <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 9.5, letterSpacing: 0.4, textTransform: "uppercase", color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 9.5, letterSpacing: 0.4, textTransform: "uppercase", color: c.muted }}>
           {kind}
         </Text>
       </View>
       <Text
         numberOfLines={3}
-        style={{ fontFamily: "Nunito_700Bold", fontSize: 12.5, lineHeight: 17, color: c.ink }}
+        style={{ fontFamily: "GolosText_700Bold", fontSize: 12.5, lineHeight: 17, color: c.ink }}
       >
         {title}
       </Text>
@@ -594,10 +594,10 @@ function DayRing({ pct, doneMin, goalMin }: { pct: number; doneMin: number; goal
         />
       </Svg>
       <View style={{ position: "absolute", alignItems: "center" }}>
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 28, color: c.ink, fontVariant: ["tabular-nums"] }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 28, color: c.ink, fontVariant: ["tabular-nums"] }}>
           {Math.round(pct * 100)}%
         </Text>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 10.5, color: c.muted, fontVariant: ["tabular-nums"] }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 10.5, color: c.muted, fontVariant: ["tabular-nums"] }}>
           {t.today.ringOf(doneMin, goalMin)}
         </Text>
       </View>
@@ -639,12 +639,12 @@ function MetricCard({
         transform: [{ scale: pressed ? 0.99 : 1 }],
       })}
     >
-      <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 9.5, letterSpacing: 0.5, textTransform: "uppercase", color: c.muted }}>
+      <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 9.5, letterSpacing: 0.5, textTransform: "uppercase", color: c.muted }}>
         {label}
       </Text>
-      <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 19, color: c.ink, fontVariant: ["tabular-nums"] }}>
+      <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 19, color: c.ink, fontVariant: ["tabular-nums"] }}>
         {value}{" "}
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, color: c.muted }}>{unit}</Text>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11, color: c.muted }}>{unit}</Text>
       </Text>
       <View style={{ height: 4, borderRadius: 2, backgroundColor: c.brandSoft, overflow: "hidden" }}>
         <View style={{ width: `${Math.round(pct * 100)}%`, height: 4, borderRadius: 2, backgroundColor: barColor }} />

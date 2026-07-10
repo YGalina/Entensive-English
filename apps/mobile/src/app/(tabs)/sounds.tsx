@@ -35,7 +35,7 @@ function repeatPause(text: string, stepId: TempoStepId): number {
 function PhraseText({ en, keyWord, color, tone }: { en: string; keyWord: string; color: string; tone: string }) {
   const parts = en.split(new RegExp(`(${keyWord})`, "i"));
   return (
-    <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, lineHeight: 33, color }}>
+    <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, lineHeight: 33, color }}>
       {parts.map((p, i) =>
         p.toLowerCase() === keyWord.toLowerCase() ? (
           <Text key={i} style={{ color: tone }}>
@@ -198,10 +198,10 @@ export default function SoundsScreen() {
       }}
     >
       <View style={{ gap: 4 }}>
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.ink }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 30, color: c.ink }}>
           {t.soundsX.title}
         </Text>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
           {t.sounds.intro}
         </Text>
       </View>
@@ -229,7 +229,7 @@ export default function SoundsScreen() {
             >
               <Text
                 style={{
-                  fontFamily: "Inter_600SemiBold",
+                  fontFamily: "GolosText_600SemiBold",
                   fontSize: 13,
                   color: on ? c.onBrand : c.ink,
                 }}
@@ -253,16 +253,16 @@ export default function SoundsScreen() {
         }}
       >
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: tone, textTransform: "uppercase", letterSpacing: 0.5 }}>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, color: tone, textTransform: "uppercase", letterSpacing: 0.5 }}>
             {t.soundsX.keyWord} · {phrase.key}
           </Text>
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
             {pi + 1} / {lesson.phrases.length}
           </Text>
         </View>
 
         <PhraseText en={phrase.en} keyWord={phrase.key} color={c.ink} tone={tone} />
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 20, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 20, color: c.muted }}>
           {phrase.ru}
         </Text>
 
@@ -289,7 +289,7 @@ export default function SoundsScreen() {
               >
                 <Text
                   style={{
-                    fontFamily: "Inter_600SemiBold",
+                    fontFamily: "GolosText_600SemiBold",
                     fontSize: 12,
                     color: on ? (speaking || auto ? c.onBrand : c.brandD) : c.muted,
                   }}
@@ -304,7 +304,7 @@ export default function SoundsScreen() {
             меняется именно роль (слушаю → говорю синхронно) */}
         <View style={{ flexDirection: "row", gap: 10, alignItems: "flex-start", backgroundColor: c.brandSoft, borderRadius: 12, padding: 12 }}>
           <Ionicons name={STEP_ICON[step.id] as never} size={18} color={tone} style={{ marginTop: 1 }} />
-          <Text style={{ flex: 1, fontFamily: "Inter_600SemiBold", fontSize: 13, lineHeight: 19, color: c.brandInk }}>
+          <Text style={{ flex: 1, fontFamily: "GolosText_600SemiBold", fontSize: 13, lineHeight: 19, color: c.brandInk }}>
             {t.soundsX.steps[step.id].hint}
           </Text>
         </View>
@@ -329,11 +329,11 @@ export default function SoundsScreen() {
         })}
       >
         <Ionicons name={auto ? "stop" : "play"} size={18} color={auto ? c.ink : "#ffffff"} />
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: auto ? c.ink : "#ffffff" }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: auto ? c.ink : "#ffffff" }}>
           {auto ? t.soundsX.stop : t.soundsX.auto}
         </Text>
       </Pressable>
-      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, textAlign: "center" }}>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, textAlign: "center" }}>
         {t.soundsX.autoHint}
       </Text>
 
@@ -357,7 +357,7 @@ export default function SoundsScreen() {
           })}
         >
           <Ionicons name="arrow-back" size={16} color={c.muted} />
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>{t.soundsX.prev}</Text>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.muted }}>{t.soundsX.prev}</Text>
         </Pressable>
         <Pressable
           onPress={() => pickPhrase(1)}
@@ -377,7 +377,7 @@ export default function SoundsScreen() {
             transform: [{ scale: pressed ? 0.98 : 1 }],
           })}
         >
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>{t.soundsX.next}</Text>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.muted }}>{t.soundsX.next}</Text>
           <Ionicons name="arrow-forward" size={16} color={c.muted} />
         </Pressable>
       </View>

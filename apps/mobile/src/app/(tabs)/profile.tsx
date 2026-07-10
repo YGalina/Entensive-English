@@ -89,7 +89,7 @@ export default function ProfileScreen() {
         gap: 16,
       }}
     >
-      <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.ink }}>
+      <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 30, color: c.ink }}>
         {t.profile.title}
       </Text>
       <Breton red />
@@ -111,17 +111,17 @@ export default function ProfileScreen() {
         {/* Прогресс к уровню — крупно, в языке Welltory */}
         <View style={{ paddingVertical: 14, gap: 8 }}>
           <View style={{ flexDirection: "row", alignItems: "baseline", justifyContent: "space-between" }}>
-            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 34, color: c.accent, fontVariant: ["tabular-nums"] }}>
+            <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 34, color: c.accent, fontVariant: ["tabular-nums"] }}>
               {outcome.pct}%
             </Text>
-            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 13, color: c.ink }}>
+            <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13, color: c.ink }}>
               {outcome.levelNow.toUpperCase()} → {outcome.levelNext.toUpperCase()}
             </Text>
           </View>
           <View style={{ height: 8, borderRadius: 4, backgroundColor: c.brandSoft, overflow: "hidden" }}>
             <View style={{ width: `${outcome.pct}%`, height: 8, borderRadius: 4, backgroundColor: c.accent }} />
           </View>
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
             {t.profile.progressCaption(Number(outcome.hoursDone.toFixed(0)), outcome.hoursGoal, HOURS_PER_LEVEL)}
           </Text>
         </View>
@@ -137,7 +137,7 @@ export default function ProfileScreen() {
           label={t.profile.wordsRecog}
           value={t.profile.wordsVal(outcome.wordsLearned, outcome.wordsTarget)}
         />
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, paddingVertical: 10 }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, paddingVertical: 10 }}>
           {t.profile.benchmarks(monthsAt(30), monthsAt(60), monthsAt(120))}
         </Text>
       </Card>
@@ -158,7 +158,7 @@ export default function ProfileScreen() {
           style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, minHeight: 44, marginBottom: 12, borderRadius: 12, backgroundColor: pressed ? c.brandSoft : "transparent", borderWidth: 1, borderColor: c.line })}
         >
           <Ionicons name="book-outline" size={15} color={c.brand} />
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13.5, color: c.brand }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13.5, color: c.brand }}>
             {t.diaryX.title} →
           </Text>
         </Pressable>
@@ -166,7 +166,7 @@ export default function ProfileScreen() {
 
       {/* ---------- Способности: «что я могу», а не «сколько стрик» ---------- */}
       <Card title={t.profile.canTitle}>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, paddingTop: 10 }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, paddingTop: 10 }}>
           {t.profile.canNote}
         </Text>
         <View style={{ gap: 10, paddingVertical: 12 }}>
@@ -182,10 +182,10 @@ export default function ProfileScreen() {
                   size={16}
                   color={cap.unlocked ? c.brand : c.muted}
                 />
-                <Text style={{ flex: 1, fontFamily: "Inter_600SemiBold", fontSize: 13, color: cap.unlocked ? c.ink : c.muted }}>
+                <Text style={{ flex: 1, fontFamily: "GolosText_600SemiBold", fontSize: 13, color: cap.unlocked ? c.ink : c.muted }}>
                   {t.profile.canNames[cap.id] ?? cap.id}
                 </Text>
-                <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, color: c.muted, fontVariant: ["tabular-nums"] }}>
+                <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11, color: c.muted, fontVariant: ["tabular-nums"] }}>
                   {cap.pct}%
                 </Text>
               </View>
@@ -204,7 +204,7 @@ export default function ProfileScreen() {
           style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, minHeight: 44, marginBottom: 12, borderRadius: 12, backgroundColor: pressed ? c.brandSoft : "transparent", borderWidth: 1, borderColor: c.line })}
         >
           <Ionicons name="trail-sign-outline" size={15} color={c.brand} />
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13.5, color: c.brand }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13.5, color: c.brand }}>
             {t.pathX.title} →
           </Text>
         </Pressable>
@@ -226,10 +226,10 @@ export default function ProfileScreen() {
             <Ionicons name="flame" size={22} color={c.sun} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 18, color: c.ink }}>
+            <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 18, color: c.ink }}>
               {streak > 0 ? t.profile.streakN(streak, plural(streak, ...t.profile.dayWords)) : t.profile.streakStart}
             </Text>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
               {t.profile.regular}
             </Text>
           </View>
@@ -253,14 +253,14 @@ export default function ProfileScreen() {
                 }}
               >
                 <Ionicons name={got ? "star" : "star-outline"} size={13} color={got ? c.sun : c.muted} />
-                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: got ? c.ink : c.muted }}>
+                <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, color: got ? c.ink : c.muted }}>
                   {m} {plural(m, ...t.profile.dayWords)}
                 </Text>
               </View>
             );
           })}
         </View>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, paddingBottom: 12 }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, lineHeight: 18, color: c.muted, paddingBottom: 12 }}>
           {t.profile.noBurn}
         </Text>
       </Card>
@@ -279,7 +279,7 @@ export default function ProfileScreen() {
             updatePrefs({ uiLang: id as "ru" | "en" });
           }}
         />
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, lineHeight: 16, color: c.muted, paddingBottom: 8 }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11, lineHeight: 16, color: c.muted, paddingBottom: 8 }}>
           {t.profile.langNote}
         </Text>
         <ChoiceRow
@@ -303,7 +303,7 @@ export default function ProfileScreen() {
 
       {/* ---------- Безопасность ---------- */}
       <Card title={t.profile.security}>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 19, color: c.muted, paddingVertical: 12 }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 19, color: c.muted, paddingVertical: 12 }}>
           {t.profile.securityNote}
         </Text>
       </Card>
@@ -327,7 +327,7 @@ export default function ProfileScreen() {
         })}
       >
         <Ionicons name="volume-high" size={20} color="#ffffff" />
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: "#ffffff" }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: "#ffffff" }}>
           {speaking ? t.profile.speaking : t.profile.testVoice}
         </Text>
       </Pressable>
@@ -352,12 +352,12 @@ export default function ProfileScreen() {
         })}
       >
         <Ionicons name="options" size={18} color={c.brand} />
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.brand }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.brand }}>
           {t.profile.redo}
         </Text>
       </Pressable>
 
-      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted }}>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, lineHeight: 18, color: c.muted }}>
         {t.profile.foot}
       </Text>
     </ScrollView>
@@ -453,7 +453,7 @@ function AccountCard() {
       <Card title={t.profile.account}>
         <Row first label={t.profile.plan} value={t.profile.planFree} />
         <Row label={t.profile.planPro} value={t.profile.planProVal} />
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 19, color: c.muted, paddingVertical: 12 }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 19, color: c.muted, paddingVertical: 12 }}>
           {t.profile.acNoServer}
         </Text>
       </Card>
@@ -467,14 +467,14 @@ function AccountCard() {
         <Row first label={t.profile.acSignedIn} value={me?.email ?? "…"} />
         <Row label={t.profile.plan} value={me?.plan === "pro" ? t.profile.planPro : t.profile.planFree} />
         <View style={{ paddingVertical: 12, gap: 10 }}>
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13.5, color: c.ink }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13.5, color: c.ink }}>
             {t.profile.acSyncTitle}
           </Text>
           <View style={{ flexDirection: "row", gap: 10 }}>
             <AcBtn icon="cloud-upload-outline" label={t.profile.acPush} onPress={doPush} disabled={status === "syncing"} />
             <AcBtn icon="cloud-download-outline" label={t.profile.acPull} onPress={doPull} disabled={status === "syncing"} />
           </View>
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
             {t.profile.acQueue(queue)}
           </Text>
           <AcStatusLine status={status} />
@@ -485,7 +485,7 @@ function AccountCard() {
           style={({ pressed }) => ({ minHeight: 44, marginBottom: 12, borderRadius: 12, borderWidth: 1, borderColor: c.line, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 6, backgroundColor: pressed ? c.surface : "transparent" })}
         >
           <Ionicons name="log-out-outline" size={16} color={c.muted} />
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13.5, color: c.muted }}>{t.profile.acLogout}</Text>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13.5, color: c.muted }}>{t.profile.acLogout}</Text>
         </Pressable>
       </Card>
     );
@@ -496,7 +496,7 @@ function AccountCard() {
     <Card title={t.profile.account}>
       <Row first label={t.profile.plan} value={t.profile.planFree} />
       <View style={{ paddingVertical: 12, gap: 10 }}>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 19, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 19, color: c.muted }}>
           {t.profile.acLoginNote}
         </Text>
         <TextInput
@@ -510,7 +510,7 @@ function AccountCard() {
           autoCapitalize="none"
           keyboardType="email-address"
           autoComplete="email"
-          style={{ minHeight: 44, borderRadius: 12, borderWidth: 1, borderColor: c.line, paddingHorizontal: 14, fontFamily: "Inter_400Regular", fontSize: 14, color: c.ink, backgroundColor: c.surface }}
+          style={{ minHeight: 44, borderRadius: 12, borderWidth: 1, borderColor: c.line, paddingHorizontal: 14, fontFamily: "GolosText_400Regular", fontSize: 14, color: c.ink, backgroundColor: c.surface }}
         />
         {status === "dev" && devLink ? (
           <>
@@ -523,9 +523,9 @@ function AccountCard() {
               style={({ pressed }) => ({ minHeight: 48, borderRadius: 14, backgroundColor: c.accent, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, transform: [{ scale: pressed ? 0.98 : 1 }] })}
             >
               <Ionicons name="open-outline" size={18} color={c.onBrand} />
-              <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>{t.profile.acOpenLink}</Text>
+              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.onBrand }}>{t.profile.acOpenLink}</Text>
             </Pressable>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 18, color: c.muted }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, lineHeight: 18, color: c.muted }}>
               {t.profile.acLinkHint}
             </Text>
           </>
@@ -537,7 +537,7 @@ function AccountCard() {
             style={({ pressed }) => ({ minHeight: 48, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, opacity: status === "sending" ? 0.6 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] })}
           >
             <Ionicons name="mail-outline" size={18} color={c.onBrand} />
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.onBrand }}>
               {status === "sending" ? t.profile.acSending : t.profile.acSend}
             </Text>
           </Pressable>
@@ -560,7 +560,7 @@ function AcBtn({ icon, label, onPress, disabled }: { icon: string; label: string
       style={({ pressed }) => ({ flex: 1, minHeight: 44, borderRadius: 12, borderWidth: 1, borderColor: c.line, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 6, opacity: disabled ? 0.5 : 1, backgroundColor: pressed ? c.brandSoft : "transparent" })}
     >
       <Ionicons name={icon as never} size={15} color={c.brand} />
-      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 12.5, color: c.brand }}>{label}</Text>
+      <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 12.5, color: c.brand }}>{label}</Text>
     </Pressable>
   );
 }
@@ -578,7 +578,7 @@ function AcNote({ text, tone }: { text: string; tone: "ok" | "warn" | "muted" })
   const { c } = useMarina();
   const color = tone === "ok" ? c.brand : tone === "warn" ? c.accent : c.muted;
   return (
-    <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12.5, lineHeight: 18, color }}>{text}</Text>
+    <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12.5, lineHeight: 18, color }}>{text}</Text>
   );
 }
 
@@ -596,7 +596,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
   const { c, radius } = useMarina();
   return (
     <View style={{ gap: 8 }}>
-      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>{title}</Text>
+      <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>{title}</Text>
       <View
         style={{
           backgroundColor: c.surface,
@@ -626,12 +626,12 @@ function Row({ label, value, first = false }: { label: string; value: string; fi
         borderTopColor: c.line,
       }}
     >
-      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: c.muted, flexShrink: 0 }}>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted, flexShrink: 0 }}>
         {label}
       </Text>
       <Text
         style={{
-          fontFamily: "Inter_600SemiBold",
+          fontFamily: "GolosText_600SemiBold",
           fontSize: 14,
           color: c.ink,
           textAlign: "right",
@@ -658,7 +658,7 @@ function ChoiceRow({
   const { c } = useMarina();
   return (
     <View style={{ paddingVertical: 12, gap: 8 }}>
-      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: c.muted }}>{label}</Text>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted }}>{label}</Text>
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
         {options.map((o) => {
           const on = o.id === value;
@@ -681,7 +681,7 @@ function ChoiceRow({
             >
               <Text
                 style={{
-                  fontFamily: "Inter_600SemiBold",
+                  fontFamily: "GolosText_600SemiBold",
                   fontSize: 13,
                   color: on ? c.onBrand : c.ink,
                 }}

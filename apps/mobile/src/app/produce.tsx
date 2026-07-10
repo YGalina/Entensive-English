@@ -71,11 +71,11 @@ export default function ProduceScreen() {
     <View style={{ flex: 1, backgroundColor: c.bg, paddingTop: insets.top + 10 }}>
       {/* Шапка */}
       <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 20, gap: 10 }}>
-        <Text style={{ flex: 1, fontFamily: "Nunito_800ExtraBold", fontSize: 22, color: c.ink }}>
+        <Text style={{ flex: 1, fontFamily: "GolosText_800ExtraBold", fontSize: 22, color: c.ink }}>
           {p.title}
         </Text>
         {!done && (
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
             {p.counter(Math.min(i + 1, queue.length), queue.length)}
           </Text>
         )}
@@ -94,10 +94,10 @@ export default function ProduceScreen() {
         {done ? (
           <View style={{ alignItems: "center", gap: 10 }}>
             <Ionicons name="sparkles" size={28} color={c.sun} />
-            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 22, color: c.ink, textAlign: "center" }}>
+            <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 22, color: c.ink, textAlign: "center" }}>
               {queue.length === 0 ? p.emptyTitle : p.doneTitle}
             </Text>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center", maxWidth: 300 }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center", maxWidth: 300 }}>
               {queue.length === 0 ? p.emptyNote : p.doneNote(saidCount, queue.length)}
             </Text>
             <Pressable
@@ -105,21 +105,21 @@ export default function ProduceScreen() {
               accessibilityRole="button"
               style={({ pressed }) => ({ marginTop: 10, minHeight: 48, paddingHorizontal: 28, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
             >
-              <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>{p.home}</Text>
+              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.onBrand }}>{p.home}</Text>
             </Pressable>
           </View>
         ) : (
           <>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted, textAlign: "center" }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19, color: c.muted, textAlign: "center" }}>
               {p.intro}
             </Text>
 
             {/* Смысл на родном — крупно */}
             <View style={{ backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, padding: 24, gap: 14, alignItems: "center" }}>
-              <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 10.5, letterSpacing: 0.6, textTransform: "uppercase", color: c.muted }}>
+              <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 10.5, letterSpacing: 0.6, textTransform: "uppercase", color: c.muted }}>
                 {p.meaningLabel}
               </Text>
-              <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 26, lineHeight: 34, color: c.ink, textAlign: "center" }}>
+              <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 26, lineHeight: 34, color: c.ink, textAlign: "center" }}>
                 {meaning?.text}
               </Text>
 
@@ -130,11 +130,11 @@ export default function ProduceScreen() {
                   accessibilityLabel={cur.word.en}
                   style={{ alignItems: "center", gap: 4 }}
                 >
-                  <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.brand }}>
+                  <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 30, color: c.brand }}>
                     {cur.word.en}
                   </Text>
                   {!!cur.word.ipa && (
-                    <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>{cur.word.ipa}</Text>
+                    <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted }}>{cur.word.ipa}</Text>
                   )}
                 </Pressable>
               ) : (
@@ -145,7 +145,7 @@ export default function ProduceScreen() {
                   style={({ pressed }) => ({ minHeight: 48, paddingHorizontal: 22, borderRadius: 14, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, opacity: pressed ? 0.85 : 1 })}
                 >
                   <Ionicons name="eye" size={16} color={c.brand} />
-                  <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.brandInk }}>{p.reveal}</Text>
+                  <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.brandInk }}>{p.reveal}</Text>
                 </Pressable>
               )}
             </View>
@@ -158,7 +158,7 @@ export default function ProduceScreen() {
                   accessibilityLabel={p.notYet}
                   style={({ pressed }) => ({ flex: 1, minHeight: 52, borderRadius: 14, backgroundColor: c.surface, borderWidth: 1, borderColor: c.line, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
                 >
-                  <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.ink }}>{p.notYet}</Text>
+                  <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.ink }}>{p.notYet}</Text>
                 </Pressable>
                 <Pressable
                   onPress={() => answer(true)}
@@ -166,7 +166,7 @@ export default function ProduceScreen() {
                   accessibilityLabel={p.said}
                   style={({ pressed }) => ({ flex: 1, minHeight: 52, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
                 >
-                  <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>{p.said}</Text>
+                  <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.onBrand }}>{p.said}</Text>
                 </Pressable>
               </View>
             )}

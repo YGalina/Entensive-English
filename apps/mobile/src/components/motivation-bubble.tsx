@@ -64,7 +64,7 @@ export function MotivationBubble({ slot }: { slot: Motivation["slot"] }) {
         }}
       >
         <Ionicons name={icon as never} size={16} color={isPsych ? c.accent : c.brand} style={{ marginTop: 1 }} />
-        <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: fg }}>
+        <Text style={{ flex: 1, fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 18, color: fg }}>
           {en ? m.en : m.ru}
         </Text>
         <Pressable onPress={close} accessibilityRole="button" hitSlop={8} style={{ marginTop: -2 }}>

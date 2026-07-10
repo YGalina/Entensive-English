@@ -106,7 +106,7 @@ export default function RolesScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg, paddingTop: insets.top + 10 }}>
       <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 20, gap: 10 }}>
-        <Text style={{ flex: 1, fontFamily: "Nunito_800ExtraBold", fontSize: 22, color: c.ink }}>
+        <Text style={{ flex: 1, fontFamily: "GolosText_800ExtraBold", fontSize: 22, color: c.ink }}>
           {r.title}
         </Text>
         <Pressable
@@ -125,19 +125,19 @@ export default function RolesScreen() {
           <>
             {/* Микро-онбординг: как это работает (3 шага) */}
             <View style={{ backgroundColor: c.brandSoft, borderRadius: radius.card, padding: 16, gap: 8 }}>
-              <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, color: c.brandInk }}>
+              <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 15, color: c.brandInk }}>
                 {r.howTitle}
               </Text>
               {[r.how1, r.how2, r.how3].map((line, idx) => (
                 <View key={idx} style={{ flexDirection: "row", gap: 8 }}>
-                  <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 13, color: c.brand }}>{idx + 1}</Text>
-                  <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.brandInk }}>
+                  <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 13, color: c.brand }}>{idx + 1}</Text>
+                  <Text style={{ flex: 1, fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19, color: c.brandInk }}>
                     {line}
                   </Text>
                 </View>
               ))}
             </View>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>
               {r.intro}
             </Text>
             {ROLE_SCENES.map((s) => (
@@ -147,10 +147,10 @@ export default function RolesScreen() {
                 accessibilityRole="button"
                 style={({ pressed }) => ({ backgroundColor: pressed ? c.brandSoft : c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, padding: 16, gap: 4 })}
               >
-                <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 17, color: c.ink }}>
+                <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 17, color: c.ink }}>
                   {en ? s.titleEn : s.title}
                 </Text>
-                <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+                <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
                   {s.roleA} · {s.roleB} · {s.level.toUpperCase()} · {s.lines.length} {r.lines}
                 </Text>
               </Pressable>
@@ -160,7 +160,7 @@ export default function RolesScreen() {
 
         {stage === "role" && scene && (
           <View style={{ gap: 12, justifyContent: "center", flex: 1 }}>
-            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 22, color: c.ink, textAlign: "center" }}>
+            <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 22, color: c.ink, textAlign: "center" }}>
               {r.whoAreYou}
             </Text>
             {(["a", "b"] as const).map((role) => (
@@ -170,12 +170,12 @@ export default function RolesScreen() {
                 accessibilityRole="button"
                 style={({ pressed }) => ({ minHeight: 64, borderRadius: radius.card, backgroundColor: pressed ? c.brandSoft : c.surface, borderWidth: 2, borderColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
               >
-                <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 19, color: c.brand }}>
+                <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 19, color: c.brand }}>
                   {role === "a" ? scene.roleA : scene.roleB}
                 </Text>
               </Pressable>
             ))}
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11.5, color: c.muted, textAlign: "center" }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11.5, color: c.muted, textAlign: "center" }}>
               {scene.source}
             </Text>
           </View>
@@ -184,10 +184,10 @@ export default function RolesScreen() {
         {/* ——— Выбор режима: сказать самой vs читать вслух ——— */}
         {stage === "mode" && scene && (
           <View style={{ gap: 12, justifyContent: "center", flex: 1 }}>
-            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 20, color: c.ink, textAlign: "center" }}>
+            <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 20, color: c.ink, textAlign: "center" }}>
               {r.modeTitle}
             </Text>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted, textAlign: "center" }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19, color: c.muted, textAlign: "center" }}>
               {r.modeNote}
             </Text>
             <Pressable
@@ -197,12 +197,12 @@ export default function RolesScreen() {
             >
               <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                 <Ionicons name="book-outline" size={18} color={c.brand} />
-                <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: c.ink }}>{r.modeReadTitle}</Text>
+                <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: c.ink }}>{r.modeReadTitle}</Text>
                 <View style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, backgroundColor: c.brandSoft }}>
-                  <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 10, color: c.brand }}>{r.modeEasier}</Text>
+                  <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 10, color: c.brand }}>{r.modeEasier}</Text>
                 </View>
               </View>
-              <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>{r.modeReadNote}</Text>
+              <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>{r.modeReadNote}</Text>
             </Pressable>
             <Pressable
               onPress={() => startPlay("say")}
@@ -211,61 +211,61 @@ export default function RolesScreen() {
             >
               <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                 <Ionicons name="mic-outline" size={18} color={c.brand} />
-                <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: c.ink }}>{r.modeSayTitle}</Text>
+                <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: c.ink }}>{r.modeSayTitle}</Text>
                 <View style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, backgroundColor: c.brand }}>
-                  <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 10, color: c.onBrand }}>{r.modeHarder}</Text>
+                  <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 10, color: c.onBrand }}>{r.modeHarder}</Text>
                 </View>
               </View>
-              <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>{r.modeSayNote}</Text>
+              <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>{r.modeSayNote}</Text>
             </Pressable>
           </View>
         )}
 
         {stage === "play" && scene && line && (
           <View style={{ gap: 12, flex: 1, justifyContent: "center" }}>
-            <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11, letterSpacing: 0.5, textTransform: "uppercase", color: c.muted, textAlign: "center" }}>
+            <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 11, letterSpacing: 0.5, textTransform: "uppercase", color: c.muted, textAlign: "center" }}>
               {i + 1} / {scene.lines.length} · {mine ? r.yourLine : r.partnerLine}
             </Text>
             <View style={{ backgroundColor: mine ? c.brandSoft : c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: mine ? c.brand : c.line, padding: 20, gap: 10 }}>
-              <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13, color: c.brand }}>
+              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13, color: c.brand }}>
                 {line.who === "a" ? scene.roleA : scene.roleB}
               </Text>
               {mine && playMode === "read" ? (
                 // Читать вслух: английский сразу, снизу перевод, «послушать образец»
                 <>
                   <Pressable onPress={() => speakEnglish(line.en, { rate: 0.92, interrupt: true })} accessibilityRole="button" accessibilityLabel={line.en}>
-                    <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 19, lineHeight: 27, color: c.brand }}>
+                    <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 19, lineHeight: 27, color: c.brand }}>
                       {line.en}
                     </Text>
                   </Pressable>
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>
                     {line.ru}
                   </Text>
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>{r.readHint}</Text>
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>{r.readHint}</Text>
                 </>
               ) : mine ? (
                 <>
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 16, lineHeight: 24, color: c.ink }}>
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 16, lineHeight: 24, color: c.ink }}>
                     {line.ru}
                   </Text>
                   {revealed ? (
                     <Pressable onPress={() => speakEnglish(line.en, { rate: 0.92, interrupt: true })} accessibilityRole="button">
-                      <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 19, lineHeight: 27, color: c.brand }}>
+                      <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 19, lineHeight: 27, color: c.brand }}>
                         {line.en}
                       </Text>
                     </Pressable>
                   ) : (
-                    <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, color: c.muted }}>
+                    <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, color: c.muted }}>
                       {r.sayHint}
                     </Text>
                   )}
                 </>
               ) : (
                 <>
-                  <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 18, lineHeight: 26, color: c.ink }}>
+                  <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 18, lineHeight: 26, color: c.ink }}>
                     {line.en}
                   </Text>
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>
                     {line.ru}
                   </Text>
                 </>
@@ -279,7 +279,7 @@ export default function RolesScreen() {
                 accessibilityRole="button"
                 style={({ pressed }) => ({ minHeight: 52, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
               >
-                <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>{r.readDone}</Text>
+                <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.onBrand }}>{r.readDone}</Text>
               </Pressable>
             ) : mine ? (
               <View style={{ flexDirection: "row", gap: 8 }}>
@@ -308,7 +308,7 @@ export default function RolesScreen() {
                     accessibilityRole="button"
                     style={({ pressed }) => ({ flex: 1, minHeight: 52, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
                   >
-                    <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>{r.saidIt}</Text>
+                    <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.onBrand }}>{r.saidIt}</Text>
                   </Pressable>
                 ) : (
                   <Pressable
@@ -316,7 +316,7 @@ export default function RolesScreen() {
                     accessibilityRole="button"
                     style={({ pressed }) => ({ flex: 1, minHeight: 52, borderRadius: 14, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center", opacity: pressed ? 0.85 : 1 })}
                   >
-                    <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.brandInk }}>{r.check}</Text>
+                    <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.brandInk }}>{r.check}</Text>
                   </Pressable>
                 )}
               </View>
@@ -326,7 +326,7 @@ export default function RolesScreen() {
                 accessibilityRole="button"
                 style={({ pressed }) => ({ minHeight: 52, borderRadius: 14, backgroundColor: c.surface, borderWidth: 1, borderColor: c.line, alignItems: "center", justifyContent: "center", opacity: pressed ? 0.85 : 1 })}
               >
-                <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.ink }}>{r.next}</Text>
+                <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.ink }}>{r.next}</Text>
               </Pressable>
             )}
           </View>
@@ -335,10 +335,10 @@ export default function RolesScreen() {
         {stage === "done" && scene && (
           <View style={{ alignItems: "center", gap: 10, flex: 1, justifyContent: "center" }}>
             <Ionicons name="film" size={28} color={c.sun} />
-            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 22, color: c.ink, textAlign: "center" }}>
+            <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 22, color: c.ink, textAlign: "center" }}>
               {r.doneTitle}
             </Text>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center", maxWidth: 300 }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center", maxWidth: 300 }}>
               {r.doneNote(saidCount, myLinesTotal)}
             </Text>
             <View style={{ flexDirection: "row", gap: 10, marginTop: 8 }}>
@@ -347,14 +347,14 @@ export default function RolesScreen() {
                 accessibilityRole="button"
                 style={({ pressed }) => ({ minHeight: 48, paddingHorizontal: 20, borderRadius: 14, backgroundColor: c.surface, borderWidth: 1, borderColor: c.line, alignItems: "center", justifyContent: "center", opacity: pressed ? 0.85 : 1 })}
               >
-                <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14.5, color: c.ink }}>{r.another}</Text>
+                <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14.5, color: c.ink }}>{r.another}</Text>
               </Pressable>
               <Pressable
                 onPress={() => router.back()}
                 accessibilityRole="button"
                 style={({ pressed }) => ({ minHeight: 48, paddingHorizontal: 24, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
               >
-                <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14.5, color: c.onBrand }}>{r.home}</Text>
+                <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14.5, color: c.onBrand }}>{r.home}</Text>
               </Pressable>
             </View>
           </View>

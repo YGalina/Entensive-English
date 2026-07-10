@@ -94,7 +94,7 @@ export default function SessionScreen() {
       }}
     >
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.muted }}>
           {phase === "attune" || phase === "bridge"
             ? t.sessionX.attune
             : phase === "flow"
@@ -219,7 +219,7 @@ function Attune({ onDone }: { onDone: () => void }) {
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 8 }}>
-      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.muted }}>
+      <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.muted }}>
         {t.sessionX.circleOf(cycle, BREATH_CYCLES)}
       </Text>
       {/* Зона круга фиксирована: на вдохе (scale 1.4) он растёт внутри неё,
@@ -238,7 +238,7 @@ function Attune({ onDone }: { onDone: () => void }) {
           transform: [{ scale }],
         }}
       >
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 19, color: c.brandD }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 19, color: c.brandD }}>
           {label}
         </Text>
       </Animated.View>
@@ -246,7 +246,7 @@ function Attune({ onDone }: { onDone: () => void }) {
       <View style={{ gap: 6, alignItems: "center", minHeight: 70, paddingTop: 6 }}>
         <Text
           style={{
-            fontFamily: "Nunito_700Bold",
+            fontFamily: "GolosText_700Bold",
             fontSize: 17,
             lineHeight: 25,
             color: c.ink,
@@ -256,12 +256,12 @@ function Attune({ onDone }: { onDone: () => void }) {
         >
           {aff.ru}
         </Text>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted, textAlign: "center" }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted, textAlign: "center" }}>
           {aff.en}
         </Text>
       </View>
       <Pressable onPress={onDone} accessibilityRole="button" style={{ minHeight: 44, justifyContent: "center" }}>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted }}>
           {t.common.ready}
         </Text>
       </Pressable>
@@ -286,7 +286,7 @@ function Bridge({ onDone }: { onDone: () => void }) {
       <Ionicons name="water" size={30} color={c.brand} />
       <Text
         style={{
-          fontFamily: "Nunito_700Bold",
+          fontFamily: "GolosText_700Bold",
           fontSize: 18,
           lineHeight: 27,
           color: c.ink,
@@ -298,7 +298,7 @@ function Bridge({ onDone }: { onDone: () => void }) {
       </Text>
       <Text
         style={{
-          fontFamily: "Inter_400Regular",
+          fontFamily: "GolosText_400Regular",
           fontSize: 14,
           lineHeight: 21,
           color: c.muted,
@@ -400,10 +400,10 @@ function Flow({
           <View style={{ width: `${pct}%`, height: 6, backgroundColor: sk.words }} />
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.brand, fontVariant: ["tabular-nums"] }}>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, color: c.brand, fontVariant: ["tabular-nums"] }}>
             {knownCount > 0 ? t.sessionX.knownN(knownCount) : " "}
           </Text>
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
             {t.sessionX.wordsOf(idx + 1, words.length)}
           </Text>
         </View>
@@ -425,7 +425,7 @@ function Flow({
       >
         <Text
           style={{
-            fontFamily: "Nunito_800ExtraBold",
+            fontFamily: "GolosText_800ExtraBold",
             fontSize: 42,
             lineHeight: 50,
             color: c.ink,
@@ -434,10 +434,10 @@ function Flow({
         >
           {w.en}
         </Text>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 15, color: c.muted }}>{w.ipa}</Text>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, color: c.muted }}>{w.ipa}</Text>
         <Text
           style={{
-            fontFamily: "Inter_600SemiBold",
+            fontFamily: "GolosText_600SemiBold",
             fontSize: 19,
             lineHeight: 26,
             color: c.brandD,
@@ -468,7 +468,7 @@ function Flow({
         {({ pressed }) => (
           <>
             <Ionicons name="checkmark-circle" size={19} color={pressed ? c.onBrand : c.brandD} />
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: pressed ? c.onBrand : c.brandD }}>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: pressed ? c.onBrand : c.brandD }}>
               {t.sessionX.know}
             </Text>
           </>
@@ -502,7 +502,7 @@ function Flow({
             >
               <Text
                 style={{
-                  fontFamily: "Inter_600SemiBold",
+                  fontFamily: "GolosText_600SemiBold",
                   fontSize: 13,
                   color: on ? c.onBrand : c.ink,
                 }}
@@ -513,7 +513,7 @@ function Flow({
           );
         })}
       </View>
-      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, lineHeight: 16, color: c.muted, textAlign: "center" }}>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11, lineHeight: 16, color: c.muted, textAlign: "center" }}>
         {t.sessionX.waveNote}
       </Text>
 
@@ -535,7 +535,7 @@ function Flow({
         })}
       >
         <Ionicons name={running ? "pause" : "play"} size={18} color={running ? c.ink : "#ffffff"} />
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: running ? c.ink : "#ffffff"}}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: running ? c.ink : "#ffffff"}}>
           {running ? t.sessionX.pause : idx === 0 ? t.sessionX.go : t.sessionX.resume}
         </Text>
       </Pressable>
@@ -562,12 +562,12 @@ function Done({ count, known, onClose }: { count: number; known: number; onClose
       >
         <Ionicons name="checkmark" size={30} color={sk.words} />
       </View>
-      <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, color: c.ink, textAlign: "center" }}>
+      <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, color: c.ink, textAlign: "center" }}>
         {t.sessionX.doneTitle(count)}
       </Text>
       <Text
         style={{
-          fontFamily: "Inter_400Regular",
+          fontFamily: "GolosText_400Regular",
           fontSize: 14,
           lineHeight: 21,
           color: c.muted,
@@ -591,7 +591,7 @@ function Done({ count, known, onClose }: { count: number; known: number; onClose
           transform: [{ scale: pressed ? 0.98 : 1 }],
         })}
       >
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
           {t.sessionX.finish}
         </Text>
       </Pressable>

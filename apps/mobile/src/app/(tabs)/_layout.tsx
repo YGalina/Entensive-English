@@ -34,7 +34,7 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarInactiveTintColor: c.muted,
         tabBarStyle: { backgroundColor: c.surface, borderTopColor: c.line },
-        tabBarLabelStyle: { fontFamily: "Inter_600SemiBold", fontSize: 11 },
+        tabBarLabelStyle: { fontFamily: "GolosText_600SemiBold", fontSize: 11 },
       }}
     >
       <Tabs.Screen

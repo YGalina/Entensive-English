@@ -213,7 +213,7 @@ export default function Onboarding() {
           <View style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center" }}>
             <Ionicons name="sparkles" size={15} color={c.brand} />
           </View>
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.ink }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.ink }}>
             {t.onb.title}
           </Text>
         </View>
@@ -245,14 +245,14 @@ export default function Onboarding() {
                   <View style={{ width: 56, height: 56, borderRadius: 18, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center" }}>
                     <Ionicons name="compass" size={28} color={c.brand} />
                   </View>
-                  <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 27, lineHeight: 34, color: c.ink }}>
+                  <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 27, lineHeight: 34, color: c.ink }}>
                     {t.onb.welcomeTitle}
                   </Text>
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 15, lineHeight: 23, color: c.ink }}>
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 23, color: c.ink }}>
                     {t.onb.welcomeBody}
                   </Text>
                   <View style={{ backgroundColor: c.brandSoft, borderRadius: radius.soft, padding: 14 }}>
-                    <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13.5, lineHeight: 20, color: c.brandInk }}>
+                    <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 20, color: c.brandInk }}>
                       {t.onb.welcomeScience}
                     </Text>
                   </View>
@@ -284,15 +284,15 @@ export default function Onboarding() {
                   >
                     <Text style={{ fontSize: 30 }}>{curLang.flag}</Text>
                     <View style={{ flex: 1, gap: 2 }}>
-                      <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 18, color: c.ink }}>
+                      <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 18, color: c.ink }}>
                         {curLang.native}
                       </Text>
-                      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+                      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
                         {t.onb.qLangHint}
                       </Text>
                     </View>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 16, backgroundColor: c.surface, borderWidth: 1, borderColor: c.line }}>
-                      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13, color: c.brand }}>
+                      <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13, color: c.brand }}>
                         {t.onb.qLangChange}
                       </Text>
                       <Ionicons name="chevron-down" size={14} color={c.brand} />
@@ -304,13 +304,13 @@ export default function Onboarding() {
               {step === "hours" && (
                 <View style={{ gap: 12 }}>
                   <FactBadge />
-                  <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, lineHeight: 30, color: c.ink }}>
+                  <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, lineHeight: 30, color: c.ink }}>
                     {t.onb.factHoursTitle}
                   </Text>
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.ink }}>
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.ink }}>
                     {t.onb.factHoursBody}
                   </Text>
-                  <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.ink, marginTop: 6 }}>
+                  <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.ink, marginTop: 6 }}>
                     {t.onb.factHoursAsk}
                   </Text>
                   <View style={{ flexDirection: "row", gap: 8 }}>
@@ -337,10 +337,10 @@ export default function Onboarding() {
                             transform: [{ scale: pressed ? 0.97 : 1 }],
                           })}
                         >
-                          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: on ? c.onBrand : c.ink }}>
+                          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: on ? c.onBrand : c.ink }}>
                             {m}
                           </Text>
-                          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 10, color: on ? c.onBrand : c.muted }}>
+                          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 10, color: on ? c.onBrand : c.muted }}>
                             {t.common.minutes}
                           </Text>
                         </Pressable>
@@ -348,10 +348,10 @@ export default function Onboarding() {
                     })}
                   </View>
                   <View style={{ backgroundColor: c.brandSoft, borderRadius: radius.soft, padding: 14, gap: 4 }}>
-                    <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.brandInk }}>
+                    <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.brandInk }}>
                       {t.onb.factHoursResult(dailyMin, monthsFor(dailyMin))}
                     </Text>
-                    <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 17, color: c.brandInk }}>
+                    <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, lineHeight: 17, color: c.brandInk }}>
                       {t.onb.factHoursNote}
                     </Text>
                   </View>
@@ -378,20 +378,20 @@ export default function Onboarding() {
               {step === "method" && (
                 <View style={{ gap: 12 }}>
                   <FactBadge />
-                  <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, lineHeight: 30, color: c.ink }}>
+                  <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, lineHeight: 30, color: c.ink }}>
                     {t.onb.factMethodTitle}
                   </Text>
                   {t.onb.factMethodItems.map((m) => (
                     <View key={m.name} style={{ backgroundColor: c.surface, borderRadius: radius.soft, borderWidth: 1, borderColor: c.line, padding: 14, gap: 4 }}>
-                      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.brandD }}>
+                      <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.brandD }}>
                         {m.name}
                       </Text>
-                      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19.5, color: c.ink }}>
+                      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19.5, color: c.ink }}>
                         {m.text}
                       </Text>
                     </View>
                   ))}
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.muted, fontStyle: "italic" }}>
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 18, color: c.muted, fontStyle: "italic" }}>
                     {t.onb.factMethodFoot}
                   </Text>
                 </View>
@@ -402,7 +402,7 @@ export default function Onboarding() {
                   <View style={{ gap: 14 }}>
                     {INTEREST_GROUPS.map((g) => (
                       <View key={g.id} style={{ gap: 8 }}>
-                        <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11, letterSpacing: 0.5, textTransform: "uppercase", color: c.muted }}>
+                        <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 11, letterSpacing: 0.5, textTransform: "uppercase", color: c.muted }}>
                           {en ? g.titleEn : g.title}
                         </Text>
                         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
@@ -425,7 +425,7 @@ export default function Onboarding() {
                                   transform: [{ scale: pressed ? 0.97 : 1 }],
                                 })}
                               >
-                                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 13, color: on ? c.onBrand : c.ink }}>
+                                <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13, color: on ? c.onBrand : c.ink }}>
                                   {en ? it.titleEn : it.title}
                                 </Text>
                               </Pressable>
@@ -441,17 +441,17 @@ export default function Onboarding() {
               {step === "skills" && (
                 <View style={{ gap: 12 }}>
                   <FactBadge />
-                  <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, lineHeight: 30, color: c.ink }}>
+                  <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, lineHeight: 30, color: c.ink }}>
                     {t.onb.factSkillsTitle}
                   </Text>
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.ink }}>
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.ink }}>
                     {t.onb.factSkillsBody}
                   </Text>
                   <View style={{ gap: 8 }}>
                     {t.onb.factSkillsItems.map((s) => (
                       <View key={s.text} style={{ flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: c.surface, borderRadius: radius.soft, borderWidth: 1, borderColor: c.line, paddingHorizontal: 14, minHeight: 52 }}>
                         <Ionicons name={s.icon as never} size={19} color={c.brand} />
-                        <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 13.5, lineHeight: 19, color: c.ink }}>
+                        <Text style={{ flex: 1, fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 19, color: c.ink }}>
                           {s.text}
                         </Text>
                       </View>
@@ -495,7 +495,7 @@ export default function Onboarding() {
                     })}
                   >
                     <Ionicons name="sparkles" size={16} color={c.brandD} />
-                    <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.brandD }}>
+                    <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.brandD }}>
                       {t.onb.qLevelCheckCta}
                     </Text>
                   </Pressable>
@@ -504,10 +504,10 @@ export default function Onboarding() {
 
               {step === "deadline" && (
                 <View style={{ gap: 12 }}>
-                  <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 26, lineHeight: 32, color: c.ink }}>
+                  <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 26, lineHeight: 32, color: c.ink }}>
                     {t.onb.qDeadlineTitle}
                   </Text>
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.muted }}>
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.muted }}>
                     {t.onb.qDeadlineNote}
                   </Text>
                   <View style={{ gap: 10 }}>
@@ -526,7 +526,7 @@ export default function Onboarding() {
                           justifyContent: "center",
                         })}
                       >
-                        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+                        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
                           {t.onb.deadlineOpt(m)}
                         </Text>
                       </Pressable>
@@ -544,10 +544,10 @@ export default function Onboarding() {
                         justifyContent: "center",
                       })}
                     >
-                      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+                      <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
                         {t.onb.deadlineNone}
                       </Text>
-                      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+                      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
                         {t.onb.deadlineNoneNote}
                       </Text>
                     </Pressable>
@@ -560,7 +560,7 @@ export default function Onboarding() {
                   <View style={{ width: 56, height: 56, borderRadius: 28, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center" }}>
                     <Ionicons name="checkmark" size={28} color={c.brand} />
                   </View>
-                  <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 26, lineHeight: 32, color: c.ink }}>
+                  <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 26, lineHeight: 32, color: c.ink }}>
                     {t.onb.summaryTitle}
                   </Text>
                   <View style={{ backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, paddingHorizontal: 16 }}>
@@ -579,11 +579,11 @@ export default function Onboarding() {
                   </View>
                   {budget.weeklyMinutesForDeadline !== null &&
                     budget.weeklyMinutesForDeadline > dailyMin * 7 && (
-                      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.accent }}>
+                      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19, color: c.accent }}>
                         {t.onb.summaryDeadlinePace(Math.ceil(budget.weeklyMinutesForDeadline / 7 / 5) * 5)}
                       </Text>
                     )}
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>
                     {t.onb.summaryFoot}
                   </Text>
                 </View>
@@ -621,7 +621,7 @@ export default function Onboarding() {
                   transform: [{ scale: pressed ? 0.98 : 1 }],
                 })}
               >
-                <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.muted }}>
+                <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.muted }}>
                   {t.common.back}
                 </Text>
               </Pressable>
@@ -643,7 +643,7 @@ export default function Onboarding() {
                 transform: [{ scale: pressed && canNext ? 0.98 : 1 }],
               })}
             >
-              <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+              <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
                 {step === "welcome"
                   ? t.onb.welcomeCta
                   : step === "summary"
@@ -672,7 +672,7 @@ function FactBadge() {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6, alignSelf: "flex-start", backgroundColor: c.warnSoft, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 5 }}>
       <Ionicons name="flask" size={13} color={c.warn} />
-      <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11, color: c.warn, letterSpacing: 0.4, textTransform: "uppercase" }}>
+      <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 11, color: c.warn, letterSpacing: 0.4, textTransform: "uppercase" }}>
         {t.onb.factBadge}
       </Text>
     </View>
@@ -733,10 +733,10 @@ function LevelCheck({
           <View style={{ width: 60, height: 60, borderRadius: 30, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center" }}>
             <Ionicons name="checkmark" size={30} color={c.brand} />
           </View>
-          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, color: c.ink, textAlign: "center" }}>
+          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, color: c.ink, textAlign: "center" }}>
             {t.onb.checkResult(result.level.toUpperCase())}
           </Text>
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center", maxWidth: 300 }}>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center", maxWidth: 300 }}>
             {note}
           </Text>
         </View>
@@ -754,7 +754,7 @@ function LevelCheck({
             transform: [{ scale: pressed ? 0.98 : 1 }],
           })}
         >
-          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
             {t.onb.checkAccept}
           </Text>
           <Ionicons name="checkmark" size={18} color="#ffffff" />
@@ -764,7 +764,7 @@ function LevelCheck({
           accessibilityRole="button"
           style={{ minHeight: 48, alignItems: "center", justifyContent: "center", marginTop: 6 }}
         >
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.muted }}>
             {t.onb.checkManual}
           </Text>
         </Pressable>
@@ -777,16 +777,16 @@ function LevelCheck({
   return (
     <View style={{ flex: 1, padding: 20, paddingBottom: insets.bottom + 12, gap: 14 }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted, flex: 1 }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted, flex: 1 }}>
           {t.onb.checkHint}
         </Text>
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.ink, fontVariant: ["tabular-nums"] }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.ink, fontVariant: ["tabular-nums"] }}>
           {i + 1} / {words.length}
         </Text>
       </View>
 
       <View style={{ flex: 1, backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, alignItems: "center", justifyContent: "center", padding: 24, gap: 12 }}>
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 34, color: c.accent, textAlign: "center" }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 34, color: c.accent, textAlign: "center" }}>
           {item.w.en}
         </Text>
         <Pressable
@@ -797,7 +797,7 @@ function LevelCheck({
           style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: 6, opacity: pressed ? 0.6 : 1, minHeight: 44 })}
         >
           <Ionicons name="volume-medium" size={18} color={c.muted} />
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: c.muted }}>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted }}>
             {item.w.ipa}
           </Text>
         </Pressable>
@@ -809,7 +809,7 @@ function LevelCheck({
           accessibilityRole="button"
           style={({ pressed }) => ({ flex: 1, minHeight: 56, borderRadius: 16, borderWidth: 1, borderColor: c.line, backgroundColor: c.surface, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
         >
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.muted }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.muted }}>
             {t.onb.checkNotYet}
           </Text>
         </Pressable>
@@ -819,14 +819,14 @@ function LevelCheck({
           style={({ pressed }) => ({ flex: 1, minHeight: 56, borderRadius: 16, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, transform: [{ scale: pressed ? 0.98 : 1 }] })}
         >
           <Ionicons name="checkmark" size={18} color={c.onBrand} />
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.onBrand }}>
             {t.onb.checkKnow}
           </Text>
         </Pressable>
       </View>
 
       <Pressable onPress={onCancel} accessibilityRole="button" style={{ minHeight: 44, alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
           {t.onb.checkBack}
         </Text>
       </Pressable>
@@ -856,7 +856,7 @@ function AhaMoment({ level, onDone }: { level: string; onDone: () => void }) {
           <Ionicons name="ear" size={28} color={c.brand} />
         </View>
         <View style={{ backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, padding: 24, gap: 14, alignSelf: "stretch" }}>
-          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, lineHeight: 32, color: c.ink, textAlign: "center" }}>
+          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, lineHeight: 32, color: c.ink, textAlign: "center" }}>
             {phrase.en}
           </Text>
           <Pressable
@@ -865,15 +865,15 @@ function AhaMoment({ level, onDone }: { level: string; onDone: () => void }) {
             style={({ pressed }) => ({ alignSelf: "center", flexDirection: "row", alignItems: "center", gap: 8, minHeight: 44, paddingHorizontal: 16, borderRadius: 22, backgroundColor: c.brandSoft, opacity: pressed ? 0.7 : 1 })}
           >
             <Ionicons name="volume-high" size={18} color={c.brandD} />
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13, color: c.brandD }}>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13, color: c.brandD }}>
               ещё раз · again
             </Text>
           </Pressable>
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center" }}>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center" }}>
             {phrase.ru}
           </Text>
         </View>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center", maxWidth: 300 }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center", maxWidth: 300 }}>
           Ты только что поняла английский — без словаря и без напряжения. Так и будет каждый
           день: понятный вход, маленький шаг, большой массив.
         </Text>
@@ -883,7 +883,7 @@ function AhaMoment({ level, onDone }: { level: string; onDone: () => void }) {
         accessibilityRole="button"
         style={({ pressed }) => ({ minHeight: 56, borderRadius: 16, backgroundColor: c.accent, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, transform: [{ scale: pressed ? 0.98 : 1 }] })}
       >
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: "#ffffff" }}>
           В приложение · Let's go
         </Text>
         <Ionicons name="arrow-forward" size={18} color="#ffffff" />
@@ -916,7 +916,7 @@ function LanguageSheet({
         <View style={{ backgroundColor: c.surface, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: "75%", paddingBottom: insets.bottom + 8 }}>
           <View style={{ alignSelf: "center", width: 40, height: 4, borderRadius: 2, backgroundColor: c.line, marginTop: 10 }} />
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 20, paddingVertical: 12 }}>
-            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 18, color: c.ink }}>
+            <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 18, color: c.ink }}>
               {title}
             </Text>
             <Pressable
@@ -948,7 +948,7 @@ function LanguageSheet({
                   })}
                 >
                   <Text style={{ fontSize: 24 }}>{l.flag}</Text>
-                  <Text style={{ flex: 1, fontFamily: active ? "Nunito_700Bold" : "Inter_400Regular", fontSize: 16, color: c.ink }}>
+                  <Text style={{ flex: 1, fontFamily: active ? "GolosText_700Bold" : "GolosText_400Regular", fontSize: 16, color: c.ink }}>
                     {l.native}
                   </Text>
                   {active && <Ionicons name="checkmark-circle" size={22} color={c.brand} />}
@@ -1011,10 +1011,10 @@ function Section({ title, note, children }: { title: string; note: string; child
   return (
     <View style={{ gap: 10 }}>
       <View style={{ gap: 6, marginBottom: 4 }}>
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 24, lineHeight: 30, color: c.ink }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, lineHeight: 30, color: c.ink }}>
           {title}
         </Text>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
           {note}
         </Text>
       </View>
@@ -1055,9 +1055,9 @@ function OptionRow({
       })}
     >
       <View style={{ flex: 1, gap: 2 }}>
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.ink }}>{title}</Text>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.ink }}>{title}</Text>
         {desc ? (
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>{desc}</Text>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>{desc}</Text>
         ) : null}
       </View>
       <View
@@ -1092,8 +1092,8 @@ function SummaryRow({ label, value, first = false }: { label: string; value: str
         borderTopColor: c.line,
       }}
     >
-      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: c.muted }}>{label}</Text>
-      <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: c.ink, textAlign: "right", flexShrink: 1 }}>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted }}>{label}</Text>
+      <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.ink, textAlign: "right", flexShrink: 1 }}>
         {value}
       </Text>
     </View>

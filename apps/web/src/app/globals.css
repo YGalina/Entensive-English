@@ -1,67 +1,72 @@
 @import "tailwindcss";
 
-/* ===== Дизайн-система «Марина» — палитра «Морская волна» =====
-   Тёплый teal морской волны, живой коралл (CTA), латунь для радости, тёплый
-   морской белый. Женственно, спокойно, с воздухом. Без бежа, без индиго/фиолета,
-   без неона. Каждый навык имеет свой цвет (сигнальные флаги).
-   ⚠️ Значения обязаны совпадать с packages/tokens/index.ts (единый источник). */
+/* ===== Дизайн-система «Living Content» — палитра «Бумага и чернила» =====
+   Тёплая бумага и уверенные чернила: терракота — бренд/CTA, амбер — новое
+   слово, мята — знакомое/успех, роза — мягкая поправка (красного нет). Тёплая
+   бумага теперь ОСНОВА (прежний «запрет бежа» снят), фиолет разрешён для навыка
+   «Письмо». ⚠️ Значения обязаны совпадать с packages/tokens/index.ts (единый
+   источник) — см. docs/design/. */
 :root {
-  --brand: #147e86; /* teal морской волны */
-  --brand-d: #0e5f66; /* глубже — мелкий текст, ховеры */
-  --brand-soft: #e1f1f0; /* пена волны — подложки пилюль */
-  --brand-ink: #0c4a50; /* морская глубина */
-  --on-brand: #ffffff; /* текст на заливке brand/флага навыка */
-  --accent: #f26a54; /* живой коралл (CTA) */
-  --accent-d: #d9503f;
-  --sun: #e8b36a; /* латунь/золото — стрик, радость */
-  --bg: #f5f9f8; /* тёплый морской белый, НЕ беж */
-  --surface: #ffffff;
-  --ink: #17383a;
-  --muted: #5e7a7b; /* морская сталь */
-  --line: #e2efed;
-  --ok: #0f9c79;
-  --warn: #b4791f;
-  --warn-soft: #fbf0de;
-  --shadow: 0 1px 2px rgba(12, 74, 80, 0.05), 0 8px 24px rgba(20, 126, 134, 0.08);
-  --shadow-lg: 0 2px 4px rgba(12, 74, 80, 0.06), 0 18px 48px rgba(20, 126, 134, 0.16);
+  --brand: #E8623D; /* терракота — бренд и CTA */
+  --brand-d: #C94E2D; /* глубже — ховеры, ссылки */
+  --brand-soft: #EFE7D7; /* wash — тёплая бумажная подложка */
+  --brand-ink: #4A453A; /* тёплый тёмный текст на wash */
+  --on-brand: #FFFFFF; /* текст на терракотовой заливке */
+  --accent: #4FB286; /* мята — знакомое, успех, прогресс */
+  --accent-d: #3F9D76;
+  --sun: #E8B36A; /* латунь — радость, постоянство */
+  --amber: #FFD66B; /* амбер — новое слово */
+  --rose: #C75A7A; /* роза — мягкая поправка, психоопора */
+  --bg: #FAF6EE; /* paper — тёплая бумага (основа) */
+  --surface: #FFFFFF;
+  --ink: #22201B; /* чернила */
+  --muted: #6F6857;
+  --line: #E3D9C4;
+  --ok: #4FB286;
+  --warn: #C99A3B;
+  --warn-soft: #FDF3E3;
+  --shadow: 0 4px 14px -10px rgba(60, 40, 15, 0.4), 0 8px 22px -14px rgba(60, 40, 15, 0.5);
+  --shadow-lg: 0 16px 36px -18px rgba(60, 40, 15, 0.55);
 
-  /* Сигнальные флаги навыков: мгновенно видно, где ты */
-  --sk-words: #147e86; /* словарь/сеанс — teal (бренд) */
-  --sk-sounds: #e0553d; /* звуки/говорение — коралл */
-  --sk-typing: #b7791f; /* набор — латунь/охра */
-  --sk-grammar: #2e8b6b; /* времена — морская зелень */
-  --sk-reading: #a8465f; /* чтение — ягодная роза */
-  --sk-video: #1e6e8c; /* shadowing — петроль (глубокая вода) */
+  /* Сигнальные флаги 6 навыков (дизайн-система §02) */
+  --sk-words: #E8623D; /* Слова — терракота */
+  --sk-sounds: #D99A2B; /* Слух — охра/амбер */
+  --sk-typing: #8A5FA8; /* Письмо — фиолет */
+  --sk-grammar: #4FB286; /* Грамматика — мята */
+  --sk-reading: #A8465F; /* Чтение — ягодная роза */
+  --sk-video: #4A7BA6; /* Речь·видео — петроль-синий */
 }
 
 .dark {
-  /* Ночь над морем: глубокая СИНЯЯ морская ночь (не мятная) + голубая волна
-     и коралл. Значения = packages/tokens/index.ts (единый источник). */
-  --brand: #54b9d8;
-  --brand-d: #7ecde6;
-  --brand-soft: #0f3346;
-  --brand-ink: #d7eef7;
-  --on-brand: #07222c;
-  --accent: #ff7a63;
-  --accent-d: #ff9683;
-  --sun: #ecbe77;
-  --bg: #0a1b26; /* синяя ночь над морем */
-  --surface: #122735;
-  --ink: #e9f2f7;
-  --muted: #8fa9b8;
-  --line: #224052;
-  --ok: #37d0a0;
-  --warn: #f0b860;
-  --warn-soft: #2c2516;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.45), 0 18px 48px rgba(0, 0, 0, 0.6);
+  /* Focus «при свете лампы»: тёплая тёмная бумага, не ночная глубина
+     (дизайн-система §02). Значения = packages/tokens/index.ts. */
+  --brand: #F0906E;
+  --brand-d: #F4A588;
+  --brand-soft: #2E2A22;
+  --brand-ink: #F0E6D6;
+  --on-brand: #211D16;
+  --accent: #7FC9A4;
+  --accent-d: #97D6B4;
+  --sun: #E8B36A;
+  --amber: #F0C86A;
+  --rose: #E07AA0;
+  --bg: #211D16;
+  --surface: #2E2A22;
+  --ink: #F5EFE2;
+  --muted: #9C937D;
+  --line: #3A3327;
+  --ok: #7FC9A4;
+  --warn: #E8B36A;
+  --warn-soft: #2E2A22;
+  --shadow: 0 4px 14px -10px rgba(0, 0, 0, 0.5), 0 8px 22px -14px rgba(0, 0, 0, 0.55);
+  --shadow-lg: 0 16px 36px -18px rgba(0, 0, 0, 0.6);
 
-  --sk-words: #54b9d8;
-  --sk-sounds: #ff8a73;
-  --sk-typing: #e2b45e;
-  --sk-grammar: #45c69b;
-  --sk-reading: #e88ba6;
-  --sk-video: #6fbede;
+  --sk-words: #F0906E;
+  --sk-sounds: #E8B36A;
+  --sk-typing: #B79BD8;
+  --sk-grammar: #7FC9A4;
+  --sk-reading: #D48BA0;
+  --sk-video: #7BA9D0;
 }
 
 @theme inline {
@@ -73,6 +78,8 @@
   --color-accent: var(--accent);
   --color-accent-d: var(--accent-d);
   --color-sun: var(--sun);
+  --color-amber: var(--amber);
+  --color-rose: var(--rose);
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-ink: var(--ink);
@@ -85,8 +92,9 @@
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-heading: var(--font-nunito), system-ui, sans-serif;
 
-  --radius-card: 22px;
-  --radius-soft: 14px;
+  --radius-card: 16px;
+  --radius-soft: 12px;
+  --radius-sheet: 22px;
 
   --shadow-card: var(--shadow);
   --shadow-float: var(--shadow-lg);
@@ -107,12 +115,12 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Морской герой: teal морской волны с градиентом в глубину */
+/* Тёплый герой: терракота с градиентом в глубину чернил */
 .bg-marine {
-  background-image: linear-gradient(160deg, #1a97a0 0%, #147e86 45%, #0c5259 100%);
+  background-image: linear-gradient(160deg, #F07A54 0%, #E8623D 45%, #C94E2D 100%);
 }
 .dark .bg-marine {
-  background-image: linear-gradient(160deg, #12455c 0%, #0e3346 45%, #0a2230 100%);
+  background-image: linear-gradient(160deg, #3a2c22 0%, #2E2A22 45%, #211D16 100%);
 }
 
 /* Бретонская полоска — фирменный декор (тонкая лента, как тельняшка) */

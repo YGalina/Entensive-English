@@ -50,7 +50,7 @@ export default function PathScreen() {
         contentContainerStyle={{ padding: 20, paddingTop: insets.top + 12, paddingBottom: 40, gap: 14 }}
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <Text style={{ flex: 1, fontFamily: "Nunito_800ExtraBold", fontSize: 24, color: c.ink }}>
+          <Text style={{ flex: 1, fontFamily: "GolosText_800ExtraBold", fontSize: 24, color: c.ink }}>
             {p.title}
           </Text>
           <Pressable
@@ -66,14 +66,14 @@ export default function PathScreen() {
 
         {/* Куда идём: жизненная цель */}
         <View style={{ backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, padding: 16, gap: 6 }}>
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 10.5, letterSpacing: 0.6, textTransform: "uppercase", color: c.muted }}>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 10.5, letterSpacing: 0.6, textTransform: "uppercase", color: c.muted }}>
             {p.whereTo}
           </Text>
-          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 18, lineHeight: 25, color: c.ink }}>
+          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 18, lineHeight: 25, color: c.ink }}>
             {goal?.lifeGoal ?? p.noGoal}
           </Text>
           {goal && (
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, color: c.muted }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted }}>
               {goal.currentLevel.toUpperCase()} → {goal.targetLevel.toUpperCase()}
               {budget ? ` · ${p.budget(budget.range[0], budget.range[1], Math.round(outcome.hoursDone))}` : ""}
             </Text>
@@ -81,7 +81,7 @@ export default function PathScreen() {
         </View>
 
         {/* Тропа вех */}
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
           {p.milestones(unlocked, caps.length)}
         </Text>
         <View style={{ gap: 0 }}>
@@ -104,7 +104,7 @@ export default function PathScreen() {
                   {cap.unlocked ? (
                     <Ionicons name="checkmark" size={14} color={c.onBrand} />
                   ) : (
-                    <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 9, color: c.muted }}>
+                    <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 9, color: c.muted }}>
                       {cap.pct}%
                     </Text>
                   )}
@@ -114,7 +114,7 @@ export default function PathScreen() {
                 )}
               </View>
               <View style={{ flex: 1, paddingBottom: 16 }}>
-                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 14, color: cap.unlocked ? c.ink : c.muted }}>
+                <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: cap.unlocked ? c.ink : c.muted }}>
                   {t.profile.canNames[cap.id] ?? cap.id}
                 </Text>
               </View>
@@ -123,7 +123,7 @@ export default function PathScreen() {
         </View>
 
         {/* Стражи пути */}
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
           {p.guardians(gstats.doneCount)}
         </Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
@@ -145,14 +145,14 @@ export default function PathScreen() {
                 }}
               >
                 <Ionicons name={met ? "shield-checkmark" : "shield-outline"} size={14} color={met ? c.brand : c.muted} />
-                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: met ? c.brandInk : c.muted }}>
+                <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, color: met ? c.brandInk : c.muted }}>
                   {(en ? g.nameEn : g.name).replace(en ? "The Guardian of " : "Страж ", "")}
                 </Text>
               </View>
             );
           })}
         </View>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 18, color: c.muted }}>
           {p.guardiansNote}
         </Text>
       </ScrollView>

@@ -57,7 +57,7 @@ export default function DiaryScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg, paddingTop: insets.top + 10 }}>
       <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 20, gap: 10 }}>
-        <Text style={{ flex: 1, fontFamily: "Nunito_800ExtraBold", fontSize: 22, color: c.ink }}>
+        <Text style={{ flex: 1, fontFamily: "GolosText_800ExtraBold", fontSize: 22, color: c.ink }}>
           {d.title}
         </Text>
         <Pressable
@@ -72,14 +72,14 @@ export default function DiaryScreen() {
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 20, gap: 14, paddingBottom: 40 }}>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 18, color: c.muted }}>
           {d.privacyNote}
         </Text>
 
         {byDay.length === 0 && (
           <View style={{ alignItems: "center", gap: 8, paddingTop: 40 }}>
             <Ionicons name="book-outline" size={26} color={c.muted} />
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, color: c.muted, textAlign: "center", maxWidth: 280 }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted, textAlign: "center", maxWidth: 280 }}>
               {d.empty}
             </Text>
           </View>
@@ -87,7 +87,7 @@ export default function DiaryScreen() {
 
         {byDay.map(([day, items]) => (
           <View key={day} style={{ gap: 8 }}>
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.muted }}>
               {fmtDay(day)}
             </Text>
             {items.map((a) => (
@@ -97,7 +97,7 @@ export default function DiaryScreen() {
               >
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                   <Ionicons name={(TYPE_ICON[a.type] ?? "document-outline") as never} size={14} color={c.brand} />
-                  <Text style={{ flex: 1, fontFamily: "Inter_600SemiBold", fontSize: 11, letterSpacing: 0.4, textTransform: "uppercase", color: c.muted }}>
+                  <Text style={{ flex: 1, fontFamily: "GolosText_600SemiBold", fontSize: 11, letterSpacing: 0.4, textTransform: "uppercase", color: c.muted }}>
                     {d.types[a.type] ?? a.type}
                     {a.audioRef ? "  ·  🎙" : ""}
                   </Text>
@@ -114,12 +114,12 @@ export default function DiaryScreen() {
                   </Pressable>
                 </View>
                 {!!a.text && (
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.ink }}>
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.ink }}>
                     {a.text}
                   </Text>
                 )}
                 {a.words.length > 0 && (
-                  <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11, color: c.brand }}>
+                  <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 11, color: c.brand }}>
                     {a.words.join(" · ")}
                   </Text>
                 )}

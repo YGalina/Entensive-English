@@ -145,17 +145,17 @@ export default function ListenScreen() {
             style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: 6, minHeight: 40, opacity: pressed ? 0.6 : 1 })}
           >
             <Ionicons name="chevron-back" size={18} color={c.muted} />
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.muted }}>
               {t.listenX.toVideos}
             </Text>
           </Pressable>
-          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 20, lineHeight: 26, color: c.ink }} numberOfLines={2}>
+          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 20, lineHeight: 26, color: c.ink }} numberOfLines={2}>
             {custom.title}
           </Text>
           <YouTube id={custom.youtubeId} height={playerH} />
           <View style={{ flexDirection: "row", gap: 8, backgroundColor: c.brandSoft, borderRadius: radius.soft, padding: 12 }}>
             <Ionicons name="mic" size={16} color={tone} style={{ marginTop: 1 }} />
-            <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.brandInk }}>
+            <Text style={{ flex: 1, fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 18, color: c.brandInk }}>
               {t.listenX.customNote}
             </Text>
           </View>
@@ -188,13 +188,13 @@ export default function ListenScreen() {
               })}
             >
               <Ionicons name="chevron-back" size={18} color={c.muted} />
-              <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.muted }}>
+              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.muted }}>
                 {t.listenX.toVideos}
               </Text>
             </Pressable>
             <Text
               style={{
-                fontFamily: "Inter_600SemiBold",
+                fontFamily: "GolosText_600SemiBold",
                 fontSize: 12,
                 color: c.muted,
                 fontVariant: ["tabular-nums"],
@@ -218,7 +218,7 @@ export default function ListenScreen() {
             }}
           >
             <Ionicons name="mic" size={16} color={tone} />
-            <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 12, lineHeight: 17, color: c.brandInk }}>
+            <Text style={{ flex: 1, fontFamily: "GolosText_400Regular", fontSize: 12, lineHeight: 17, color: c.brandInk }}>
               {t.listenX.hint}
             </Text>
             <Pressable
@@ -241,7 +241,7 @@ export default function ListenScreen() {
             >
               <Text
                 style={{
-                  fontFamily: "Nunito_700Bold",
+                  fontFamily: "GolosText_700Bold",
                   fontSize: 12,
                   color: showRu ? c.onBrand : c.brandD,
                 }}
@@ -285,7 +285,7 @@ export default function ListenScreen() {
               >
                 <Text
                   style={{
-                    fontFamily: active ? "Nunito_700Bold" : "Inter_400Regular",
+                    fontFamily: active ? "GolosText_700Bold" : "GolosText_400Regular",
                     fontSize: 16,
                     lineHeight: 24,
                     color: active ? c.ink : c.muted,
@@ -294,7 +294,7 @@ export default function ListenScreen() {
                   {l.en}
                 </Text>
                 {showRu && l.ru ? (
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.muted, marginTop: 2 }}>
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 18, color: c.muted, marginTop: 2 }}>
                     {l.ru}
                   </Text>
                 ) : null}
@@ -318,10 +318,10 @@ export default function ListenScreen() {
       }}
     >
       <View style={{ gap: 4 }}>
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 30, color: c.ink }}>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 30, color: c.ink }}>
           {t.listenX.title}
         </Text>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
           {t.listenX.subtitle}
         </Text>
       </View>
@@ -350,10 +350,10 @@ export default function ListenScreen() {
       >
         <Ionicons name="timer" size={24} color={c.onBrand} />
         <View style={{ flex: 1, gap: 2 }}>
-          <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: c.onBrand }}>
+          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: c.onBrand }}>
             {t.listenX.three}
           </Text>
-          <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.onBrand }}>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.onBrand }}>
             {t.listenX.threeNote}
           </Text>
         </View>
@@ -362,10 +362,10 @@ export default function ListenScreen() {
 
       {/* Блоки с преподавателем: разогрев → ролик → объясни мысль */}
       <View style={{ gap: 4 }}>
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
           {t.listenX.teacherBlocks}
         </Text>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
           {t.listenX.teacherBlocksNote}
         </Text>
       </View>
@@ -393,10 +393,10 @@ export default function ListenScreen() {
         >
           <Ionicons name="school-outline" size={22} color={c.brand} />
           <View style={{ flex: 1, gap: 2 }}>
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14.5, color: c.ink }} numberOfLines={2}>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14.5, color: c.ink }} numberOfLines={2}>
               {lang === "en" ? tb.topicEn : tb.topic}
             </Text>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11.5, color: c.muted }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11.5, color: c.muted }}>
               {t.listenX.teacherBlockSteps}
             </Text>
           </View>
@@ -405,7 +405,7 @@ export default function ListenScreen() {
       ))}
 
       {/* Мои видео: своя лента */}
-      <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+      <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
         {t.listenX.myVideos}
       </Text>
       {myLib.videos.map((mv) => (
@@ -433,7 +433,7 @@ export default function ListenScreen() {
           <View style={{ width: 42, height: 42, borderRadius: 12, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center" }}>
             <Ionicons name="logo-youtube" size={18} color={tone} />
           </View>
-          <Text style={{ flex: 1, fontFamily: "Nunito_700Bold", fontSize: 14.5, color: c.ink }} numberOfLines={2}>
+          <Text style={{ flex: 1, fontFamily: "GolosText_700Bold", fontSize: 14.5, color: c.ink }} numberOfLines={2}>
             {mv.title}
           </Text>
           <Pressable
@@ -470,7 +470,7 @@ export default function ListenScreen() {
         })}
       >
         <Ionicons name="add" size={18} color={c.brandD} />
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.brandD }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.brandD }}>
           {t.listenX.addVideo}
         </Text>
       </Pressable>
@@ -506,7 +506,7 @@ export default function ListenScreen() {
         if (items.length === 0) return null;
         return (
           <View key={cat} style={{ gap: 10 }}>
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
               {t.listenX.cats[cat] ?? CATEGORY_LABEL[cat]}
             </Text>
             {items.map((s) => (
@@ -576,10 +576,10 @@ function VideoCard({
         </View>
       </View>
       <View style={{ flex: 1, justifyContent: "center", gap: 3 }}>
-        <Text numberOfLines={2} style={{ fontFamily: "Nunito_700Bold", fontSize: 14.5, lineHeight: 20, color: c.ink }}>
+        <Text numberOfLines={2} style={{ fontFamily: "GolosText_700Bold", fontSize: 14.5, lineHeight: 20, color: c.ink }}>
           {title}
         </Text>
-        <Text numberOfLines={1} style={{ fontFamily: "Inter_400Regular", fontSize: 11.5, color: c.muted }}>
+        <Text numberOfLines={1} style={{ fontFamily: "GolosText_400Regular", fontSize: 11.5, color: c.muted }}>
           {subtitle}
         </Text>
       </View>

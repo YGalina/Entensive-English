@@ -70,7 +70,7 @@ export default function CoachScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: c.bg, paddingTop: insets.top + 10 }}>
       <View style={{ flexDirection: "row", alignItems: "center", paddingHorizontal: 20, gap: 10 }}>
-        <Text style={{ flex: 1, fontFamily: "Nunito_800ExtraBold", fontSize: 22, color: c.ink }}>
+        <Text style={{ flex: 1, fontFamily: "GolosText_800ExtraBold", fontSize: 22, color: c.ink }}>
           {k.title}
         </Text>
         <Pressable
@@ -88,10 +88,10 @@ export default function CoachScreen() {
         {saved ? (
           <View style={{ alignItems: "center", gap: 10, paddingTop: 60 }}>
             <Ionicons name="clipboard" size={28} color={c.sun} />
-            <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 22, color: c.ink, textAlign: "center" }}>
+            <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 22, color: c.ink, textAlign: "center" }}>
               {k.savedTitle}
             </Text>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center", maxWidth: 300 }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center", maxWidth: 300 }}>
               {k.savedNote}
             </Text>
             <Pressable
@@ -99,21 +99,21 @@ export default function CoachScreen() {
               accessibilityRole="button"
               style={({ pressed }) => ({ marginTop: 10, minHeight: 48, paddingHorizontal: 28, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
             >
-              <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.onBrand }}>{k.home}</Text>
+              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.onBrand }}>{k.home}</Text>
             </Pressable>
           </View>
         ) : (
           <>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>
               {k.intro}
             </Text>
 
             {/* Факты недели — без оценок */}
             <View style={{ backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, padding: 16, gap: 8 }}>
-              <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 10.5, letterSpacing: 0.6, textTransform: "uppercase", color: c.muted }}>
+              <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 10.5, letterSpacing: 0.6, textTransform: "uppercase", color: c.muted }}>
                 {k.facts}
               </Text>
-              <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, lineHeight: 24, color: c.ink }}>
+              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, lineHeight: 24, color: c.ink }}>
                 {k.factsLine(facts.minutes, facts.statuses, facts.voice, facts.activeWords, facts.practices)}
               </Text>
             </View>
@@ -121,14 +121,14 @@ export default function CoachScreen() {
             {/* Три вопроса тренера */}
             {questions.map((q, i) => (
               <View key={i} style={{ gap: 6 }}>
-                <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14.5, color: c.ink }}>{q}</Text>
+                <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14.5, color: c.ink }}>{q}</Text>
                 <TextInput
                   value={answers[i]}
                   onChangeText={(v) => setAnswers((a) => a.map((x, j) => (j === i ? v : x)))}
                   placeholder={k.placeholder}
                   placeholderTextColor={c.muted}
                   multiline
-                  style={{ minHeight: 56, borderRadius: 12, borderWidth: 1, borderColor: c.line, backgroundColor: c.surface, padding: 12, fontFamily: "Inter_400Regular", fontSize: 14.5, color: c.ink, textAlignVertical: "top" }}
+                  style={{ minHeight: 56, borderRadius: 12, borderWidth: 1, borderColor: c.line, backgroundColor: c.surface, padding: 12, fontFamily: "GolosText_400Regular", fontSize: 14.5, color: c.ink, textAlignVertical: "top" }}
                 />
               </View>
             ))}
@@ -139,7 +139,7 @@ export default function CoachScreen() {
               accessibilityRole="button"
               style={({ pressed }) => ({ minHeight: 52, borderRadius: 14, backgroundColor: canSave ? c.brand : c.brandSoft, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
             >
-              <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: canSave ? c.onBrand : c.muted }}>
+              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: canSave ? c.onBrand : c.muted }}>
                 {k.save}
               </Text>
             </Pressable>
@@ -170,9 +170,9 @@ function LiveCheckinBlock() {
       <View style={{ marginTop: 8, backgroundColor: c.brandSoft, borderRadius: radius.soft, padding: 14, gap: 4 }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <Ionicons name="people" size={16} color={c.brand} />
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.brandInk }}>{k.liveJoined}</Text>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.brandInk }}>{k.liveJoined}</Text>
         </View>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.brandInk }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 18, color: c.brandInk }}>
           {k.liveJoinedNote}
         </Text>
       </View>
@@ -194,9 +194,9 @@ function LiveCheckinBlock() {
     <View style={{ marginTop: 12, backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, padding: 16, gap: 10 }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
         <Ionicons name="people-outline" size={18} color={c.brand} />
-        <Text style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 16, color: c.ink }}>{k.liveTitle}</Text>
+        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: c.ink }}>{k.liveTitle}</Text>
       </View>
-      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
         {k.liveNote}
       </Text>
 
@@ -206,11 +206,11 @@ function LiveCheckinBlock() {
           accessibilityRole="button"
           style={({ pressed }) => ({ minHeight: 46, borderRadius: 12, borderWidth: 1, borderColor: c.brand, alignItems: "center", justifyContent: "center", opacity: pressed ? 0.85 : 1 })}
         >
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.brand }}>{k.liveCta}</Text>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.brand }}>{k.liveCta}</Text>
         </Pressable>
       ) : (
         <>
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.muted }}>{k.liveFormat}</Text>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, color: c.muted }}>{k.liveFormat}</Text>
           <View style={{ flexDirection: "row", gap: 6 }}>
             {FORMATS.map((f) => (
               <Pressable
@@ -219,11 +219,11 @@ function LiveCheckinBlock() {
                 accessibilityRole="button"
                 style={{ flex: 1, minHeight: 40, borderRadius: 10, borderWidth: 2, borderColor: format === f.id ? c.brand : c.line, backgroundColor: format === f.id ? c.brandSoft : c.surface, alignItems: "center", justifyContent: "center", paddingHorizontal: 4 }}
               >
-                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11.5, color: format === f.id ? c.brand : c.muted, textAlign: "center" }}>{f.label}</Text>
+                <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 11.5, color: format === f.id ? c.brand : c.muted, textAlign: "center" }}>{f.label}</Text>
               </Pressable>
             ))}
           </View>
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12, color: c.muted }}>{k.livePace}</Text>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, color: c.muted }}>{k.livePace}</Text>
           <View style={{ flexDirection: "row", gap: 6 }}>
             {PACES.map((pp) => (
               <Pressable
@@ -232,7 +232,7 @@ function LiveCheckinBlock() {
                 accessibilityRole="button"
                 style={{ flex: 1, minHeight: 40, borderRadius: 10, borderWidth: 2, borderColor: pace === pp.id ? c.brand : c.line, backgroundColor: pace === pp.id ? c.brandSoft : c.surface, alignItems: "center", justifyContent: "center" }}
               >
-                <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11.5, color: pace === pp.id ? c.brand : c.muted }}>{pp.label}</Text>
+                <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 11.5, color: pace === pp.id ? c.brand : c.muted }}>{pp.label}</Text>
               </Pressable>
             ))}
           </View>
@@ -242,14 +242,14 @@ function LiveCheckinBlock() {
             placeholder={k.livePlaceholder}
             placeholderTextColor={c.muted}
             multiline
-            style={{ minHeight: 48, borderRadius: 10, borderWidth: 1, borderColor: c.line, backgroundColor: c.bg, padding: 10, fontFamily: "Inter_400Regular", fontSize: 14, color: c.ink, textAlignVertical: "top" }}
+            style={{ minHeight: 48, borderRadius: 10, borderWidth: 1, borderColor: c.line, backgroundColor: c.bg, padding: 10, fontFamily: "GolosText_400Regular", fontSize: 14, color: c.ink, textAlignVertical: "top" }}
           />
           <Pressable
             onPress={() => { void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success); saveInterest({ format, pace, note }); }}
             accessibilityRole="button"
             style={({ pressed }) => ({ minHeight: 46, borderRadius: 12, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
           >
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14, color: c.onBrand }}>{k.liveSubmit}</Text>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.onBrand }}>{k.liveSubmit}</Text>
           </Pressable>
         </>
       )}

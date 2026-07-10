@@ -90,9 +90,9 @@ export function OutputCard() {
       <View style={{ backgroundColor: c.surface, borderRadius: radius.soft, borderWidth: 1, borderColor: c.line, padding: 14, gap: 6 }}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <Ionicons name="chatbubble-ellipses" size={16} color={c.brand} />
-          <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.ink }}>{o.doneTitle}</Text>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.ink }}>{o.doneTitle}</Text>
         </View>
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, color: c.muted }}>
           {o.doneNote(stats.today)}
         </Text>
         {hints !== null && (hints.length > 0 ? <Hints hints={hints} /> : <Praise />)}
@@ -105,14 +105,14 @@ export function OutputCard() {
     <View style={{ backgroundColor: c.surface, borderRadius: radius.soft, borderWidth: 1, borderColor: c.line, padding: 14, gap: 10 }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
         <Ionicons name="chatbubble-ellipses" size={16} color={c.accent} />
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.ink }}>{title}</Text>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.ink }}>{title}</Text>
       </View>
-      <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.muted }}>{prompt}</Text>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 18, color: c.muted }}>{prompt}</Text>
 
       {/* Зачем это — короткое объяснение (Галина: непонятно зачем и куда идёт) */}
       <View style={{ flexDirection: "row", gap: 6, backgroundColor: c.brandSoft, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 8 }}>
         <Ionicons name="bulb-outline" size={13} color={c.brand} style={{ marginTop: 1 }} />
-        <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 11.5, lineHeight: 16.5, color: c.brandInk }}>
+        <Text style={{ flex: 1, fontFamily: "GolosText_400Regular", fontSize: 11.5, lineHeight: 16.5, color: c.brandInk }}>
           {o.why}
         </Text>
       </View>
@@ -136,7 +136,7 @@ export function OutputCard() {
           borderColor: c.line,
           backgroundColor: c.bg,
           padding: 12,
-          fontFamily: "Inter_400Regular",
+          fontFamily: "GolosText_400Regular",
           fontSize: 15,
           color: c.ink,
           textAlignVertical: "top",
@@ -144,7 +144,7 @@ export function OutputCard() {
       />
 
       {usedWords.length > 0 && (
-        <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11.5, color: c.brand }}>
+        <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 11.5, color: c.brand }}>
           {o.usedWords(usedWords.length)} · {usedWords.join(", ")}
         </Text>
       )}
@@ -160,13 +160,13 @@ export function OutputCard() {
             style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, minHeight: 38, borderRadius: 10, borderWidth: 1, borderColor: c.brand, backgroundColor: pressed ? c.brandSoft : c.surface })}
           >
             <Ionicons name="play" size={14} color={c.brand} />
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 12.5, color: c.brand }}>{o.playRec}</Text>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 12.5, color: c.brand }}>{o.playRec}</Text>
           </Pressable>
-          <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 11, color: c.muted }}>{o.recordedNote}</Text>
+          <Text style={{ flex: 1, fontFamily: "GolosText_400Regular", fontSize: 11, color: c.muted }}>{o.recordedNote}</Text>
         </View>
       )}
       {micError && (
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11.5, color: c.accent }}>{o.micDenied}</Text>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11.5, color: c.accent }}>{o.micDenied}</Text>
       )}
 
       <View style={{ flexDirection: "row", gap: 8 }}>
@@ -190,7 +190,7 @@ export function OutputCard() {
             })}
           >
             <Ionicons name={rec.recording ? "stop" : "mic"} size={16} color={rec.recording ? c.onBrand : c.brand} />
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 13.5, color: rec.recording ? c.onBrand : c.ink }}>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13.5, color: rec.recording ? c.onBrand : c.ink }}>
               {rec.recording ? o.stopRecord : o.record}
             </Text>
           </Pressable>
@@ -212,7 +212,7 @@ export function OutputCard() {
         >
           <Text
             style={{
-              fontFamily: "Nunito_700Bold",
+              fontFamily: "GolosText_700Bold",
               fontSize: 15,
               color: !text.trim() && !audioRef ? c.muted : c.onBrand,
             }}
@@ -230,11 +230,11 @@ function Hints({ hints }: { hints: FeedbackHint[] }) {
   const { t } = useT();
   return (
     <View style={{ backgroundColor: c.brandSoft, borderRadius: 12, padding: 10, gap: 4 }}>
-      <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 11, color: c.brandInk }}>
+      <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 11, color: c.brandInk }}>
         {t.output.hintTitle}
       </Text>
       {hints.map((h) => (
-        <Text key={h.id} style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.brandInk }}>
+        <Text key={h.id} style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 18, color: c.brandInk }}>
           • {t.output.hints[h.id] ?? h.id}
         </Text>
       ))}
@@ -268,12 +268,12 @@ function AiReview({ text }: { text: string }) {
       <View style={{ backgroundColor: c.brandSoft, borderRadius: 12, padding: 10, gap: 4 }}>
         {result.hints.length > 0 ? (
           result.hints.map((h, i) => (
-            <Text key={i} style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.brandInk }}>
-              • <Text style={{ fontFamily: "Inter_600SemiBold" }}>{h.title}:</Text> {h.hint}
+            <Text key={i} style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 18, color: c.brandInk }}>
+              • <Text style={{ fontFamily: "GolosText_600SemiBold" }}>{h.title}:</Text> {h.hint}
             </Text>
           ))
         ) : (
-          <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12.5, color: c.brandInk }}>{result.praise}</Text>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12.5, color: c.brandInk }}>{result.praise}</Text>
         )}
       </View>
     );
@@ -288,12 +288,12 @@ function AiReview({ text }: { text: string }) {
         style={({ pressed }) => ({ alignSelf: "flex-start", minHeight: 38, paddingHorizontal: 14, borderRadius: 12, borderWidth: 1, borderColor: c.line, backgroundColor: c.surface, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 6, opacity: pressed || state === "busy" ? 0.7 : 1 })}
       >
         <Ionicons name="sparkles-outline" size={14} color={c.brand} />
-        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 12.5, color: c.brand }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 12.5, color: c.brand }}>
           {state === "busy" ? o.aiWait : o.aiBtn}
         </Text>
       </Pressable>
       {state === "off" && (
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11, lineHeight: 16, color: c.muted }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11, lineHeight: 16, color: c.muted }}>
           {o.aiUnavailable}
         </Text>
       )}
@@ -307,7 +307,7 @@ function Praise() {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: c.brandSoft, borderRadius: 12, padding: 10 }}>
       <Ionicons name="sparkles" size={13} color={c.brand} />
-      <Text style={{ fontFamily: "Inter_600SemiBold", fontSize: 12.5, color: c.brandInk }}>
+      <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12.5, color: c.brandInk }}>
         {t.output.praise}
       </Text>
     </View>

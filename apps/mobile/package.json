@@ -3,7 +3,9 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "dependencies": {
+    "@expo-google-fonts/golos-text": "^0.4.2",
     "@expo-google-fonts/inter": "^0.4.2",
+    "@expo-google-fonts/lora": "^0.4.2",
     "@expo-google-fonts/nunito": "^0.4.2",
     "@expo/ui": "~0.2.0-beta.9",
     "@expo/vector-icons": "^15.0.2",

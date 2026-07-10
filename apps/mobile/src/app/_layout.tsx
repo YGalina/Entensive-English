@@ -5,11 +5,23 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { useFonts } from "expo-font";
+// Дизайн-система «Living Content»: Golos Text — голос интерфейса, Lora — голос
+// языка (английские слова, фразы, чтение, курсив голосов стражей).
 import {
-  Nunito_700Bold,
-  Nunito_800ExtraBold,
-} from "@expo-google-fonts/nunito";
-import { Inter_400Regular, Inter_600SemiBold } from "@expo-google-fonts/inter";
+  GolosText_400Regular,
+  GolosText_500Medium,
+  GolosText_600SemiBold,
+  GolosText_700Bold,
+  GolosText_800ExtraBold,
+} from "@expo-google-fonts/golos-text";
+import {
+  Lora_400Regular,
+  Lora_500Medium,
+  Lora_600SemiBold,
+  Lora_700Bold,
+  Lora_400Regular_Italic,
+  Lora_500Medium_Italic,
+} from "@expo-google-fonts/lora";
 import { configureStorage } from "@ie/core/storage";
 import { marinaColors } from "@ie/tokens";
 import { kvStorage } from "@/lib/storage";
@@ -42,10 +54,17 @@ function navTheme(mode: "light" | "dark") {
 export default function RootLayout() {
   const { mode } = useMarina();
   const [fontsLoaded] = useFonts({
-    Nunito_700Bold,
-    Nunito_800ExtraBold,
-    Inter_400Regular,
-    Inter_600SemiBold,
+    GolosText_400Regular,
+    GolosText_500Medium,
+    GolosText_600SemiBold,
+    GolosText_700Bold,
+    GolosText_800ExtraBold,
+    Lora_400Regular,
+    Lora_500Medium,
+    Lora_600SemiBold,
+    Lora_700Bold,
+    Lora_400Regular_Italic,
+    Lora_500Medium_Italic,
   });
 
   useEffect(() => {

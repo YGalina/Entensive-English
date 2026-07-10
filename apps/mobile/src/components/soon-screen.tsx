@@ -44,7 +44,7 @@ export function SoonScreen({ icon, tone, title, lead, points }: Props) {
       </View>
       <Text
         style={{
-          fontFamily: "Nunito_800ExtraBold",
+          fontFamily: "GolosText_800ExtraBold",
           fontSize: 28,
           lineHeight: 34,
           color: c.ink,
@@ -54,7 +54,7 @@ export function SoonScreen({ icon, tone, title, lead, points }: Props) {
       </Text>
       <Text
         style={{
-          fontFamily: "Inter_400Regular",
+          fontFamily: "GolosText_400Regular",
           fontSize: 15,
           lineHeight: 23,
           color: c.muted,
@@ -79,7 +79,7 @@ export function SoonScreen({ icon, tone, title, lead, points }: Props) {
             <Text
               style={{
                 flex: 1,
-                fontFamily: "Inter_400Regular",
+                fontFamily: "GolosText_400Regular",
                 fontSize: 14,
                 lineHeight: 21,
                 color: c.ink,
@@ -92,7 +92,7 @@ export function SoonScreen({ icon, tone, title, lead, points }: Props) {
       </View>
       <Text
         style={{
-          fontFamily: "Inter_400Regular",
+          fontFamily: "GolosText_400Regular",
           fontSize: 13,
           lineHeight: 19,
           color: c.muted,
