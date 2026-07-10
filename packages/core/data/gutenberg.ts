@@ -93,6 +93,11 @@ export function gutenbergPageUrl(gutenbergId: number): string {
   return `https://www.gutenberg.org/ebooks/${gutenbergId}`;
 }
 
+/** Обложка книги (витрина): Gutenberg кэширует cover.medium.jpg по id. */
+export function gutenbergCoverUrl(gutenbergId: number): string {
+  return `https://www.gutenberg.org/cache/epub/${gutenbergId}/pg${gutenbergId}.cover.medium.jpg`;
+}
+
 export function gutenbergTextCandidates(gutenbergId: number): string[] {
   return [
     `https://www.gutenberg.org/cache/epub/${gutenbergId}/pg${gutenbergId}.txt`,

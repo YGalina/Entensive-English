@@ -7,6 +7,14 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+/** Проиграть запись по uri (прослушать свой голос). Общий контракт с native. */
+export async function playRecording(uri: string): Promise<void> {
+  try {
+    if (typeof Audio === "undefined") return;
+    await new Audio(uri).play();
+  } catch {}
+}
+
 export type VoiceRecorder = {
   /** платформа умеет записывать (на web — есть MediaRecorder и микрофон-API) */
   supported: boolean;

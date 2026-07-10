@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
@@ -10,6 +10,7 @@ import {
   booksForReader,
   chunkGutenbergText,
   gutenbergChunkToStory,
+  gutenbergCoverUrl,
   gutenbergTextCandidates,
   type GutenbergBook,
 } from "@ie/core/data/gutenberg";
@@ -29,6 +30,7 @@ import { recordWpm, useWpmStats } from "@ie/core/wpm";
 import { nowMs } from "@ie/core/now";
 import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
+import { MotivationBubble } from "@/components/motivation-bubble";
 
 // «Читать» — массив текста потоком, не по слову. Замер WPM — главный
 // измеримый KPI метода. Два уровня: короткие тексты (вшиты, с переводом) и
@@ -413,39 +415,16 @@ export default function ReadScreen() {
         </Text>
       </View>
 
-      {/* Книги целиком (реальный текст Gutenberg главами), под интересы */}
+      {/* Мотивашка дня (методическая/психологическая — цвет кодирует тип) */}
+      <MotivationBubble slot="read" />
+
+      {/* Книги-витрина: обложки Gutenberg гридом (как книжная полка) */}
       <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 17, color: c.ink, marginTop: 6 }}>{t.readX.books}</Text>
-      {books.map((b) => (
-        <Pressable
-          key={b.bookId}
-          onPress={() => openBook(b)}
-          accessibilityRole="button"
-          accessibilityLabel={`${b.title}, ${b.author}, уровень ${b.level.toUpperCase()}`}
-          style={({ pressed }) => ({
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 12,
-            backgroundColor: pressed ? c.brandSoft : c.surface,
-            borderRadius: radius.soft,
-            borderWidth: 1,
-            borderColor: c.line,
-            padding: 14,
-            minHeight: 64,
-            transform: [{ scale: pressed ? 0.99 : 1 }],
-          })}
-        >
-          <View style={{ width: 42, height: 42, borderRadius: 12, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center" }}>
-            <Ionicons name="book" size={20} color={tone} />
-          </View>
-          <View style={{ flex: 1, gap: 2 }}>
-            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.ink }}>{b.title}</Text>
-            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
-              {b.author} · {b.level.toUpperCase()} · {t.readX.byChapters}
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={16} color={c.muted} />
-        </Pressable>
-      ))}
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
+        {books.map((b) => (
+          <BookCover key={b.bookId} book={b} onOpen={() => openBook(b)} />
+        ))}
+      </View>
 
       {/* Мои книги: своя лента (Gutenberg по ссылке) */}
       <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 17, color: c.ink, marginTop: 10 }}>
@@ -631,5 +610,49 @@ function NoticingParagraph({
         return <Text key={i}>{tok}</Text>;
       })}
     </Text>
+  );
+}
+
+/* ---------- Обложка книги для витрины (грид) ---------- */
+// Картинка-обложка Gutenberg; если не загрузилась (нет сети/обложки) —
+// красивый цветной фолбэк с названием. Ширина ~ половина экрана минус отступы.
+function BookCover({ book, onOpen }: { book: GutenbergBook; onOpen: () => void }) {
+  const { c, radius } = useMarina();
+  const { width } = useWindowDimensions();
+  const [failed, setFailed] = useState(false);
+  const w = Math.floor((width - 40 - 12) / 2); // 2 колонки, паддинг 20 + gap 12
+  const h = Math.round(w * 1.5);
+
+  return (
+    <Pressable
+      onPress={onOpen}
+      accessibilityRole="button"
+      accessibilityLabel={`${book.title}, ${book.author}, ${book.level.toUpperCase()}`}
+      style={({ pressed }) => ({ width: w, transform: [{ scale: pressed ? 0.98 : 1 }] })}
+    >
+      <View style={{ width: w, height: h, borderRadius: radius.soft, overflow: "hidden", backgroundColor: c.brandSoft, borderWidth: 1, borderColor: c.line }}>
+        {!failed ? (
+          <Image
+            source={{ uri: gutenbergCoverUrl(book.gutenbergId) }}
+            style={{ width: "100%", height: "100%" }}
+            resizeMode="cover"
+            onError={() => setFailed(true)}
+          />
+        ) : (
+          <View style={{ flex: 1, padding: 12, justifyContent: "space-between" }}>
+            <Ionicons name="book" size={22} color={c.brand} />
+            <Text numberOfLines={4} style={{ fontFamily: "Nunito_800ExtraBold", fontSize: 15, lineHeight: 20, color: c.brandInk }}>
+              {book.title}
+            </Text>
+          </View>
+        )}
+      </View>
+      <Text numberOfLines={1} style={{ fontFamily: "Nunito_700Bold", fontSize: 12.5, color: c.ink, marginTop: 6 }}>
+        {book.title}
+      </Text>
+      <Text numberOfLines={1} style={{ fontFamily: "Inter_400Regular", fontSize: 11, color: c.muted }}>
+        {book.author} · {book.level.toUpperCase()}
+      </Text>
+    </Pressable>
   );
 }

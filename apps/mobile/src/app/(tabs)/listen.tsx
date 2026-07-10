@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
+import { Image, Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -18,6 +18,7 @@ import { useMyLibrary, addMyVideo, removeMyVideo, parseYoutubeId } from "@ie/cor
 import { AddLinkSheet } from "@/components/add-link-sheet";
 import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
+import { MotivationBubble } from "@/components/motivation-bubble";
 
 // Shadowing: смотришь живого носителя и ПОВТОРЯЕШЬ ВСЛУХ. Видео закреплено
 // сверху (не уезжает), активная строка подсвечивается сама по таймингам
@@ -325,6 +326,9 @@ export default function ListenScreen() {
         </Text>
       </View>
 
+      {/* Мотивашка дня */}
+      <MotivationBubble slot="listen" />
+
       {/* «3-минутка» — супер-короткая практика для дороги и очередей */}
       <Pressable
         onPress={() => {
@@ -506,50 +510,79 @@ export default function ListenScreen() {
               {t.listenX.cats[cat] ?? CATEGORY_LABEL[cat]}
             </Text>
             {items.map((s) => (
-              <Pressable
+              <VideoCard
                 key={s.id}
-                onPress={() => openVideo(s.id)}
-                accessibilityRole="button"
-                accessibilityLabel={`${s.title}, ${s.author}`}
-                style={({ pressed }) => ({
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 12,
-                  backgroundColor: pressed ? c.brandSoft : c.surface,
-                  borderRadius: radius.soft,
-                  borderWidth: 1,
-                  borderColor: c.line,
-                  padding: 14,
-                  minHeight: 64,
-                  transform: [{ scale: pressed ? 0.99 : 1 }],
-                })}
-              >
-                <View
-                  style={{
-                    width: 42,
-                    height: 42,
-                    borderRadius: 12,
-                    backgroundColor: c.brandSoft,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Ionicons name="play" size={18} color={tone} />
-                </View>
-                <View style={{ flex: 1, gap: 2 }}>
-                  <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 15, color: c.ink }}>
-                    {s.title}
-                  </Text>
-                  <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
-                    {s.author} · {s.level.toUpperCase()} · {t.listenX.linesN(s.lines.length)}
-                  </Text>
-                </View>
-                <Ionicons name="chevron-forward" size={16} color={c.muted} />
-              </Pressable>
+                youtubeId={s.youtubeId}
+                title={s.title}
+                subtitle={`${s.author} · ${s.level.toUpperCase()} · ${t.listenX.linesN(s.lines.length)}`}
+                onOpen={() => openVideo(s.id)}
+              />
             ))}
           </View>
         );
       })}
     </ScrollView>
+  );
+}
+
+/* ---------- Карточка видео с превью (thumbnail) ---------- */
+// Превью-кадр YouTube (hqdefault) с кнопкой Play поверх, как в ленте/витрине.
+// Не загрузилось (нет сети) — цветной фолбэк с иконкой.
+function VideoCard({
+  youtubeId,
+  title,
+  subtitle,
+  onOpen,
+}: {
+  youtubeId: string;
+  title: string;
+  subtitle: string;
+  onOpen: () => void;
+}) {
+  const { c, sk, radius } = useMarina();
+  const [failed, setFailed] = useState(false);
+  const thumbW = 116;
+  const thumbH = Math.round((thumbW * 9) / 16);
+
+  return (
+    <Pressable
+      onPress={onOpen}
+      accessibilityRole="button"
+      accessibilityLabel={title}
+      style={({ pressed }) => ({
+        flexDirection: "row",
+        gap: 12,
+        backgroundColor: pressed ? c.brandSoft : c.surface,
+        borderRadius: radius.soft,
+        borderWidth: 1,
+        borderColor: c.line,
+        padding: 10,
+        transform: [{ scale: pressed ? 0.99 : 1 }],
+      })}
+    >
+      <View style={{ width: thumbW, height: thumbH, borderRadius: 10, overflow: "hidden", backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center" }}>
+        {!failed ? (
+          <Image
+            source={{ uri: `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` }}
+            style={{ width: "100%", height: "100%" }}
+            resizeMode="cover"
+            onError={() => setFailed(true)}
+          />
+        ) : (
+          <Ionicons name="logo-youtube" size={26} color={sk.video} />
+        )}
+        <View style={{ position: "absolute", width: 34, height: 34, borderRadius: 17, backgroundColor: "rgba(0,0,0,0.5)", alignItems: "center", justifyContent: "center" }}>
+          <Ionicons name="play" size={16} color="#fff" />
+        </View>
+      </View>
+      <View style={{ flex: 1, justifyContent: "center", gap: 3 }}>
+        <Text numberOfLines={2} style={{ fontFamily: "Nunito_700Bold", fontSize: 14.5, lineHeight: 20, color: c.ink }}>
+          {title}
+        </Text>
+        <Text numberOfLines={1} style={{ fontFamily: "Inter_400Regular", fontSize: 11.5, color: c.muted }}>
+          {subtitle}
+        </Text>
+      </View>
+    </Pressable>
   );
 }

@@ -10,10 +10,20 @@
 import { useCallback, useState } from "react";
 import {
   AudioModule,
+  createAudioPlayer,
   RecordingPresets,
   setAudioModeAsync,
   useAudioRecorder,
 } from "expo-audio";
+
+/** Проиграть запись по uri (прослушать свой голос). Общий контракт с web. */
+export async function playRecording(uri: string): Promise<void> {
+  try {
+    await setAudioModeAsync({ playsInSilentMode: true });
+    const player = createAudioPlayer({ uri });
+    player.play();
+  } catch {}
+}
 
 export type VoiceRecorder = {
   supported: boolean;

@@ -11,7 +11,7 @@ import { addArtifact, useOutputStats } from "@ie/core/output";
 import { feedbackFor, type FeedbackHint } from "@ie/core/feedback";
 import { requestAiFeedback, type AiHint } from "@ie/core/aiFeedback";
 import { todaysTouchedCards } from "@ie/core/srs";
-import { useVoiceRecorder } from "@ie/media/recorder";
+import { useVoiceRecorder, playRecording } from "@ie/media/recorder";
 import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
 
@@ -108,6 +108,14 @@ export function OutputCard() {
       </View>
       <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12.5, lineHeight: 18, color: c.muted }}>{prompt}</Text>
 
+      {/* Зачем это — короткое объяснение (Галина: непонятно зачем и куда идёт) */}
+      <View style={{ flexDirection: "row", gap: 6, backgroundColor: c.brandSoft, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 8 }}>
+        <Ionicons name="bulb-outline" size={13} color={c.brand} style={{ marginTop: 1 }} />
+        <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 11.5, lineHeight: 16.5, color: c.brandInk }}>
+          {o.why}
+        </Text>
+      </View>
+
       {hints !== null && (hints.length > 0 ? <Hints hints={hints} /> : <Praise />)}
       {hints !== null && savedText.length > 0 && <AiReview text={savedText} />}
 
@@ -140,9 +148,21 @@ export function OutputCard() {
         </Text>
       )}
       {audioRef && (
-        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11.5, color: c.muted }}>
-          <Ionicons name="mic" size={11} color={c.brand} /> {o.recordedNote}
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <Pressable
+            onPress={() => {
+              void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              void playRecording(audioRef);
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={o.playRec}
+            style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", gap: 6, paddingHorizontal: 12, minHeight: 38, borderRadius: 10, borderWidth: 1, borderColor: c.brand, backgroundColor: pressed ? c.brandSoft : c.surface })}
+          >
+            <Ionicons name="play" size={14} color={c.brand} />
+            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 12.5, color: c.brand }}>{o.playRec}</Text>
+          </Pressable>
+          <Text style={{ flex: 1, fontFamily: "Inter_400Regular", fontSize: 11, color: c.muted }}>{o.recordedNote}</Text>
+        </View>
       )}
       {micError && (
         <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11.5, color: c.accent }}>{o.micDenied}</Text>
