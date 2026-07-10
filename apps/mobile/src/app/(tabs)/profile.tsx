@@ -106,6 +106,9 @@ export default function ProfileScreen() {
         <Row label={t.profile.days} value={String(outcome.daysPracticed)} />
       </Card>
 
+      {/* ---------- Честные часы: неделя столбиками (макет «Прогресс») ---------- */}
+      <WeekBars byDay={time.byDay} />
+
       {/* ---------- Программа и ожидаемый результат ---------- */}
       <Card title={t.profile.program}>
         {/* Прогресс к уровню — крупно, в языке Welltory */}
@@ -361,6 +364,88 @@ export default function ProfileScreen() {
         {t.profile.foot}
       </Text>
     </ScrollView>
+  );
+}
+
+/* ---------- Честные часы: неделя столбиками ---------- */
+// Дизайн «Прогресс»: пустой день — тихий столбик, не «сломанная цепочка».
+// Сегодня — терракота, прошлые дни — мягкая терракота, пусто — wash.
+
+function WeekBars({ byDay }: { byDay: Record<string, number> }) {
+  const { c, mode } = useMarina();
+  const { t } = useT();
+  const days: { key: string; dow: number; sec: number; isToday: boolean }[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 864e5);
+    const key = d.toISOString().slice(0, 10);
+    days.push({ key, dow: (d.getDay() + 6) % 7, sec: byDay[key] ?? 0, isToday: i === 0 });
+  }
+  const totalSec = Object.values(byDay).reduce((a, b) => a + b, 0);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.round((totalSec % 3600) / 60);
+  const maxSec = Math.max(1, ...days.map((d) => d.sec));
+  const pastBar = mode === "dark" ? "#6b5344" : "#f0c9bc"; // мягкая терракота
+  const quietBar = c.brandSoft;
+
+  return (
+    <View
+      style={{
+        backgroundColor: c.surface,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: c.line,
+        padding: 14,
+        paddingHorizontal: 16,
+        gap: 0,
+      }}
+    >
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 24, letterSpacing: -0.4, color: c.ink, fontVariant: ["tabular-nums"] }}>
+          {h} ч {m} мин
+        </Text>
+        <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 11, color: c.muted }}>
+          {t.profile.weekHonest}
+        </Text>
+      </View>
+      <View style={{ flexDirection: "row", gap: 6, alignItems: "flex-end", height: 44, marginTop: 12 }}>
+        {days.map((d) => {
+          const pct = d.sec > 0 ? Math.max(0.12, d.sec / maxSec) : 0.1;
+          return (
+            <View
+              key={d.key}
+              style={{
+                flex: 1,
+                height: `${Math.round(pct * 100)}%`,
+                borderTopLeftRadius: 5,
+                borderTopRightRadius: 5,
+                borderBottomLeftRadius: 2,
+                borderBottomRightRadius: 2,
+                backgroundColor: d.sec === 0 ? quietBar : d.isToday ? c.brand : pastBar,
+              }}
+            />
+          );
+        })}
+      </View>
+      <View style={{ flexDirection: "row", gap: 6, marginTop: 5 }}>
+        {days.map((d) => (
+          <Text
+            key={d.key}
+            style={{
+              flex: 1,
+              textAlign: "center",
+              fontFamily: d.isToday ? "GolosText_700Bold" : "GolosText_500Medium",
+              fontSize: 9.5,
+              color: d.isToday ? c.brand : c.muted,
+            }}
+          >
+            {t.profile.weekDays[d.dow]}
+          </Text>
+        ))}
+      </View>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11, lineHeight: 16, color: c.muted, marginTop: 10 }}>
+        {t.profile.weekQuiet}
+      </Text>
+    </View>
   );
 }
 
