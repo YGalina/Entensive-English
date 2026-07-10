@@ -473,6 +473,7 @@ export default function TodayScreen() {
 
       {/* Ещё практика: роли · 3-минутка · срез · разбор — тихой строкой */}
       <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+        <MoreChip icon="library-outline" label={t.vocabX.title} onPress={() => { tap(); router.push("/vocab" as never); }} />
         <MoreChip icon="film-outline" label={t.homeX.chipRoles} onPress={() => { tap(); router.push("/roles" as never); }} />
         <MoreChip icon="timer-outline" label={t.homeX.chipThree} onPress={() => { tap(); router.push("/three" as never); }} />
         {srs.produceDue > 0 && (

@@ -235,6 +235,52 @@ export function todaysTouchedCards(): Card[] {
 }
 
 /** Последние тронутые карточки (fallback, если сегодня практики не было). */
+// ---- «Мой словарь»: слова как накопленный живой опыт (макет 25a) ----
+// Сила слова — три состояния: new (встречено в потоке), recog (узнаю),
+// mine (сказано вслух — активный вывод). SRS внутри, давления снаружи нет.
+
+export type VocabState = "new" | "recog" | "mine";
+
+export type VocabEntry = {
+  en: string;
+  state: VocabState;
+  /** Сколько раз замечено «в дикой природе» (noticing). */
+  noticed: number;
+  /** Была ли рецептивная карточка успешно вспомнена хоть раз. */
+  recogReps: number;
+  /** Сказано вслух (produce reps>0). */
+  said: boolean;
+  /** Последнее касание (мс) — для сортировки «живой ленты». */
+  touchedAt: number;
+};
+
+export function vocabEntries(): VocabEntry[] {
+  const s = read();
+  const map = new Map<string, VocabEntry>();
+  for (const [key, card] of Object.entries(s)) {
+    const en = isProduceKey(key) ? key.slice(PRODUCE_PREFIX.length) : key;
+    const cur =
+      map.get(en) ??
+      ({ en, state: "new", noticed: 0, recogReps: 0, said: false, touchedAt: 0 } as VocabEntry);
+    const touched = card.last_review ? new Date(card.last_review).getTime() : 0;
+    if (touched > cur.touchedAt) cur.touchedAt = touched;
+    if (isProduceKey(key)) {
+      cur.noticed = card.noticed ?? 0;
+      if ((card.reps ?? 0) > 0) cur.said = true;
+    } else {
+      cur.recogReps = card.reps ?? 0;
+    }
+    map.set(en, cur);
+  }
+  const out = [...map.values()];
+  for (const e of out) {
+    e.state = e.said ? "mine" : e.recogReps > 0 ? "recog" : "new";
+  }
+  // Живая лента: последние касания сверху.
+  out.sort((a, b) => b.touchedAt - a.touchedAt);
+  return out;
+}
+
 export function recentCards(limit: number): Card[] {
   return recognizeCards(read())
     .filter((c) => c.last_review)
