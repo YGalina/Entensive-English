@@ -13,6 +13,7 @@ import {
   type ShadowScript,
 } from "@ie/core/data/shadowing";
 import { useActivityTimer } from "@ie/core/timelog";
+import { TEACHER_BLOCKS } from "@ie/core/data/teacherBlocks";
 import { useMyLibrary, addMyVideo, removeMyVideo, parseYoutubeId } from "@ie/core/mylibrary";
 import { AddLinkSheet } from "@/components/add-link-sheet";
 import { useT } from "@/lib/i18n";
@@ -30,7 +31,7 @@ export default function ListenScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const tone = sk.video;
-  const { t } = useT();
+  const { t, lang } = useT();
 
   const [videoId, setVideoId] = useState<string | null>(null);
   const [custom, setCustom] = useState<{ youtubeId: string; title: string } | null>(null);
@@ -354,6 +355,50 @@ export default function ListenScreen() {
         </View>
         <Ionicons name="chevron-forward" size={18} color={c.onBrand} />
       </Pressable>
+
+      {/* Блоки с преподавателем: разогрев → ролик → объясни мысль */}
+      <View style={{ gap: 4 }}>
+        <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
+          {t.listenX.teacherBlocks}
+        </Text>
+        <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: c.muted }}>
+          {t.listenX.teacherBlocksNote}
+        </Text>
+      </View>
+      {TEACHER_BLOCKS.map((tb) => (
+        <Pressable
+          key={tb.id}
+          onPress={() => {
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            router.push({ pathname: "/block", params: { id: tb.id } } as never);
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={lang === "en" ? tb.topicEn : tb.topic}
+          style={({ pressed }) => ({
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            backgroundColor: pressed ? c.brandSoft : c.surface,
+            borderRadius: radius.soft,
+            borderWidth: 1,
+            borderColor: c.line,
+            padding: 14,
+            minHeight: 64,
+            transform: [{ scale: pressed ? 0.99 : 1 }],
+          })}
+        >
+          <Ionicons name="school-outline" size={22} color={c.brand} />
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 14.5, color: c.ink }} numberOfLines={2}>
+              {lang === "en" ? tb.topicEn : tb.topic}
+            </Text>
+            <Text style={{ fontFamily: "Inter_400Regular", fontSize: 11.5, color: c.muted }}>
+              {t.listenX.teacherBlockSteps}
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={c.muted} />
+        </Pressable>
+      ))}
 
       {/* Мои видео: своя лента */}
       <Text style={{ fontFamily: "Nunito_700Bold", fontSize: 16, color: c.ink }}>
