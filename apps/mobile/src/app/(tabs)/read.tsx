@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, Image, Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
+import { ActivityIndicator, Image, Modal, Pressable, ScrollView, Text, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsFocused } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
@@ -16,6 +16,8 @@ import {
 } from "@ie/core/data/gutenberg";
 import { usePrefs } from "@ie/core/prefs";
 import { noticeableWords, recordNoticed } from "@ie/core/srs";
+import { lookupWord } from "@ie/core/data/levelVocab";
+import { speakEnglish } from "@ie/media/speech";
 import {
   useMyLibrary,
   addMyBook,
@@ -65,13 +67,22 @@ export default function ReadScreen() {
   // Слова «на замечание» фиксируем при открытии текста (не дёргаются при тапах).
   const [noticeSet, setNoticeSet] = useState<Set<string>>(new Set());
   const [noticedNow, setNoticedNow] = useState<Set<string>>(new Set());
+  // Слой перевода (макет 2b): тап по слову → bottom sheet с переводом.
+  const [sheetWord, setSheetWord] = useState<string | null>(null);
 
   function handleNotice(word: string) {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSheetWord(word.toLowerCase());
+  }
+
+  function addToVocab(word: string) {
     const w = word.toLowerCase();
-    if (noticedNow.has(w)) return;
-    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    recordNoticed(w);
-    setNoticedNow((s) => new Set(s).add(w));
+    if (!noticedNow.has(w)) {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      recordNoticed(w);
+      setNoticedNow((s) => new Set(s).add(w));
+    }
+    setSheetWord(null);
   }
 
   // Режим книги: выбранная книга + её главы (фрагменты).
@@ -230,6 +241,15 @@ export default function ReadScreen() {
                 </View>
               ))}
             </View>
+
+            {/* Слой перевода — bottom sheet по макету 2b */}
+            <WordSheet
+              word={sheetWord}
+              inVocab={sheetWord != null && noticedNow.has(sheetWord)}
+              onListen={(w) => speakEnglish(w, { interrupt: true, rate: 0.95 })}
+              onAdd={addToVocab}
+              onClose={() => setSheetWord(null)}
+            />
 
             {hasRu ? (
               <Pressable
@@ -611,6 +631,100 @@ function NoticingParagraph({
         return <Text key={i}>{tok}</Text>;
       })}
     </Text>
+  );
+}
+
+/* ---------- Слой перевода: bottom sheet (макет 2b, дизайн-система §06) ---------- */
+// Тап по слову в тексте → шторка: слово (Lora) + IPA, перевод терракотой,
+// пример (если есть), «Прослушать» / «В мой словарь». Sheet-радиус 22.
+
+function WordSheet({
+  word,
+  inVocab,
+  onListen,
+  onAdd,
+  onClose,
+}: {
+  word: string | null;
+  inVocab: boolean;
+  onListen: (w: string) => void;
+  onAdd: (w: string) => void;
+  onClose: () => void;
+}) {
+  const { c } = useMarina();
+  const { t } = useT();
+  const insets = useSafeAreaInsets();
+  const entry = word ? lookupWord(word) : undefined;
+  const ru = entry?.tr?.ru?.tr ?? null;
+
+  return (
+    <Modal visible={word != null} transparent animationType="slide" onRequestClose={onClose}>
+      <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(34,32,27,0.45)" }}>
+        <Pressable style={{ flex: 1 }} onPress={onClose} accessibilityLabel={t.readX.sheetClose} />
+        <View
+          style={{
+            backgroundColor: c.surface,
+            borderTopLeftRadius: 22,
+            borderTopRightRadius: 22,
+            paddingHorizontal: 20,
+            paddingTop: 12,
+            paddingBottom: insets.bottom + 18,
+          }}
+        >
+          <View style={{ alignSelf: "center", width: 36, height: 4, borderRadius: 4, backgroundColor: c.line, marginBottom: 12 }} />
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
+            <Text style={{ fontFamily: "Lora_500Medium", fontSize: 21, color: c.ink }}>{word ?? ""}</Text>
+            {!!entry?.ipa && (
+              <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11.5, color: c.muted }}>{entry.ipa}</Text>
+            )}
+          </View>
+          <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 13.5, color: c.brand, marginTop: 3 }}>
+            {ru ?? t.readX.sheetNoTr}
+          </Text>
+          {!!entry?.exEn && (
+            <Text style={{ fontFamily: "Lora_400Regular_Italic", fontSize: 12.5, lineHeight: 19, color: c.muted, marginTop: 8 }}>
+              “{entry.exEn}”
+            </Text>
+          )}
+          <View style={{ flexDirection: "row", gap: 8, marginTop: 12 }}>
+            <Pressable
+              onPress={() => word && onListen(word)}
+              accessibilityRole="button"
+              style={({ pressed }) => ({
+                flex: 1,
+                minHeight: 44,
+                borderRadius: 11,
+                backgroundColor: c.brandSoft,
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: pressed ? 0.7 : 1,
+              })}
+            >
+              <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12.5, color: c.brandInk }}>
+                {t.readX.sheetListen}
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => word && onAdd(word)}
+              accessibilityRole="button"
+              style={({ pressed }) => ({
+                flex: 1,
+                minHeight: 44,
+                borderRadius: 11,
+                backgroundColor: c.ink,
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: pressed ? 0.85 : 1,
+              })}
+            >
+              <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12.5, color: c.bg }}>
+                {inVocab ? t.readX.sheetAdded : t.readX.sheetAdd}
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    </Modal>
   );
 }
 

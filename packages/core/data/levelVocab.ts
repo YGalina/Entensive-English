@@ -89,6 +89,21 @@ export function sessionWords(level: string | undefined, known: Set<string>, limi
   return ordered.slice(0, limit);
 }
 
+// Быстрый словарь en → слово (для слоя перевода в читалке: тап по слову).
+let LOOKUP: Map<string, Word> | null = null;
+
+/** Найти слово в частотных списках (B1–C1) по английской форме. */
+export function lookupWord(en: string): Word | undefined {
+  if (!LOOKUP) {
+    LOOKUP = new Map();
+    for (const w of [...B1, ...B2, ...C1]) {
+      const key = w.en.toLowerCase().trim();
+      if (!LOOKUP.has(key)) LOOKUP.set(key, w);
+    }
+  }
+  return LOOKUP.get(en.toLowerCase().trim());
+}
+
 /** Метка уровня для заголовка сеанса — показывает, что массив ведёт вверх. */
 export function sessionLevelLabel(level: string | undefined): string {
   const base = baseLevelIndex(level);

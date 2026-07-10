@@ -409,71 +409,106 @@ function Flow({
         </View>
       </View>
 
-      {/* Кадр киносеанса */}
-      <View
+      {/* Карточка слова — макет 2b: тёплая тень, волна-декор, тап = озвучка */}
+      <Pressable
+        onPress={() => speakEnglish(w.en, { interrupt: true, rate: 1.0 })}
+        accessibilityRole="button"
+        accessibilityLabel={w.en}
         style={{
           flex: 1,
           backgroundColor: c.surface,
-          borderRadius: radius.card,
-          borderWidth: 1,
-          borderColor: c.line,
+          borderRadius: 20,
           alignItems: "center",
           justifyContent: "center",
           padding: 24,
-          gap: 10,
+          gap: 4,
+          shadowColor: "#3c280f",
+          shadowOpacity: 0.24,
+          shadowRadius: 18,
+          shadowOffset: { width: 0, height: 10 },
+          elevation: 5,
         }}
       >
         <Text
           style={{
-            fontFamily: "Lora_600SemiBold",
-            fontSize: 40,
-            lineHeight: 50,
+            fontFamily: "Lora_500Medium",
+            fontSize: 36,
+            lineHeight: 46,
+            letterSpacing: -0.4,
             color: c.ink,
             textAlign: "center",
           }}
         >
           {w.en}
         </Text>
-        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, color: c.muted }}>{w.ipa}</Text>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted }}>{w.ipa}</Text>
         <Text
           style={{
-            fontFamily: "GolosText_600SemiBold",
-            fontSize: 19,
-            lineHeight: 26,
-            color: c.brandD,
+            fontFamily: "GolosText_500Medium",
+            fontSize: 17,
+            lineHeight: 24,
+            color: c.brand,
             textAlign: "center",
+            marginTop: 6,
           }}
         >
           {tr.text}
         </Text>
-      </View>
-
-      {/* Узнавание в потоке: «это слово я знаю» */}
-      <Pressable
-        onPress={markKnown}
-        accessibilityRole="button"
-        accessibilityLabel={t.sessionX.knowA11y(w.en)}
-        style={({ pressed }) => ({
-          minHeight: 50,
-          borderRadius: 14,
-          borderWidth: 1.5,
-          borderColor: c.brand,
-          backgroundColor: pressed ? c.brand : c.brandSoft,
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "row",
-          gap: 8,
-        })}
-      >
-        {({ pressed }) => (
-          <>
-            <Ionicons name="checkmark-circle" size={19} color={pressed ? c.onBrand : c.brandD} />
-            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: pressed ? c.onBrand : c.brandD }}>
-              {t.sessionX.know}
-            </Text>
-          </>
-        )}
+        {/* Аудиоволна — цвет навыка «слух», приглашение прослушать */}
+        <View style={{ flexDirection: "row", gap: 3, alignItems: "flex-end", height: 20, marginTop: 12 }}>
+          {[8, 16, 11, 19, 7, 13].map((hh, i) => (
+            <View key={i} style={{ width: 4, height: hh, borderRadius: 2, backgroundColor: sk.sounds }} />
+          ))}
+        </View>
       </Pressable>
+
+      {/* «Ещё нет / Знаю» — узнавание прямо в потоке, ритм не останавливаем */}
+      <View style={{ flexDirection: "row", gap: 9 }}>
+        <Pressable
+          onPress={() => {
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            setIdx((i) => (i + 1 >= words.length ? i : i + 1));
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={t.sessionX.notYet}
+          style={({ pressed }) => ({
+            flex: 1,
+            minHeight: 50,
+            borderRadius: 13,
+            backgroundColor: c.surface,
+            alignItems: "center",
+            justifyContent: "center",
+            shadowColor: "#3c280f",
+            shadowOpacity: 0.12,
+            shadowRadius: 9,
+            shadowOffset: { width: 0, height: 4 },
+            elevation: 2,
+            opacity: pressed ? 0.7 : 1,
+          })}
+        >
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13.5, color: c.muted }}>
+            {t.sessionX.notYet}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={markKnown}
+          accessibilityRole="button"
+          accessibilityLabel={t.sessionX.knowA11y(w.en)}
+          style={({ pressed }) => ({
+            flex: 1,
+            minHeight: 50,
+            borderRadius: 13,
+            backgroundColor: c.accent,
+            alignItems: "center",
+            justifyContent: "center",
+            transform: [{ scale: pressed ? 0.98 : 1 }],
+          })}
+        >
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13.5, color: c.onBrand }}>
+            {t.sessionX.know}
+          </Text>
+        </Pressable>
+      </View>
 
       {/* Темп */}
       <View style={{ flexDirection: "row", gap: 8 }}>
