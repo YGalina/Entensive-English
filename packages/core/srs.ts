@@ -121,16 +121,25 @@ export function recordAnswer(packId: string, en: string, known: boolean) {
 
 /** Записать результат ПРОДУКТИВНОГО извлечения (значение → форма). */
 export function recordProduceAnswer(packId: string, en: string, known: boolean) {
+  recordProduceGrade(packId, en, known ? "good" : "again");
+}
+
+/**
+ * Флеш-словарь (макет 37a): самооценка честностью напрямую называет интервал
+ * возврата — прозрачный SRS. «Нет» = again (вернём завтра, это настройка, не
+ * ошибка), «С подсказкой» = hard (через пару дней), «Сразу» = good (дальше).
+ */
+export function recordProduceGrade(packId: string, en: string, grade: "again" | "hard" | "good") {
   const s = read();
   const now = new Date();
   const pk = PRODUCE_PREFIX + en;
   const prev = s[pk];
   const card: FsrsCard = isFsrsCard(prev) ? reviveFsrs(prev) : createEmptyCard(now);
-  const grade = known ? Rating.Good : Rating.Again;
-  const { card: next } = f.next(card, now, grade);
+  const rating = grade === "again" ? Rating.Again : grade === "hard" ? Rating.Hard : Rating.Good;
+  const { card: next } = f.next(card, now, rating);
   s[pk] = { ...next, en, packId, direction: "produce" };
   write(s);
-  emitEvent("srs-answer", { en, packId, known, direction: "produce" });
+  emitEvent("srs-answer", { en, packId, known: grade !== "again", grade, direction: "produce" });
 }
 
 /** Множество узнанных слов (reps ≥ 1) — чтобы вал не повторял их, а дополнял

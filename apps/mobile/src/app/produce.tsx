@@ -4,7 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { dueProduceCards, recordProduceAnswer, type Card } from "@ie/core/srs";
+import { dueProduceCards, recordProduceGrade, type Card } from "@ie/core/srs";
 import { findWord, getPack, translate, type Word } from "@ie/core/data/packs";
 import { LEVEL_PACKS } from "@ie/core/data/levelVocab";
 import { useNativeLang } from "@ie/core/prefs";
@@ -57,15 +57,27 @@ export default function ProduceScreen() {
     speakEnglish(cur.word.en, { rate: 0.9, interrupt: true });
   }
 
-  function answer(known: boolean) {
+  // Флеш-словарь (макет 37a): самооценка честностью называет интервал —
+  // «Нет» вернёт слово завтра (настройка, не ошибка), «С подсказкой» — через
+  // пару дней, «Сразу» — дальше по кривой. Красного здесь не бывает.
+  function grade(g: "again" | "hard" | "good") {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    recordProduceAnswer(cur.card.packId, cur.card.en, known);
-    if (known) setSaidCount((n) => n + 1);
+    recordProduceGrade(cur.card.packId, cur.card.en, g);
+    if (g !== "again") setSaidCount((n) => n + 1);
     setRevealed(false);
     setI((n) => n + 1);
   }
 
   const meaning = cur ? translate(cur.word, lang) : null;
+  // Лицевая сторона — не слово, а ТВОЙ контекст с пропуском (если у слова
+  // есть аутентичная фраза): вспоминание там, где слово встретилось.
+  const gapped = (() => {
+    const ex = cur?.word.exEn;
+    if (!ex) return null;
+    const re = new RegExp(cur!.word.en.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+    if (!re.test(ex)) return null;
+    return ex.replace(re, "______");
+  })();
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg, paddingTop: insets.top + 10 }}>
@@ -114,14 +126,28 @@ export default function ProduceScreen() {
               {p.intro}
             </Text>
 
-            {/* Смысл на родном — крупно */}
+            {/* Лицевая сторона: твой контекст с пропуском (или смысл на родном) */}
             <View style={{ backgroundColor: c.surface, borderRadius: radius.card, borderWidth: 1, borderColor: c.line, padding: 24, gap: 14, alignItems: "center" }}>
               <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 10.5, letterSpacing: 0.6, textTransform: "uppercase", color: c.muted }}>
-                {p.meaningLabel}
+                {gapped ? p.contextLabel : p.meaningLabel}
               </Text>
-              <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 26, lineHeight: 34, color: c.ink, textAlign: "center" }}>
-                {meaning?.text}
-              </Text>
+              {gapped ? (
+                <>
+                  <Text style={{ fontFamily: "Lora_400Regular", fontSize: 20, lineHeight: 31, color: c.ink, textAlign: "center" }}>
+                    “{gapped}”
+                  </Text>
+                  <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.ink, textAlign: "center" }}>
+                    {p.whichWord}
+                  </Text>
+                  <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 13, color: c.brand }}>
+                    {meaning?.text}
+                  </Text>
+                </>
+              ) : (
+                <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 26, lineHeight: 34, color: c.ink, textAlign: "center" }}>
+                  {meaning?.text}
+                </Text>
+              )}
 
               {revealed ? (
                 <Pressable
@@ -151,24 +177,32 @@ export default function ProduceScreen() {
             </View>
 
             {revealed && (
-              <View style={{ flexDirection: "row", gap: 10 }}>
-                <Pressable
-                  onPress={() => answer(false)}
-                  accessibilityRole="button"
-                  accessibilityLabel={p.notYet}
-                  style={({ pressed }) => ({ flex: 1, minHeight: 52, borderRadius: 14, backgroundColor: c.surface, borderWidth: 1, borderColor: c.line, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
-                >
-                  <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.ink }}>{p.notYet}</Text>
-                </Pressable>
-                <Pressable
-                  onPress={() => answer(true)}
-                  accessibilityRole="button"
-                  accessibilityLabel={p.said}
-                  style={({ pressed }) => ({ flex: 1, minHeight: 52, borderRadius: 14, backgroundColor: c.brand, alignItems: "center", justifyContent: "center", transform: [{ scale: pressed ? 0.98 : 1 }] })}
-                >
-                  <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.onBrand }}>{p.said}</Text>
-                </Pressable>
-              </View>
+              <>
+                <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13.5, color: c.ink, textAlign: "center" }}>
+                  {p.honestAsk}
+                </Text>
+                <View style={{ flexDirection: "row", gap: 8 }}>
+                  {([
+                    ["again", p.gAgain, p.gAgainNote, c.surface, c.ink, c.line],
+                    ["hard", p.gHard, p.gHardNote, c.warnSoft, c.ink, c.warn],
+                    ["good", p.gGood, p.gGoodNote, c.accent, c.onBrand, c.accent],
+                  ] as const).map(([g, label, note, bg, fg, border]) => (
+                    <Pressable
+                      key={g}
+                      onPress={() => grade(g)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`${label}. ${note}`}
+                      style={({ pressed }) => ({ flex: 1, minHeight: 62, borderRadius: 14, backgroundColor: bg, borderWidth: 1, borderColor: border, alignItems: "center", justifyContent: "center", gap: 2, paddingHorizontal: 4, transform: [{ scale: pressed ? 0.97 : 1 }] })}
+                    >
+                      <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13.5, color: fg }}>{label}</Text>
+                      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 9.5, color: fg, opacity: 0.75, textAlign: "center" }}>{note}</Text>
+                    </Pressable>
+                  ))}
+                </View>
+                <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11.5, lineHeight: 16, color: c.muted, textAlign: "center" }}>
+                  {p.noRed}
+                </Text>
+              </>
             )}
           </>
         )}
