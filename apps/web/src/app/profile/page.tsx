@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import BottomNav from "@/components/BottomNav";
+import AppShell from "@/components/AppShell";
 import ThemeToggle from "@/components/ThemeToggle";
 import { Sun, Sound, Play, Check } from "@/components/Icons";
 import { usePrefs, updatePrefs } from "@ie/core/prefs";
@@ -147,8 +147,8 @@ export default function Profile() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <main className="mx-auto w-full max-w-[480px] flex-1 px-5 pt-7 pb-6">
+    <AppShell>
+      <main className="mx-auto w-full max-w-[560px] flex-1 px-5 pt-7 pb-6">
         <div className="mb-5 flex items-center justify-between">
           <h1 data-testid="profile-title" className="font-heading text-2xl font-extrabold text-ink">{t.profile}</h1>
           <ThemeToggle />
@@ -280,8 +280,7 @@ export default function Profile() {
           </button>
         </div>
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }
 

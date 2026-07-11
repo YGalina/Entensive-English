@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import BottomNav from "@/components/BottomNav";
+import AppShell from "@/components/AppShell";
 import { Sound, Check, Layers, Play } from "@/components/Icons";
 import { useSrsStats, dueCards, recordAnswer } from "@ie/core/srs";
 import { useActivityTimer } from "@ie/core/timelog";
@@ -54,8 +54,8 @@ export default function Vocab() {
   const t = UI[ui];
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <main className="mx-auto w-full max-w-[480px] flex-1 px-5 pt-7 pb-6">
+    <AppShell>
+      <main className="mx-auto w-full max-w-[560px] flex-1 px-5 pt-7 pb-6">
         {!review ? (
           <>
             <h1 className="font-heading text-2xl font-extrabold text-ink">{t.title}</h1>
@@ -126,8 +126,7 @@ export default function Vocab() {
           <Review onExit={() => setReview(false)} />
         )}
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }
 

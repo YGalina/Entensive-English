@@ -19,17 +19,17 @@ import { useT } from "@/lib/i18n";
 import { BotanicalFrame } from "@/components/botanical";
 import { useMarina } from "@/theme";
 
-// Сессия дня — ОДИН флоу 4 фаз (13_app_logic §3.2, макет 2b/v2):
+// Сессия дня — ОДИН флоу 4 фаз (13_app_logic §3.2), визуально 1:1 по макетам
+// Экраны-v2 «СЕССИЯ · ПОТОК СЛОВ / КОНТЕКСТ / СКАЗАТЬ СВОЁ»:
 //   1 настройка (дыхание + классика + установки — снятие барьера)
-//   2 поток слов (вал по Петрусинскому: массив, темп вплоть до субцептивного)
-//   3 контекст (те же слова в живых фразах, тап = слой перевода)
-//   4 сказать своё (вопрос дня + чипы слов + голос/текст → артефакт)
-// Говорение — финал сессии, не отдельная кнопка: каждый цикл заканчивается
-// активным выводом. attune/bridge — внутренние шаги фазы 1.
+//   2 поток слов (карточка Lora 44, пример с амбер-маркером, Ещё нет/Знаю)
+//   3 контекст (сплошной отрывок Lora, тап по слову → слой перевода снизу)
+//   4 сказать своё (вопрос дня, белые Lora-чипы, голос/текст → артефакт)
+// Полоски фаз в шапке: терракота · мята · охра · петроль.
 
 type Phase = "attune" | "bridge" | "flow" | "context" | "say" | "done";
 
-/** Номер фазы для индикатора «N/4» в шапке. */
+/** Сколько полосок фаз закрашено. */
 const PHASE_NO: Record<Phase, number> = {
   attune: 1,
   bridge: 1,
@@ -38,6 +38,18 @@ const PHASE_NO: Record<Phase, number> = {
   say: 4,
   done: 4,
 };
+
+const BREATH_CYCLES = 3;
+const INHALE = 4000;
+const HOLD = 2000;
+const EXHALE = 6000;
+
+/** Темпы киносеанса. «Вал» — предъявление быстрее сознательного чтения. */
+const TEMPOS = [
+  { id: "calm", ms: 2400, tts: true },
+  { id: "fast", ms: 1100, tts: false },
+  { id: "wave", ms: 450, tts: false },
+] as const;
 
 /** Вопрос дня для «сказать своё» — ротация по дате, без сети. */
 const SAY_QUESTIONS = [
@@ -51,28 +63,8 @@ const SAY_QUESTIONS = [
   { ru: "Какое место в твоём городе тебе дорого — и чем?", en: "What place in your city matters to you — and why?" },
 ] as const;
 
-const BREATH_CYCLES = 3;
-const INHALE = 4000;
-const HOLD = 2000;
-const EXHALE = 6000;
-
-/** Темпы киносеанса. «Вал» — предъявление быстрее сознательного чтения:
- *  фиксируется неосознанным восприятием, озвучка не успевает и не нужна. */
-const TEMPOS = [
-  { id: "calm", label: "Спокойный", ms: 2400, tts: true },
-  { id: "fast", label: "Быстрый", ms: 1100, tts: false },
-  { id: "wave", label: "Вал", ms: 450, tts: false },
-] as const;
-
-function levelPackId(level?: string): string {
-  const l = (level ?? "b1").toLowerCase();
-  if (l === "c1" || l === "c2") return "level-c1";
-  if (l === "b2") return "level-b2";
-  return "level-b1"; // a1/a2/b1 — стартовый частотный массив
-}
-
 export default function SessionScreen() {
-  const { c, sk, radius } = useMarina();
+  const { c, sk } = useMarina();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const prefs = usePrefs();
@@ -117,30 +109,40 @@ export default function SessionScreen() {
     router.back();
   }
 
+  // Цвета полосок фаз — по макету: терракота · мята · охра · петроль.
+  const phaseColors = [c.brand, c.accent, sk.sounds, sk.video];
+  const filled = PHASE_NO[phase];
+
   return (
     <View
       style={{
         flex: 1,
         backgroundColor: c.bg,
-        padding: 20,
-        paddingTop: insets.top + 12,
+        paddingHorizontal: 30,
+        paddingTop: insets.top + 14,
         paddingBottom: insets.bottom + 12,
       }}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.muted, fontVariant: ["tabular-nums"] }}>
-          {phase === "done"
-            ? t.sessionX.done
-            : `${PHASE_NO[phase]}/4 · ${
-                phase === "attune" || phase === "bridge"
-                  ? t.sessionX.attune
-                  : phase === "flow"
-                    ? levelLabel
-                    : phase === "context"
-                      ? t.sessionX.ctxPhase
-                      : t.sessionX.sayPhase
-              }`}
-        </Text>
+      {/* Шапка: полоски фаз (+ счётчик слов в потоке) и выход */}
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+        <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 7 }}>
+          {phaseColors.map((col, i) => (
+            <View
+              key={i}
+              style={{
+                flex: 1,
+                height: 6,
+                borderRadius: 6,
+                backgroundColor: i < filled ? col : c.brandSoft,
+              }}
+            />
+          ))}
+          {phase === "flow" && (
+            <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13, color: c.muted, opacity: 0.85, marginLeft: 4, fontVariant: ["tabular-nums"] }}>
+              {idx + 1}/{words.length}
+            </Text>
+          )}
+        </View>
         <Pressable
           onPress={leave}
           accessibilityRole="button"
@@ -232,7 +234,7 @@ export default function SessionScreen() {
 /* ---------- Настройка: дыхание под классику + установки ---------- */
 
 function Attune({ onDone }: { onDone: () => void }) {
-  const { c, sk } = useMarina();
+  const { c } = useMarina();
   const { t } = useT();
   const scale = useRef(new Animated.Value(1)).current;
   const [label, setLabel] = useState(t.sessionX.inhale);
@@ -318,7 +320,7 @@ function Attune({ onDone }: { onDone: () => void }) {
         >
           {aff.ru}
         </Text>
-        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted, textAlign: "center" }}>
+        <Text style={{ fontFamily: "Lora_400Regular", fontStyle: "italic", fontSize: 13, color: c.muted, textAlign: "center" }}>
           {aff.en}
         </Text>
       </View>
@@ -374,7 +376,47 @@ function Bridge({ onDone }: { onDone: () => void }) {
   );
 }
 
-/* ---------- Киносеанс: вал слов ---------- */
+/* ---------- Фаза 2 · Поток слов (макет: карточка Lora 44, пример с маркером) ---------- */
+
+/** Английская фраза с амбер-маркером целевого слова (как в макете). */
+function HighlightedExample({
+  text,
+  target,
+  size = 15,
+  line = 23,
+}: {
+  text: string;
+  target: string;
+  size?: number;
+  line?: number;
+}) {
+  const { c } = useMarina();
+  const i = text.toLowerCase().indexOf(target.toLowerCase());
+  return (
+    <Text
+      style={{
+        fontFamily: "Lora_400Regular",
+        fontStyle: "italic",
+        fontSize: size,
+        lineHeight: line,
+        color: c.muted,
+        textAlign: "center",
+      }}
+    >
+      {i >= 0 ? (
+        <>
+          {text.slice(0, i)}
+          <Text style={{ fontStyle: "normal", fontFamily: "Lora_500Medium", backgroundColor: c.amber, color: "#3b2c07" }}>
+            {text.slice(i, i + target.length)}
+          </Text>
+          {text.slice(i + target.length)}
+        </>
+      ) : (
+        text
+      )}
+    </Text>
+  );
+}
 
 function Flow({
   words,
@@ -403,7 +445,7 @@ function Flow({
   knownCount: number;
   onFinish: () => void;
 }) {
-  const { c, sk, radius } = useMarina();
+  const { c, sk } = useMarina();
   const { t } = useT();
   const tempo = TEMPOS[tempoIdx];
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -439,11 +481,15 @@ function Flow({
   }, [idx, running]);
 
   const tr = translate(w, nativeLang as never);
-  const pct = Math.round(((idx + 1) / words.length) * 100);
 
   function toggle() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setRunning(!running);
+  }
+
+  function cycleTempo() {
+    void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setTempoIdx((tempoIdx + 1) % TEMPOS.length);
   }
 
   // «Знаю»: узнавание прямо в потоке — слово уходит в SRS (Good) и в
@@ -455,23 +501,8 @@ function Flow({
   }
 
   return (
-    <View style={{ flex: 1, gap: 14, paddingTop: 12 }}>
-      {/* Прогресс массива */}
-      <View style={{ gap: 6 }}>
-        <View style={{ height: 6, borderRadius: 3, backgroundColor: c.line, overflow: "hidden" }}>
-          <View style={{ width: `${pct}%`, height: 6, backgroundColor: sk.words }} />
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, color: c.brand, fontVariant: ["tabular-nums"] }}>
-            {knownCount > 0 ? t.sessionX.knownN(knownCount) : " "}
-          </Text>
-          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, color: c.muted, fontVariant: ["tabular-nums"] }}>
-            {t.sessionX.wordsOf(idx + 1, words.length)}
-          </Text>
-        </View>
-      </View>
-
-      {/* Карточка слова — макет 2b: тёплая тень, волна-декор, тап = озвучка */}
+    <View style={{ flex: 1, gap: 18, paddingTop: 8 }}>
+      {/* Карточка слова — макет: radius 28, Lora 44, перевод терракотой */}
       <Pressable
         onPress={() => speakEnglish(w.en, { interrupt: true, rate: 1.0 })}
         accessibilityRole="button"
@@ -479,23 +510,25 @@ function Flow({
         style={{
           flex: 1,
           backgroundColor: c.surface,
-          borderRadius: 20,
+          borderRadius: 28,
           alignItems: "center",
           justifyContent: "center",
-          padding: 24,
-          gap: 4,
+          paddingHorizontal: 28,
+          paddingVertical: 36,
           shadowColor: "#3c280f",
-          shadowOpacity: 0.24,
-          shadowRadius: 18,
-          shadowOffset: { width: 0, height: 10 },
-          elevation: 5,
+          shadowOpacity: 0.26,
+          shadowRadius: 24,
+          shadowOffset: { width: 0, height: 14 },
+          elevation: 6,
         }}
       >
         <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
           style={{
             fontFamily: "Lora_500Medium",
-            fontSize: 36,
-            lineHeight: 46,
+            fontSize: 44,
+            lineHeight: 54,
             letterSpacing: -0.4,
             color: c.ink,
             textAlign: "center",
@@ -503,29 +536,36 @@ function Flow({
         >
           {w.en}
         </Text>
-        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted }}>{w.ipa}</Text>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 16, color: c.muted, opacity: 0.75, marginTop: 8 }}>
+          {w.ipa}
+        </Text>
         <Text
           style={{
             fontFamily: "GolosText_500Medium",
-            fontSize: 17,
-            lineHeight: 24,
+            fontSize: 23,
+            lineHeight: 30,
             color: c.brand,
             textAlign: "center",
-            marginTop: 6,
+            marginTop: 14,
           }}
         >
           {tr.text}
         </Text>
-        {/* Аудиоволна — цвет навыка «слух», приглашение прослушать */}
-        <View style={{ flexDirection: "row", gap: 3, alignItems: "flex-end", height: 20, marginTop: 12 }}>
-          {[8, 16, 11, 19, 7, 13].map((hh, i) => (
-            <View key={i} style={{ width: 4, height: hh, borderRadius: 2, backgroundColor: sk.sounds }} />
+        {/* Аудиоволна — охра навыка «слух», приглашение прослушать */}
+        <View style={{ flexDirection: "row", gap: 4, alignItems: "flex-end", height: 26, marginTop: 22 }}>
+          {[11, 22, 15, 26, 9, 18, 12].map((hh, i) => (
+            <View key={i} style={{ width: 5, height: hh, borderRadius: 2, backgroundColor: sk.sounds }} />
           ))}
         </View>
+        {w.exEn && (
+          <View style={{ marginTop: 22, maxWidth: 300 }}>
+            <HighlightedExample text={`“${w.exEn}”`} target={w.en} size={16} line={24} />
+          </View>
+        )}
       </Pressable>
 
       {/* «Ещё нет / Знаю» — узнавание прямо в потоке, ритм не останавливаем */}
-      <View style={{ flexDirection: "row", gap: 9 }}>
+      <View style={{ flexDirection: "row", gap: 12 }}>
         <Pressable
           onPress={() => {
             void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -535,20 +575,20 @@ function Flow({
           accessibilityLabel={t.sessionX.notYet}
           style={({ pressed }) => ({
             flex: 1,
-            minHeight: 50,
-            borderRadius: 13,
+            minHeight: 56,
+            borderRadius: 16,
             backgroundColor: c.surface,
             alignItems: "center",
             justifyContent: "center",
             shadowColor: "#3c280f",
-            shadowOpacity: 0.12,
-            shadowRadius: 9,
-            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.14,
+            shadowRadius: 10,
+            shadowOffset: { width: 0, height: 5 },
             elevation: 2,
             opacity: pressed ? 0.7 : 1,
           })}
         >
-          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13.5, color: c.muted }}>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 16, color: c.muted }}>
             {t.sessionX.notYet}
           </Text>
         </Pressable>
@@ -558,89 +598,44 @@ function Flow({
           accessibilityLabel={t.sessionX.knowA11y(w.en)}
           style={({ pressed }) => ({
             flex: 1,
-            minHeight: 50,
-            borderRadius: 13,
+            minHeight: 56,
+            borderRadius: 16,
             backgroundColor: c.accent,
             alignItems: "center",
             justifyContent: "center",
+            shadowColor: c.accent,
+            shadowOpacity: 0.4,
+            shadowRadius: 13,
+            shadowOffset: { width: 0, height: 7 },
+            elevation: 3,
             transform: [{ scale: pressed ? 0.98 : 1 }],
           })}
         >
-          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13.5, color: c.onBrand }}>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 16, color: c.onBrand }}>
             {t.sessionX.know}
           </Text>
         </Pressable>
       </View>
 
-      {/* Темп */}
-      <View style={{ flexDirection: "row", gap: 8 }}>
-        {TEMPOS.map((tp, i) => {
-          const on = i === tempoIdx;
-          return (
-            <Pressable
-              key={tp.id}
-              onPress={() => {
-                void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setTempoIdx(i);
-              }}
-              accessibilityRole="button"
-              accessibilityState={{ selected: on }}
-              style={({ pressed }) => ({
-                flex: 1,
-                minHeight: 44,
-                borderRadius: 12,
-                borderWidth: 1,
-                alignItems: "center",
-                justifyContent: "center",
-                borderColor: on ? sk.words : c.line,
-                backgroundColor: on ? sk.words : c.surface,
-                transform: [{ scale: pressed ? 0.97 : 1 }],
-              })}
-            >
-              <Text
-                style={{
-                  fontFamily: "GolosText_600SemiBold",
-                  fontSize: 13,
-                  color: on ? c.onBrand : c.ink,
-                }}
-              >
-                {t.sessionX.tempos[tp.id]}
-              </Text>
-            </Pressable>
-          );
-        })}
+      {/* Футер — макет: «темп 0,5 сек · Пауза». Тап по темпу листает режимы */}
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 4, paddingBottom: 4 }}>
+        <Pressable onPress={cycleTempo} accessibilityRole="button" hitSlop={8} style={{ minHeight: 44, justifyContent: "center" }}>
+          <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 14, color: c.muted, opacity: 0.8 }}>
+            {t.sessionX.tempoLine(t.sessionX.tempos[tempo.id])}
+            {knownCount > 0 ? `   ·   ${t.sessionX.knownN(knownCount)}` : ""}
+          </Text>
+        </Pressable>
+        <Pressable onPress={toggle} accessibilityRole="button" hitSlop={8} style={{ minHeight: 44, justifyContent: "center" }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: running ? c.muted : c.brand }}>
+            {running ? t.sessionX.pause : idx === 0 ? t.sessionX.go : t.sessionX.resume}
+          </Text>
+        </Pressable>
       </View>
-      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11, lineHeight: 16, color: c.muted, textAlign: "center" }}>
-        {t.sessionX.waveNote}
-      </Text>
-
-      {/* Пуск/пауза */}
-      <Pressable
-        onPress={toggle}
-        accessibilityRole="button"
-        style={({ pressed }) => ({
-          minHeight: 56,
-          borderRadius: 16,
-          backgroundColor: running ? c.surface : c.accent,
-          borderWidth: running ? 1 : 0,
-          borderColor: c.line,
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "row",
-          gap: 8,
-          transform: [{ scale: pressed ? 0.98 : 1 }],
-        })}
-      >
-        <Ionicons name={running ? "pause" : "play"} size={18} color={running ? c.ink : c.onBrand} />
-        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: running ? c.ink : c.onBrand}}>
-          {running ? t.sessionX.pause : idx === 0 ? t.sessionX.go : t.sessionX.resume}
-        </Text>
-      </Pressable>
     </View>
   );
 }
 
-/* ---------- Фаза 3 · Контекст: те же слова в живых фразах ---------- */
+/* ---------- Фаза 3 · Контекст: сплошной отрывок, тап = слой перевода ---------- */
 
 function Context({
   words,
@@ -665,6 +660,9 @@ function Context({
     return null;
   }
 
+  const newCount = items.filter((w) => !known.has(w.en.toLowerCase())).length;
+  const knownCount = items.length - newCount;
+
   function openWord(w: Word) {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     recordNoticed(w.en);
@@ -681,117 +679,144 @@ function Context({
   const selTr = selected ? translate(selected, nativeLang as never) : null;
 
   return (
-    <View style={{ flex: 1, paddingTop: 12, gap: 10 }}>
-      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, lineHeight: 19, color: c.muted }}>
-        {t.sessionX.ctxHint}
+    <View style={{ flex: 1, marginHorizontal: -30 }}>
+      {/* Кикер фазы — мята, как в макете */}
+      <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, letterSpacing: 1.1, textTransform: "uppercase", color: c.accent, paddingHorizontal: 30, paddingTop: 20 }}>
+        {t.sessionX.ctxPhase}
       </Text>
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 10, paddingBottom: 8 }}>
-        {items.map((w) => {
-          const ex = w.exEn as string;
-          const i = ex.toLowerCase().indexOf(w.en.toLowerCase());
-          const before = i >= 0 ? ex.slice(0, i) : ex;
-          const match = i >= 0 ? ex.slice(i, i + w.en.length) : "";
-          const after = i >= 0 ? ex.slice(i + w.en.length) : "";
-          const isKnown = known.has(w.en.toLowerCase());
-          return (
-            <Pressable
-              key={w.en}
-              onPress={() => openWord(w)}
-              accessibilityRole="button"
-              accessibilityLabel={w.en}
-              style={({ pressed }) => ({
-                backgroundColor: c.surface,
-                borderRadius: 16,
-                padding: 15,
-                shadowColor: "#3c280f",
-                shadowOpacity: 0.12,
-                shadowRadius: 9,
-                shadowOffset: { width: 0, height: 4 },
-                elevation: 2,
-                opacity: pressed ? 0.85 : 1,
-                borderWidth: selected?.en === w.en ? 1.5 : 0,
-                borderColor: c.brand,
-              })}
-            >
-              <Text style={{ fontFamily: "Lora_400Regular", fontSize: 17, lineHeight: 27, color: c.ink }}>
-                {before}
-                <Text
-                  style={
-                    isKnown
-                      ? { textDecorationLine: "underline", textDecorationColor: c.accent, color: c.ink }
-                      : { backgroundColor: c.amber, color: c.ink }
-                  }
-                >
-                  {match}
-                </Text>
-                {after}
+      {/* Сплошной живой отрывок: амбер = новое, мятное подчёркивание = знакомое */}
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 30, paddingTop: 16, paddingBottom: 12 }}>
+        <Text style={{ fontFamily: "Lora_400Regular", fontSize: 21, lineHeight: 37, color: c.ink }}>
+          {items.map((w, i) => {
+            const ex = w.exEn as string;
+            const at = ex.toLowerCase().indexOf(w.en.toLowerCase());
+            const isKnown = known.has(w.en.toLowerCase());
+            const isSel = selected?.en === w.en;
+            return (
+              <Text key={w.en}>
+                {i > 0 ? "  " : ""}
+                {at >= 0 ? (
+                  <>
+                    {ex.slice(0, at)}
+                    <Text
+                      onPress={() => openWord(w)}
+                      suppressHighlighting
+                      style={
+                        isKnown
+                          ? {
+                              textDecorationLine: "underline",
+                              textDecorationColor: c.accent,
+                              color: c.ink,
+                              backgroundColor: isSel ? c.brandSoft : "transparent",
+                            }
+                          : { backgroundColor: c.amber, color: "#3b2c07" }
+                      }
+                    >
+                      {ex.slice(at, at + w.en.length)}
+                    </Text>
+                    {ex.slice(at + w.en.length)}
+                  </>
+                ) : (
+                  <Text onPress={() => openWord(w)} suppressHighlighting>
+                    {ex}
+                  </Text>
+                )}
               </Text>
-            </Pressable>
-          );
-        })}
-        {/* Легенда маркировки — как в макете: амбер = новое, мята = знакомое */}
-        <View style={{ flexDirection: "row", gap: 12, alignItems: "center", paddingHorizontal: 2 }}>
-          <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
-            <View style={{ width: 10, height: 10, borderRadius: 2, backgroundColor: c.amber }} />
-            <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 11, color: c.muted }}>
-              {t.sessionX.ctxLegendNew}
-            </Text>
-          </View>
-          <View style={{ flexDirection: "row", gap: 5, alignItems: "center" }}>
-            <View style={{ width: 10, height: 3, borderRadius: 2, backgroundColor: c.accent }} />
-            <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 11, color: c.muted }}>
-              {t.sessionX.ctxLegendKnown}
-            </Text>
-          </View>
+            );
+          })}
+        </Text>
+
+        {/* Легенда маркировки */}
+        <View style={{ flexDirection: "row", gap: 16, marginTop: 20, flexWrap: "wrap" }}>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13, color: c.brand }}>
+            ■ {t.sessionX.ctxNew(newCount)}
+          </Text>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13, color: c.accent }}>
+            — {t.sessionX.ctxKnown(knownCount)}
+          </Text>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13, color: c.muted, opacity: 0.8 }}>
+            {t.sessionX.ctxTap}
+          </Text>
         </View>
+
+        {!selected && (
+          <Pressable
+            onPress={onDone}
+            accessibilityRole="button"
+            style={({ pressed }) => ({
+              marginTop: 24,
+              minHeight: 58,
+              borderRadius: 18,
+              backgroundColor: c.brand,
+              alignItems: "center",
+              justifyContent: "center",
+              shadowColor: c.brand,
+              shadowOpacity: 0.45,
+              shadowRadius: 14,
+              shadowOffset: { width: 0, height: 8 },
+              elevation: 4,
+              transform: [{ scale: pressed ? 0.98 : 1 }],
+            })}
+          >
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.onBrand }}>
+              {t.sessionX.ctxNext}
+            </Text>
+          </Pressable>
+        )}
       </ScrollView>
 
-      {/* Слой перевода снизу — макет: слово · транскрипция · перевод · действия */}
+      {/* Слой перевода снизу — макет: ручка, Lora 28, чернильная кнопка */}
       {selected && selTr && (
         <View
           style={{
             backgroundColor: c.surface,
-            borderRadius: 18,
-            padding: 16,
-            gap: 4,
+            borderTopLeftRadius: 30,
+            borderTopRightRadius: 30,
+            paddingHorizontal: 30,
+            paddingTop: 20,
+            paddingBottom: 26,
             shadowColor: "#3c280f",
-            shadowOpacity: 0.22,
-            shadowRadius: 16,
-            shadowOffset: { width: 0, height: 8 },
-            elevation: 5,
+            shadowOpacity: 0.3,
+            shadowRadius: 24,
+            shadowOffset: { width: 0, height: -10 },
+            elevation: 10,
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "baseline", justifyContent: "space-between" }}>
-            <Text style={{ fontFamily: "Lora_500Medium", fontSize: 22, color: c.ink }}>
+          <Pressable onPress={() => setSelected(null)} accessibilityRole="button" accessibilityLabel={t.readX.sheetClose} hitSlop={12}>
+            <View style={{ width: 44, height: 5, borderRadius: 5, backgroundColor: c.line, alignSelf: "center", marginBottom: 16 }} />
+          </Pressable>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
+            <Text style={{ fontFamily: "Lora_500Medium", fontSize: 28, color: c.ink }}>
               {selected.en}
             </Text>
-            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted, opacity: 0.75 }}>
               {selected.ipa}
             </Text>
           </View>
-          <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 15, color: c.brand }}>
+          <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 18, color: c.brand, marginTop: 6 }}>
             {selTr.text}
           </Text>
-          <View style={{ flexDirection: "row", gap: 9, marginTop: 10 }}>
+          {selected.exEn && (
+            <Text style={{ fontFamily: "Lora_400Regular", fontStyle: "italic", fontSize: 16, lineHeight: 24, color: c.muted, marginTop: 12 }}>
+              “{selected.exEn}”
+            </Text>
+          )}
+          <View style={{ flexDirection: "row", gap: 12, marginTop: 18 }}>
             <Pressable
               onPress={() => speakEnglish(selected.exEn ?? selected.en, { interrupt: true, rate: 0.95 })}
               accessibilityRole="button"
               style={({ pressed }) => ({
                 flex: 1,
-                minHeight: 46,
-                borderRadius: 12,
-                borderWidth: 1,
-                borderColor: c.line,
+                minHeight: 50,
+                borderRadius: 14,
+                backgroundColor: c.brandSoft,
                 alignItems: "center",
                 justifyContent: "center",
-                flexDirection: "row",
-                gap: 6,
                 opacity: pressed ? 0.7 : 1,
               })}
             >
-              <Ionicons name="volume-medium" size={16} color={c.ink} />
-              <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13, color: c.ink }}>
+              <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 15, color: c.brandInk }}>
                 {t.sessionX.ctxListen}
               </Text>
             </Pressable>
@@ -801,49 +826,43 @@ function Context({
               accessibilityRole="button"
               style={({ pressed }) => ({
                 flex: 1,
-                minHeight: 46,
-                borderRadius: 12,
-                backgroundColor: added.has(selected.en) ? c.brandSoft : c.accent,
+                minHeight: 50,
+                borderRadius: 14,
+                backgroundColor: added.has(selected.en) ? c.accent : c.ink,
                 alignItems: "center",
                 justifyContent: "center",
                 transform: [{ scale: pressed ? 0.98 : 1 }],
               })}
             >
-              <Text
-                style={{
-                  fontFamily: "GolosText_600SemiBold",
-                  fontSize: 13,
-                  color: added.has(selected.en) ? c.brandD : c.onBrand,
-                }}
-              >
+              <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 15, color: added.has(selected.en) ? c.onBrand : c.bg }}>
                 {added.has(selected.en) ? t.sessionX.ctxAdded : t.sessionX.ctxAdd}
               </Text>
             </Pressable>
           </View>
+          <Pressable
+            onPress={onDone}
+            accessibilityRole="button"
+            style={({ pressed }) => ({
+              marginTop: 12,
+              minHeight: 52,
+              borderRadius: 16,
+              backgroundColor: c.brand,
+              alignItems: "center",
+              justifyContent: "center",
+              transform: [{ scale: pressed ? 0.98 : 1 }],
+            })}
+          >
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15.5, color: c.onBrand }}>
+              {t.sessionX.ctxNext}
+            </Text>
+          </Pressable>
         </View>
       )}
-
-      <Pressable
-        onPress={onDone}
-        accessibilityRole="button"
-        style={({ pressed }) => ({
-          minHeight: 56,
-          borderRadius: 16,
-          backgroundColor: c.brand,
-          alignItems: "center",
-          justifyContent: "center",
-          transform: [{ scale: pressed ? 0.98 : 1 }],
-        })}
-      >
-        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: c.onBrand }}>
-          {t.sessionX.ctxNext}
-        </Text>
-      </Pressable>
     </View>
   );
 }
 
-/* ---------- Фаза 4 · Сказать своё: активный вывод — финал сессии ---------- */
+/* ---------- Фаза 4 · Сказать своё — макет: петроль-кикер, белые Lora-чипы ---------- */
 
 function Say({ words, onDone }: { words: Word[]; onDone: () => void }) {
   const { c, sk } = useMarina();
@@ -893,18 +912,22 @@ function Say({ words, onDone }: { words: Word[]; onDone: () => void }) {
   return (
     <ScrollView
       style={{ flex: 1 }}
-      contentContainerStyle={{ paddingTop: 12, gap: 12, paddingBottom: 24 }}
+      contentContainerStyle={{ paddingTop: 20, gap: 0, paddingBottom: 24, flexGrow: 1 }}
       keyboardShouldPersistTaps="handled"
     >
-      <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 24, lineHeight: 31, color: c.ink }}>
+      {/* Кикер фазы — петроль «речь», как в макете */}
+      <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, letterSpacing: 1.1, textTransform: "uppercase", color: sk.video }}>
+        {t.sessionX.sayPhase}
+      </Text>
+      <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 27, lineHeight: 33, letterSpacing: -0.5, color: c.ink, marginTop: 10 }}>
         {lang === "en" ? q.en : q.ru}
       </Text>
-      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted }}>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.muted, opacity: 0.9, marginTop: 11 }}>
         {t.sessionX.sayHint}
       </Text>
 
-      {/* Чипы-опоры из сегодняшних слов */}
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+      {/* Чипы-опоры: белые, Lora — слово как предмет (макет) */}
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 9, marginTop: 22 }}>
         {chips.map((w) => (
           <Pressable
             key={w}
@@ -912,86 +935,117 @@ function Say({ words, onDone }: { words: Word[]; onDone: () => void }) {
             accessibilityRole="button"
             accessibilityLabel={t.sessionX.sayChipA11y(w)}
             style={({ pressed }) => ({
-              paddingHorizontal: 13,
-              minHeight: 38,
+              paddingHorizontal: 15,
+              minHeight: 40,
               justifyContent: "center",
-              borderRadius: 999,
-              backgroundColor: c.amber,
-              opacity: pressed ? 0.7 : 1,
+              borderRadius: 22,
+              backgroundColor: c.surface,
+              shadowColor: "#3c280f",
+              shadowOpacity: 0.18,
+              shadowRadius: 8,
+              shadowOffset: { width: 0, height: 4 },
+              elevation: 2,
+              transform: [{ scale: pressed ? 0.96 : 1 }],
             })}
           >
-            <Text style={{ fontFamily: "Lora_500Medium", fontSize: 14, color: "#3b2c07" }}>{w}</Text>
+            <Text style={{ fontFamily: "Lora_500Medium", fontSize: 16, color: c.ink }}>{w}</Text>
           </Pressable>
         ))}
       </View>
 
-      <TextInput
-        value={text}
-        onChangeText={setText}
-        multiline
-        placeholder={t.sessionX.sayPlaceholder}
-        placeholderTextColor={c.muted}
+      {/* Поле — белая карточка, пишем Lora (голос языка) */}
+      <View
         style={{
-          minHeight: 130,
+          flex: 1,
+          minHeight: 150,
           backgroundColor: c.surface,
-          borderRadius: 16,
-          borderWidth: 1,
-          borderColor: c.line,
-          padding: 14,
-          fontFamily: "Lora_400Regular",
-          fontSize: 17,
-          lineHeight: 26,
-          color: c.ink,
-          textAlignVertical: "top",
+          borderRadius: 22,
+          padding: 22,
+          marginTop: 22,
+          shadowColor: "#3c280f",
+          shadowOpacity: 0.15,
+          shadowRadius: 12,
+          shadowOffset: { width: 0, height: 6 },
+          elevation: 3,
         }}
-      />
+      >
+        <TextInput
+          value={text}
+          onChangeText={setText}
+          multiline
+          placeholder={t.sessionX.sayPlaceholder}
+          placeholderTextColor={c.muted}
+          style={{
+            flex: 1,
+            fontFamily: "Lora_400Regular",
+            fontSize: 18,
+            lineHeight: 30,
+            color: c.ink,
+            textAlignVertical: "top",
+          }}
+        />
+      </View>
 
-      {/* Голос: запись только для себя */}
-      {rec.supported && (
-        <Pressable
-          onPress={toggleRecord}
-          accessibilityRole="button"
-          style={({ pressed }) => ({
-            minHeight: 50,
-            borderRadius: 14,
-            borderWidth: 1.5,
-            borderColor: rec.recording ? c.brand : c.line,
-            backgroundColor: rec.recording ? c.brandSoft : c.surface,
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "row",
-            gap: 8,
-            opacity: pressed ? 0.8 : 1,
-          })}
-        >
-          <Ionicons name={rec.recording ? "stop" : "mic"} size={18} color={rec.recording ? c.brandD : sk.video} />
-          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.ink }}>
-            {rec.recording ? t.sessionX.sayStop : audioUri ? t.sessionX.sayRecorded : t.sessionX.sayRecord}
-          </Text>
-        </Pressable>
-      )}
-      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11.5, lineHeight: 16, color: c.muted }}>
+      <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, lineHeight: 17, color: c.muted, opacity: 0.7, marginTop: 10 }}>
         {t.sessionX.sayPrivate}
       </Text>
 
-      <Pressable
-        onPress={save}
-        disabled={!canSave}
-        accessibilityRole="button"
-        style={({ pressed }) => ({
-          minHeight: 58,
-          borderRadius: 16,
-          backgroundColor: canSave ? c.brand : c.brandSoft,
-          alignItems: "center",
-          justifyContent: "center",
-          transform: [{ scale: pressed && canSave ? 0.98 : 1 }],
-        })}
-      >
-        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 16, color: canSave ? c.onBrand : c.brandD }}>
-          {t.sessionX.saySave}
-        </Text>
-      </Pressable>
-      <Pressable onPress={onDone} accessibilityRole="button" style={{ minHeight: 44, justifyContent: "center", alignItems: "center" }}>
+      {/* Микрофон-квадрат + терракотовый CTA — как в макете */}
+      <View style={{ flexDirection: "row", gap: 12, alignItems: "center", marginTop: 14 }}>
+        {rec.supported && (
+          <Pressable
+            onPress={toggleRecord}
+            accessibilityRole="button"
+            accessibilityLabel={rec.recording ? t.sessionX.sayStop : t.sessionX.sayRecord}
+            style={({ pressed }) => ({
+              width: 60,
+              height: 60,
+              borderRadius: 20,
+              backgroundColor: rec.recording ? c.brandSoft : c.surface,
+              borderWidth: rec.recording ? 1.5 : 0,
+              borderColor: c.brand,
+              alignItems: "center",
+              justifyContent: "center",
+              shadowColor: "#3c280f",
+              shadowOpacity: 0.16,
+              shadowRadius: 10,
+              shadowOffset: { width: 0, height: 5 },
+              elevation: 2,
+              transform: [{ scale: pressed ? 0.95 : 1 }],
+            })}
+          >
+            <Ionicons
+              name={rec.recording ? "stop" : audioUri ? "checkmark" : "mic"}
+              size={22}
+              color={rec.recording ? c.brandD : audioUri ? c.accent : sk.video}
+            />
+          </Pressable>
+        )}
+        <Pressable
+          onPress={save}
+          disabled={!canSave}
+          accessibilityRole="button"
+          style={({ pressed }) => ({
+            flex: 1,
+            minHeight: 60,
+            borderRadius: 18,
+            backgroundColor: canSave ? c.brand : c.brandSoft,
+            alignItems: "center",
+            justifyContent: "center",
+            shadowColor: c.brand,
+            shadowOpacity: canSave ? 0.45 : 0,
+            shadowRadius: 14,
+            shadowOffset: { width: 0, height: 8 },
+            elevation: canSave ? 4 : 0,
+            transform: [{ scale: pressed && canSave ? 0.98 : 1 }],
+          })}
+        >
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: canSave ? c.onBrand : c.brandInk }}>
+            {t.sessionX.saySave}
+          </Text>
+        </Pressable>
+      </View>
+      <Pressable onPress={onDone} accessibilityRole="button" style={{ minHeight: 44, justifyContent: "center", alignItems: "center", marginTop: 4 }}>
         <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted }}>
           {t.sessionX.saySkip}
         </Text>

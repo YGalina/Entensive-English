@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import BottomNav from "@/components/BottomNav";
+import AppShell from "@/components/AppShell";
 import OnboardingGate from "@/components/OnboardingGate";
 import { Text, Play, Sound, Chat, Keyboard, ArrowRight } from "@/components/Icons";
 import { useUILang } from "@ie/core/prefs";
@@ -43,8 +43,8 @@ export default function LibraryPage() {
 
   return (
     <OnboardingGate>
-      <div className="flex min-h-dvh flex-col">
-        <main className="mx-auto w-full max-w-[480px] flex-1 px-5 pt-7 pb-6">
+      <AppShell>
+        <main className="mx-auto w-full max-w-[560px] flex-1 px-5 pt-7 pb-6">
           <header className="mb-5">
             <h1 data-testid="library-title" className="font-heading text-3xl font-extrabold tracking-tight text-ink">
               {t.title}
@@ -82,8 +82,7 @@ export default function LibraryPage() {
             {t.own}
           </p>
         </main>
-        <BottomNav />
-      </div>
+      </AppShell>
     </OnboardingGate>
   );
 }
