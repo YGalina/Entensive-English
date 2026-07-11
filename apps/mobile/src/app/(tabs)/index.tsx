@@ -4,17 +4,11 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useDayPlan } from "@ie/core/dayplan";
-import { useArtifacts, useOutputStats } from "@ie/core/output";
-import { speakingDue, useAssessVersion } from "@ie/core/assess";
-import { booksForReader } from "@ie/core/data/gutenberg";
-import { SHADOWING } from "@ie/core/data/shadowing";
-import { STORIES } from "@ie/core/data/reading";
+import { useOutputStats } from "@ie/core/output";
 import { useSrsStats } from "@ie/core/srs";
 import { useOutcome } from "@ie/core/outcome";
-import { usePrefs } from "@ie/core/prefs";
 import { useT } from "@/lib/i18n";
-import { useMarina, skillTone } from "@/theme";
-import { OutputCard } from "@/components/output-card";
+import { useMarina } from "@/theme";
 import { GuardianCard } from "@/components/guardian-card";
 
 // «Сегодня» — по макету 24a (docs/design, Living Content): утро и вечер одного
@@ -47,17 +41,9 @@ export default function TodayScreen() {
   const { t, lang } = useT();
   const L = lang;
   const en = L === "en";
-  const prefs = usePrefs();
   const outcome = useOutcome();
   const srs = useSrsStats();
-  const artifacts = useArtifacts(40);
-  const weekday = new Date().getDay();
-  const reviewDue =
-    (weekday === 0 || weekday === 6) &&
-    !artifacts.some((a) => a.type === "review" && a.createdAt >= Date.now() - 6 * 864e5);
   const outStats = useOutputStats();
-  useAssessVersion();
-  const checkupDue = speakingDue(outStats.activeDays);
 
   const steps = plan.steps.filter((s) => !WEB_ONLY_STEPS.has(s.id));
   const current = steps.find((s) => !s.done) ?? null;
@@ -100,19 +86,6 @@ export default function TodayScreen() {
     return t.homeX.etaNoPace;
   })();
 
-  // «Полка дня»: конечная (НЕ лента) — три двери в смыслы на сегодня.
-  const shelf = (() => {
-    const day = Math.floor(Date.now() / 864e5);
-    const books = booksForReader(prefs?.topics ?? [], prefs?.level);
-    const book = books.length ? books[day % Math.min(3, books.length)] : null;
-    const video = SHADOWING.length ? SHADOWING[day % SHADOWING.length] : null;
-    const lvl = (prefs?.level ?? "b1").toLowerCase();
-    const order = ["a1", "a2", "b1", "b2", "c1"];
-    const li = Math.max(0, order.indexOf(lvl));
-    const stories = STORIES.filter((st) => Math.abs(order.indexOf(st.level) - li) <= 1);
-    const story = stories.length ? stories[day % stories.length] : STORIES[day % STORIES.length];
-    return { book, video, story };
-  })();
 
   return (
     <ScrollView
@@ -122,10 +95,10 @@ export default function TodayScreen() {
       {/* Шапка: дата · Сегодня · аватар */}
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" }}>
         <View>
-          <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 12.5, color: c.muted }}>
+          <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 15, color: c.muted }}>
             {dateLine}
           </Text>
-          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 25, letterSpacing: -0.5, color: c.ink, marginTop: 3 }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 34, letterSpacing: -0.8, color: c.ink, marginTop: 4 }}>
             {eveningView ? t.homeX.eveningTitle : t.today.title}
           </Text>
         </View>
@@ -137,9 +110,9 @@ export default function TodayScreen() {
           accessibilityRole="button"
           accessibilityLabel={t.profile.title}
           style={({ pressed }) => ({
-            width: 38,
-            height: 38,
-            borderRadius: 19,
+            width: 46,
+            height: 46,
+            borderRadius: 23,
             backgroundColor: c.brand,
             alignItems: "center",
             justifyContent: "center",
@@ -165,19 +138,19 @@ export default function TodayScreen() {
         }}
       >
         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
-          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 11, letterSpacing: 0.7, textTransform: "uppercase", color: c.muted }}>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12.5, letterSpacing: 0.8, textTransform: "uppercase", color: c.muted }}>
             {t.homeX.pathTo(outcome.levelNext.toUpperCase())}
           </Text>
-          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 12, color: c.ink, fontVariant: ["tabular-nums"] }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.ink, fontVariant: ["tabular-nums"] }}>
             {t.homeX.hoursOf(Math.round(outcome.hoursDone), outcome.hoursGoal)}
           </Text>
         </View>
-        <View style={{ height: 6, borderRadius: 6, backgroundColor: c.brandSoft, marginTop: 8, overflow: "hidden", flexDirection: "row" }}>
+        <View style={{ height: 8, borderRadius: 8, backgroundColor: c.brandSoft, marginTop: 10, overflow: "hidden", flexDirection: "row" }}>
           {/* градиент терракота→амбер двумя сегментами (без linear-gradient зависимости) */}
           <View style={{ width: `${Math.max(2, hoursPct * 60)}%`, backgroundColor: c.brand }} />
           <View style={{ width: `${hoursPct * 40}%`, backgroundColor: sk.sounds }} />
         </View>
-        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11, color: c.muted, marginTop: 7 }}>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted, marginTop: 9 }}>
           {etaNote}
         </Text>
       </View>
@@ -222,13 +195,13 @@ export default function TodayScreen() {
 
           {/* Вечерний круг — тёмная карточка «свет лампы» */}
           <View style={{ backgroundColor: "#2e2a22", borderRadius: 18, padding: 16 }}>
-            <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 10, letterSpacing: 1, textTransform: "uppercase", color: "#e8b36a" }}>
+            <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, letterSpacing: 1.1, textTransform: "uppercase", color: "#e8b36a" }}>
               {t.homeX.circleLabel}
             </Text>
-            <Text style={{ fontFamily: "Lora_400Regular", fontSize: 16, lineHeight: 23, color: "#f5efe2", marginTop: 7 }}>
+            <Text style={{ fontFamily: "Lora_400Regular", fontSize: 19, lineHeight: 28, color: "#f5efe2", marginTop: 9 }}>
               {t.homeX.circleQuote}
             </Text>
-            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11.5, lineHeight: 17, color: "#9c937d", marginTop: 6 }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 19, color: "#9c937d", marginTop: 8 }}>
               {t.homeX.circleNote}
             </Text>
             <Pressable
@@ -238,16 +211,16 @@ export default function TodayScreen() {
               }}
               accessibilityRole="button"
               style={({ pressed }) => ({
-                marginTop: 12,
-                minHeight: 48,
-                borderRadius: 13,
+                marginTop: 14,
+                minHeight: 58,
+                borderRadius: 999,
                 backgroundColor: "#e8b36a",
                 alignItems: "center",
                 justifyContent: "center",
                 transform: [{ scale: pressed ? 0.98 : 1 }],
               })}
             >
-              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13.5, color: "#2a2214" }}>
+              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: "#2a2214" }}>
                 {outStats.statusToday ? t.homeX.circleOpenAgain : t.homeX.circleCta}
               </Text>
             </Pressable>
@@ -271,19 +244,19 @@ export default function TodayScreen() {
             }}
           >
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-              <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 10, letterSpacing: 1, textTransform: "uppercase", color: c.brand }}>
+              <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, letterSpacing: 1.1, textTransform: "uppercase", color: c.brand }}>
                 {t.homeX.oneStep}
               </Text>
               {current && current.goalMin > 0 && (
-                <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 11.5, color: c.muted }}>
+                <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13.5, color: c.muted }}>
                   {t.homeX.min(current.goalMin)}
                 </Text>
               )}
             </View>
-            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 18, lineHeight: 22, color: c.ink, marginTop: 7 }}>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 24, lineHeight: 29, color: c.ink, marginTop: 9 }}>
               {current ? current[L].title : t.today.allDone}
             </Text>
-            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12.5, lineHeight: 18.5, color: c.muted, marginTop: 4 }}>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.muted, marginTop: 6 }}>
               {current ? current[L].note : t.today.allDoneNote}
             </Text>
             {current && (
@@ -292,16 +265,16 @@ export default function TodayScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={`${t.today.start}: ${current[L].title}`}
                 style={({ pressed }) => ({
-                  marginTop: 12,
-                  minHeight: 48,
-                  borderRadius: 13,
+                  marginTop: 16,
+                  minHeight: 60,
+                  borderRadius: 999,
                   backgroundColor: c.brand,
                   alignItems: "center",
                   justifyContent: "center",
                   transform: [{ scale: pressed ? 0.98 : 1 }],
                 })}
               >
-                <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14, color: c.onBrand }}>
+                <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 17, color: c.onBrand }}>
                   {t.today.start}
                 </Text>
               </Pressable>
@@ -311,12 +284,26 @@ export default function TodayScreen() {
           {/* Потом · Вечером — две малые карточки */}
           <View style={{ flexDirection: "row", gap: 10 }}>
             <SmallCard
-              label={srs.produceDue > 0 ? t.homeX.later(5) : t.homeX.later(4)}
+              label={
+                !outStats.morningToday
+                  ? t.homeX.morningMin(1)
+                  : srs.produceDue > 0
+                    ? t.homeX.later(5)
+                    : t.homeX.later(4)
+              }
               labelColor={c.accent}
-              title={srs.produceDue > 0 ? t.homeX.sayWords : t.homeX.playScene}
+              title={
+                !outStats.morningToday
+                  ? t.homeX.phraseSelf
+                  : srs.produceDue > 0
+                    ? t.homeX.sayWords
+                    : t.homeX.playScene
+              }
               onPress={() => {
                 tap();
-                router.push((srs.produceDue > 0 ? "/produce" : "/roles") as never);
+                router.push(
+                  (!outStats.morningToday ? "/phrase" : srs.produceDue > 0 ? "/produce" : "/roles") as never
+                );
               }}
             />
             <SmallCard
@@ -330,9 +317,6 @@ export default function TodayScreen() {
             />
           </View>
 
-          {/* Утренняя фраза — маленький вывод дня. Вечером статус живёт в
-              вечернем круге (тёмный экран) — инлайн-карточку не дублируем. */}
-          {!evening && <OutputCard />}
         </>
       )}
 
@@ -359,133 +343,14 @@ export default function TodayScreen() {
         })}
       >
         <Ionicons name="people" size={18} color={c.brandInk} />
-        <Text style={{ flex: 1, fontFamily: "GolosText_500Medium", fontSize: 12, lineHeight: 17, color: c.brandInk }}>
+        <Text style={{ flex: 1, fontFamily: "GolosText_500Medium", fontSize: 14, lineHeight: 20, color: c.brandInk }}>
           {t.homeX.communityLine}
         </Text>
-        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 12, color: c.brandD }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 14.5, color: c.brandD }}>
           {t.homeX.communityCta}
         </Text>
       </Pressable>
 
-      {/* Полка дня: три двери в смыслы (конечная, не лента) */}
-      <View style={{ gap: 8, marginTop: 3 }}>
-        <View style={{ flexDirection: "row", alignItems: "baseline", gap: 8 }}>
-          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
-            {t.today.shelf}
-          </Text>
-          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 11, color: c.muted }}>
-            {t.today.shelfNote}
-          </Text>
-        </View>
-        <View style={{ flexDirection: "row", gap: 8 }}>
-          {shelf.book && (
-            <ShelfCard
-              icon="book"
-              kind={t.today.shelfBook}
-              title={shelf.book.title}
-              tone={sk.reading}
-              onPress={() => {
-                tap();
-                router.push({ pathname: "/read", params: { book: shelf.book!.bookId } } as never);
-              }}
-            />
-          )}
-          {shelf.video && (
-            <ShelfCard
-              icon="play"
-              kind={t.today.shelfVideo}
-              title={shelf.video.title}
-              tone={sk.video}
-              onPress={() => {
-                tap();
-                router.push({ pathname: "/listen", params: { video: shelf.video!.id } } as never);
-              }}
-            />
-          )}
-          {shelf.story && (
-            <ShelfCard
-              icon="document-text"
-              kind={t.today.shelfText}
-              title={shelf.story.title}
-              tone={c.brand}
-              onPress={() => {
-                tap();
-                router.push({ pathname: "/read", params: { story: shelf.story!.id } } as never);
-              }}
-            />
-          )}
-        </View>
-      </View>
-
-      {/* Дорожка дня: компактные этапы-точки */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          backgroundColor: c.surface,
-          borderRadius: radius.soft,
-          borderWidth: 1,
-          borderColor: c.line,
-          paddingVertical: 12,
-          paddingHorizontal: 8,
-        }}
-      >
-        {steps.map((s) => {
-          const tone = skillTone(s.tone, sk, c.brand);
-          const isCurrent = current?.id === s.id;
-          return (
-            <Pressable
-              key={s.id}
-              onPress={() => openStep(s.id, s[L].title)}
-              accessibilityRole="button"
-              accessibilityLabel={`${s[L].title}: ${s.done ? t.today.stepDone : isCurrent ? t.today.stepCurrent : `${s.pct}%`}`}
-              hitSlop={6}
-              style={({ pressed }) => ({ alignItems: "center", gap: 5, flex: 1, opacity: pressed ? 0.6 : 1 })}
-            >
-              <View
-                style={{
-                  width: 30,
-                  height: 30,
-                  borderRadius: 15,
-                  borderWidth: 2,
-                  borderColor: s.done ? tone : isCurrent ? c.brand : c.line,
-                  backgroundColor: s.done ? tone : "transparent",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {s.done ? (
-                  <Ionicons name="checkmark" size={15} color={c.onBrand} />
-                ) : isCurrent ? (
-                  <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: c.brand }} />
-                ) : null}
-              </View>
-              <Text
-                numberOfLines={1}
-                style={{ fontFamily: "GolosText_600SemiBold", fontSize: 9.5, color: s.done || isCurrent ? c.ink : c.muted }}
-              >
-                {s[L].title.split(" ")[0]}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
-
-      {/* Ещё практика: роли · 3-минутка · срез · разбор — тихой строкой */}
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-        <MoreChip icon="library-outline" label={t.vocabX.title} onPress={() => { tap(); router.push("/vocab" as never); }} />
-        <MoreChip icon="film-outline" label={t.homeX.chipRoles} onPress={() => { tap(); router.push("/roles" as never); }} />
-        <MoreChip icon="timer-outline" label={t.homeX.chipThree} onPress={() => { tap(); router.push("/three" as never); }} />
-        {srs.produceDue > 0 && (
-          <MoreChip icon="mic-outline" label={t.homeX.chipProduce(srs.produceDue)} onPress={() => { tap(); router.push("/produce" as never); }} />
-        )}
-        {checkupDue && (
-          <MoreChip icon="pulse-outline" label={t.homeX.chipCheckup} onPress={() => { tap(); router.push("/checkup" as never); }} />
-        )}
-        {reviewDue && (
-          <MoreChip icon="clipboard-outline" label={t.homeX.chipReview} onPress={() => { tap(); router.push("/coach" as never); }} />
-        )}
-      </View>
     </ScrollView>
   );
 }
@@ -533,78 +398,4 @@ function SmallCard({
   );
 }
 
-/* ---------- Чип «ещё практика» ---------- */
 
-function MoreChip({ icon, label, onPress }: { icon: string; label: string; onPress: () => void }) {
-  const { c } = useMarina();
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={label}
-      style={({ pressed }) => ({
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 6,
-        minHeight: 40,
-        paddingHorizontal: 12,
-        borderRadius: 20,
-        borderWidth: 1,
-        borderColor: c.line,
-        backgroundColor: pressed ? c.brandSoft : c.surface,
-      })}
-    >
-      <Ionicons name={icon as never} size={14} color={c.muted} />
-      <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, color: c.brandInk }}>{label}</Text>
-    </Pressable>
-  );
-}
-
-/* ---------- Карточка полки ---------- */
-
-function ShelfCard({
-  icon,
-  kind,
-  title,
-  tone,
-  onPress,
-}: {
-  icon: string;
-  kind: string;
-  title: string;
-  tone: string;
-  onPress: () => void;
-}) {
-  const { c, radius } = useMarina();
-  return (
-    <Pressable
-      onPress={onPress}
-      accessibilityRole="button"
-      accessibilityLabel={`${kind}: ${title}`}
-      style={({ pressed }) => ({
-        flex: 1,
-        backgroundColor: pressed ? c.brandSoft : c.surface,
-        borderRadius: radius.soft,
-        borderWidth: 1,
-        borderColor: c.line,
-        padding: 10,
-        gap: 6,
-        minHeight: 92,
-        transform: [{ scale: pressed ? 0.98 : 1 }],
-      })}
-    >
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-        <Ionicons name={icon as never} size={13} color={tone} />
-        <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 9.5, letterSpacing: 0.4, textTransform: "uppercase", color: c.muted }}>
-          {kind}
-        </Text>
-      </View>
-      <Text
-        numberOfLines={3}
-        style={{ fontFamily: "GolosText_700Bold", fontSize: 12.5, lineHeight: 17, color: c.ink }}
-      >
-        {title}
-      </Text>
-    </Pressable>
-  );
-}
