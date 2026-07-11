@@ -165,6 +165,19 @@ export default function ProfileScreen() {
             {t.diaryX.title} →
           </Text>
         </Pressable>
+        <Pressable
+          onPress={() => {
+            tap();
+            router.push("/vocab" as never);
+          }}
+          accessibilityRole="button"
+          style={({ pressed }) => ({ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6, minHeight: 44, marginBottom: 12, borderRadius: 12, backgroundColor: pressed ? c.brandSoft : "transparent", borderWidth: 1, borderColor: c.line })}
+        >
+          <Ionicons name="library-outline" size={15} color={c.brand} />
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 13.5, color: c.brand }}>
+            {t.vocabX.title} →
+          </Text>
+        </Pressable>
       </Card>
 
       {/* ---------- Способности: «что я могу», а не «сколько стрик» ---------- */}
