@@ -30,10 +30,10 @@ export const DAY_STEPS: DayStep[] = [
     tone: "--sk-words",
     href: "/session/health",
     goalMin: 15,
-    activities: ["flash", "context", "recognition"],
+    activities: ["flash", "context", "recognition", "output"],
     kind: "time",
-    ru: { title: "Сеанс дня", note: "настройка → киносеанс → контекст → узнавание" },
-    en: { title: "Today’s session", note: "attune → exposure → context → recognition" },
+    ru: { title: "Сессия дня", note: "поток слов → контекст → узнавание → сказать своё" },
+    en: { title: "Today’s session", note: "word flow → context → recognition → say your own" },
   },
   {
     id: "review",

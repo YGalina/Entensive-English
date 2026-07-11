@@ -51,29 +51,14 @@ export default function VocabScreen() {
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: 20, paddingTop: insets.top + 12, paddingBottom: insets.bottom + 24, gap: 12 }}
       >
-        {/* Шапка */}
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <Pressable
-            onPress={() => {
-              tap();
-              if (router.canGoBack()) router.back();
-              else router.replace("/");
-            }}
-            accessibilityRole="button"
-            accessibilityLabel={t.diaryX.close}
-            hitSlop={8}
-            style={({ pressed }) => ({ minHeight: 44, justifyContent: "center", opacity: pressed ? 0.6 : 1 })}
-          >
-            <Ionicons name="chevron-back" size={22} color={c.muted} />
-          </Pressable>
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 24, letterSpacing: -0.4, color: c.ink }}>
-              {v.title}
-            </Text>
-            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted, marginTop: 1 }}>
-              {v.subtitle(entries.length)}
-            </Text>
-          </View>
+        {/* Шапка — «Словарь» теперь таб, кнопка «назад» не нужна */}
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 24, letterSpacing: -0.4, color: c.ink }}>
+            {v.title}
+          </Text>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted, marginTop: 1 }}>
+            {v.subtitle(entries.length)}
+          </Text>
         </View>
 
         {/* Фильтры силы слова */}

@@ -4,8 +4,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { usePrefs } from "@ie/core/prefs";
 import { useMarina } from "@/theme";
 
-// Мобильная навигация: 5 табов (не 8, как на web) — рецептивное ядро v1.
-// Активный таб красится сигнальным флагом своего навыка (система «Марина»).
+// Мобильная навигация — 5 табов по финальным макетам (13_app_logic §4.1):
+// Сегодня · Библиотека · Словарь · Люди · Профиль. Читать/Слушать/Звуки живут
+// внутри Библиотеки; активный таб красится сигнальным флагом своего навыка.
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
@@ -25,8 +26,8 @@ export default function TabsLayout() {
 
   const en = prefs.uiLang === "en";
   const T = en
-    ? { today: "Today", read: "Read", listen: "Listen", sounds: "Sounds", profile: "Profile" }
-    : { today: "Сегодня", read: "Читать", listen: "Слушать", sounds: "Звуки", profile: "Профиль" };
+    ? { today: "Today", library: "Library", vocab: "Words", people: "People", profile: "Profile" }
+    : { today: "Сегодня", library: "Библиотека", vocab: "Словарь", people: "Люди", profile: "Профиль" };
 
   return (
     <Tabs
@@ -46,27 +47,27 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="read"
+        name="library"
         options={{
-          title: T.read,
+          title: T.library,
           tabBarActiveTintColor: sk.reading,
-          tabBarIcon: icon("book"),
+          tabBarIcon: icon("library"),
         }}
       />
       <Tabs.Screen
-        name="listen"
+        name="vocab"
         options={{
-          title: T.listen,
+          title: T.vocab,
+          tabBarActiveTintColor: sk.words,
+          tabBarIcon: icon("layers"),
+        }}
+      />
+      <Tabs.Screen
+        name="people"
+        options={{
+          title: T.people,
           tabBarActiveTintColor: sk.video,
-          tabBarIcon: icon("headset"),
-        }}
-      />
-      <Tabs.Screen
-        name="sounds"
-        options={{
-          title: T.sounds,
-          tabBarActiveTintColor: sk.sounds,
-          tabBarIcon: icon("mic"),
+          tabBarIcon: icon("people"),
         }}
       />
       <Tabs.Screen

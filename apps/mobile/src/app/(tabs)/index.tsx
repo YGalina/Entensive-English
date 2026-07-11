@@ -1,4 +1,4 @@
-import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,25 +7,21 @@ import { useDayPlan } from "@ie/core/dayplan";
 import { useOutputStats } from "@ie/core/output";
 import { useSrsStats } from "@ie/core/srs";
 import { useOutcome } from "@ie/core/outcome";
+import { usePrefs } from "@ie/core/prefs";
+import { sessionLevelLabel } from "@ie/core/data/levelVocab";
 import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
 import { GuardianCard } from "@/components/guardian-card";
 
-// «Сегодня» — по макету 24a (docs/design, Living Content): утро и вечер одного
-// дня. Утром — один следующий шаг и честные часы до уровня; вечером экран сам
-// меняется: сделанное сворачивается, остаётся статус дня (вечерний круг) и
-// мягкое приглашение. Без стриков и огоньков: прогресс — часы и способности.
+// «Сегодня» — макет 24a/v2 + 13_app_logic §3.1: ОДИН следующий шаг.
+// Утром: большая карточка «Сессия дня» (единственный терракотовый CTA),
+// честные часы до уровня, малая карточка SRS «Пора вернуть слова» и вечерний
+// вход. Вечером экран сам меняется: сделанное сворачивается, остаётся статус
+// дня. Без стриков и огоньков; без легаси-входов phrase/roles/3-минутки.
 
 // «Набор» — принципиально только web (виртуальная клавиатура не тренирует
 // пальцевую память); на мобильном шаг не показываем.
 const WEB_ONLY_STEPS = new Set(["typing"]);
-
-const STEP_ROUTE: Record<string, string> = {
-  session: "/session",
-  pronunciation: "/sounds",
-  reading: "/read",
-  shadowing: "/listen",
-};
 
 const MONTHS_DAT_RU = ["к январю","к февралю","к марту","к апрелю","к маю","к июню","к июлю","к августу","к сентябрю","к октябрю","к ноябрю","к декабрю"];
 const MONTHS_EN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -45,14 +41,20 @@ export default function TodayScreen() {
   const srs = useSrsStats();
   const outStats = useOutputStats();
 
+  const prefs = usePrefs();
   const steps = plan.steps.filter((s) => !WEB_ONLY_STEPS.has(s.id));
   const current = steps.find((s) => !s.done) ?? null;
+
+  // Главная карточка — всегда «Сессия дня» (один флоу 4 фаз), не очередной
+  // шаг чек-листа: dayplan остаётся под капотом как учёт часов.
+  const sessionStep = steps.find((s) => s.id === "session") ?? null;
+  const sessionDone = sessionStep?.done ?? false;
+  const levelLabel = sessionLevelLabel(prefs?.level);
 
   // Вечерний режим экрана: после 17:00 и главный шаг сделан (или всё сделано).
   const hour = new Date().getHours();
   const evening = hour >= 17;
-  const mainDone = steps.length > 0 && (steps[0]?.done ?? false);
-  const eveningView = evening && (mainDone || !current);
+  const eveningView = evening && (sessionDone || !current);
 
   const now = new Date();
   const dateLine = en
@@ -61,16 +63,6 @@ export default function TodayScreen() {
 
   function tap() {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-  }
-
-  function openStep(id: string, title: string) {
-    tap();
-    const route = STEP_ROUTE[id];
-    if (route) {
-      router.push(route as never);
-      return;
-    }
-    Alert.alert(title, t.today.soonBody, [{ text: t.today.ok, style: "default" }]);
   }
 
   // Честные часы: путь к следующему уровню (Cambridge GLH ориентир).
@@ -228,7 +220,7 @@ export default function TodayScreen() {
         </>
       ) : (
         <>
-          {/* ОДИН СЛЕДУЮЩИЙ ШАГ */}
+          {/* СЕССИЯ ДНЯ — единственный терракотовый CTA экрана (макет 24a/v2) */}
           <View
             style={{
               backgroundColor: c.surface,
@@ -245,65 +237,58 @@ export default function TodayScreen() {
           >
             <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
               <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 12, letterSpacing: 1.1, textTransform: "uppercase", color: c.brand }}>
-                {t.homeX.oneStep}
+                {t.homeX.sessionLabel}
               </Text>
-              {current && current.goalMin > 0 && (
+              {sessionStep && sessionStep.goalMin > 0 && (
                 <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13.5, color: c.muted }}>
-                  {t.homeX.min(current.goalMin)}
+                  {t.homeX.min(sessionStep.goalMin)}
                 </Text>
               )}
             </View>
             <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 24, lineHeight: 29, color: c.ink, marginTop: 9 }}>
-              {current ? current[L].title : t.today.allDone}
+              {sessionDone ? t.homeX.sessionDoneTitle : t.homeX.sessionTitle(levelLabel)}
             </Text>
             <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.muted, marginTop: 6 }}>
-              {current ? current[L].note : t.today.allDoneNote}
+              {t.homeX.sessionNote}
             </Text>
-            {current && (
-              <Pressable
-                onPress={() => openStep(current.id, current[L].title)}
-                accessibilityRole="button"
-                accessibilityLabel={`${t.today.start}: ${current[L].title}`}
-                style={({ pressed }) => ({
-                  marginTop: 16,
-                  minHeight: 60,
-                  borderRadius: 999,
-                  backgroundColor: c.brand,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transform: [{ scale: pressed ? 0.98 : 1 }],
-                })}
-              >
-                <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 17, color: c.onBrand }}>
-                  {t.today.start}
-                </Text>
-              </Pressable>
-            )}
+            <Pressable
+              onPress={() => {
+                tap();
+                router.push("/session" as never);
+              }}
+              accessibilityRole="button"
+              accessibilityLabel={sessionDone ? t.homeX.sessionAgain : t.today.start}
+              style={({ pressed }) => ({
+                marginTop: 16,
+                minHeight: 60,
+                borderRadius: 999,
+                backgroundColor: sessionDone ? c.surface : c.brand,
+                borderWidth: sessionDone ? 1.5 : 0,
+                borderColor: c.line,
+                alignItems: "center",
+                justifyContent: "center",
+                transform: [{ scale: pressed ? 0.98 : 1 }],
+              })}
+            >
+              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 17, color: sessionDone ? c.ink : c.onBrand }}>
+                {sessionDone ? t.homeX.sessionAgain : t.today.start}
+              </Text>
+            </Pressable>
           </View>
 
-          {/* Потом · Вечером — две малые карточки */}
+          {/* Пора вернуть слова (SRS без долга) · Вечером — две малые карточки */}
           <View style={{ flexDirection: "row", gap: 10 }}>
             <SmallCard
               label={
-                !outStats.morningToday
-                  ? t.homeX.morningMin(1)
-                  : srs.produceDue > 0
-                    ? t.homeX.later(5)
-                    : t.homeX.later(4)
+                srs.produceDue > 0
+                  ? t.homeX.srsN(srs.produceDue)
+                  : t.homeX.srsVocabLabel
               }
               labelColor={c.accent}
-              title={
-                !outStats.morningToday
-                  ? t.homeX.phraseSelf
-                  : srs.produceDue > 0
-                    ? t.homeX.sayWords
-                    : t.homeX.playScene
-              }
+              title={srs.produceDue > 0 ? t.homeX.srsTitle : t.homeX.srsVocabTitle}
               onPress={() => {
                 tap();
-                router.push(
-                  (!outStats.morningToday ? "/phrase" : srs.produceDue > 0 ? "/produce" : "/roles") as never
-                );
+                router.push((srs.produceDue > 0 ? "/produce" : "/vocab") as never);
               }}
             />
             <SmallCard
