@@ -9,6 +9,8 @@ import { useNativeLang, usePace, useUILang } from "@ie/core/prefs";
 import { speakEnglish, warmEnglishVoices, speechLooksSilent } from "@ie/media/speech";
 import { recordAnswer } from "@ie/core/srs";
 import { useActivityTimer } from "@ie/core/timelog";
+import { addArtifact } from "@ie/core/output";
+import { useVoiceRecorder } from "@ie/media/recorder";
 import { LANG_DIR, type LangCode } from "@ie/core/data/catalog";
 import { AFFIRMATIONS, BREATH, BREATH_CYCLES_GOAL } from "@ie/core/data/affirmations";
 import { startAmbient, stopAmbient } from "@ie/media/ambient";
@@ -26,15 +28,29 @@ import {
   X,
 } from "@/components/Icons";
 
-type Phase = "ready" | "flash" | "context" | "recognition" | "relax";
-const ORDER: Phase[] = ["ready", "flash", "context", "recognition", "relax"];
+// Фазы по 13_app_logic §3.2: цикл всегда заканчивается активным выводом —
+// «сказать своё» вместо релаксации. Релакс-итог живёт внутри финала.
+type Phase = "ready" | "flash" | "context" | "recognition" | "say";
+const ORDER: Phase[] = ["ready", "flash", "context", "recognition", "say"];
 const LABEL: Record<Phase, string> = {
   ready: "Настройка · вход в состояние",
-  flash: "Киносеанс · перегрузка",
+  flash: "Поток слов · перегрузка",
   context: "Активизация · в контексте",
   recognition: "Узнавание",
-  relax: "Релаксация",
+  say: "Сказать своё · финал",
 };
+
+/** Вопрос дня для «сказать своё» — ротация по дате, те же вопросы на mobile. */
+const SAY_QUESTIONS = [
+  { ru: "Что тебя сейчас выматывает — и что ты с этим делаешь?", en: "What is draining you these days — and what are you doing about it?" },
+  { ru: "Что ты сделала сегодня намеренно, не по привычке?", en: "What did you do on purpose today, not out of habit?" },
+  { ru: "Что тебе хочется поменять в своих буднях?", en: "What would you like to change in your everyday life?" },
+  { ru: "Чему ты научилась за последнее время — вне английского?", en: "What have you learned recently — outside English?" },
+  { ru: "Какой разговор ты откладываешь — и почему?", en: "What conversation are you putting off — and why?" },
+  { ru: "Что сегодня было проще, чем ты ожидала?", en: "What was easier today than you expected?" },
+  { ru: "О чём ты думаешь перед сном в последние дни?", en: "What has been on your mind before sleep lately?" },
+  { ru: "Какое место в твоём городе тебе дорого — и чем?", en: "What place in your city matters to you — and why?" },
+] as const;
 
 const SESSION_UI = {
   ru: {
@@ -82,14 +98,26 @@ const SESSION_UI = {
       faster: ["Быстрее", "короткая пауза"],
       sprint: ["Разгон", "без чтения перевода"],
     },
+    say: {
+      passed: (n: number) => `Через тебя прошло ${n} слов. Финал — твоя речь.`,
+      hint: "2–3 фразы. Не идеально — достаточно хорошо для контакта.",
+      chips: "Опоры · клик, чтобы вставить",
+      placeholder: "Today I…",
+      record: "Записать голосом",
+      stop: "Остановить запись",
+      recorded: "Запись готова ✓ · записать заново",
+      privacy: "Запись и текст видны только тебе.",
+      save: "Засчитать в часы",
+      skip: "Пропустить сегодня — без штрафа",
+    },
   },
   en: {
     phases: {
       ready: "Readiness",
-      flash: "Exposure · overload",
+      flash: "Word flow · overload",
       context: "Activation · in context",
       recognition: "Recognition",
-      relax: "Relax",
+      say: "Say your own · finale",
     } as Record<Phase, string>,
     pack: "Pack",
     exit: "Exit session",
@@ -133,6 +161,18 @@ const SESSION_UI = {
       calm: ["Calm", "voice + pause"],
       faster: ["Faster", "short pause"],
       sprint: ["Sprint", "no translation reading"],
+    },
+    say: {
+      passed: (n: number) => `${n} words flowed through you. The finale is your speech.`,
+      hint: "2–3 phrases. Not perfect — good enough for contact.",
+      chips: "Supports · click to insert",
+      placeholder: "Today I…",
+      record: "Record your voice",
+      stop: "Stop recording",
+      recorded: "Recording ready ✓ · record again",
+      privacy: "Your recording and text are visible only to you.",
+      save: "Count it into my hours",
+      skip: "Skip today — no penalty",
     },
   },
 } as const;
@@ -180,9 +220,13 @@ export default function SessionPage() {
   const lang = useNativeLang();
   const ui = useUILang();
   const t = SESSION_UI[ui];
-  // Учёт времени по нагрузочным фазам
+  // Учёт времени по нагрузочным фазам; «сказать своё» = активность output
   useActivityTimer(
-    phase === "flash" || phase === "context" || phase === "recognition" ? phase : null
+    phase === "flash" || phase === "context" || phase === "recognition"
+      ? phase
+      : phase === "say"
+        ? "output"
+        : null
   );
   // Альфа-фон, включённый в настройке, живёт весь сеанс; глушим при выходе.
   useEffect(() => () => stopAmbient(), []);
@@ -201,12 +245,12 @@ export default function SessionPage() {
   // Словарные наборы по уровню — без контекстной фазы (нет примеров)
   const order: Phase[] =
     pack.kind === "vocab"
-      ? ["ready", "flash", "recognition", "relax"]
+      ? ["ready", "flash", "recognition", "say"]
       : ORDER;
   const phaseIdx = order.indexOf(phase);
   const go = (from: Phase) => {
     const i = order.indexOf(from);
-    setPhase(order[i + 1] ?? "relax");
+    setPhase(order[i + 1] ?? "say");
   };
 
   return (
@@ -266,8 +310,13 @@ export default function SessionPage() {
             onDone={() => go("recognition")}
           />
         )}
-        {phase === "relax" && (
-          <Relax count={pack.words.length} onFinish={() => router.push("/")} />
+        {phase === "say" && (
+          <Say
+            words={pack.words}
+            count={pack.words.length}
+            ui={ui}
+            onFinish={() => router.push("/")}
+          />
         )}
       </main>
     </div>
@@ -708,8 +757,9 @@ function Context({ words, lang, onDone }: { words: Word[]; lang: LangCode; onDon
   const next = useCallback(() => {
     clearNextTimer();
     if (last) onDone();
-    else setI((p) => p + 1);
-  }, [clearNextTimer, last, onDone]);
+    // Кламп: два быстрых клика «дальше» не должны увести индекс за массив.
+    else setI((p) => Math.min(p + 1, words.length - 1));
+  }, [clearNextTimer, last, onDone, words.length]);
 
   useEffect(() => {
     warmEnglishVoices();
@@ -986,44 +1036,122 @@ function Recognition({
   );
 }
 
-/* ---------- Фаза 5: Релаксация / итог ---------- */
-function Relax({ count, onFinish }: { count: number; onFinish: () => void }) {
-  return (
-    <div data-testid="phase-relax" className="flex flex-1 flex-col">
-      <div className="flex flex-1 flex-col items-center justify-center text-center">
-        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-ok/15 text-ok">
-          <Check className="h-9 w-9" />
-        </span>
-        <h2 className="mt-5 font-heading text-2xl font-extrabold text-ink">
-          Пачка пройдена
-        </h2>
-        <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-muted">
-          Через тебя прошло {count} слов. Сделай вдох-выдох — и можно дальше. Эти
-          слова система покажет на повторе завтра.
-        </p>
+/* ---------- Фаза 5: Сказать своё — активный вывод, финал цикла ---------- */
+function Say({
+  words,
+  count,
+  ui,
+  onFinish,
+}: {
+  words: Word[];
+  count: number;
+  ui: "ru" | "en";
+  onFinish: () => void;
+}) {
+  const t = SESSION_UI[ui].say;
+  const rec = useVoiceRecorder();
+  const [text, setText] = useState("");
+  const [audioUri, setAudioUri] = useState<string | null>(null);
 
-        <div className="mt-6 grid w-full grid-cols-2 gap-3">
-          <div className="rounded-card bg-surface p-4 shadow-card">
-            <p className="tnum font-heading text-2xl font-extrabold text-brand">
-              {count}
-            </p>
-            <p className="text-xs text-muted">слов в потоке</p>
-          </div>
-          <div className="rounded-card bg-surface p-4 shadow-card">
-            <p className="tnum font-heading text-2xl font-extrabold text-accent-d">
-              +1
-            </p>
-            <p className="text-xs text-muted">блок в режим дня</p>
+  const dayIdx = Math.floor(Date.now() / 86400000) % SAY_QUESTIONS.length;
+  const q = SAY_QUESTIONS[dayIdx];
+  const chips = words.filter((w) => !!w.exEn).slice(0, 4).map((w) => w.en);
+  const canSave = text.trim().length > 0 || !!audioUri;
+
+  function insertChip(word: string) {
+    setText((s) => (s.length === 0 || s.endsWith(" ") ? `${s}${word} ` : `${s} ${word} `));
+  }
+
+  async function toggleRecord() {
+    if (rec.recording) {
+      const uri = await rec.stop();
+      if (uri) setAudioUri(uri);
+    } else {
+      setAudioUri(null);
+      await rec.start();
+    }
+  }
+
+  function save() {
+    const usedWords = chips.filter((w) => text.toLowerCase().includes(w.toLowerCase()));
+    addArtifact({
+      type: audioUri ? "speech" : "essay",
+      promptId: "session-say",
+      text: text.trim() || undefined,
+      audioRef: audioUri ?? undefined,
+      words: usedWords,
+    });
+    onFinish();
+  }
+
+  return (
+    <div data-testid="phase-say" className="flex flex-1 flex-col">
+      <p className="text-xs font-semibold text-muted">{t.passed(count)}</p>
+
+      <h2 className="mt-3 font-heading text-2xl font-extrabold leading-snug text-ink">
+        {ui === "en" ? q.en : q.ru}
+      </h2>
+      <p className="mt-2 text-sm leading-relaxed text-muted">{t.hint}</p>
+
+      {/* Чипы-опоры из слов сессии — амбер, как маркер нового слова */}
+      {chips.length > 0 && (
+        <div className="mt-4">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-muted">
+            {t.chips}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {chips.map((w) => (
+              <button
+                key={w}
+                onClick={() => insertChip(w)}
+                className="rounded-full bg-sun px-3.5 py-2 font-english text-sm font-medium text-[#3b2c07] transition-transform active:scale-[0.97]"
+              >
+                {w}
+              </button>
+            ))}
           </div>
         </div>
-      </div>
+      )}
+
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder={t.placeholder}
+        data-testid="say-text"
+        rows={4}
+        className="mt-4 w-full flex-1 resize-none rounded-card border border-line bg-surface p-4 font-english text-base leading-relaxed text-ink outline-none placeholder:text-muted focus:border-brand"
+      />
+
+      {rec.supported && (
+        <button
+          onClick={toggleRecord}
+          className={`mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border px-5 py-3.5 font-heading text-sm font-bold transition-colors ${
+            rec.recording
+              ? "border-brand bg-brand-soft text-brand-d"
+              : "border-line bg-surface text-ink"
+          }`}
+        >
+          <Sound className="h-4 w-4" />
+          {rec.recording ? t.stop : audioUri ? t.recorded : t.record}
+        </button>
+      )}
+      <p className="mt-2 text-xs leading-relaxed text-muted">{t.privacy}</p>
 
       <button
-        onClick={onFinish}
-        data-testid="relax-finish"
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)] transition-transform active:scale-[0.98]"
+        onClick={save}
+        disabled={!canSave}
+        data-testid="say-finish"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-brand px-5 py-4 font-heading text-base font-extrabold text-white transition-transform active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
       >
-        Готово
+        <Check className="h-5 w-5" />
+        {t.save}
+      </button>
+      <button
+        onClick={onFinish}
+        data-testid="say-skip"
+        className="mt-2 w-full rounded-2xl px-5 py-3 font-heading text-sm font-bold text-muted"
+      >
+        {t.skip}
       </button>
     </div>
   );

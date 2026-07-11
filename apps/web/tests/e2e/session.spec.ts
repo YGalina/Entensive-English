@@ -31,14 +31,14 @@ test("проходит сеанс насквозь и записывает сл�
   // Фаза 4 — Узнавание: на каждое слово раскрываем перевод и жмём «Знаю».
   await expect(page.getByTestId("phase-recognition")).toBeVisible();
   for (let i = 0; i < 30; i++) {
-    if (await page.getByTestId("phase-relax").isVisible()) break;
+    if (await page.getByTestId("phase-say").isVisible()) break;
     const reveal = page.getByTestId("recognition-reveal");
     if (await reveal.isVisible()) await reveal.click();
     await page.getByTestId("recognition-known").click();
   }
 
-  // Фаза 5 — Релаксация/итог
-  await expect(page.getByTestId("phase-relax")).toBeVisible();
+  // Фаза 5 — Сказать своё: цикл заканчивается активным выводом (13_app_logic).
+  await expect(page.getByTestId("phase-say")).toBeVisible();
 
   // Ядро метода: пройденные слова легли в план повторов.
   const recorded = await page.evaluate(() => {
@@ -50,8 +50,20 @@ test("проходит сеанс насквозь и записывает сл�
   });
   expect(recorded).toBeGreaterThan(0);
 
-  await page.getByTestId("relax-finish").click();
+  // Пишем 2 фразы и засчитываем в часы → артефакт вывода сохранён.
+  await page.getByTestId("say-text").fill("Today I finished a deadline. I did it on purpose.");
+  await page.getByTestId("say-finish").click();
   await expect(page).toHaveURL(/\/$/);
+
+  const artifacts = await page.evaluate(() => {
+    try {
+      return (JSON.parse(localStorage.getItem("ie_output") ?? "[]") as { promptId?: string }[])
+        .filter((a) => a.promptId === "session-say").length;
+    } catch {
+      return 0;
+    }
+  });
+  expect(artifacts).toBeGreaterThan(0);
 });
 
 test("экран повторов отрабатывает очередь SRS до конца", async ({ page }) => {

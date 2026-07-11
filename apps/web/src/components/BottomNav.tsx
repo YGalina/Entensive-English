@@ -2,18 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Layers, Text, Play, Smile, Sound, Chat, Keyboard } from "./Icons";
+import { Home, Layers, Library, People, Smile } from "./Icons";
 import { useUILang } from "@ie/core/prefs";
 
-// tone — сигнальный цвет навыка («Марина»): активный таб красится в свой флаг.
+// Навигация — 5 пунктов по 13_app_logic §4: Сегодня · Библиотека · Словарь ·
+// Люди · Профиль. Навыки (звуки, набор, времена, чтение, видео) живут внутри
+// Библиотеки. Активный пункт красится сигнальным флагом своего навыка.
 const items = [
   { href: "/", ru: "Сегодня", en: "Today", Icon: Home, tone: "--brand" },
+  { href: "/library", ru: "Библиотека", en: "Library", Icon: Library, tone: "--sk-reading" },
   { href: "/vocab", ru: "Словарь", en: "Words", Icon: Layers, tone: "--sk-words" },
-  { href: "/pronunciation", ru: "Звуки", en: "Sounds", Icon: Sound, tone: "--sk-sounds" },
-  { href: "/typing", ru: "Набор", en: "Typing", Icon: Keyboard, tone: "--sk-typing" },
-  { href: "/grammar", ru: "Времена", en: "Tenses", Icon: Chat, tone: "--sk-grammar" },
-  { href: "/reading", ru: "Чтение", en: "Reading", Icon: Text, tone: "--sk-reading" },
-  { href: "/video", ru: "Видео", en: "Video", Icon: Play, tone: "--sk-video" },
+  { href: "/people", ru: "Люди", en: "People", Icon: People, tone: "--sk-video" },
   { href: "/profile", ru: "Профиль", en: "Profile", Icon: Smile, tone: "--brand" },
 ];
 

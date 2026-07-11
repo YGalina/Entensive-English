@@ -29,6 +29,23 @@ export const Layers = (p: P) => (
   </svg>
 );
 
+export const People = (p: P) => (
+  <svg {...base} className={p.className}>
+    <circle cx="9" cy="8" r="3.4" />
+    <path d="M2.8 20c.7-3.2 3.2-5 6.2-5s5.5 1.8 6.2 5" />
+    <circle cx="17" cy="9" r="2.6" />
+    <path d="M16.6 15.2c2.4.3 4.1 1.9 4.6 4.3" />
+  </svg>
+);
+
+export const Library = (p: P) => (
+  <svg {...base} className={p.className}>
+    <path d="M4 4v16" />
+    <path d="M9 4v16" />
+    <path d="M13.5 5.2 18 4l3.4 15.4-4.5 1.2L13.5 5.2Z" />
+  </svg>
+);
+
 export const Text = (p: P) => (
   <svg {...base} className={p.className}>
     <path d="M5 4h14" />
