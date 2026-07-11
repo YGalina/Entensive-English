@@ -318,7 +318,7 @@ export default function SoundsScreen() {
         style={({ pressed }) => ({
           minHeight: 56,
           borderRadius: 16,
-          backgroundColor: auto ? c.surface : c.accent,
+          backgroundColor: auto ? c.surface : c.brand,
           borderWidth: auto ? 1 : 0,
           borderColor: c.line,
           alignItems: "center",
