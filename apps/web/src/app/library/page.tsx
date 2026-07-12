@@ -19,7 +19,7 @@ type Kind = "all" | "video" | "text" | "book";
 
 const UI = {
   ru: {
-    kicker: "Библиотека",
+    kicker: (n: number) => `Библиотека · ${n} материалов B1–C1`,
     title: "Контент, который тебе по силам",
     importTitle: "Вставь свою ссылку",
     importNote: "YouTube или статью — соберём сессию",
@@ -38,7 +38,7 @@ const UI = {
     metaText: "текст",
   },
   en: {
-    kicker: "Library",
+    kicker: (n: number) => `Library · ${n} materials B1–C1`,
     title: "Content that is within your reach",
     importTitle: "Paste your link",
     importNote: "YouTube or an article — we'll build a session",
@@ -69,15 +69,19 @@ export default function LibraryPage() {
   const [link, setLink] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
 
+  // Показываем ВЕСЬ каталог, отсортированный под уровень ученицы (не обрезаем):
+  // «сколько здесь моего» видно, библиотека выглядит настоящей.
   const stories = useMemo(() => {
     const byLevel = storiesByLevel(prefs?.level ?? "b1");
-    return (byLevel.length > 0 ? byLevel : STORIES).slice(0, 6);
+    const seen = new Set(byLevel.map((s) => s.id));
+    return [...byLevel, ...STORIES.filter((s) => !seen.has(s.id))];
   }, [prefs?.level]);
   const books = useMemo(
-    () => booksForReader(prefs?.topics ?? [], prefs?.level).slice(0, 3),
+    () => booksForReader(prefs?.topics ?? [], prefs?.level),
     [prefs?.topics, prefs?.level]
   );
-  const videos = SHADOWING.slice(0, 4);
+  const videos = SHADOWING;
+  const total = videos.length + stories.length + books.length;
 
   function addLink() {
     const v = link.trim();
@@ -109,7 +113,7 @@ export default function LibraryPage() {
           {/* Шапка: заголовок + импорт своей ссылки справа */}
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="font-heading text-[13px] font-semibold text-muted/80">{t.kicker}</p>
+              <p className="font-heading text-[13px] font-semibold text-muted/80">{t.kicker(total)}</p>
               <h1
                 data-testid="library-title"
                 className="mt-1 font-heading text-[26px] font-extrabold tracking-[-0.025em] text-ink lg:text-[30px]"

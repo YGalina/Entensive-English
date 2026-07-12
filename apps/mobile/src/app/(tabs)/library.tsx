@@ -55,16 +55,21 @@ export default function LibraryScreen() {
   }, [prefs?.level]);
   const shelf = levelStories[Math.floor(Date.now() / 86400000) % levelStories.length];
 
+  // Весь каталог под уровень — не обрезаем (библиотека должна быть настоящей).
   const books = useMemo(
-    () => booksForReader(prefs?.topics ?? [], prefs?.level).slice(0, 3),
+    () => booksForReader(prefs?.topics ?? [], prefs?.level),
     [prefs?.topics, prefs?.level]
   );
 
   const q = query.trim().toLowerCase();
   const looksLikeLink = /^https?:\/\/|youtu|gutenberg/.test(q);
 
-  const stories = levelStories.filter((s) => s.id !== shelf?.id).slice(0, 4);
-  const videos = SHADOWING.slice(0, 3);
+  const allStories = useMemo(() => {
+    const seen = new Set(levelStories.map((s) => s.id));
+    return [...levelStories, ...STORIES.filter((s) => !seen.has(s.id))];
+  }, [levelStories]);
+  const stories = allStories.filter((s) => s.id !== shelf?.id);
+  const videos = SHADOWING;
 
   function match(...hay: (string | undefined)[]): boolean {
     if (!q || looksLikeLink) return true;
