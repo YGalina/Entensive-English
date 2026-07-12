@@ -12,8 +12,6 @@ import { useActivityTimer } from "@ie/core/timelog";
 import { addArtifact } from "@ie/core/output";
 import { useVoiceRecorder } from "@ie/media/recorder";
 import { LANG_DIR, type LangCode } from "@ie/core/data/catalog";
-import { AFFIRMATIONS, BREATH, BREATH_CYCLES_GOAL } from "@ie/core/data/affirmations";
-import { startAmbient, stopAmbient } from "@ie/media/ambient";
 import {
   Sound,
   Play,
@@ -30,10 +28,11 @@ import {
 
 // Фазы по 13_app_logic §3.2: цикл всегда заканчивается активным выводом —
 // «сказать своё» вместо релаксации. Релакс-итог живёт внутри финала.
-type Phase = "ready" | "flash" | "context" | "recognition" | "say";
-const ORDER: Phase[] = ["ready", "flash", "context", "recognition", "say"];
+type Phase = "flash" | "context" | "recognition" | "say";
+const ORDER: Phase[] = ["flash", "context", "recognition", "say"];
+// Сессия начинается сразу с потока слов — без фазы дыхания/настройки
+// (решение Галины 2026-07-12: медитации убраны; ориентир — пользователи).
 const LABEL: Record<Phase, string> = {
-  ready: "Настройка · вход в состояние",
   flash: "Поток слов · перегрузка",
   context: "Активизация · в контексте",
   recognition: "Узнавание",
@@ -65,10 +64,6 @@ const SESSION_UI = {
     readyNote:
       "Если звук включён, поток ждёт окончания английской озвучки. Пауза и выход доступны в любой момент.",
     start: "Поехали",
-    attune: "Настроиться · 1 минута",
-    attuneSkip: "Сразу к словам",
-    attuneHint: "Дыши вместе с кругом. Установку читай про себя или шёпотом.",
-    attuneDone: "Ты готова. Слова лягут сами.",
     ambient: "Альфа-фон",
     ambientHint: "мягкий тон 10 Гц · лучше в наушниках",
     breathIn: "Вдох",
@@ -113,7 +108,6 @@ const SESSION_UI = {
   },
   en: {
     phases: {
-      ready: "Readiness",
       flash: "Word flow · overload",
       context: "Activation · in context",
       recognition: "Recognition",
@@ -129,10 +123,6 @@ const SESSION_UI = {
     readyNote:
       "When sound is on, the flow waits for the English audio to finish. Pause and exit are always available.",
     start: "Start",
-    attune: "Attune · 1 minute",
-    attuneSkip: "Straight to words",
-    attuneHint: "Breathe with the circle. Read the affirmation silently or in a whisper.",
-    attuneDone: "You are ready. The words will settle on their own.",
     ambient: "Alpha tone",
     ambientHint: "soft 10 Hz tone · best with headphones",
     breathIn: "Inhale",
@@ -216,7 +206,7 @@ export default function SessionPage() {
   const router = useRouter();
   const pack = getPack(params.pack) ?? getLevelPack(params.pack);
 
-  const [phase, setPhase] = useState<Phase>("ready");
+  const [phase, setPhase] = useState<Phase>("flash");
   const lang = useNativeLang();
   const ui = useUILang();
   const t = SESSION_UI[ui];
@@ -229,7 +219,6 @@ export default function SessionPage() {
         : null
   );
   // Альфа-фон, включённый в настройке, живёт весь сеанс; глушим при выходе.
-  useEffect(() => () => stopAmbient(), []);
 
   if (!pack || pack.words.length === 0) {
     return (
@@ -245,7 +234,7 @@ export default function SessionPage() {
   // Словарные наборы по уровню — без контекстной фазы (нет примеров)
   const order: Phase[] =
     pack.kind === "vocab"
-      ? ["ready", "flash", "recognition", "say"]
+      ? ["flash", "recognition", "say"]
       : ORDER;
   const phaseIdx = order.indexOf(phase);
   const go = (from: Phase) => {
@@ -287,15 +276,6 @@ export default function SessionPage() {
       </header>
 
       <main className="mx-auto flex w-full max-w-[480px] flex-1 flex-col px-5 py-6">
-        {phase === "ready" && (
-          <Ready
-            pack={pack.title}
-            count={pack.words.length}
-            context={pack.context}
-            ui={ui}
-            onStart={() => go("ready")}
-          />
-        )}
         {phase === "flash" && (
           <Flash words={pack.words} lang={lang} ui={ui} onDone={() => go("flash")} />
         )}
@@ -319,175 +299,6 @@ export default function SessionPage() {
           />
         )}
       </main>
-    </div>
-  );
-}
-
-/* ---------- Фаза 1: Готовность ---------- */
-function Ready({
-  pack,
-  count,
-  context,
-  ui,
-  onStart,
-}: {
-  pack: string;
-  count: number;
-  context: string;
-  ui: "ru" | "en";
-  onStart: () => void;
-}) {
-  const t = SESSION_UI[ui];
-  // Настройка (суггестопедия + Крашен): дыхание 4–2–6 с установками снимает
-  // барьер восприятия перед массивом. Пропуск всегда доступен — не принуждаем.
-  const [stage, setStage] = useState<"intro" | "breathe">("intro");
-  const [bp, setBp] = useState<"in" | "hold" | "out">("in");
-  const [cycle, setCycle] = useState(0);
-  const [amb, setAmb] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  function toggleAmbient() {
-    if (amb) {
-      stopAmbient();
-      setAmb(false);
-    } else if (startAmbient()) {
-      setAmb(true);
-    }
-  }
-
-  useEffect(() => {
-    if (stage !== "breathe") return;
-    let alive = true;
-    const step = (phase: "in" | "hold" | "out") => {
-      if (!alive) return;
-      setBp(phase);
-      const dur =
-        phase === "in" ? BREATH.inhale : phase === "hold" ? BREATH.hold : BREATH.exhale;
-      timer.current = setTimeout(() => {
-        if (!alive) return;
-        if (phase === "in") step("hold");
-        else if (phase === "hold") step("out");
-        else {
-          setCycle((c) => c + 1);
-          step("in");
-        }
-      }, dur);
-    };
-    step("in");
-    return () => {
-      alive = false;
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, [stage]);
-
-  if (stage === "breathe") {
-    const aff = AFFIRMATIONS[cycle % AFFIRMATIONS.length];
-    const expanded = bp !== "out";
-    const durMs = bp === "in" ? BREATH.inhale : bp === "hold" ? 0 : BREATH.exhale;
-    const goalReached = cycle >= BREATH_CYCLES_GOAL;
-    const breathLabel =
-      bp === "in" ? t.breathIn : bp === "hold" ? t.breathHold : t.breathOut;
-    return (
-      <div data-testid="phase-ready" className="flex flex-1 flex-col">
-        <div className="flex items-center justify-between text-xs text-muted">
-          <span>
-            {t.cycle}{" "}
-            <b className="tnum text-ink">{Math.min(cycle + 1, BREATH_CYCLES_GOAL)}</b> /{" "}
-            {BREATH_CYCLES_GOAL}
-          </span>
-          <button
-            onClick={toggleAmbient}
-            data-testid="ambient-toggle"
-            title={t.ambientHint}
-            className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 font-heading text-[11px] font-bold transition-colors ${
-              amb ? "bg-brand text-white" : "bg-surface text-brand-d shadow-card"
-            }`}
-          >
-            <Sound className="h-3.5 w-3.5" />
-            {t.ambient}
-          </button>
-        </div>
-
-        <div className="flex flex-1 flex-col items-center justify-center text-center">
-          {/* Дыхательный круг: вдох 4с — пауза 2с — выдох 6с */}
-          <div className="flex h-56 w-56 items-center justify-center">
-            <div
-              className="flex h-36 w-36 items-center justify-center rounded-full bg-brand-soft shadow-card transition-transform ease-in-out"
-              style={{
-                transform: `scale(${expanded ? 1.35 : 1})`,
-                transitionDuration: `${durMs}ms`,
-              }}
-            >
-              <span className="font-heading text-base font-bold text-brand-d">
-                {breathLabel}
-              </span>
-            </div>
-          </div>
-
-          {/* Установка: родной язык — главным, английская пара — тихой строкой */}
-          <div key={cycle} className="mt-6 min-h-[84px] max-w-[320px]">
-            <p className="font-heading text-lg font-bold leading-snug text-ink">
-              {aff.ru}
-            </p>
-            <p className="mt-2 text-sm italic leading-relaxed text-muted">{aff.en}</p>
-          </div>
-        </div>
-
-        <p
-          className={`mb-3 text-center text-xs leading-relaxed ${
-            goalReached ? "font-semibold text-ok" : "text-muted"
-          }`}
-        >
-          {goalReached ? t.attuneDone : t.attuneHint}
-        </p>
-        <button
-          onClick={onStart}
-          data-testid="phase-start"
-          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)] transition-transform active:scale-[0.98]"
-        >
-          <Play className="h-5 w-5" />
-          {t.start}
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <div data-testid="phase-ready" className="flex flex-1 flex-col">
-      <div className="flex flex-1 flex-col items-center justify-center text-center">
-        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-soft text-brand">
-          <Spark className="h-8 w-8" />
-        </span>
-        <h2 className="mt-5 font-heading text-2xl font-extrabold text-ink">
-          {t.readyTitle}
-        </h2>
-        <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-muted">
-          {t.readyText(count)}
-        </p>
-        <p className="mt-5 rounded-soft bg-surface px-4 py-3 text-sm font-medium text-brand-ink shadow-card">
-          «{pack}» — {context.toLowerCase()}
-        </p>
-      </div>
-
-      <div className="rounded-soft border border-line bg-surface p-3 text-xs leading-relaxed text-muted">
-        {t.readyNote}
-      </div>
-
-      <button
-        onClick={() => setStage("breathe")}
-        data-testid="attune-start"
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-accent px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--accent)] transition-transform active:scale-[0.98]"
-      >
-        <Spark className="h-5 w-5" />
-        {t.attune}
-      </button>
-      <button
-        onClick={onStart}
-        data-testid="phase-start"
-        className="mt-2 w-full rounded-2xl border border-line bg-surface px-5 py-3.5 font-heading text-sm font-bold text-muted"
-      >
-        {t.attuneSkip}
-      </button>
     </div>
   );
 }

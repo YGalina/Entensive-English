@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Easing, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,7 +7,6 @@ import * as Haptics from "expo-haptics";
 import { sessionWords, sessionLevelLabel } from "@ie/core/data/levelVocab";
 import { knownWordSet, recordNoticed } from "@ie/core/srs";
 import { translate, type Word } from "@ie/core/data/packs";
-import { AFFIRMATIONS } from "@ie/core/data/affirmations";
 import { usePrefs } from "@ie/core/prefs";
 import { recordAnswer } from "@ie/core/srs";
 import { useActivityTimer } from "@ie/core/timelog";
@@ -16,7 +15,6 @@ import { speakEnglish } from "@ie/media/speech";
 import { useVoiceRecorder } from "@ie/media/recorder";
 import { useCalmMusic } from "@/lib/calm-music";
 import { useT } from "@/lib/i18n";
-import { BotanicalFrame } from "@/components/botanical";
 import { useMarina } from "@/theme";
 
 // Сессия дня — ОДИН флоу 4 фаз (13_app_logic §3.2), визуально 1:1 по макетам
@@ -25,24 +23,20 @@ import { useMarina } from "@/theme";
 //   2 поток слов (карточка Lora 44, пример с амбер-маркером, Ещё нет/Знаю)
 //   3 контекст (сплошной отрывок Lora, тап по слову → слой перевода снизу)
 //   4 сказать своё (вопрос дня, белые Lora-чипы, голос/текст → артефакт)
-// Полоски фаз в шапке: терракота · мята · охра · петроль.
+// Сессия начинается сразу с потока слов (как в макете) — без дыхания/медитации
+// и ботаники (решение Галины 2026-07-12: метод Лозанова писался, когда медитаций
+// никто не делал; ориентир — время и пользователи, а они морщатся на медитацию).
+// Полоски фаз в шапке: поток (терракота) · контекст (мята) · сказать (петроль).
 
-type Phase = "attune" | "bridge" | "flow" | "context" | "say" | "done";
+type Phase = "flow" | "context" | "say" | "done";
 
 /** Сколько полосок фаз закрашено. */
 const PHASE_NO: Record<Phase, number> = {
-  attune: 1,
-  bridge: 1,
-  flow: 2,
-  context: 3,
-  say: 4,
-  done: 4,
+  flow: 1,
+  context: 2,
+  say: 3,
+  done: 3,
 };
-
-const BREATH_CYCLES = 3;
-const INHALE = 4000;
-const HOLD = 2000;
-const EXHALE = 6000;
 
 /** Темпы киносеанса. «Вал» — предъявление быстрее сознательного чтения. */
 const TEMPOS = [
@@ -79,7 +73,9 @@ export default function SessionScreen() {
   );
   const levelLabel = sessionLevelLabel(prefs?.level);
 
-  const [phase, setPhase] = useState<Phase>("attune");
+  const [phase, setPhase] = useState<Phase>("flow");
+  // Автостарт потока: слова едут сами через 1,2 с (не заставляем жать «Поехали»
+  // каждый день). Видимая «Пауза» рядом — решение из UX-аудита.
   const [running, setRunning] = useState(false);
   const [idx, setIdx] = useState(0);
   const [tempoIdx, setTempoIdx] = useState(0);
@@ -96,11 +92,19 @@ export default function SessionScreen() {
           : null
   );
 
-  // Музыка живёт весь сеанс: громче на настройке, тихо под потоком.
+  // Музыка — тихий фон весь сеанс (это не медитация, а атмосфера; методический
+  // инструмент). Стартует сразу под поток слов.
   useEffect(() => {
-    music.start(0.35);
+    music.start(0.12);
     return () => music.stop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Автостарт потока: слова едут сами через 1,2 с — не заставляем жать «Поехали»
+  // каждый день (UX-аудит). Пауза рядом всегда доступна.
+  useEffect(() => {
+    const id = setTimeout(() => setRunning(true), 1200);
+    return () => clearTimeout(id);
   }, []);
 
   function leave() {
@@ -109,8 +113,8 @@ export default function SessionScreen() {
     router.back();
   }
 
-  // Цвета полосок фаз — по макету: терракота · мята · охра · петроль.
-  const phaseColors = [c.brand, c.accent, sk.sounds, sk.video];
+  // Цвета полосок фаз: поток (терракота) · контекст (мята) · сказать (петроль).
+  const phaseColors = [c.brand, c.accent, sk.video];
   const filled = PHASE_NO[phase];
 
   return (
@@ -164,25 +168,6 @@ export default function SessionScreen() {
         </Pressable>
       </View>
 
-      {(phase === "attune" || phase === "bridge") && <BotanicalFrame />}
-
-      {phase === "attune" && (
-        <Attune
-          onDone={() => {
-            setPhase("bridge");
-          }}
-        />
-      )}
-
-      {phase === "bridge" && (
-        <Bridge
-          onDone={() => {
-            music.duck(0.06);
-            setPhase("flow");
-          }}
-        />
-      )}
-
       {phase === "flow" && (
         <Flow
           words={words}
@@ -231,152 +216,7 @@ export default function SessionScreen() {
   );
 }
 
-/* ---------- Настройка: дыхание под классику + установки ---------- */
-
-function Attune({ onDone }: { onDone: () => void }) {
-  const { c } = useMarina();
-  const { t } = useT();
-  const scale = useRef(new Animated.Value(1)).current;
-  const [label, setLabel] = useState(t.sessionX.inhale);
-  const [cycle, setCycle] = useState(1);
-  const [affIdx, setAffIdx] = useState(() => Math.floor(Math.random() * AFFIRMATIONS.length));
-  const alive = useRef(true);
-
-  // Установки сменяются мягко, раз в цикл дыхания.
-  useEffect(() => {
-    const id = setInterval(() => setAffIdx((i) => (i + 1) % AFFIRMATIONS.length), INHALE + HOLD + EXHALE);
-    return () => clearInterval(id);
-  }, []);
-
-  useEffect(() => {
-    alive.current = true;
-    let left = BREATH_CYCLES;
-    const run = () => {
-      if (!alive.current) return;
-      setLabel(t.sessionX.inhale);
-      Animated.timing(scale, { toValue: 1.4, duration: INHALE, easing: Easing.inOut(Easing.ease), useNativeDriver: true }).start(() => {
-        if (!alive.current) return;
-        setLabel(t.sessionX.hold);
-        setTimeout(() => {
-          if (!alive.current) return;
-          setLabel(t.sessionX.exhale);
-          Animated.timing(scale, { toValue: 1, duration: EXHALE, easing: Easing.inOut(Easing.ease), useNativeDriver: true }).start(() => {
-            if (!alive.current) return;
-            left--;
-            if (left <= 0) onDone();
-            else {
-              setCycle(BREATH_CYCLES - left + 1);
-              run();
-            }
-          });
-        }, HOLD);
-      });
-    };
-    run();
-    return () => {
-      alive.current = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const aff = AFFIRMATIONS[affIdx];
-
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center", gap: 8 }}>
-      <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.muted }}>
-        {t.sessionX.circleOf(cycle, BREATH_CYCLES)}
-      </Text>
-      {/* Зона круга фиксирована: на вдохе (scale 1.4) он растёт внутри неё,
-          не наезжая на подписи — воздух сохраняется. */}
-      <View style={{ height: 240, alignItems: "center", justifyContent: "center" }}>
-      <Animated.View
-        style={{
-          width: 150,
-          height: 150,
-          borderRadius: 75,
-          backgroundColor: c.brandSoft,
-          borderWidth: 2,
-          borderColor: c.brand,
-          alignItems: "center",
-          justifyContent: "center",
-          transform: [{ scale }],
-        }}
-      >
-        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 19, color: c.brandD }}>
-          {label}
-        </Text>
-      </Animated.View>
-      </View>
-      <View style={{ gap: 6, alignItems: "center", minHeight: 70, paddingTop: 6 }}>
-        <Text
-          style={{
-            fontFamily: "GolosText_700Bold",
-            fontSize: 17,
-            lineHeight: 25,
-            color: c.ink,
-            textAlign: "center",
-            maxWidth: 300,
-          }}
-        >
-          {aff.ru}
-        </Text>
-        <Text style={{ fontFamily: "Lora_400Regular", fontStyle: "italic", fontSize: 13, color: c.muted, textAlign: "center" }}>
-          {aff.en}
-        </Text>
-      </View>
-      <Pressable onPress={onDone} accessibilityRole="button" style={{ minHeight: 44, justifyContent: "center" }}>
-        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted }}>
-          {t.common.ready}
-        </Text>
-      </Pressable>
-    </View>
-  );
-}
-
-/* ---------- Мягкий мост: без резких переходов (метод: без стресса) ---------- */
-
-function Bridge({ onDone }: { onDone: () => void }) {
-  const { c } = useMarina();
-  const { t } = useT();
-  const anim = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    Animated.timing(anim, { toValue: 1, duration: 700, useNativeDriver: true }).start();
-    const t = setTimeout(onDone, 3600);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return (
-    <Animated.View style={{ flex: 1, alignItems: "center", justifyContent: "center", opacity: anim, gap: 12 }}>
-      <Ionicons name="water" size={30} color={c.brand} />
-      <Text
-        style={{
-          fontFamily: "GolosText_700Bold",
-          fontSize: 18,
-          lineHeight: 27,
-          color: c.ink,
-          textAlign: "center",
-          maxWidth: 300,
-        }}
-      >
-        {t.sessionX.bridgeTitle}
-      </Text>
-      <Text
-        style={{
-          fontFamily: "GolosText_400Regular",
-          fontSize: 14,
-          lineHeight: 21,
-          color: c.muted,
-          textAlign: "center",
-          maxWidth: 300,
-        }}
-      >
-        {t.sessionX.bridgeBody}
-      </Text>
-    </Animated.View>
-  );
-}
-
-/* ---------- Фаза 2 · Поток слов (макет: карточка Lora 44, пример с маркером) ---------- */
+/* ---------- Фаза 1 · Поток слов (макет: карточка Lora 44, пример с маркером) ---------- */
 
 /** Английская фраза с амбер-маркером целевого слова (как в макете). */
 function HighlightedExample({

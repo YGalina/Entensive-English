@@ -9,7 +9,6 @@ import { useOutputStats } from "@ie/core/output";
 import { useSrsStats } from "@ie/core/srs";
 import { useOutcome } from "@ie/core/outcome";
 import { usePrefs } from "@ie/core/prefs";
-import { BotanicalFrame } from "@/components/botanical";
 import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
 
@@ -45,7 +44,6 @@ export default function PathScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
-      <BotanicalFrame />
       <ScrollView
         contentContainerStyle={{ padding: 20, paddingTop: insets.top + 12, paddingBottom: 40, gap: 14 }}
       >

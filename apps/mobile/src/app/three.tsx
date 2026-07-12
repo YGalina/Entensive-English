@@ -9,7 +9,6 @@ import { AFFIRMATIONS } from "@ie/core/data/affirmations";
 import { useActivityTimer } from "@ie/core/timelog";
 import { speakEnglish } from "@ie/media/speech";
 import { useCalmMusic } from "@/lib/calm-music";
-import { BotanicalFrame } from "@/components/botanical";
 import { useT } from "@/lib/i18n";
 import { useMarina } from "@/theme";
 
@@ -142,7 +141,6 @@ export default function ThreeMinutes() {
         </Pressable>
       </View>
 
-      {!done && (stage === "breath" || stage === "bridge") && <BotanicalFrame />}
 
       {done ? (
         <Finale onClose={close} />

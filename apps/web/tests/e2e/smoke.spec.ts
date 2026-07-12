@@ -13,9 +13,8 @@ test("opens main learning surfaces", async ({ page }) => {
   await expect(page.getByTestId("home-start-session")).toBeVisible();
 
   await page.goto("/session/health");
-  await expect(page.getByTestId("phase-ready")).toBeVisible();
+  await expect(page.getByTestId("phase-flash")).toBeVisible();
   await expect(page.getByTestId("session-pack-title")).toContainText("Здоровье");
-  await expect(page.getByTestId("phase-start")).toBeVisible();
 
   await page.goto("/profile");
   await expect(page.getByTestId("profile-title")).toBeVisible();

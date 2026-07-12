@@ -10,13 +10,8 @@ test("проходит сеанс насквозь и записывает сл�
   await seed(page);
   await page.goto(`/session/${PACK}`);
 
-  // Фаза 1 — Настройка: интро → дыхание с установками → к словам.
-  await expect(page.getByTestId("phase-ready")).toBeVisible();
-  await page.getByTestId("attune-start").click();
-  await expect(page.getByTestId("phase-ready")).toBeVisible();
-  await page.getByTestId("phase-start").click();
-
-  // Фаза 2 — Киносеанс (перегрузка массивом). Проверяем, что карточка ожила,
+  // Сессия начинается сразу с потока слов (дыхание/настройка убраны).
+  // Фаза 1 — Киносеанс (перегрузка массивом). Проверяем, что карточка ожила,
   // и уходим дальше без ожидания всего потока.
   await expect(page.getByTestId("phase-flash")).toBeVisible();
   await page.getByTestId("flash-skip").click();
