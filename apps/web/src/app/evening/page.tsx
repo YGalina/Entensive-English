@@ -1,415 +1,360 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { speakEnglish } from "@ie/media/speech";
-import { startAmbient, stopAmbient } from "@ie/media/ambient";
-import { useActivityTimer } from "@ie/core/timelog";
-import { useNativeLang, useUILang } from "@ie/core/prefs";
-import { addArtifact, outputStats } from "@ie/core/output";
-import { feedbackFor, type FeedbackHint } from "@ie/core/feedback";
-import { todaysTouchedCards, recentCards } from "@ie/core/srs";
-import { findWord, getPack, translate, type Word } from "@ie/core/data/packs";
-import { LEVEL_PACKS } from "@ie/core/data/levelVocab";
-import { LANG_DIR } from "@ie/core/data/catalog";
-import { Moon, Play, Pause, Sound, X } from "@/components/Icons";
+import { useRouter } from "next/navigation";
+import { useDayPlan } from "@ie/core/dayplan";
+import { addArtifact, listArtifacts } from "@ie/core/output";
+import { todaysTouchedCards } from "@ie/core/srs";
+import { storage } from "@ie/core/storage";
+import { useUILang } from "@ie/core/prefs";
 
-// Вечерний круг: тихий повтор дневного материала перед сном. Ничего не нужно
-// отвечать — память консолидируется во сне (гиппокамп «проигрывает» последнее).
-// Слова дня → спокойный голос → пауза на дыхание. Без счёта и оценок.
+// «Вечерний круг» на web — 1:1 по макету «Focus-режим · Вечерний круг»:
+// единственный тёмный экран «свет лампы» (#211D16, латунь, тишина), две
+// колонки — слева состояние и страж, справа одна фраза о дне по-английски
+// с чипами из сегодняшних слов. Палитра фиксированная, от темы не зависит.
+
+const N = {
+  bg: "#211D16",
+  surface: "#2E2A22",
+  chip: "#3a352b",
+  chipInk: "#e8e1cf",
+  line: "#3a352b",
+  ink: "#F5EFE2",
+  muted: "#9C937D",
+  soft: "#c9c0ab",
+  faint: "#7c745f",
+  brass: "#E8B36A",
+  brassInk: "#2a2214",
+};
+
+type Mood = "calm" | "proud" | "tired" | "blocked";
+type GuardianId = "devalue" | "fear" | "mock" | "perfect";
+
+const GUARDIANS: { id: GuardianId; from: string; to: string; eye: string }[] = [
+  { id: "devalue", from: "#93A7C9", to: "#7C93B8", eye: "#26303f" },
+  { id: "fear", from: "#F2B45E", to: "#E8934D", eye: "#3a2c14" },
+  { id: "mock", from: "#EC93B4", to: "#E07AA0", eye: "#4a2233" },
+  { id: "perfect", from: "#AE9BE2", to: "#9B84D9", eye: "#33265a" },
+];
 
 const UI = {
   ru: {
-    title: "Вечерний круг",
-    intro: "Тихий повтор перед сном. Ничего не отвечай — просто смотри и слушай.",
-    start: "Начать круг",
-    pause: "Пауза",
-    resume: "Дальше",
-    ambient: "Альфа-фон",
-    exit: "Выйти",
-    done: "Спокойной ночи",
-    doneNote:
-      "Круг пройден. Дальше — работа сна: мозг сам проиграет и уложит сегодняшние слова. Увидимся утром.",
-    home: "Домой",
-    words: (n: number) => `${n} слов дня`,
-    statusTitle: "Статус дня",
-    statusIntro: "1–3 предложения по-английски: как прошёл день. Это твой артефакт дня — приватный.",
-    statusPlaceholder: "Today I practiced… I noticed…",
-    statusSave: "Сохранить и спать",
-    statusSkip: "Не сегодня",
-    hintTitle: "Мягкая подсказка — поправь сама:",
-    aiBtn: "Разбор тренера (AI)",
-    aiWait: "Тренер читает…",
-    aiUnavailable: "AI-разбор появится после входа, согласия в профиле и настройки ключа.",
-    praise: "Живая фраза. Именно так рождается речь.",
-    hints: {
-      "do-decision": "Решение по-английски «делают» иначе: make a decision.",
-      "feel-myself": "После feel — сразу состояние: I feel good (без myself).",
-      "depends-from": "Depends дружит с on: it depends on…",
-      "discuss-about": "Discuss — без about: discuss the plan.",
-      "married-on": "Married to: she is married to…",
-      "in-weekday": "Дни недели — с on: on Monday.",
-      "very-like": "Глагол усиливает really: I really like it.",
-      "capital-i": "«Я» по-английски всегда с большой: I.",
-      "past-marker": "Вчера — прошедшее время: попробуй V2 (did, went, was).",
-      shorter: "Разбей на короткие предложения — «Пиши, сокращай».",
-    } as Record<string, string>,
+    kicker: (time: string) => `Вечерний круг · ${time}`,
+    exit: "Выйти из фокуса",
+    title: "Тихо закроем\nсегодняшний день",
+    facts: (min: number, words: number, spoke: boolean) =>
+      [
+        `${min} ${min % 10 === 1 && min % 100 !== 11 ? "минута" : min % 10 >= 2 && min % 10 <= 4 && (min % 100 < 10 || min % 100 >= 20) ? "минуты" : "минут"} практики`,
+        `${words} ${words % 10 === 1 && words % 100 !== 11 ? "слово" : words % 10 >= 2 && words % 10 <= 4 && (words % 100 < 10 || words % 100 >= 20) ? "слова" : "слов"} в работе`,
+        ...(spoke ? ["голос звучал — вслух"] : []),
+      ].join(" · ") + ".",
+    howLabel: "Как ты сейчас",
+    moods: { calm: "Спокойна", proud: "Собой довольна", tired: "Устала", blocked: "Тяжело было" } as Record<Mood, string>,
+    guardianNames: {
+      devalue: "обесценивание",
+      fear: "запугивание",
+      mock: "высмеивание",
+      perfect: "перфекционизм",
+    } as Record<GuardianId, string>,
+    guardianAsk: "Тапни того, кто приходил сегодня. Не спорим — замечаем.",
+    guardianPassed: (name: string) =>
+      `Сегодня приходило ${name} — и ты всё равно здесь, закрываешь день. Это считается.`,
+    statusLabel: "Одна фраза о дне · по-английски",
+    placeholder: "Today was long, but…",
+    chipsNote: "Подсказки — из сегодняшних слов. Запись видна только тебе.",
+    close: "Закрыть день",
+    skipClose: "Закрыть день без записи",
+    entryN: (n: number) => `${n}-я запись · все — только твои`,
+    doneTitle: "День закрыт",
+    doneNote: "Завтра продолжим с твоего места. Пауза — часть пути.",
+    yourStatus: "Твоя запись",
+    toToday: "На сегодня",
   },
   en: {
-    title: "Evening circle",
-    intro: "A quiet replay before sleep. Answer nothing — just watch and listen.",
-    start: "Start the circle",
-    pause: "Pause",
-    resume: "Resume",
-    ambient: "Alpha tone",
-    exit: "Exit",
-    done: "Good night",
-    doneNote:
-      "The circle is complete. Sleep does the rest: your brain will replay today's words and settle them. See you in the morning.",
-    home: "Home",
-    words: (n: number) => `${n} words of the day`,
-    statusTitle: "Status of the day",
-    statusIntro: "1–3 sentences in English: how the day went. Your artifact of the day — private.",
-    statusPlaceholder: "Today I practiced… I noticed…",
-    statusSave: "Save and sleep",
-    statusSkip: "Not tonight",
-    hintTitle: "A gentle hint — fix it yourself:",
-    aiBtn: "Coach review (AI)",
-    aiWait: "The coach is reading…",
-    aiUnavailable: "AI review unlocks after sign-in, consent in profile, and key setup.",
-    praise: "A living phrase. This is how speech is born.",
-    hints: {
-      "do-decision": "In English decisions are made: make a decision.",
-      "feel-myself": "After feel goes the state itself: I feel good (no myself).",
-      "depends-from": "Depends pairs with on: it depends on…",
-      "discuss-about": "Discuss takes no about: discuss the plan.",
-      "married-on": "Married to: she is married to…",
-      "in-weekday": "Weekdays take on: on Monday.",
-      "very-like": "Boost a verb with really: I really like it.",
-      "capital-i": "The English 'I' is always capital.",
-      "past-marker": "Yesterday means past tense: try V2 (did, went, was).",
-      shorter: "Split it into short sentences.",
-    } as Record<string, string>,
+    kicker: (time: string) => `Evening circle · ${time}`,
+    exit: "Leave focus",
+    title: "Let's quietly close\nthis day",
+    facts: (min: number, words: number, spoke: boolean) =>
+      [
+        `${min} minute${min === 1 ? "" : "s"} of practice`,
+        `${words} word${words === 1 ? "" : "s"} in progress`,
+        ...(spoke ? ["your voice was heard — out loud"] : []),
+      ].join(" · ") + ".",
+    howLabel: "How you are",
+    moods: { calm: "Calm", proud: "Proud of myself", tired: "Tired", blocked: "It was hard" } as Record<Mood, string>,
+    guardianNames: {
+      devalue: "devaluation",
+      fear: "intimidation",
+      mock: "ridicule",
+      perfect: "perfectionism",
+    } as Record<GuardianId, string>,
+    guardianAsk: "Tap the one who came today. We don't argue — we notice.",
+    guardianPassed: (name: string) =>
+      `${name[0].toUpperCase()}${name.slice(1)} came today — and you are still here, closing the day. It counts.`,
+    statusLabel: "One phrase about the day · in English",
+    placeholder: "Today was long, but…",
+    chipsNote: "Hints come from today's words. Visible only to you.",
+    close: "Close the day",
+    skipClose: "Close the day without a record",
+    entryN: (n: number) => `entry #${n} · all of them are yours only`,
+    doneTitle: "The day is closed",
+    doneNote: "Tomorrow we continue from your place. A pause is part of the path.",
+    yourStatus: "Your record",
+    toToday: "To Today",
   },
 } as const;
 
-/** Сколько мс держим слово на экране (спокойно, но без затягивания). */
-const STEP_MS = 4500;
-const MAX_WORDS = 24;
-
-export default function Evening() {
+export default function EveningPage() {
+  const router = useRouter();
   const ui = useUILang();
-  const lang = useNativeLang();
   const t = UI[ui];
+  const plan = useDayPlan();
 
-  const [stage, setStage] = useState<"intro" | "flow" | "status" | "done">("intro");
-  const [i, setI] = useState(0);
-  const [running, setRunning] = useState(false);
-  const [amb, setAmb] = useState(false);
-  const [statusText, setStatusText] = useState("");
-  const [hints, setHints] = useState<FeedbackHint[] | null>(null);
-  const [ai, setAi] = useState<{ state: "idle" | "busy" | "off" | "done"; hints: { title: string; hint: string }[]; praise: string }>({ state: "idle", hints: [], praise: "" });
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [mood, setMood] = useState<Mood | null>(null);
+  const [guardian, setGuardian] = useState<GuardianId | null>(null);
+  const [text, setText] = useState("");
+  const [closed, setClosed] = useState(false);
+  const [savedText, setSavedText] = useState("");
 
-  useActivityTimer(stage === "flow" && running ? "evening" : null);
-
-  // Слова дня: тронутые сегодня → недавние → стартовый пак (для новичка).
-  const words = useMemo<Word[]>(() => {
-    const levelIndex = new Map<string, Word>();
-    for (const p of LEVEL_PACKS) {
-      if (p.id === "level-mega") continue;
-      for (const w of p.words) levelIndex.set(w.en.toLowerCase(), w);
-    }
-    const lookup = (en: string): Word | undefined =>
-      findWord(en) ?? levelIndex.get(en.toLowerCase());
-
-    const cards = todaysTouchedCards();
-    if (cards.length < 6) {
-      const seen = new Set(cards.map((c) => c.en));
-      for (const c of recentCards(MAX_WORDS)) {
-        if (!seen.has(c.en)) cards.push(c);
-        if (cards.length >= MAX_WORDS) break;
-      }
-    }
-    const resolved = cards
-      .slice(0, MAX_WORDS)
-      .map((c) => lookup(c.en))
-      .filter((w): w is Word => Boolean(w));
-    if (resolved.length > 0) return resolved;
-    return (getPack("health")?.words ?? []).slice(0, 12);
-  }, []);
-
-  const w = words[Math.min(i, words.length - 1)];
-  const tr = w ? translate(w, lang) : null;
-
-  // Автопоток: озвучили слово → подержали → дальше. Никаких действий.
-  useEffect(() => {
-    if (stage !== "flow" || !running || !w) return;
-    speakEnglish(w.en, { rate: 0.9, interrupt: true });
-    timer.current = setTimeout(() => {
-      setI((p) => {
-        if (p >= words.length - 1) {
-          // После тихого круга — маленький вывод: статус дня (артефакт).
-          // Если статус сегодня уже написан, сразу «Спокойной ночи».
-          setStage(outputStats().statusToday ? "done" : "status");
-          setRunning(false);
-          return p;
-        }
-        return p + 1;
-      });
-    }, STEP_MS);
-    return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, [stage, running, i, w, words.length]);
-
-  useEffect(
-    () => () => {
-      stopAmbient();
-      try {
-        window.speechSynthesis?.cancel();
-      } catch {}
-    },
+  const touched = useMemo(() => todaysTouchedCards(), []);
+  const chips = useMemo(() => touched.slice(0, 3).map((card) => card.en), [touched]);
+  const statusCount = useMemo(
+    () => listArtifacts().filter((a) => a.type === "status").length,
+    []
+  );
+  const spokeToday = useMemo(
+    () => listArtifacts(20).some((a) => a.createdAt >= Date.now() - 18 * 36e5 && !!a.audioRef),
     []
   );
 
-  function toggleAmbient() {
-    if (amb) {
-      stopAmbient();
-      setAmb(false);
-    } else if (startAmbient()) {
-      setAmb(true);
+  const time = (() => {
+    const d = new Date();
+    return `${d.getHours()}:${String(d.getMinutes()).padStart(2, "0")}`;
+  })();
+
+  function insertChip(w: string) {
+    setText((v) => (v.trim().length ? `${v.trimEnd()} ${w}` : w));
+  }
+
+  function closeDay() {
+    const trimmed = text.trim();
+    if (mood) {
+      // Состояние — на завтра: план сможет подстроиться («устала» → короче).
+      storage().setItem(
+        "ie_evening_mood",
+        JSON.stringify({ day: new Date().toISOString().slice(0, 10), mood })
+      );
     }
+    if (trimmed) {
+      addArtifact({
+        type: "status",
+        text: trimmed,
+        words: chips.filter((w) => trimmed.toLowerCase().includes(w.toLowerCase())),
+      });
+      setSavedText(trimmed);
+    }
+    setClosed(true);
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-brand-ink/95">
-      <main className="mx-auto flex w-full max-w-[480px] flex-1 flex-col px-5 py-6 text-white">
-        <div className="flex items-center justify-between">
-          <p className="flex items-center gap-2 font-heading text-sm font-bold text-white/85">
-            <Moon className="h-4 w-4" /> {t.title}
-          </p>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={toggleAmbient}
-              className={`rounded-xl px-2.5 py-1.5 font-heading text-[11px] font-bold transition-colors ${
-                amb ? "bg-white text-brand-ink" : "bg-white/15 text-white"
-              }`}
-            >
-              {t.ambient}
-            </button>
-            <Link
-              href="/"
-              aria-label={t.exit}
-              className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white"
-            >
-              <X className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-
-        {stage === "intro" && (
-          <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
-              <Moon className="h-8 w-8 text-white/90" />
+    <div className="min-h-dvh" style={{ background: N.bg }}>
+      <div className="mx-auto flex min-h-dvh w-full max-w-[1180px] flex-col px-5 py-5 lg:px-10">
+        {/* Шапка focus: лого-плитка + кикер латунью + выход */}
+        <header className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="flex h-[34px] w-[34px] items-center justify-center rounded-[10px] bg-amber font-english text-[15px] font-semibold italic text-[#22201B]">
+              ie
             </span>
-            <h1
-              data-testid="evening-title"
-              className="mt-5 font-heading text-2xl font-extrabold"
+            <span
+              className="font-heading text-xs font-semibold uppercase tracking-[0.07em]"
+              style={{ color: N.brass }}
             >
-              {t.title}
-            </h1>
-            <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-white/75">
-              {t.intro}
-            </p>
-            <p className="mt-4 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold text-white/85">
-              {t.words(words.length)}
-            </p>
-            <button
-              onClick={() => {
-                setI(0);
-                setRunning(true);
-                setStage("flow");
-              }}
-              data-testid="evening-start"
-              className="mt-8 flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-4 font-heading text-base font-extrabold text-brand-ink transition-transform active:scale-[0.98]"
-            >
-              <Play className="h-5 w-5" />
-              {t.start}
-            </button>
+              {t.kicker(time)}
+            </span>
           </div>
-        )}
+          <Link
+            href="/"
+            className="rounded-xl border px-4 py-2.5 font-heading text-[13px] font-semibold transition-opacity hover:opacity-80"
+            style={{ borderColor: N.line, color: N.muted }}
+          >
+            {t.exit}
+          </Link>
+        </header>
 
-        {stage === "flow" && w && (
-          <div className="flex flex-1 flex-col">
-            <div className="flex flex-1 flex-col items-center justify-center text-center">
-              <button
-                onClick={() => speakEnglish(w.en, { rate: 0.9, interrupt: true })}
-                className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/80"
-                aria-label="Озвучить"
-              >
-                <Sound className="h-5 w-5" />
-              </button>
-              <p
-                data-testid="evening-word"
-                className="max-w-full break-words font-heading text-[40px] font-extrabold leading-tight text-accent"
-              >
-                {w.en}
-              </p>
-              {tr && (
-                <p
-                  dir={tr.isDef ? "ltr" : LANG_DIR[lang]}
-                  className="mt-4 max-w-[320px] text-lg leading-relaxed text-white/85"
+        {!closed ? (
+          <div className="mt-6 grid flex-1 gap-6 pb-10 lg:grid-cols-2">
+            {/* Левая колонка: заголовок, факты, состояние, страж */}
+            <div className="flex flex-col gap-6">
+              <div>
+                <h1
+                  data-testid="evening-title"
+                  className="whitespace-pre-line font-heading text-[30px] font-bold leading-[1.15] tracking-[-0.02em] lg:text-[34px]"
+                  style={{ color: N.ink }}
                 >
-                  {tr.text}
+                  {t.title}
+                </h1>
+                <p className="mt-3 text-sm leading-relaxed" style={{ color: N.muted }}>
+                  {t.facts(plan.todayMin, touched.length, spokeToday)}
                 </p>
+              </div>
+
+              {/* Как ты сейчас */}
+              <div className="rounded-[20px] p-6" style={{ background: N.surface }}>
+                <p
+                  className="font-heading text-[11px] font-semibold uppercase tracking-[0.08em]"
+                  style={{ color: N.brass }}
+                >
+                  {t.howLabel}
+                </p>
+                <div className="mt-3.5 flex flex-wrap gap-2.5">
+                  {(Object.keys(t.moods) as Mood[]).map((m) => {
+                    const on = mood === m;
+                    return (
+                      <button
+                        key={m}
+                        data-testid={`evening-mood-${m}`}
+                        onClick={() => setMood(on ? null : m)}
+                        className="rounded-[20px] px-4 py-2.5 font-heading text-sm font-medium transition-transform active:scale-[0.97]"
+                        style={
+                          on
+                            ? { background: N.brass, color: N.brassInk }
+                            : { background: N.chip, color: N.chipInk }
+                        }
+                      >
+                        {t.moods[m]}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Страж — появляется, когда «Тяжело было» */}
+              {mood === "blocked" && (
+                <div className="flex items-center gap-4 rounded-[20px] p-6" style={{ background: N.surface }}>
+                  <div className="flex gap-2.5">
+                    {GUARDIANS.map((g) => {
+                      const on = guardian === g.id;
+                      return (
+                        <button
+                          key={g.id}
+                          onClick={() => setGuardian(on ? null : g.id)}
+                          aria-label={t.guardianNames[g.id]}
+                          className="relative flex-none transition-all"
+                          style={{ width: on ? 46 : 38, height: on ? 46 : 38, opacity: on ? 1 : 0.45 }}
+                        >
+                          <span
+                            className="absolute inset-0"
+                            style={{
+                              borderRadius: "44% 56% 52% 48%/54% 46% 54% 46%",
+                              background: `linear-gradient(145deg, ${g.from}, ${g.to})`,
+                            }}
+                          />
+                          <span className="absolute h-1 w-1 rounded-full" style={{ left: "30%", top: "42%", background: g.eye }} />
+                          <span className="absolute h-1 w-1 rounded-full" style={{ right: "30%", top: "42%", background: g.eye }} />
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-[13.5px] leading-relaxed" style={{ color: N.soft }}>
+                    {guardian ? t.guardianPassed(t.guardianNames[guardian]) : t.guardianAsk}
+                  </p>
+                </div>
               )}
             </div>
 
-            <div className="mb-2 flex items-center justify-between text-xs text-white/60">
-              <span className="tnum">
-                {i + 1} / {words.length}
-              </span>
-              <span>{t.intro}</span>
-            </div>
-            <div className="h-1 overflow-hidden rounded-full bg-white/15">
-              <div
-                className="h-full rounded-full bg-white/70 transition-[width] duration-500"
-                style={{ width: `${Math.round(((i + 1) / words.length) * 100)}%` }}
-              />
-            </div>
-            <button
-              onClick={() => setRunning((r) => !r)}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-white/15 px-5 py-3.5 font-heading text-sm font-bold text-white"
-            >
-              {running ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
-              {running ? t.pause : t.resume}
-            </button>
-          </div>
-        )}
-
-        {stage === "status" && (
-          <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <h2 className="font-heading text-2xl font-extrabold">{t.statusTitle}</h2>
-            <p className="mt-2 max-w-[320px] text-sm leading-relaxed text-white/75">
-              {t.statusIntro}
-            </p>
-            <textarea
-              value={statusText}
-              onChange={(e) => setStatusText(e.target.value)}
-              placeholder={t.statusPlaceholder}
-              rows={3}
-              data-testid="evening-status-input"
-              className="mt-5 w-full resize-none rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-base text-white placeholder:text-white/40 focus:border-white/50 focus:outline-none"
-            />
-            <button
-              onClick={() => {
-                const text = statusText.trim();
-                if (text) {
-                  const low = text.toLowerCase();
-                  addArtifact({
-                    type: "status",
-                    text,
-                    words: todaysTouchedCards()
-                      .map((c) => c.en)
-                      .filter((en) => low.includes(en.toLowerCase())),
-                  });
-                  setHints(feedbackFor(text));
-                }
-                setStage("done");
-              }}
-              disabled={!statusText.trim()}
-              data-testid="evening-status-save"
-              className="mt-5 w-full rounded-2xl bg-white px-5 py-4 font-heading text-base font-extrabold text-brand-ink transition-transform active:scale-[0.98] disabled:opacity-40"
-            >
-              {t.statusSave}
-            </button>
-            <button
-              onClick={() => setStage("done")}
-              className="mt-3 rounded-full px-4 py-1.5 text-xs font-bold text-white/60 hover:text-white/85"
-            >
-              {t.statusSkip}
-            </button>
-          </div>
-        )}
-
-        {stage === "done" && (
-          <div className="flex flex-1 flex-col items-center justify-center text-center">
-            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white/10">
-              <Moon className="h-8 w-8 text-white/90" />
-            </span>
-            <h2 className="mt-5 font-heading text-2xl font-extrabold">{t.done}</h2>
-            <p className="mt-2 max-w-[300px] text-sm leading-relaxed text-white/75">
-              {t.doneNote}
-            </p>
-            {hints !== null &&
-              (hints.length > 0 ? (
-                <div className="mt-4 w-full rounded-2xl bg-white/10 px-4 py-3 text-left">
-                  <p className="text-xs font-bold text-white/70">{t.hintTitle}</p>
-                  {hints.map((h) => (
-                    <p key={h.id} className="mt-1 text-sm leading-relaxed text-white/85">
-                      • {t.hints[h.id] ?? h.id}
-                    </p>
-                  ))}
-                </div>
-              ) : (
-                <p className="mt-4 rounded-full bg-white/10 px-4 py-1.5 text-xs font-bold text-white/85">
-                  {t.praise}
+            {/* Правая колонка: одна фраза о дне */}
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-1 flex-col rounded-[20px] p-6" style={{ background: N.surface }}>
+                <p
+                  className="font-heading text-[11px] font-semibold uppercase tracking-[0.08em]"
+                  style={{ color: N.brass }}
+                >
+                  {t.statusLabel}
                 </p>
-              ))}
-
-            {/* AI-разбор тренера — по согласию llm-feedback (Фаза D) */}
-            {hints !== null && statusText.trim() && ai.state !== "done" && (
-              <button
-                onClick={async () => {
-                  setAi((a) => ({ ...a, state: "busy" }));
-                  try {
-                    const res = await fetch("/api/feedback", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ text: statusText.trim() }),
-                    });
-                    if (!res.ok) {
-                      setAi({ state: "off", hints: [], praise: "" });
-                      return;
-                    }
-                    const j = (await res.json()) as { hints: { title: string; hint: string }[]; praise: string };
-                    setAi({ state: "done", hints: j.hints ?? [], praise: j.praise ?? "" });
-                  } catch {
-                    setAi({ state: "off", hints: [], praise: "" });
-                  }
-                }}
-                disabled={ai.state === "busy"}
-                className="mt-3 rounded-full bg-white/15 px-4 py-2 text-xs font-bold text-white/85 disabled:opacity-50"
-              >
-                {ai.state === "busy" ? t.aiWait : t.aiBtn}
-              </button>
-            )}
-            {ai.state === "off" && (
-              <p className="mt-2 max-w-[300px] text-[11px] leading-relaxed text-white/50">{t.aiUnavailable}</p>
-            )}
-            {ai.state === "done" && (
-              <div className="mt-3 w-full rounded-2xl bg-white/10 px-4 py-3 text-left">
-                {ai.hints.length > 0 ? (
-                  ai.hints.map((h, i) => (
-                    <p key={i} className="mt-1 text-sm leading-relaxed text-white/85">
-                      • <b>{h.title}:</b> {h.hint}
-                    </p>
-                  ))
-                ) : (
-                  <p className="text-sm leading-relaxed text-white/85">{ai.praise}</p>
+                <textarea
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder={t.placeholder}
+                  data-testid="evening-status-text"
+                  rows={5}
+                  className="mt-3.5 w-full flex-1 resize-none bg-transparent font-english text-[21px] leading-relaxed outline-none placeholder:opacity-40"
+                  style={{ color: N.ink }}
+                />
+                {chips.length > 0 && (
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {chips.map((w) => (
+                      <button
+                        key={w}
+                        onClick={() => insertChip(w)}
+                        className="rounded-[18px] px-3.5 py-2 font-english text-sm font-medium transition-transform active:scale-[0.96]"
+                        style={{ background: N.chip, color: N.chipInk }}
+                      >
+                        {w}
+                      </button>
+                    ))}
+                  </div>
                 )}
+                <p className="mt-3 text-xs" style={{ color: N.faint }}>
+                  {t.chipsNote}
+                </p>
+              </div>
+
+              <button
+                onClick={closeDay}
+                data-testid="evening-close"
+                className="rounded-[18px] px-5 py-[18px] text-center font-heading text-base font-bold transition-transform active:scale-[0.98]"
+                style={{
+                  background: N.brass,
+                  color: N.brassInk,
+                  boxShadow: "0 14px 30px -12px rgba(232,179,106,.35)",
+                }}
+              >
+                {text.trim() ? t.close : t.skipClose}
+              </button>
+              {(text.trim().length > 0 || statusCount > 0) && (
+                <p className="text-center text-[13px]" style={{ color: N.faint }}>
+                  {t.entryN(statusCount + (text.trim() ? 1 : 0))}
+                </p>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* День закрыт: тёплый свет лампы + твоя запись */
+          <div className="flex flex-1 flex-col items-center justify-center gap-6 pb-16 text-center">
+            <div
+              className="h-20 w-20 rounded-full"
+              style={{ background: N.brass, boxShadow: `0 0 60px 18px rgba(232,179,106,.35)` }}
+            />
+            <h1 data-testid="evening-done" className="font-heading text-[28px] font-bold" style={{ color: N.ink }}>
+              {t.doneTitle}
+            </h1>
+            {savedText && (
+              <div className="w-full max-w-[520px] rounded-[20px] p-6 text-left" style={{ background: N.surface }}>
+                <p className="font-heading text-[11px] font-semibold uppercase tracking-[0.08em]" style={{ color: N.brass }}>
+                  {t.yourStatus}
+                </p>
+                <p className="mt-3 font-english text-lg italic leading-relaxed" style={{ color: N.ink }}>
+                  “{savedText}”
+                </p>
+                <p className="mt-3 text-xs" style={{ color: N.faint }}>
+                  {t.entryN(statusCount + 1)}
+                </p>
               </div>
             )}
-            <Link
-              href="/"
-              className="mt-8 w-full rounded-2xl bg-white px-5 py-4 text-center font-heading text-base font-extrabold text-brand-ink"
+            <p className="text-sm" style={{ color: N.muted }}>
+              {t.doneNote}
+            </p>
+            <button
+              onClick={() => router.push("/")}
+              className="rounded-[16px] border px-8 py-3.5 font-heading text-sm font-bold"
+              style={{ borderColor: N.line, color: N.ink }}
             >
-              {t.home}
-            </Link>
+              {t.toToday}
+            </button>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }

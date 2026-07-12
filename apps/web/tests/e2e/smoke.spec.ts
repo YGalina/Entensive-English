@@ -45,11 +45,13 @@ test("opens main learning surfaces", async ({ page }) => {
   await examples.first().click();
   await expect(page.getByTestId("pronunciation-title")).toBeVisible();
 
-  // Вечерний круг: тихий автопоток слов дня стартует и показывает слово.
+  // Вечерний круг v2: состояние → фраза о дне → «Закрыть день» → лампа.
   await page.goto("/evening");
   await expect(page.getByTestId("evening-title")).toBeVisible();
-  await page.getByTestId("evening-start").click();
-  await expect(page.getByTestId("evening-word")).toBeVisible();
+  await page.getByTestId("evening-mood-calm").click();
+  await page.getByTestId("evening-status-text").fill("Today I kept my rhythm.");
+  await page.getByTestId("evening-close").click();
+  await expect(page.getByTestId("evening-done")).toBeVisible();
 
   // Набор (машинопись): zero-error ввод — печатаем фразу, получаем итог.
   await page.goto("/typing");

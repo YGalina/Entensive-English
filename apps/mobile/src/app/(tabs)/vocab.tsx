@@ -113,8 +113,41 @@ export default function VocabScreen() {
           </View>
         )}
 
-        {/* Список слов */}
-        {list.length === 0 ? (
+        {/* Пусто совсем — макет «пусто · словарь»: приглашение, не упрёк */}
+        {entries.length === 0 ? (
+          <View style={{ alignItems: "center", gap: 12, paddingVertical: 44, paddingHorizontal: 8 }}>
+            <View style={{ width: 64, height: 64, borderRadius: 20, backgroundColor: c.brandSoft, alignItems: "center", justifyContent: "center" }}>
+              <Ionicons name="book-outline" size={28} color={c.brandD} />
+            </View>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 20, color: c.ink, textAlign: "center" }}>
+              {v.emptyTitle}
+            </Text>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.muted, textAlign: "center", maxWidth: 300 }}>
+              {v.emptyBody}
+            </Text>
+            <Pressable
+              onPress={() => {
+                tap();
+                router.push("/session" as never);
+              }}
+              accessibilityRole="button"
+              style={({ pressed }) => ({
+                alignSelf: "stretch",
+                marginTop: 8,
+                minHeight: 54,
+                borderRadius: 16,
+                backgroundColor: c.brand,
+                alignItems: "center",
+                justifyContent: "center",
+                transform: [{ scale: pressed ? 0.98 : 1 }],
+              })}
+            >
+              <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.onBrand }}>
+                {v.emptyCta}
+              </Text>
+            </Pressable>
+          </View>
+        ) : list.length === 0 ? (
           <View style={{ alignItems: "center", gap: 10, paddingVertical: 48 }}>
             <Ionicons name="book-outline" size={34} color={c.muted} />
             <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13.5, lineHeight: 20, color: c.muted, textAlign: "center", maxWidth: 280 }}>

@@ -19,8 +19,9 @@ const UI = {
     inWork: "в работе",
     learned: "усвоено",
     due: "к повтору",
-    emptyTitle: "Пока пусто",
-    emptyNote: "Пройди сеанс на «Сегодня» — слова попадут сюда и встанут в план повторов.",
+    emptyTitle: "Здесь копятся твои слова",
+    emptyNote: "Пока пусто — так и должно быть в первый день. Слово попадает сюда, когда тапаешь перевод в контенте.",
+    emptyCta: "Начать сессию дня",
     review: (n: number) => `Повторить ${n}`,
     allDoneTitle: "На сегодня всё",
     allDoneNote: "Повторов нет — система покажет слова, когда придёт срок. Можно пройти новую пачку.",
@@ -35,8 +36,9 @@ const UI = {
     inWork: "active",
     learned: "learned",
     due: "due",
-    emptyTitle: "Nothing here yet",
-    emptyNote: "Complete a Today session — words will appear here and enter the review plan.",
+    emptyTitle: "Your words gather here",
+    emptyNote: "Empty for now — as it should be on day one. A word lands here when you tap its translation in content.",
+    emptyCta: "Start today’s session",
     review: (n: number) => `Review ${n}`,
     allDoneTitle: "All done today",
     allDoneNote: "No reviews are due. The system will show words when it is time, or you can start a new pack.",
@@ -70,10 +72,18 @@ export default function Vocab() {
             </div>
 
             {stats.total === 0 ? (
-              <EmptyHint
-                title={t.emptyTitle}
-                note={t.emptyNote}
-              />
+              <>
+                <EmptyHint
+                  title={t.emptyTitle}
+                  note={t.emptyNote}
+                />
+                <Link
+                  href="/session/health"
+                  className="mt-4 flex w-full items-center justify-center rounded-2xl bg-brand px-5 py-4 font-heading text-base font-extrabold text-white shadow-[0_8px_20px_-6px_var(--brand)] transition-transform active:scale-[0.98]"
+                >
+                  {t.emptyCta}
+                </Link>
+              </>
             ) : stats.dueToday > 0 ? (
               <button
                 onClick={() => setReview(true)}
