@@ -1,88 +1,306 @@
 "use client";
 
-import Link from "next/link";
+import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import OnboardingGate from "@/components/OnboardingGate";
-import { Text, Play, Sound, Chat, Keyboard, ArrowRight } from "@/components/Icons";
-import { useUILang } from "@ie/core/prefs";
+import { useUILang, usePrefs } from "@ie/core/prefs";
+import { STORIES, storiesByLevel, wordCount, type Story } from "@ie/core/data/reading";
+import { booksForReader, type GutenbergBook } from "@ie/core/data/gutenberg";
+import { SHADOWING, CATEGORY_LABEL, type ShadowScript } from "@ie/core/data/shadowing";
+import { addMyBook, addMyVideo, parseGutenbergId, parseYoutubeId } from "@ie/core/mylibrary";
 
-// «Библиотека» — по 13_app_logic §4.2: один вход в контент и навыки.
-// Чтение, видео/shadowing, звуки, времена, набор — внутри Библиотеки,
-// не в главной навигации. Сетка B1–C1 с «% моего» и импортом — следующий шаг.
+// «Библиотека» на web — 1:1 по макету «Веб-приложение · БИБЛИОТЕКА»: шапка с
+// импортом своей ссылки, фильтр-чипы, СЕТКА карточек материалов с обложками
+// по типу (видео · подкаст/звук · текст). Каждая карточка ведёт в свой навык.
+// Цвета — через токены: сетка одинаково живёт в светлой и тёмной теме.
+
+type Kind = "all" | "video" | "text" | "book";
 
 const UI = {
   ru: {
-    title: "Библиотека",
-    subtitle: "Контент, который тебе по силам",
-    items: [
-      { href: "/reading", title: "Читать", note: "тексты с переводом по тапу · замер скорости", Icon: Text, tone: "--sk-reading" },
-      { href: "/video", title: "Видео · shadowing", note: "слушай → повторяй в тени голоса", Icon: Play, tone: "--sk-video" },
-      { href: "/pronunciation", title: "Звуки", note: "лестница темпа: слушай → повтори → вместе", Icon: Sound, tone: "--sk-sounds" },
-      { href: "/grammar", title: "Времена", note: "закон из фразы — и собери своё", Icon: Chat, tone: "--sk-grammar" },
-      { href: "/typing", title: "Набор", note: "моторный канал: рука помнит слово", Icon: Keyboard, tone: "--sk-typing" },
-    ],
-    own: "Своё видео или статья — вставь ссылку внутри раздела, соберём урок.",
+    kicker: "Библиотека",
+    title: "Контент, который тебе по силам",
+    importTitle: "Вставь свою ссылку",
+    importNote: "YouTube или статью — соберём сессию",
+    importAdd: "Добавить",
+    importPh: "https://youtu.be/… или ссылка на книгу",
+    importErr: "Не распознала ссылку. Нужен YouTube или Project Gutenberg.",
+    importOkVideo: "Видео добавлено — открываю shadowing",
+    importOkBook: "Книга добавлена — открываю читалку",
+    chips: { all: "Всё", video: "Видео", text: "Тексты", book: "Книги" } as Record<Kind, string>,
+    minRead: (m: number) => `${m} мин чтения`,
+    words: (n: number) => `${n} слов · перевод по тапу`,
+    videoMeta: (c: string) => `видео · shadowing · ${c}`,
+    bookMeta: "книга · читать главами",
+    ownTitle: "Своё видео",
+    ownNote: "из ссылки за минуту",
+    metaText: "текст",
   },
   en: {
-    title: "Library",
-    subtitle: "Content that is within your reach",
-    items: [
-      { href: "/reading", title: "Read", note: "texts with tap-to-translate · speed check", Icon: Text, tone: "--sk-reading" },
-      { href: "/video", title: "Video · shadowing", note: "listen → repeat in the shadow of a voice", Icon: Play, tone: "--sk-video" },
-      { href: "/pronunciation", title: "Sounds", note: "tempo ladder: listen → repeat → together", Icon: Sound, tone: "--sk-sounds" },
-      { href: "/grammar", title: "Tenses", note: "the law from a phrase — then build your own", Icon: Chat, tone: "--sk-grammar" },
-      { href: "/typing", title: "Typing", note: "motor channel: the hand remembers the word", Icon: Keyboard, tone: "--sk-typing" },
-    ],
-    own: "Your own video or article — paste a link inside a section, we'll build a lesson.",
+    kicker: "Library",
+    title: "Content that is within your reach",
+    importTitle: "Paste your link",
+    importNote: "YouTube or an article — we'll build a session",
+    importAdd: "Add",
+    importPh: "https://youtu.be/… or a book link",
+    importErr: "Couldn't recognise the link. YouTube or Project Gutenberg needed.",
+    importOkVideo: "Video added — opening shadowing",
+    importOkBook: "Book added — opening the reader",
+    chips: { all: "All", video: "Video", text: "Texts", book: "Books" } as Record<Kind, string>,
+    minRead: (m: number) => `${m} min read`,
+    words: (n: number) => `${n} words · tap to translate`,
+    videoMeta: (c: string) => `video · shadowing · ${c}`,
+    bookMeta: "book · read by chapters",
+    ownTitle: "Your video",
+    ownNote: "from a link in a minute",
+    metaText: "text",
   },
 } as const;
 
 export default function LibraryPage() {
+  const router = useRouter();
   const ui = useUILang();
   const t = UI[ui];
+  const prefs = usePrefs();
+
+  const [kind, setKind] = useState<Kind>("all");
+  const [importOpen, setImportOpen] = useState(false);
+  const [link, setLink] = useState("");
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const stories = useMemo(() => {
+    const byLevel = storiesByLevel(prefs?.level ?? "b1");
+    return (byLevel.length > 0 ? byLevel : STORIES).slice(0, 6);
+  }, [prefs?.level]);
+  const books = useMemo(
+    () => booksForReader(prefs?.topics ?? [], prefs?.level).slice(0, 3),
+    [prefs?.topics, prefs?.level]
+  );
+  const videos = SHADOWING.slice(0, 4);
+
+  function addLink() {
+    const v = link.trim();
+    const yt = parseYoutubeId(v);
+    if (yt) {
+      addMyVideo(yt, "My video");
+      setMsg(t.importOkVideo);
+      setTimeout(() => router.push("/video"), 700);
+      return;
+    }
+    const gb = parseGutenbergId(v);
+    if (gb) {
+      addMyBook(gb, "My book");
+      setMsg(t.importOkBook);
+      setTimeout(() => router.push("/reading"), 700);
+      return;
+    }
+    setMsg(t.importErr);
+  }
+
+  const showVideo = kind === "all" || kind === "video";
+  const showText = kind === "all" || kind === "text";
+  const showBook = kind === "all" || kind === "book";
 
   return (
     <OnboardingGate>
       <AppShell>
-        <main className="mx-auto w-full max-w-[560px] flex-1 px-5 pt-7 pb-6">
-          <header className="mb-5">
-            <h1 data-testid="library-title" className="font-heading text-3xl font-extrabold tracking-tight text-ink">
-              {t.title}
-            </h1>
-            <p className="mt-1 text-sm text-muted">{t.subtitle}</p>
-          </header>
+        <main className="mx-auto w-full max-w-[1180px] flex-1 px-5 pb-10 pt-7 lg:px-10">
+          {/* Шапка: заголовок + импорт своей ссылки справа */}
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="font-heading text-[13px] font-semibold text-muted/80">{t.kicker}</p>
+              <h1
+                data-testid="library-title"
+                className="mt-1 font-heading text-[26px] font-extrabold tracking-[-0.025em] text-ink lg:text-[30px]"
+              >
+                {t.title}
+              </h1>
+            </div>
 
-          <ul className="space-y-2.5">
-            {t.items.map(({ href, title, note, Icon, tone }) => (
-              <li key={href}>
-                <Link
-                  href={href}
-                  className="flex items-center gap-3.5 rounded-card bg-surface p-4 shadow-card transition-transform active:scale-[0.98]"
+            <div className="rounded-[14px] border-2 border-dashed border-line bg-surface p-2.5 shadow-card">
+              {!importOpen ? (
+                <button
+                  onClick={() => setImportOpen(true)}
+                  className="flex items-center gap-3 pl-2"
                 >
-                  <span
-                    className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl"
-                    style={{
-                      background: `color-mix(in srgb, var(${tone}) 14%, transparent)`,
-                      color: `var(${tone})`,
+                  <span className="text-left">
+                    <span className="block font-heading text-xs font-semibold text-ink">{t.importTitle}</span>
+                    <span className="block text-[10.5px] text-muted">{t.importNote}</span>
+                  </span>
+                  <span className="rounded-[10px] bg-brand px-4 py-2.5 font-heading text-[12.5px] font-bold text-white">
+                    {t.importAdd}
+                  </span>
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <input
+                    autoFocus
+                    value={link}
+                    onChange={(e) => {
+                      setLink(e.target.value);
+                      setMsg(null);
                     }}
+                    onKeyDown={(e) => e.key === "Enter" && addLink()}
+                    placeholder={t.importPh}
+                    className="w-[240px] rounded-[10px] bg-bg px-3 py-2.5 font-body text-[13px] text-ink outline-none"
+                  />
+                  <button
+                    onClick={addLink}
+                    className="rounded-[10px] bg-brand px-4 py-2.5 font-heading text-[12.5px] font-bold text-white"
                   >
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-heading text-base font-bold text-ink">{title}</span>
-                    <span className="block text-xs leading-relaxed text-muted">{note}</span>
-                  </span>
-                  <ArrowRight className="h-4 w-4 flex-shrink-0 text-muted" />
-                </Link>
-              </li>
-            ))}
-          </ul>
+                    {t.importAdd}
+                  </button>
+                </div>
+              )}
+              {msg && <p className="mt-1.5 px-1 text-[11px] font-medium text-brand-d">{msg}</p>}
+            </div>
+          </div>
 
-          <p className="mt-4 rounded-soft bg-brand-soft px-4 py-3 text-sm leading-relaxed text-brand-ink">
-            {t.own}
-          </p>
+          {/* Фильтр-чипы */}
+          <div className="mt-6 flex flex-wrap gap-2">
+            {(Object.keys(t.chips) as Kind[]).map((k) => {
+              const on = kind === k;
+              return (
+                <button
+                  key={k}
+                  onClick={() => setKind(k)}
+                  className={`rounded-full px-4 py-2 font-heading text-[12.5px] transition-colors ${
+                    on
+                      ? "bg-ink font-semibold text-bg"
+                      : "bg-surface font-medium text-muted shadow-card hover:text-ink"
+                  }`}
+                >
+                  {t.chips[k]}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Сетка карточек */}
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {showVideo &&
+              videos.map((v) => (
+                <VideoCard key={v.id} script={v} meta={t.videoMeta(CATEGORY_LABEL[v.category])} onOpen={() => router.push("/video")} />
+              ))}
+            {showText &&
+              stories.map((s) => {
+                const w = wordCount(s);
+                return (
+                  <TextCard
+                    key={s.id}
+                    title={s.title}
+                    level={s.level}
+                    tag={t.metaText}
+                    meta={t.words(w)}
+                    onOpen={() => router.push("/reading")}
+                  />
+                );
+              })}
+            {showBook &&
+              books.map((b) => (
+                <TextCard
+                  key={b.bookId}
+                  title={b.title}
+                  level={b.level}
+                  tag="book"
+                  meta={t.bookMeta}
+                  sub={b.author}
+                  onOpen={() => router.push("/reading")}
+                />
+              ))}
+
+            {/* Импорт-плитка в конце сетки */}
+            <button
+              onClick={() => setImportOpen(true)}
+              className="flex min-h-[180px] flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-line bg-bg transition-colors hover:border-brand/50"
+            >
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-soft font-heading text-[22px] font-bold text-brand-ink">
+                +
+              </span>
+              <span className="font-heading text-[13px] font-semibold text-ink">{t.ownTitle}</span>
+              <span className="text-[11px] text-muted">{t.ownNote}</span>
+            </button>
+          </div>
         </main>
       </AppShell>
     </OnboardingGate>
+  );
+}
+
+/* ---------- Карточка видео (обложка-градиент петроль + play) ---------- */
+function VideoCard({ script, meta, onOpen }: { script: ShadowScript; meta: string; onOpen: () => void }) {
+  return (
+    <button
+      onClick={onOpen}
+      className="overflow-hidden rounded-2xl bg-surface text-left shadow-card transition-transform active:scale-[0.99]"
+    >
+      <div
+        className="relative flex h-28 items-center justify-center"
+        style={{ background: "linear-gradient(150deg,#3a4d63,#22323f)" }}
+      >
+        <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90">
+          <span
+            className="ml-1"
+            style={{ width: 0, height: 0, borderLeft: "12px solid #22323f", borderTop: "8px solid transparent", borderBottom: "8px solid transparent" }}
+          />
+        </span>
+        <span className="absolute left-2.5 top-2.5 rounded-md bg-black/50 px-2 py-1 font-heading text-[10px] font-semibold text-white">
+          {script.lines.length} фраз
+        </span>
+      </div>
+      <div className="p-4">
+        <p className="font-heading text-sm font-semibold leading-snug text-ink">{script.title}</p>
+        <p className="mt-1 text-[11.5px] text-muted">{meta}</p>
+      </div>
+    </button>
+  );
+}
+
+/* ---------- Карточка текста/книги (обложка «Aa» на полосатом фоне) ---------- */
+function TextCard({
+  title,
+  level,
+  tag,
+  meta,
+  sub,
+  onOpen,
+}: {
+  title: string;
+  level: string;
+  tag: string;
+  meta: string;
+  sub?: string;
+  onOpen: () => void;
+}) {
+  const isBook = tag === "book";
+  return (
+    <button
+      onClick={onOpen}
+      className="overflow-hidden rounded-2xl bg-surface text-left shadow-card transition-transform active:scale-[0.99]"
+    >
+      <div
+        className="relative flex h-28 items-center justify-center"
+        style={{
+          background: isBook
+            ? "linear-gradient(150deg,#4a6a52,#2f4a38)"
+            : "repeating-linear-gradient(135deg,#eadfca,#eadfca 10px,#e2d5bb 10px,#e2d5bb 20px)",
+        }}
+      >
+        <span
+          className="font-english text-[22px]"
+          style={{ color: isBook ? "rgba(255,255,255,.92)" : "#8a7d60" }}
+        >
+          Aa
+        </span>
+        <span className="absolute left-2.5 top-2.5 rounded-md bg-black/40 px-2 py-1 font-heading text-[10px] font-semibold text-white">
+          {level.toUpperCase()}
+        </span>
+      </div>
+      <div className="p-4">
+        <p className="font-heading text-sm font-semibold leading-snug text-ink">{title}</p>
+        <p className="mt-1 text-[11.5px] text-muted">{sub ?? meta}</p>
+      </div>
+    </button>
   );
 }
