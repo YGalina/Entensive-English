@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import ThemeToggle from "@/components/ThemeToggle";
-import { Sun, Sound, Play, Check } from "@/components/Icons";
+import { Sun, Sound, Play, Check, Smile } from "@/components/Icons";
 import { usePrefs, updatePrefs } from "@ie/core/prefs";
 import { listEnglishVoices, speakEnglish } from "@ie/media/speech";
 import { fetchMe, logout, pushToCloud, pullFromCloud, type MeUser } from "@/lib/cloud";
@@ -148,19 +148,35 @@ export default function Profile() {
 
   return (
     <AppShell>
-      <main className="mx-auto w-full max-w-[560px] flex-1 px-5 pt-7 pb-6">
-        <div className="mb-5 flex items-center justify-between">
-          <h1 data-testid="profile-title" className="font-heading text-2xl font-extrabold text-ink">{t.profile}</h1>
+      <main className="mx-auto w-full max-w-[1080px] flex-1 px-5 pb-10 pt-7 lg:px-9">
+        {/* Шапка: аватар + идентичность (макет 12) */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <span className="flex h-[70px] w-[70px] items-center justify-center rounded-full bg-brand-soft font-heading text-[26px] font-bold text-brand-ink">
+              <Smile className="h-8 w-8 text-brand" />
+            </span>
+            <div>
+              <h1 data-testid="profile-title" className="font-heading text-[26px] font-extrabold tracking-[-0.02em] text-ink">
+                {t.profile}
+              </h1>
+              <p className="mt-0.5 text-sm text-muted">
+                {level}
+                {goal ? ` · ${goal}` : ""}
+              </p>
+            </div>
+          </div>
           <ThemeToggle />
         </div>
 
-        {/* Прогресс */}
-        <div className="grid grid-cols-3 gap-2.5">
+        {/* Прогресс — строкой под шапкой */}
+        <div className="mt-6 grid max-w-[520px] grid-cols-3 gap-2.5">
           <Mini n={stats.total} label={t.words} />
           <Mini n={stats.learned} label={t.learned} />
           <Mini n={stats.dueToday} label={t.due} />
         </div>
 
+        {/* Настройки — 2-колоночная кладка на широком экране */}
+        <div className="mt-6 columns-1 gap-4 lg:columns-2">
         {/* Аккаунт и облако */}
         <Card title={t.account} note={t.accountNote}>
           <AccountCard t={t} />
@@ -264,8 +280,10 @@ export default function Profile() {
           </div>
         </Card>
 
+        </div>
+
         {/* Действия */}
-        <div className="mt-6 space-y-2.5">
+        <div className="mt-2 grid max-w-[520px] gap-2.5 sm:grid-cols-2">
           <button
             onClick={resetOnboarding}
             className="w-full rounded-2xl border border-line bg-surface px-5 py-3.5 font-heading text-sm font-bold text-ink"
@@ -610,7 +628,7 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <section className="mt-5 rounded-card border border-line bg-surface p-4">
+    <section className="mb-4 break-inside-avoid rounded-card border border-line bg-surface p-5">
       <h2 className="font-heading text-base font-bold text-ink">{title}</h2>
       {note && <p className="mt-0.5 mb-3 text-xs text-muted">{note}</p>}
       {!note && <div className="mb-3" />}

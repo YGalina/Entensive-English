@@ -123,9 +123,10 @@ export default function Vocab() {
                 onClick={() => setReview(true)}
                 data-testid="vocab-review-start"
                 style={{ background: "var(--sk-sounds)" }}
-                className="hidden flex-none rounded-xl px-6 py-3 font-heading text-sm font-bold text-white shadow-[0_12px_26px_-12px_rgba(217,154,43,.55)] transition-transform active:scale-[0.98] sm:block"
+                className="flex-none rounded-xl px-5 py-3 font-heading text-[13px] font-bold text-white shadow-[0_12px_26px_-12px_rgba(217,154,43,.55)] transition-transform active:scale-[0.98] sm:px-6 sm:text-sm"
               >
-                {t.review(stats.dueToday)}
+                <span className="hidden sm:inline">{t.review(stats.dueToday)}</span>
+                <span className="sm:hidden">{t.reviewShort(stats.dueToday)}</span>
               </button>
             )}
           </div>
