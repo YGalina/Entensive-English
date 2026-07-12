@@ -309,7 +309,43 @@ export default function LibraryScreen() {
           </Pressable>
         )}
 
-        {/* Импорт своего — wash-карточка с плюсом (макет) */}
+        {/* Найти видео на YouTube — прямо в приложении (поиск через API) */}
+        <Pressable
+          onPress={() => {
+            tap();
+            router.push("/youtube" as never);
+          }}
+          accessibilityRole="button"
+          accessibilityLabel={L.ytSearch}
+          style={({ pressed }) => ({
+            backgroundColor: c.surface,
+            borderRadius: 20,
+            paddingHorizontal: 20,
+            paddingVertical: 18,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 14,
+            shadowColor: "#3c280f",
+            shadowOpacity: 0.13,
+            shadowRadius: 10,
+            shadowOffset: { width: 0, height: 5 },
+            elevation: 2,
+            transform: [{ scale: pressed ? 0.98 : 1 }],
+          })}
+        >
+          <View style={{ width: 44, height: 44, borderRadius: 13, backgroundColor: `${sk.video}22`, alignItems: "center", justifyContent: "center" }}>
+            <Ionicons name="logo-youtube" size={22} color={sk.video} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.ink }}>{L.ytSearch}</Text>
+            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 13, color: c.muted, marginTop: 2 }}>
+              {L.ytSearchNote}
+            </Text>
+          </View>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 22, color: sk.video }}>›</Text>
+        </Pressable>
+
+        {/* Импорт своей ссылки — wash-карточка с плюсом (макет) */}
         <Pressable
           onPress={() => {
             tap();

@@ -118,8 +118,14 @@ export default function ListenScreen() {
   useEffect(() => {
     if (!params.video || consumed.current === params.video) return;
     consumed.current = params.video;
-    if (SHADOWING.some((s) => s.id === params.video)) setVideoId(params.video);
-  }, [params.video]);
+    if (SHADOWING.some((s) => s.id === params.video)) {
+      setVideoId(params.video);
+    } else {
+      // Произвольный YouTube-id (из поиска / своей ссылки) → custom-плеер.
+      const mine = myLib.videos.find((v) => v.youtubeId === params.video);
+      setCustom({ youtubeId: params.video, title: mine?.title ?? "" });
+    }
+  }, [params.video, myLib.videos]);
 
   const playerH = Math.round(((width - 40) * 9) / 16);
 

@@ -9,6 +9,7 @@ import { STORIES, storiesByLevel, wordCount, type Story } from "@ie/core/data/re
 import { booksForReader, type GutenbergBook } from "@ie/core/data/gutenberg";
 import { SHADOWING, CATEGORY_LABEL, type ShadowScript } from "@ie/core/data/shadowing";
 import { addMyBook, addMyVideo, parseGutenbergId, parseYoutubeId } from "@ie/core/mylibrary";
+import { searchYouTube, type YouTubeHit } from "@ie/core/data/youtube";
 
 // «Библиотека» на web — 1:1 по макету «Веб-приложение · БИБЛИОТЕКА»: шапка с
 // импортом своей ссылки, фильтр-чипы, СЕТКА карточек материалов с обложками
@@ -36,6 +37,15 @@ const UI = {
     ownTitle: "Своё видео",
     ownNote: "из ссылки за минуту",
     metaText: "текст",
+    ytBtn: "Найти видео на YouTube",
+    ytPh: "Поиск видео на YouTube",
+    ytFind: "Искать",
+    ytHint: "Найди то, что и так хочешь посмотреть. Тап по видео добавит его в shadowing.",
+    ytEmpty: "Ничего не нашлось. Попробуй другие слова.",
+    ytNoKey: "Поиск пока не подключён — нужен ключ YouTube API. Пока добавляй видео по ссылке.",
+    ytQuota: "На сегодня лимит поиска исчерпан. Вставь ссылку вручную или вернись завтра.",
+    ytNetwork: "Нет связи с YouTube. Попробуй ещё раз.",
+    close: "Закрыть",
   },
   en: {
     kicker: (n: number) => `Library · ${n} materials B1–C1`,
@@ -55,6 +65,15 @@ const UI = {
     ownTitle: "Your video",
     ownNote: "from a link in a minute",
     metaText: "text",
+    ytBtn: "Find a video on YouTube",
+    ytPh: "Search videos on YouTube",
+    ytFind: "Search",
+    ytHint: "Find what you already want to watch. Tapping a video adds it to shadowing.",
+    ytEmpty: "Nothing found. Try other words.",
+    ytNoKey: "Search isn't connected yet — a YouTube API key is needed. Add videos by link for now.",
+    ytQuota: "Today's search limit is used up. Paste a link manually or come back tomorrow.",
+    ytNetwork: "No connection to YouTube. Try again.",
+    close: "Close",
   },
 } as const;
 
@@ -68,6 +87,34 @@ export default function LibraryPage() {
   const [importOpen, setImportOpen] = useState(false);
   const [link, setLink] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
+
+  // Поиск YouTube (выбор Галины: API-путь)
+  const [ytOpen, setYtOpen] = useState(false);
+  const [ytQuery, setYtQuery] = useState("");
+  const [ytHits, setYtHits] = useState<YouTubeHit[] | null>(null);
+  const [ytLoading, setYtLoading] = useState(false);
+  const [ytError, setYtError] = useState<string | null>(null);
+
+  async function runYtSearch() {
+    const q = ytQuery.trim();
+    if (!q) return;
+    setYtLoading(true);
+    setYtError(null);
+    const res = await searchYouTube(q, 12);
+    setYtLoading(false);
+    if (res.ok) {
+      setYtHits(res.hits);
+      if (res.hits.length === 0) setYtError(t.ytEmpty);
+    } else {
+      setYtHits([]);
+      setYtError(res.reason === "no-key" ? t.ytNoKey : res.reason === "quota" ? t.ytQuota : t.ytNetwork);
+    }
+  }
+
+  function pickYt(hit: YouTubeHit) {
+    addMyVideo(hit.id, hit.title);
+    router.push("/video");
+  }
 
   // Показываем ВЕСЬ каталог, отсортированный под уровень ученицы (не обрезаем):
   // «сколько здесь моего» видно, библиотека выглядит настоящей.
@@ -161,8 +208,8 @@ export default function LibraryPage() {
             </div>
           </div>
 
-          {/* Фильтр-чипы */}
-          <div className="mt-6 flex flex-wrap gap-2">
+          {/* Фильтр-чипы + вход в поиск YouTube */}
+          <div className="mt-6 flex flex-wrap items-center gap-2">
             {(Object.keys(t.chips) as Kind[]).map((k) => {
               const on = kind === k;
               return (
@@ -179,7 +226,60 @@ export default function LibraryPage() {
                 </button>
               );
             })}
+            <button
+              onClick={() => setYtOpen((v) => !v)}
+              className="ml-auto flex items-center gap-2 rounded-full px-4 py-2 font-heading text-[12.5px] font-semibold text-white transition-transform active:scale-[0.97]"
+              style={{ background: "var(--sk-video)" }}
+            >
+              ▶ {t.ytBtn}
+            </button>
           </div>
+
+          {/* Панель поиска YouTube */}
+          {ytOpen && (
+            <div className="mt-4 rounded-[18px] bg-surface p-5 shadow-card">
+              <div className="flex items-center gap-2">
+                <input
+                  autoFocus
+                  value={ytQuery}
+                  onChange={(e) => setYtQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && runYtSearch()}
+                  placeholder={t.ytPh}
+                  className="min-w-0 flex-1 rounded-[10px] bg-bg px-4 py-3 font-body text-sm text-ink outline-none"
+                />
+                <button
+                  onClick={runYtSearch}
+                  className="rounded-[10px] px-5 py-3 font-heading text-sm font-bold text-white"
+                  style={{ background: "var(--sk-video)" }}
+                >
+                  {t.ytFind}
+                </button>
+              </div>
+              <p className="mt-2 text-xs text-muted">{t.ytHint}</p>
+
+              {ytLoading && <p className="mt-4 text-sm text-muted">…</p>}
+              {ytError && <p className="mt-4 text-sm font-medium text-brand-d">{ytError}</p>}
+
+              {ytHits && ytHits.length > 0 && (
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  {ytHits.map((h) => (
+                    <button
+                      key={h.id}
+                      onClick={() => pickYt(h)}
+                      className="flex gap-3 overflow-hidden rounded-xl bg-bg text-left transition-transform active:scale-[0.99]"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={h.thumb} alt="" className="h-[72px] w-[112px] flex-none object-cover" />
+                      <span className="min-w-0 flex-1 py-2 pr-2">
+                        <span className="line-clamp-2 font-heading text-[13px] font-semibold text-ink">{h.title}</span>
+                        <span className="mt-0.5 block truncate text-[11px] text-muted">{h.channel}</span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Сетка карточек */}
           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
