@@ -13,10 +13,11 @@
 | **[U]** unknown | данных нет / поле не устоялось |
 
 ## Источники (инвентарь)
+> Корпус реорганизован 2026-07-13: россыпь research-файлов разложена по темам с чистыми именами `TOPIC_tool_date_LANG.md`; манифесты в каждой папке. **Правило (решение Галины): источники с неподтверждённым происхождением из корпуса НЕ выкидываем** — используем в анализе, помечаем «источник не подтверждён», отдельной корроборацией не засчитываем до подтверждения инструмента.
 - **Наука:** `Research for EE/03_science_.../L3_science_...RU.md` (graded corroboration), `L2_science...`.
-- **Разрыв:** `Research for EE/05_receptive_productive_gap/GAP_gemini_2026-07-09_RU.md` (Tier A/B/C, effect sizes).
-- **Программы/конкуренты:** `Research for EE/Adult_Intermediate_Language_Programmes_Comparative_Research.md`, `comparative_research.md`.
-- **Рынок:** `08_product_audit_v3_codex.md`, `Research for EE/06_product_audit/`, `Research for EE/04_layer3_synthesis/`.
+- **Разрыв / интегрированная L2-компетенция:** `Research for EE/05_receptive_productive_gap/` — `GAP_gemini_2026-07-09_RU.md` (Tier A/B/C, effect sizes), `GAP_consensus_2026-07-13_EN.md`, `GAP_deepseek_2026-07-13_EN.md`, `GAP_kimi_2026-07-13_RU.md` (источник не подтверждён).
+- **Программы/конкуренты:** `Research for EE/07_comparative_programmes/` — `PROG_consensus_2026-07-13_RU.md`, `PROG_deepseek_2026-07-13_EN.md`, `PROG_unconfirmed_2026-07-13_EN.md` (источник не подтверждён; уже цитируется в этой папке как programme-прецедент).
+- **Рынок:** `08_product_audit_v3_codex.md`, `Research for EE/06_product_audit/`, `Research for EE/04_layer3_synthesis/`, `Research for EE/02_layer2_reports/`, `Research for EE/Исследования рынка по 1 промпту/` (Gemini/ChatGPT provenance).
 - **Продукт-логика:** `13_app_logic.md`, `17_platform_architecture.md`, `18_*` (SLA-реверс), `19_speaking_automaticity_ladder.md`.
 - **UX:** `feedback/2026-07-12_claude_ux-audit.md`, `_user-simulation`, `15_ux_audit_codex`, `16_target_user_simulation_codex`, `feedback/2026-07-12_SYNTHESIS_roadmap.md`.
 - **Код (текущие упражнения/контент):** `apps/mobile/src/app/*`, `apps/web/src/app/*`, `packages/core/data/*`, `packages/core/{srs,output,dayplan,assess,feedback}.ts`.
