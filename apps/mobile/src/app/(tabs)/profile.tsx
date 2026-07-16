@@ -94,6 +94,36 @@ export default function ProfileScreen() {
       </Text>
       <Breton red />
 
+      {/* ---------- Пилот Vertical Slice (временный вход; убрать после пилота) ---------- */}
+      <Pressable
+        onPress={() => {
+          tap();
+          router.push("/slice");
+        }}
+        accessibilityRole="button"
+        style={({ pressed }) => ({
+          backgroundColor: pressed ? c.brandSoft : c.surface,
+          borderRadius: 16,
+          borderWidth: 1,
+          borderColor: c.line,
+          padding: 16,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 12,
+        })}
+      >
+        <Ionicons name="flask-outline" size={20} color={c.brand} />
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 15, color: c.ink }}>
+            Пилот · Vertical Slice
+          </Text>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, color: c.muted }}>
+            14 сессий одной речевой задачи — по приглашению
+          </Text>
+        </View>
+        <Ionicons name="chevron-forward" size={18} color={c.muted} />
+      </Pressable>
+
       {/* ---------- Я в программе ---------- */}
       <Card title={t.profile.myCourse}>
         <Row first label={t.profile.levelNow} value={levelTitle} />
