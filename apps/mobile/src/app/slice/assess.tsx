@@ -2,14 +2,13 @@ import { useMemo, useState } from "react";
 import { Pressable, Text, TextInput, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { sliceItem, SLICE_NEW_CONTEXT } from "@ie/core/data/slice";
+import { anyAssessedItem, SLICE_NEW_CONTEXT } from "@ie/core/data/slice";
 import {
   assessmentOrder,
   checkAssessmentAnswer,
   recordAssessmentItem,
   finishDay14,
   recordNewContext,
-  detectFoundItems,
 } from "@ie/core/slice";
 import { addArtifact } from "@ie/core/output";
 import { useVoiceRecorder } from "@ie/media/recorder";
@@ -37,7 +36,7 @@ function Day14Test({ onDone }: { onDone: () => void }) {
   const order = useMemo(() => assessmentOrder(), []);
   const [i, setI] = useState(0);
   const [answer, setAnswer] = useState("");
-  const item = sliceItem(order[i] ?? "");
+  const item = anyAssessedItem(order[i] ?? "");
 
   function submit(blank: boolean) {
     if (!item) return;
@@ -152,7 +151,7 @@ function NewContextTask({ onDone }: { onDone: () => void }) {
           label="Отправить"
           disabled={text.trim().length < 10}
           onPress={() => {
-            recordNewContext(text, detectFoundItems(text).map((x) => x.id), uri ?? undefined);
+            recordNewContext(text, uri ?? undefined);
             onDone();
           }}
         />

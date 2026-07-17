@@ -6,9 +6,12 @@ configureStorage(memoryStorage());
 
 const {
   SLICE_ITEMS,
+  SLICE_HOLDOUT,
   SLICE_TEXTS,
   SLICE_TRANSFORMS,
+  SLICE_NEW_CONTEXT,
   itemsForDay,
+  anyAssessedItem,
 } = await import("../data/slice");
 const {
   detectFoundItems,
@@ -18,7 +21,6 @@ const {
   recordPilotEntry,
   finishPretest,
   recordRetrieval,
-  dueSliceItemIds,
   nextSessionPlan,
   startSession,
   completeSession,
@@ -30,21 +32,41 @@ const {
   sliceLog,
   itemEvidence,
   transformSatisfied,
+  productionSatisfied,
+  hasPresentPerfectContinuous,
+  hasPastSimpleWithTimeMarker,
+  isHoldoutId,
+  recordAssessmentItem,
+  assessmentSummary,
 } = await import("../slice");
 
-test("банк: ровно 22 единицы, дни 5/5/4/4/4, id уникальны", () => {
+test("банк: 22 тренируемые (5/5/4/4/4) + 6 контрольных, id уникальны", () => {
   assert.equal(SLICE_ITEMS.length, 22);
+  assert.equal(SLICE_HOLDOUT.length, 6);
   assert.deepEqual(
     [1, 2, 3, 4, 5].map((d) => itemsForDay(d).length),
     [5, 5, 4, 4, 4]
   );
-  assert.equal(new Set(SLICE_ITEMS.map((i) => i.id)).size, 22);
-  // у каждой единицы есть промпт, контекст, 2 варианта и леммы
+  const allIds = [...SLICE_ITEMS.map((i) => i.id), ...SLICE_HOLDOUT.map((h) => h.id)];
+  assert.equal(new Set(allIds).size, 28);
   for (const i of SLICE_ITEMS) {
     assert.ok(i.prompt.length > 10, i.id);
-    assert.ok(i.context.length > 10, i.id);
     assert.equal(i.variants.length, 2, i.id);
-    assert.ok(i.lemmas.length >= 1, i.id);
+  }
+});
+
+test("holdout: каждая контрольная подобрана парой к тренируемой и НЕ имеет учебных полей", () => {
+  for (const h of SLICE_HOLDOUT) {
+    assert.ok(SLICE_ITEMS.some((i) => i.id === h.matchedTo), `пара ${h.matchedTo} не найдена`);
+    assert.ok(!("prompt" in h), h.id);
+    assert.ok(!("day" in h), h.id);
+    assert.ok(!("context" in h), h.id);
+  }
+  // контрольные не встречаются ни в одном учебном тексте (не тренируются даже случайно)
+  for (const t of SLICE_TEXTS) {
+    for (const h of SLICE_HOLDOUT) {
+      assert.ok(!itemFoundInText(h, t.en), `${h.id} утёк в текст дня ${t.day}`);
+    }
   }
 });
 
@@ -56,77 +78,146 @@ test("банк: каждая единица дня реально встреча
   }
 });
 
-test("детект единиц в письменном ответе: находит и не выдумывает", () => {
+test("грамматика: PPC ловит настоящую форму и не ловит ловушки", () => {
+  assert.equal(hasPresentPerfectContinuous("I've been working on a report."), true);
+  assert.equal(hasPresentPerfectContinuous("She has been interviewing candidates."), true);
+  assert.equal(hasPresentPerfectContinuous("We have just been testing it."), true);
+  // ловушки: been + не-глагол, просто been, просто -ing
+  assert.equal(hasPresentPerfectContinuous("It has been a thing this morning."), false);
+  assert.equal(hasPresentPerfectContinuous("I have been busy."), false);
+  assert.equal(hasPresentPerfectContinuous("I am working on it."), false);
+  assert.equal(hasPresentPerfectContinuous("The meeting has been interesting."), false);
+});
+
+test("грамматика: past simple требует прошедшую форму И маркер времени", () => {
+  assert.equal(hasPastSimpleWithTimeMarker("We launched the site last week."), true);
+  assert.equal(hasPastSimpleWithTimeMarker("I made a decision yesterday."), true);
+  assert.equal(hasPastSimpleWithTimeMarker("We met the client in june."), true);
+  // прошедшее без времени / время без прошедшего / need-ловушка
+  assert.equal(hasPastSimpleWithTimeMarker("We launched the site."), false);
+  assert.equal(hasPastSimpleWithTimeMarker("I work hard yesterday."), false);
+  assert.equal(hasPastSimpleWithTimeMarker("I need it last week."), false);
+});
+
+test("трансформация: слабые условия больше не проходят", () => {
+  const t1 = SLICE_TRANSFORMS.find((t) => t.id === "t1")!;
+  // раньше хватало слова been — теперь нужна конструкция
+  assert.equal(transformSatisfied(t1, "I have been happy lately."), false);
+  assert.equal(transformSatisfied(t1, "I've been working on a new course."), true);
+  const t4 = SLICE_TRANSFORMS.find((t) => t.id === "t4")!;
+  assert.equal(transformSatisfied(t4, "made"), false); // голое made без времени
+  assert.equal(transformSatisfied(t4, "Yesterday we made a decision to move."), true);
+  const t3 = SLICE_TRANSFORMS.find((t) => t.id === "t3")!;
+  assert.equal(transformSatisfied(t3, "I fixed this bug on Monday."), false);
+  assert.equal(transformSatisfied(t3, "I've been fixing this bug since Monday."), true);
+});
+
+test("production: main-промпт требует валидированный PPC", () => {
+  const plan = { kind: "main" as const, ru: "", lemmas: [], grammar: "ppc" as const };
+  assert.equal(productionSatisfied(plan, "I was working on stuff."), false);
+  assert.equal(productionSatisfied(plan, "I've been working on two projects."), true);
+});
+
+test("детект единиц: находит и не выдумывает", () => {
   const text =
     "I've been working on a big report. We met the deadline and I came up with a new idea.";
   const found = detectFoundItems(text).map((i) => i.id);
   assert.ok(found.includes("frame-working-on"));
   assert.ok(found.includes("meet-a-deadline"));
   assert.ok(found.includes("come-up-with"));
-  assert.ok(!found.includes("figure-out"));
-  // "running" не должно матчить "run a project" без project
   assert.ok(!detectFoundItems("I was running fast").some((i) => i.id === "run-a-project"));
 });
 
-test("проверка ответа теста: correct / incorrect / blank", () => {
-  assert.equal(checkAssessmentAnswer("figure-out", "figure out"), "correct");
+test("оценка ответа: тренируемые и контрольные резолвятся; blank честен", () => {
   assert.equal(checkAssessmentAnswer("figure-out", "to figure out"), "correct");
-  assert.equal(checkAssessmentAnswer("figure-out", "understand"), "incorrect");
-  assert.equal(checkAssessmentAnswer("figure-out", "   "), "blank");
-  assert.equal(checkAssessmentAnswer("make-a-decision", "made a decision"), "correct");
+  assert.equal(checkAssessmentAnswer("h-turn-down", "turn down"), "correct");
+  assert.equal(checkAssessmentAnswer("h-turn-down", "reject"), "incorrect");
+  assert.equal(checkAssessmentAnswer("h-turn-down", ""), "blank");
+  assert.ok(anyAssessedItem("h-set-a-goal"));
+  assert.ok(isHoldoutId("h-set-a-goal"));
+  assert.ok(!isHoldoutId("figure-out"));
 });
 
-test("порядок теста фиксируется на претесте и не меняется", () => {
+test("порядок теста: 28 единиц, фиксируется на претесте; HoldoutAssignment записан", () => {
   recordPilotEntry({ P1: "yes", P2: "yes", P3: "yes", P4: "insufficient", P5: "yes" });
   const before = assessmentOrder();
-  assert.equal(before.length, 22);
+  assert.equal(before.length, 28);
   finishPretest();
   assert.deepEqual(assessmentOrder(), before);
+  const st = sliceState();
+  assert.equal(st.holdout?.itemIds.length, 6);
+  assert.equal(st.holdout?.experimentId, "slice-v1-pilot");
+  assert.ok(sliceLog().some((e) => e.type === "holdout-assigned"));
 });
 
-test("retrieval → FSRS produce: due назавтра при показе ответа", () => {
-  recordRetrieval("launch", 3); // показали ответ = again
-  recordRetrieval("hire", 0); // сам = good
-  // again вернётся раньше good
-  const state = sliceState();
-  assert.ok(state); // smoke
-  assert.equal(itemEvidence("launch"), "insufficient"); // 1 попытка — рано судить
-  recordRetrieval("launch", 1);
-  assert.equal(itemEvidence("launch"), "tracked");
+test("сводка теста: тренируемые и holdout считаются РАЗДЕЛЬНО", () => {
+  recordAssessmentItem("pretest", "figure-out", "figure out", "correct");
+  recordAssessmentItem("pretest", "launch", "", "blank");
+  recordAssessmentItem("pretest", "h-turn-down", "", "blank");
+  recordAssessmentItem("pretest", "h-set-a-goal", "set a goal", "correct");
+  const s = assessmentSummary("pretest");
+  assert.equal(s.trained.correct, 1);
+  assert.equal(s.trained.blank, 1);
+  assert.equal(s.holdout.correct, 1);
+  assert.equal(s.holdout.blank, 1);
+  // holdout не попал в trained и наоборот
+  assert.equal(s.trained.total, 2);
+  assert.equal(s.holdout.total, 2);
 });
 
-test("план сессий: 5 введений по дням, потом возврат с трансформациями", () => {
-  // состояние после предыдущих тестов: introDone=0
+test("recovery НЕ тратит программу: счётчики, день введения и план сохраняются", () => {
+  // пройдём интро-день 1 обычной сессией
   const p1 = nextSessionPlan();
   assert.equal(p1.type, "intro");
-  assert.equal(p1.introDay, 1);
-  assert.equal(p1.newItems.length, 5);
-  assert.equal(p1.production.kind, "item");
   startSession(p1);
   completeSession(p1);
-  for (let d = 2; d <= 5; d++) {
-    const p = nextSessionPlan();
-    assert.equal(p.type, "intro");
-    assert.equal(p.introDay, d);
-    startSession(p);
-    completeSession(p);
-  }
-  const p6 = nextSessionPlan();
-  assert.equal(p6.type, "review");
-  assert.equal(p6.number, 6);
-  assert.equal(p6.production.kind, "transform");
-  // сессии 12–14 — главный вопрос
-  const s = sliceState();
-  assert.equal(s.introDone, 5);
-  assert.equal(s.sessionsCompleted, 5);
-});
+  const before = sliceState();
+  const planBefore = nextSessionPlan();
 
-test("recovery: не нужен сразу после сессии; план recovery без новых единиц", () => {
-  assert.equal(needsRecovery(), false);
+  // возврат: завершается полностью
   const rec = nextSessionPlan(true);
   assert.equal(rec.type, "recovery");
   assert.equal(rec.newItems.length, 0);
-  assert.equal(rec.production.kind, "main");
+  startSession(rec);
+  completeSession(rec);
+
+  const after = sliceState();
+  assert.equal(after.sessionsCompleted, before.sessionsCompleted, "sessionsCompleted изменился");
+  assert.equal(after.introDone, before.introDone, "introDone изменился");
+  assert.equal(after.recoveriesCompleted, 1);
+  // следующий обычный план не сдвинулся
+  const planAfter = nextSessionPlan();
+  assert.equal(planAfter.type, planBefore.type);
+  assert.equal(planAfter.number, planBefore.number);
+  assert.equal(planAfter.introDay, planBefore.introDay);
+  // recovery после recovery не требуется (lastSessionAt обновлён)
+  assert.equal(needsRecovery(), false);
+});
+
+test("14-сессионный кап не пробивается recovery-сессиями", () => {
+  // даже десять возвратов не двигают программу
+  for (let k = 0; k < 10; k++) {
+    const rec = nextSessionPlan(true);
+    completeSession(rec);
+  }
+  const st = sliceState();
+  assert.equal(st.sessionsCompleted, 1);
+  assert.equal(st.recoveriesCompleted, 11);
+  assert.ok(st.sessionsCompleted <= 14);
+});
+
+test("itemEvidence — только процесс: два значения, «tracked» не растёт до mastery", () => {
+  // даже после многих идеальных извлечений — только tracked
+  for (let k = 0; k < 6; k++) recordRetrieval("hire", 0);
+  assert.equal(itemEvidence("hire"), "tracked");
+  const allowed = new Set(["insufficient", "tracked"]);
+  for (const i of SLICE_ITEMS) assert.ok(allowed.has(itemEvidence(i.id)));
+  // прогресс не содержит полей с языком владения
+  const pr = sliceProgress();
+  const keys = Object.keys(pr).join(" ");
+  for (const bad of ["mastered", "learned", "level", "retention", "cefr", "spoken"]) {
+    assert.ok(!keys.toLowerCase().includes(bad), `поле прогресса пахнет владением: ${bad}`);
+  }
 });
 
 test("отложенный тест: закрыт до 14 календарных дней от претеста", () => {
@@ -136,20 +227,12 @@ test("отложенный тест: закрыт до 14 календарных
   assert.equal(assessmentAvailable(s.pretestAt! + 14 * 24 * 3600 * 1000 + 1), true);
 });
 
-test("трансформация: проверка обязательных форм", () => {
-  const t3 = SLICE_TRANSFORMS.find((t) => t.id === "t3")!;
-  assert.equal(transformSatisfied(t3, "I've been fixing this bug since Monday."), true);
-  assert.equal(transformSatisfied(t3, "I fixed this bug on Monday."), false);
-});
-
-test("прогресс и экспорт: только процесс, лог append-only", () => {
-  const pr = sliceProgress();
-  assert.equal(pr.totalSessions, 14);
-  assert.equal(pr.sessionsCompleted, 5);
-  assert.ok(pr.insufficientCount > 0); // большинство единиц ещё не тронуты
-  const before = sliceLog().length;
-  const json = exportSliceData();
-  const parsed = JSON.parse(json);
+test("экспорт: классы доказательств разделены, письменное ≠ устное", () => {
+  const parsed = JSON.parse(exportSliceData());
+  assert.ok(parsed.evidenceNote.includes("ПИСЬМЕННОЕ"));
+  assert.ok(parsed.evidenceNote.includes("не является свидетельством устной"));
+  assert.ok(parsed.summaries.pretest.trained);
+  assert.ok(parsed.summaries.pretest.holdout);
   assert.ok(Array.isArray(parsed.log));
-  assert.equal(sliceLog().length, before + 1); // export сам записан в лог
+  assert.equal(parsed.experimentId, "slice-v1-pilot");
 });

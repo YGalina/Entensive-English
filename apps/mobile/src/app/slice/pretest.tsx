@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Text, TextInput, View } from "react-native";
 import { useRouter } from "expo-router";
-import { sliceItem } from "@ie/core/data/slice";
+import { anyAssessedItem } from "@ie/core/data/slice";
 import {
   assessmentOrder,
   checkAssessmentAnswer,
@@ -23,7 +23,7 @@ export default function SlicePretest() {
   const [i, setI] = useState(0);
   const [answer, setAnswer] = useState("");
   const done = i >= order.length;
-  const item = done ? undefined : sliceItem(order[i]);
+  const item = done ? undefined : anyAssessedItem(order[i]);
 
   function submit(blank: boolean) {
     if (!item) return;
@@ -56,7 +56,7 @@ export default function SlicePretest() {
   return (
     <SliceScreen title={`Претест · ${i + 1} из ${order.length}`}>
       <SliceCard>
-        <SliceNote text="Как это сказать по-английски? Напиши форму — слово, сочетание или начало фразы." />
+        <SliceNote text="Как это сказать по-английски? Напиши форму — слово, сочетание или начало фразы. Часть единиц — контрольные: они не появятся в уроках, но важны для честного сравнения." />
         <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 20, color: c.ink }}>
           {item?.ru}
         </Text>

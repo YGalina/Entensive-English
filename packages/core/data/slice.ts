@@ -53,10 +53,30 @@ export type GrammarContrast = {
 export type TransformPrompt = {
   id: string;
   ru: string;
-  /** какие формы обязаны появиться в ответе */
+  /** содержательные формы, которые обязаны появиться (может быть пусто) */
   lemmas: string[][];
+  /** целевая конструкция — проверяется НАСТОЯЩИМ грамматическим чеком (slice.ts) */
+  grammar: "ppc" | "past";
   /** подсказка-образец (показывается после отправки, не до) */
   sample: string;
+};
+
+/**
+ * Контрольная (holdout) единица: НИКОГДА не тренируется — нет дня, промпта,
+ * контекста и вариантов. Участвует только в претесте и дне 14 как контроль
+ * test–retest/фоновой экспозиции. Подобрана парой к тренируемой единице
+ * (та же структура, тот же рабочий регистр, сопоставимая частотность).
+ * ⚠️ Результат по holdout НЕ называется structural generalization —
+ * протокол этого не поддерживает; это «holdout-контроль», не более.
+ */
+export type HoldoutItem = {
+  id: string;
+  kind: SliceKind;
+  en: string;
+  ru: string;
+  lemmas: string[][];
+  /** какой тренируемой единице подобрана парой */
+  matchedTo: string;
 };
 
 export const SLICE_ITEMS: SliceItem[] = [
@@ -337,42 +357,48 @@ export const SLICE_GRAMMAR: GrammarContrast[] = [
   },
 ];
 
-/** Трансформации (по одной в сессиях 6–11, письменно). */
+/** Трансформации (по одной в сессиях 6–11, письменно). Конструкция проверяется настоящим чеком. */
 export const SLICE_TRANSFORMS: TransformPrompt[] = [
   {
     id: "t1",
     ru: "Чем ты занята на работе в последнее время? Ответь одним предложением, начни с I've been…",
-    lemmas: [["been"]],
+    lemmas: [],
+    grammar: "ppc",
     sample: "I've been working on a new report for our client.",
   },
   {
     id: "t2",
-    ru: "Назови одно дело, которое ты закончила на прошлой неделе. Past simple + last week.",
-    lemmas: [["last week", "yesterday", "on monday", "on tuesday", "on wednesday", "on thursday", "on friday"]],
+    ru: "Назови одно дело, которое ты закончила на прошлой неделе. Past simple + когда (last week…).",
+    lemmas: [],
+    grammar: "past",
     sample: "I finished the presentation last week.",
   },
   {
     id: "t3",
     ru: "Ты с понедельника разбираешься с одной проблемой, и она ещё не решена. Скажи это через I've been… since Monday.",
-    lemmas: [["been"], ["since"]],
+    lemmas: [["since"]],
+    grammar: "ppc",
     sample: "I've been trying to figure out this bug since Monday.",
   },
   {
     id: "t4",
     ru: "Вчера вы приняли решение. Скажи это одним предложением в past simple.",
-    lemmas: [["decided", "made"]],
+    lemmas: [["decision", "decided"]],
+    grammar: "past",
     sample: "Yesterday we made a decision to change the plan.",
   },
   {
     id: "t5",
     ru: "Расскажи, что ты давно откладываешь: I've been putting off… for…",
-    lemmas: [["putting off"], ["for"]],
+    lemmas: [["putting off"]],
+    grammar: "ppc",
     sample: "I've been putting off the yearly report for a month.",
   },
   {
     id: "t6",
     ru: "Скажи, что вы запустили и когда (past simple + время).",
-    lemmas: [["launched", "released", "started"]],
+    lemmas: [["launched", "released", "started", "opened", "published"]],
+    grammar: "past",
     sample: "We launched the new site in June.",
   },
 ];
@@ -382,18 +408,76 @@ export const SLICE_MAIN_PROMPT = {
   id: "main-question",
   en: "So what have you been working on lately?",
   ru: "Ответь письменно, 3–5 предложений: над чем ты работаешь в последнее время? Смешай процесс (I've been…) и законченные факты (past simple).",
-  lemmas: [["been"]],
+  grammar: "ppc" as const,
 };
 
-/** Задача нового контекста (после отложенного теста). */
+/**
+ * Контрольный набор (6): пары к тренируемым по структуре/регистру/частотному
+ * слою. Только претест и день 14. В сессиях не появляются НИКОГДА.
+ */
+export const SLICE_HOLDOUT: HoldoutItem[] = [
+  {
+    id: "h-set-a-goal", kind: "collocation", matchedTo: "make-a-decision",
+    en: "set a goal", ru: "поставить цель",
+    lemmas: [["set", "sets", "setting"], ["goal", "goals"]],
+  },
+  {
+    id: "h-make-progress", kind: "collocation", matchedTo: "solve-a-problem",
+    en: "make progress", ru: "продвинуться (в деле), сделать прогресс",
+    lemmas: [["make", "makes", "making", "made"], ["progress"]],
+  },
+  {
+    id: "h-hold-a-meeting", kind: "collocation", matchedTo: "run-a-project",
+    en: "hold a meeting", ru: "провести встречу",
+    lemmas: [["hold", "holds", "holding", "held"], ["meeting", "meetings"]],
+  },
+  {
+    id: "h-carry-out", kind: "phrasal", matchedTo: "figure-out",
+    en: "carry out", ru: "выполнить (план, задачу)",
+    lemmas: [["carry out", "carries out", "carried out", "carrying out"]],
+  },
+  {
+    id: "h-bring-up", kind: "phrasal", matchedTo: "come-up-with",
+    en: "bring up", ru: "поднять (тему, вопрос)",
+    lemmas: [["bring up", "brings up", "bringing up", "brought up"]],
+  },
+  {
+    id: "h-turn-down", kind: "phrasal", matchedTo: "put-off",
+    en: "turn down", ru: "отклонить (предложение)",
+    lemmas: [["turn down", "turns down", "turned down", "turning down"]],
+  },
+];
+
+/**
+ * Задача нового контекста (после отложенного теста) + opportunity-модель:
+ * targetIds — тренируемые единицы, которым этот промпт даёт РЕАЛЬНУЮ
+ * возможность появиться (знаменатель метрики «употребление в новом
+ * контексте»). Не появилась — missed opportunity, а не просто ноль.
+ */
 export const SLICE_NEW_CONTEXT = {
   id: "new-context",
   en: "Tell me about a problem you solved at work recently.",
   ru: "Расскажи письменно о проблеме, которую ты недавно решила на работе. 3–5 предложений.",
+  targetIds: [
+    "solve-a-problem",
+    "figure-out",
+    "frame-turned-out",
+    "frame-thing-is",
+    "sort-out",
+    "come-up-with",
+    "make-a-decision",
+    "challenging",
+  ],
+  grammar: "past" as const,
 };
 
 export function sliceItem(id: string): SliceItem | undefined {
   return SLICE_ITEMS.find((i) => i.id === id);
+}
+
+/** Единица по id среди тренируемых И контрольных (для тестов претеста/дня 14). */
+export function anyAssessedItem(id: string): SliceItem | HoldoutItem | undefined {
+  return sliceItem(id) ?? SLICE_HOLDOUT.find((h) => h.id === id);
 }
 
 export function itemsForDay(day: number): SliceItem[] {

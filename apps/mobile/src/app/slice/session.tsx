@@ -14,7 +14,7 @@ import {
   recordSummaryShown,
   itemFoundInText,
   detectFoundItems,
-  lemmasSatisfied,
+  productionSatisfied,
   type LadderDepth,
   type SessionPlan,
 } from "@ie/core/slice";
@@ -358,7 +358,7 @@ function ProduceStep({
   const target = plan.production.itemId ? sliceItem(plan.production.itemId) : undefined;
 
   function finish(force: boolean) {
-    const satisfied = lemmasSatisfied(plan.production.lemmas, text);
+    const satisfied = productionSatisfied(plan.production, text);
     if (!satisfied && !force && !nudged) {
       setNudged(true);
       return;
@@ -367,6 +367,12 @@ function ProduceStep({
     recordProduction(plan.production.kind, text, found, satisfied);
     onDone(text, found);
   }
+
+  const nudgeText = target
+    ? `Попробуй вписать: ${target.en}`
+    : plan.production.grammar === "ppc"
+      ? "Попробуй форму I've been + глагол-ing (I've been working on…)"
+      : "Попробуй past simple + когда это было (last week, yesterday, in June…)";
 
   return (
     <>
@@ -400,7 +406,7 @@ function ProduceStep({
         {nudged && (
           <View style={{ gap: 8 }}>
             <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13, color: c.brandInk }}>
-              Попробуй вписать: {target ? target.en : "нужную форму из задания"}
+              {nudgeText}
             </Text>
             <SliceBtn kind="ghost" label="Оставить как есть" onPress={() => finish(true)} />
           </View>

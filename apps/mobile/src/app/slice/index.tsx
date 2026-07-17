@@ -30,7 +30,7 @@ export default function SliceHub() {
 
   return (
     <SliceScreen title="Пилот · Vertical Slice">
-      <SliceNote text="Одна задача: ответить на «So what have you been working on lately?». 22 единицы · 14 сессий · претест и отложенный тест. Данные хранятся на этом устройстве." />
+      <SliceNote text="Одна задача: ответить на «So what have you been working on lately?». 22 учебные единицы (+6 контрольных в тестах) · 14 сессий · претест и отложенный тест. Данные хранятся на этом устройстве." />
 
       {!entryDone && (
         <SliceCard>
@@ -43,15 +43,15 @@ export default function SliceHub() {
       {entryDone && !pretestDone && (
         <SliceCard>
           <Title text="Шаг 2 · Претест" />
-          <SliceNote text="22 единицы: русский смысл → напиши английскую форму. Без подсказок и без ответов — это базовая линия, не урок. «Не помню» — честная кнопка." />
+          <SliceNote text="28 единиц: русский смысл → напиши английскую форму. 22 будем тренировать, 6 контрольных не появятся в уроках никогда — они нужны для честного сравнения. Без подсказок и без ответов: это базовая линия, не урок. «Не помню» — честная кнопка." />
           <SliceBtn label="Начать претест" onPress={() => router.push("/slice/pretest")} />
         </SliceCard>
       )}
 
       {pretestDone && sessionsLeft && recovery && (
         <SliceCard tone="soft">
-          <Title text="Вернуться с 5 минут" />
-          <SliceNote text="Был перерыв — это пауза, не потеря. Короткий возврат: несколько единиц и одна твоя фраза. Считается полноценной сессией." />
+          <Title text="Вернуться с 5 минут · рекомендуем" />
+          <SliceNote text="Был перерыв — это пауза, не потеря. Короткий возврат: несколько единиц и одна твоя фраза. Программу из 14 сессий он не тратит. Рекомендованный путь после паузы — но не обязательный." />
           <SliceBtn
             label="Вернуться с 5 минут"
             onPress={() => router.push({ pathname: "/slice/session", params: { mode: "recovery" } })}
@@ -64,12 +64,17 @@ export default function SliceHub() {
           <Title text={`Сессия ${Math.min(s.sessionsCompleted + 1, SLICE_TOTAL_SESSIONS)} из ${SLICE_TOTAL_SESSIONS}`} />
           <SliceNote
             text={
-              s.introDone < 5
+              (recovery ? "Можно и сразу полную сессию — возврат выше просто мягче. " : "") +
+              (s.introDone < 5
                 ? "Новые единицы дня: текст → извлечение → твой ответ → вслух."
-                : "Возврат и производство: то, что уже вводили, — в твою речь."
+                : "Возврат и производство: то, что уже вводили, — в твою речь.")
             }
           />
-          <SliceBtn label="Начать сессию" onPress={() => router.push("/slice/session")} />
+          <SliceBtn
+            label="Начать сессию"
+            kind={recovery ? "ghost" : "primary"}
+            onPress={() => router.push("/slice/session")}
+          />
         </SliceCard>
       )}
 
@@ -106,9 +111,12 @@ export default function SliceHub() {
           {pr.todayTotal > 0 && (
             <Fact label={`Сегодня ${pr.todayOk} из ${pr.todayTotal} достались без подсказки`} />
           )}
-          {pr.voiceCount > 0 && <Fact label={`${pr.voiceCount} голосовых записей — твои, приватные`} />}
-          {pr.frameUses > 0 && (
-            <Fact label={`«I've been…» появилось в твоих написанных ответах: ${pr.frameUses}`} />
+          {pr.recoveriesCompleted > 0 && (
+            <Fact label={`Возвратов после паузы: ${pr.recoveriesCompleted} (программу не тратят)`} />
+          )}
+          {pr.voiceCount > 0 && <Fact label={`${pr.voiceCount} голосовых записей — твои, приватные, не оцениваются`} />}
+          {pr.ppcUses > 0 && (
+            <Fact label={`Форма have/has been + -ing вышла в твоих письменных ответах: ${pr.ppcUses}`} />
           )}
           {pr.insufficientCount > 0 && (
             <Fact label={`По ${pr.insufficientCount} единицам данных пока мало`} />
