@@ -45,9 +45,13 @@ const {
   needsRecovery,
   assessmentAvailable,
   finishDay14,
+  finishHoldout,
   recordNewContext,
+  day14TrainedOrder,
+  holdoutOrder,
   sliceState,
   sliceProgress,
+  sliceLog,
   exportSliceData,
   isHoldoutId,
   SLICE_TOTAL_SESSIONS,
@@ -133,15 +137,31 @@ test("полный поток пилота: вход → претест → 5+re
   __setNowForTests(T0 + 15 * DAY);
   assert.equal(assessmentAvailable(), true);
 
-  // отвечаем: тренируемые правильно, контрольные blank (ожидаемый паттерн эффекта)
-  for (const id of assessmentOrder()) {
+  // ── день 14, часть 1: ТОЛЬКО 22 тренируемые (контрольные ядром закрыты) ──
+  const trained = day14TrainedOrder();
+  assert.equal(trained.length, 22);
+  assert.ok(trained.every((id) => !isHoldoutId(id)));
+  assert.throws(
+    () => recordAssessmentItem("day14", holdoutOrder()[0], "", "blank"),
+    /до нового контекста/,
+    "контрольная не должна предъявляться до нового контекста"
+  );
+  for (const id of trained) {
     const item = anyAssessedItem(id)!;
-    const answer = isHoldoutId(id) ? "" : item.en;
-    recordAssessmentItem("day14", id, answer, checkAssessmentAnswer(id, answer));
+    recordAssessmentItem("day14", id, item.en, checkAssessmentAnswer(id, item.en));
   }
   finishDay14();
+  // финальный экспорт закрыт, пока не пройдены новый контекст и контрольные
+  assert.throws(() => exportSliceData(), /до завершения протокола/);
 
-  // ── новый контекст: opportunity-модель ──
+  // ── часть 2: новый контекст СТРОГО до экспозиции контрольных ──
+  const holdoutDay14Before = sliceLog().filter(
+    (e) =>
+      e.type === "assessment-item" &&
+      e.payload.phase === "day14" &&
+      Boolean(e.payload.holdout)
+  );
+  assert.equal(holdoutDay14Before.length, 0, "контрольные экспонированы до нового контекста");
   const ctxText =
     "Last week I solved a problem with our report. The thing is, nobody could figure out the numbers. It turned out that one system was wrong, so I sorted out the data.";
   const res = recordNewContext(ctxText);
@@ -151,9 +171,17 @@ test("полный поток пилота: вход → претест → 5+re
   assert.ok(res.usedIds.includes("sort-out"));
   assert.ok(res.missedIds.length > 0, "missed opportunity должен быть явным состоянием");
   assert.equal(res.usedIds.length + res.missedIds.length, res.denominator);
+  assert.throws(() => exportSliceData(), /до завершения протокола/);
 
-  // ── экспорт: восстановимость и раздельные классы ──
+  // ── часть 3: контрольные — отдельной последовательностью ──
+  for (const id of holdoutOrder()) {
+    recordAssessmentItem("day14", id, "", checkAssessmentAnswer(id, ""));
+  }
+  finishHoldout();
+
+  // ── часть 4: финальный экспорт ──
   const parsed = JSON.parse(exportSliceData());
+  assert.equal(parsed.partial, false);
   assert.equal(parsed.summaries.day14.trained.correct, 22);
   assert.equal(parsed.summaries.day14.holdout.blank, 6);
   assert.equal(parsed.summaries.pretest.trained.correct, 1);

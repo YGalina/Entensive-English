@@ -4,10 +4,12 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { anyAssessedItem, SLICE_NEW_CONTEXT } from "@ie/core/data/slice";
 import {
-  assessmentOrder,
+  day14TrainedOrder,
+  holdoutOrder,
   checkAssessmentAnswer,
   recordAssessmentItem,
   finishDay14,
+  finishHoldout,
   recordNewContext,
   assessmentAvailable,
   useSliceState,
@@ -17,25 +19,31 @@ import { useVoiceRecorder } from "@ie/media/recorder";
 import { useMarina } from "@/theme";
 import { SliceScreen, SliceCard, SliceBtn, SliceNote } from "@/components/slice-ui";
 
-// Отложенный тест (≥14 дней от претеста): те же 22 единицы, тот же порядок,
-// тот же протокол — retention тренированных. Затем задача нового контекста:
-// употребление тренированных единиц там, где мы не тренировались.
+// День 14 — строго по порядку, раздельными шагами:
+// 1) тест 22 ТРЕНИРУЕМЫХ (тот же относительный порядок, что на претесте);
+// 2) задача нового контекста (до любой экспозиции контрольных!);
+// 3) отдельный тест 6 КОНТРОЛЬНЫХ; 4) финальная выгрузка (на хабе).
 // Как и претест — без подсказок и без показа правильных ответов.
 
-type Phase = "test" | "context" | "done";
+type Phase = "test" | "context" | "holdout" | "done";
 
 export default function SliceAssess() {
   const params = useLocalSearchParams<{ phase?: string }>();
-  const [phase, setPhase] = useState<Phase>(params.phase === "context" ? "context" : "test");
+  const [phase, setPhase] = useState<Phase>(
+    params.phase === "context" ? "context" : params.phase === "holdout" ? "holdout" : "test"
+  );
   const s = useSliceState();
 
-  // Протокол охраняется и в ядре (finishDay14/recordNewContext бросают),
-  // и здесь — чтобы прямой заход по ссылке не открыл тест раньше времени.
+  // Протокол охраняется и в ядре (finishDay14/recordNewContext/finishHoldout
+  // и запись контрольных бросают), и здесь — чтобы прямой заход по ссылке
+  // не открыл шаг раньше времени.
   if (phase === "test" && !assessmentAvailable()) return <NotYetScreen />;
   if (phase === "context" && !s.assessAt) return <NotYetScreen />;
+  if (phase === "holdout" && !s.newContextAt) return <NotYetScreen />;
 
   if (phase === "test") return <Day14Test onDone={() => setPhase("context")} />;
-  if (phase === "context") return <NewContextTask onDone={() => setPhase("done")} />;
+  if (phase === "context") return <NewContextTask onDone={() => setPhase("holdout")} />;
+  if (phase === "holdout") return <HoldoutTest onDone={() => setPhase("done")} />;
   return <DoneScreen />;
 }
 
@@ -57,7 +65,7 @@ function NotYetScreen() {
 
 function Day14Test({ onDone }: { onDone: () => void }) {
   const { c } = useMarina();
-  const order = useMemo(() => assessmentOrder(), []);
+  const order = useMemo(() => day14TrainedOrder(), []);
   const [i, setI] = useState(0);
   const [answer, setAnswer] = useState("");
   const item = anyAssessedItem(order[i] ?? "");
@@ -79,7 +87,7 @@ function Day14Test({ onDone }: { onDone: () => void }) {
 
   return (
     <SliceScreen title={`Тест · ${i + 1} из ${order.length}`}>
-      <SliceNote text="Как на претесте: русский смысл → английская форма. Без подсказок, «Не помню» — честно." />
+      <SliceNote text="22 учебные единицы, как на претесте: русский смысл → английская форма. Без подсказок, «Не помню» — честно. Контрольные единицы будут отдельным шагом позже." />
       <SliceCard>
         <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 20, color: c.ink }}>{item.ru}</Text>
         <TextInput
@@ -184,6 +192,61 @@ function NewContextTask({ onDone }: { onDone: () => void }) {
   );
 }
 
+// Шаг 3: отдельный тест контрольных — первое предъявление после претеста.
+// Идёт строго ПОСЛЕ нового контекста, чтобы их экспозиция не загрязнила
+// свободное производство (порядок охраняется и в ядре).
+function HoldoutTest({ onDone }: { onDone: () => void }) {
+  const { c } = useMarina();
+  const order = useMemo(() => holdoutOrder(), []);
+  const [i, setI] = useState(0);
+  const [answer, setAnswer] = useState("");
+  const item = anyAssessedItem(order[i] ?? "");
+
+  function submit(blank: boolean) {
+    if (!item) return;
+    const text = blank ? "" : answer;
+    recordAssessmentItem("day14", item.id, text, checkAssessmentAnswer(item.id, text));
+    setAnswer("");
+    if (i + 1 >= order.length) {
+      finishHoldout();
+      onDone();
+    } else {
+      setI((v) => v + 1);
+    }
+  }
+
+  if (!item) return null;
+
+  return (
+    <SliceScreen title={`Контрольные · ${i + 1} из ${order.length}`}>
+      <SliceNote text="Последний шаг: 6 контрольных единиц. Они не появлялись в уроках — это честное сравнение, не проверка тебя. «Не помню» — совершенно нормальный ответ." />
+      <SliceCard>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 20, color: c.ink }}>{item.ru}</Text>
+        <TextInput
+          value={answer}
+          onChangeText={setAnswer}
+          placeholder="Напиши по-английски…"
+          placeholderTextColor={c.muted}
+          autoCapitalize="none"
+          autoCorrect={false}
+          style={{
+            minHeight: 52,
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: c.line,
+            paddingHorizontal: 14,
+            fontFamily: "Lora_600SemiBold",
+            fontSize: 18,
+            color: c.ink,
+          }}
+        />
+        <SliceBtn label="Дальше" disabled={!answer.trim()} onPress={() => submit(false)} />
+        <SliceBtn kind="ghost" label="Не помню — дальше" onPress={() => submit(true)} />
+      </SliceCard>
+    </SliceScreen>
+  );
+}
+
 function DoneScreen() {
   const { c } = useMarina();
   const router = useRouter();
@@ -193,7 +256,7 @@ function DoneScreen() {
         <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 18, color: c.ink }}>
           Это было всё. Спасибо!
         </Text>
-        <SliceNote text="Ты прошла претест, сессии, отложенный тест и новый контекст. На главном экране пилота — кнопка выгрузки данных: отправь JSON Галине." />
+        <SliceNote text="Ты прошла претест, сессии, тест учебных единиц, новый контекст и контрольные. На главном экране пилота — кнопка финальной выгрузки: отправь JSON Галине." />
         <SliceBtn label="К пилоту" onPress={() => router.back()} />
       </SliceCard>
     </SliceScreen>

@@ -6,6 +6,7 @@ import {
   assessmentAvailable,
   sliceProgress,
   exportSliceData,
+  exportPartialSliceData,
   SLICE_TOTAL_SESSIONS,
 } from "@ie/core/slice";
 import { useMarina } from "@/theme";
@@ -26,7 +27,8 @@ export default function SliceHub() {
   const recovery = needsRecovery();
   const assessOpen = assessmentAvailable();
   const contextLeft = Boolean(s.assessAt) && !s.newContextAt;
-  const finished = Boolean(s.newContextAt);
+  const holdoutLeft = Boolean(s.newContextAt) && !s.holdoutAt;
+  const finished = Boolean(s.holdoutAt);
 
   return (
     <SliceScreen title="Пилот · Vertical Slice">
@@ -81,15 +83,15 @@ export default function SliceHub() {
       {assessOpen && (
         <SliceCard tone="soft">
           <Title text="Отложенный тест открыт" />
-          <SliceNote text="Программа пройдена и прошло 14 дней с претеста. Те же 28 единиц (22 учебные + 6 контрольных), тот же порядок — сравним с базовой линией." />
+          <SliceNote text="Программа пройдена и прошло 14 дней с претеста. Шаг 1 из 3: 22 учебные единицы в претестовом порядке. Дальше — новый контекст, и только после него — 6 контрольных отдельным шагом." />
           <SliceBtn label="Пройти тест" onPress={() => router.push("/slice/assess")} />
         </SliceCard>
       )}
 
       {contextLeft && (
         <SliceCard tone="soft">
-          <Title text="Последний шаг · Новый контекст" />
-          <SliceNote text="Один новый вопрос, на котором мы не тренировались." />
+          <Title text="Шаг 2 из 3 · Новый контекст" />
+          <SliceNote text="Один новый вопрос, на котором мы не тренировались. Идёт до контрольных — так честнее." />
           <SliceBtn
             label="Ответить"
             onPress={() => router.push({ pathname: "/slice/assess", params: { phase: "context" } })}
@@ -97,10 +99,21 @@ export default function SliceHub() {
         </SliceCard>
       )}
 
+      {holdoutLeft && (
+        <SliceCard tone="soft">
+          <Title text="Шаг 3 из 3 · Контрольные единицы" />
+          <SliceNote text="6 единиц, которых не было в уроках. «Не помню» — нормальный ответ: это контроль сравнения, не проверка тебя." />
+          <SliceBtn
+            label="Пройти контрольные"
+            onPress={() => router.push({ pathname: "/slice/assess", params: { phase: "holdout" } })}
+          />
+        </SliceCard>
+      )}
+
       {finished && (
         <SliceCard tone="soft">
           <Title text="Пилот завершён" />
-          <SliceNote text="Спасибо. Выгрузи данные кнопкой ниже и отправь Галине." />
+          <SliceNote text="Спасибо. Выгрузи финальные данные кнопкой ниже и отправь Галине." />
         </SliceCard>
       )}
 
@@ -128,9 +141,12 @@ export default function SliceHub() {
       {entryDone && (
         <SliceBtn
           kind="ghost"
-          label="Выгрузить данные пилота (JSON)"
+          label={finished ? "Выгрузить данные пилота (JSON)" : "Выгрузить черновик (пилот не завершён)"}
           onPress={() => {
-            void Share.share({ message: exportSliceData() });
+            const json = finished
+              ? exportSliceData()
+              : exportPartialSliceData("ручная выгрузка до завершения протокола");
+            void Share.share({ message: json });
           }}
         />
       )}

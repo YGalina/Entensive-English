@@ -42,9 +42,13 @@ const {
   recordAssessmentItem,
   assessmentSummary,
   finishDay14,
+  finishHoldout,
   recordNewContext,
   newContextOpportunities,
   voiceArtifactRefs,
+  day14TrainedOrder,
+  holdoutOrder,
+  exportPartialSliceData,
 } = await import("../slice");
 
 test("банк: 22 тренируемые (5/5/4/4/4) + 6 контрольных, id уникальны", () => {
@@ -259,8 +263,20 @@ test("гейт дня 14: нужны ОБА условия; ранние пер�
 test("finishDay14/recordNewContext: валидный путь один раз, повторы отвергаются", () => {
   const s0 = sliceState();
   __setNowForTests(s0.pretestAt! + 15 * DAY);
-  finishDay14(); // валидный переход
+  finishDay14(); // валидный переход (часть 1: тренируемые)
   assert.throws(() => finishDay14(), /уже завершён/);
+
+  // ПОРЯДОК: до нового контекста контрольные дня 14 недоступны ядру
+  assert.throws(
+    () => recordAssessmentItem("day14", "h-set-a-goal", "", "blank"),
+    /до нового контекста/
+  );
+  assert.throws(() => finishHoldout(), /до нового контекста/);
+  // финальный экспорт закрыт, черновик — доступен и помечен
+  assert.throws(() => exportSliceData(), /до завершения протокола/);
+  const draft = JSON.parse(exportPartialSliceData("тест черновика"));
+  assert.equal(draft.partial, true);
+  assert.equal(draft.partialReason, "тест черновика");
 
   const longText =
     "Last week I was busy with many small tasks at work and I finally solved a problem with our monthly report after two long days of checking every number twice.";
@@ -268,6 +284,40 @@ test("finishDay14/recordNewContext: валидный путь один раз, �
   assert.ok(res.denominator > 0);
   assert.throws(() => recordNewContext(longText), /уже отправлен/);
   __setNowForTests(null);
+});
+
+test("день 14: контрольные — отдельной последовательностью после нового контекста; экспорт — после всего", () => {
+  // до этой точки ни одна контрольная не предъявлялась в день 14
+  const holdBefore = sliceLog().filter(
+    (e) =>
+      e.type === "assessment-item" &&
+      e.payload.phase === "day14" &&
+      Boolean(e.payload.holdout)
+  );
+  assert.equal(holdBefore.length, 0, "контрольные утекли в день 14 до нового контекста");
+
+  // финальный экспорт всё ещё закрыт (контрольные не пройдены)
+  assert.throws(() => exportSliceData(), /до завершения протокола/);
+
+  // отдельная последовательность контрольных: ровно 6, в претестовом порядке
+  const order = holdoutOrder();
+  assert.equal(order.length, 6);
+  assert.ok(order.every((id) => isHoldoutId(id)));
+  assert.equal(day14TrainedOrder().length, 22);
+  assert.ok(day14TrainedOrder().every((id) => !isHoldoutId(id)));
+  for (const id of order) {
+    recordAssessmentItem("day14", id, "", "blank"); // теперь разрешено
+  }
+  finishHoldout();
+  assert.throws(() => finishHoldout(), /уже завершён/);
+
+  // теперь финальный экспорт открыт; результаты групп СТРОГО раздельны:
+  // в день 14 этого файла записывались только контрольные — trained-ведро пусто
+  const parsed = JSON.parse(exportSliceData());
+  assert.equal(parsed.partial, false);
+  assert.equal(parsed.summaries.day14.holdout.blank, 6);
+  assert.equal(parsed.summaries.day14.holdout.total, 6);
+  assert.equal(parsed.summaries.day14.trained.total, 0);
 });
 
 test("opportunity-статусы: insufficient не входит в знаменатель", () => {

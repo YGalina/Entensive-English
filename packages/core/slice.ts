@@ -99,8 +99,12 @@ export type SliceState = {
   /** HoldoutAssignment: ученик × набор × эксперимент (фиксируется на претесте) */
   holdout?: { experimentId: string; itemIds: string[]; assignedAt: number };
   lastSessionAt?: number;
+  /** день 14, часть 1: тест 22 ТРЕНИРУЕМЫХ завершён */
   assessAt?: number;
+  /** день 14, часть 2: задача нового контекста отправлена */
   newContextAt?: number;
+  /** день 14, часть 3: отдельный тест 6 КОНТРОЛЬНЫХ завершён */
+  holdoutAt?: number;
 };
 
 // Снапшот для useSyncExternalStore обязан быть стабильной ссылкой, пока
@@ -373,8 +377,9 @@ export function isHoldoutId(itemId: string): boolean {
 }
 
 /**
- * Порядок единиц теста: 22 тренируемые + 6 контрольных, перемешаны вместе.
- * Фиксируется при претесте и НЕ меняется в день 14 (сравнимость).
+ * Порядок единиц ПРЕТЕСТА: 22 тренируемые + 6 контрольных, перемешаны вместе.
+ * Фиксируется при претесте. В день 14 группы тестируются РАЗДЕЛЬНО
+ * (см. day14TrainedOrder / holdoutOrder) с сохранением относительного порядка.
  */
 export function assessmentOrder(): string[] {
   const s = readState();
@@ -382,6 +387,16 @@ export function assessmentOrder(): string[] {
   const seed = s.entry?.at ?? 20260716;
   const ids = [...SLICE_ITEMS.map((i) => i.id), ...SLICE_HOLDOUT.map((h) => h.id)];
   return shuffled(ids, seed);
+}
+
+/** День 14, часть 1: только 22 тренируемые, в претестовом относительном порядке. */
+export function day14TrainedOrder(): string[] {
+  return assessmentOrder().filter((id) => !isHoldoutId(id));
+}
+
+/** День 14, часть 3: только 6 контрольных, в претестовом относительном порядке. */
+export function holdoutOrder(): string[] {
+  return assessmentOrder().filter((id) => isHoldoutId(id));
 }
 
 export type AssessVerdict = "correct" | "incorrect" | "blank";
@@ -406,6 +421,12 @@ export function recordAssessmentItem(
   answer: string,
   verdict: AssessVerdict
 ) {
+  // Порядок дня 14 охраняется в ядре: контрольные единицы НЕ предъявляются,
+  // пока задача нового контекста не отправлена — иначе экспозиция контрольных
+  // могла бы загрязнить свободное производство.
+  if (phase === "day14" && isHoldoutId(itemId) && !readState().newContextAt) {
+    throw new Error("slice-protocol: контрольная единица дня 14 до нового контекста");
+  }
   const pretestExposed = readLog().some(
     (e) =>
       e.type === "assessment-item" &&
@@ -476,9 +497,10 @@ export function assessmentSummary(phase: "pretest" | "day14"): AssessmentSummary
 }
 
 /**
- * Закрыть отложенный тест. Протокол охраняется В ЯДРЕ, не порядком экранов:
- * претест сделан · все 14 учебных сессий пройдены · интервал выдержан ·
- * тест ещё не закрывался. Иначе — исключение (невалидный переход).
+ * Закрыть день 14, часть 1 — тест 22 ТРЕНИРУЕМЫХ. Протокол охраняется
+ * В ЯДРЕ, не порядком экранов: претест сделан · все 14 учебных сессий
+ * пройдены · интервал выдержан · часть 1 ещё не закрывалась.
+ * Дальше по порядку: новый контекст → отдельный тест контрольных → экспорт.
  */
 export function finishDay14() {
   const s = readState();
@@ -493,6 +515,20 @@ export function finishDay14() {
   s.assessAt = nowMs();
   writeState(s);
   logSlice("day14-finished", {});
+}
+
+/**
+ * Закрыть день 14, часть 3 — отдельный тест 6 КОНТРОЛЬНЫХ. Разрешён только
+ * после отправленного нового контекста и только один раз.
+ */
+export function finishHoldout() {
+  const s = readState();
+  if (!s.newContextAt)
+    throw new Error("slice-protocol: тест контрольных до нового контекста");
+  if (s.holdoutAt) throw new Error("slice-protocol: тест контрольных уже завершён");
+  s.holdoutAt = nowMs();
+  writeState(s);
+  logSlice("holdout-finished", {});
 }
 
 export type OpportunityStatus = "used" | "missed" | "insufficient-opportunity";
@@ -560,6 +596,16 @@ export function recordNewContext(text: string, audioRef?: string): NewContextRes
   const s = readState();
   if (!s.assessAt) throw new Error("slice-protocol: новый контекст до завершения дня 14");
   if (s.newContextAt) throw new Error("slice-protocol: новый контекст уже отправлен");
+
+  // Порядок: новый контекст идёт ДО экспозиции контрольных единиц дня 14.
+  const hasHoldoutDay14 = readLog().some(
+    (e) =>
+      e.type === "assessment-item" &&
+      e.payload.phase === "day14" &&
+      Boolean(e.payload.holdout)
+  );
+  if (hasHoldoutDay14)
+    throw new Error("slice-protocol: новый контекст после экспозиции контрольных дня 14");
 
   const res = newContextOpportunities(text);
   s.newContextAt = nowMs();
@@ -807,11 +853,25 @@ export function voiceArtifactRefs(): {
   return out;
 }
 
-/** Полная выгрузка пилота (JSON): состояние, лог, produce-FSRS, сводки. */
+/**
+ * Финальная выгрузка пилота (JSON). Завершает протокол, поэтому охраняется:
+ * доступна только когда пройдены все три части дня 14 — тест тренируемых,
+ * новый контекст и тест контрольных. Для незавершённого пилота (выбыла,
+ * отладка) есть exportPartialSliceData — с явной пометкой partial.
+ */
 export function exportSliceData(): string {
+  const s = readState();
+  if (!s.assessAt || !s.newContextAt || !s.holdoutAt) {
+    throw new Error(
+      "slice-protocol: финальный экспорт до завершения протокола " +
+        "(нужны: тест тренируемых, новый контекст, тест контрольных); " +
+        "для незавершённого пилота — exportPartialSliceData"
+    );
+  }
   const payload = {
     exportedAt: new Date(nowMs()).toISOString(),
     experimentId: SLICE_EXPERIMENT_ID,
+    partial: false,
     // Классы доказательств разделены; письменное ≠ устное (код-ревью §4):
     evidenceNote:
       "Все измеряемые исходы — ПИСЬМЕННОЕ продуктивное извлечение и письменное " +
@@ -829,5 +889,28 @@ export function exportSliceData(): string {
     log: readLog(),
   };
   logSlice("export", {});
+  return JSON.stringify(payload, null, 2);
+}
+
+/**
+ * Частичная выгрузка незавершённого пилота (участница выбыла, отладка).
+ * Явно помечена partial + причина; финальным экспортом НЕ является.
+ */
+export function exportPartialSliceData(reason: string): string {
+  const payload = {
+    exportedAt: new Date(nowMs()).toISOString(),
+    experimentId: SLICE_EXPERIMENT_ID,
+    partial: true,
+    partialReason: reason,
+    state: readState(),
+    srs: readSrs(),
+    summaries: {
+      pretest: assessmentSummary("pretest"),
+      day14: assessmentSummary("day14"),
+    },
+    voiceArtifacts: voiceArtifactRefs(),
+    log: readLog(),
+  };
+  logSlice("export-partial", { reason });
   return JSON.stringify(payload, null, 2);
 }
