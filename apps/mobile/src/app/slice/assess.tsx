@@ -8,11 +8,13 @@ import {
   holdoutOrder,
   checkAssessmentAnswer,
   recordAssessmentItem,
+  recordedAssessmentIds,
   finishDay14,
   finishHoldout,
   recordNewContext,
   assessmentAvailable,
   useSliceState,
+  SLICE_NEW_CONTEXT_MIN_CHARS,
 } from "@ie/core/slice";
 import { addArtifact } from "@ie/core/output";
 import { useVoiceRecorder } from "@ie/media/recorder";
@@ -40,6 +42,7 @@ export default function SliceAssess() {
   if (phase === "test" && !assessmentAvailable()) return <NotYetScreen />;
   if (phase === "context" && !s.assessAt) return <NotYetScreen />;
   if (phase === "holdout" && !s.newContextAt) return <NotYetScreen />;
+  if (phase === "holdout" && s.holdoutAt) return <DoneScreen />;
 
   if (phase === "test") return <Day14Test onDone={() => setPhase("context")} />;
   if (phase === "context") return <NewContextTask onDone={() => setPhase("holdout")} />;
@@ -65,7 +68,11 @@ function NotYetScreen() {
 
 function Day14Test({ onDone }: { onDone: () => void }) {
   const { c } = useMarina();
-  const order = useMemo(() => day14TrainedOrder(), []);
+  // Возобновление: уже записанные пропускаются (свидетельства иммутабельны)
+  const order = useMemo(() => {
+    const doneIds = new Set(recordedAssessmentIds("day14"));
+    return day14TrainedOrder().filter((id) => !doneIds.has(id));
+  }, []);
   const [i, setI] = useState(0);
   const [answer, setAnswer] = useState("");
   const item = anyAssessedItem(order[i] ?? "");
@@ -83,7 +90,23 @@ function Day14Test({ onDone }: { onDone: () => void }) {
     }
   }
 
-  if (!item) return null;
+  if (!order.length || !item) {
+    // всё уже записано в прошлом заходе — осталось закрыть часть протокола
+    return (
+      <SliceScreen title="Тест">
+        <SliceCard tone="soft">
+          <SliceNote text="Все ответы уже записаны. Закрываем этот шаг." />
+          <SliceBtn
+            label="Продолжить"
+            onPress={() => {
+              finishDay14();
+              onDone();
+            }}
+          />
+        </SliceCard>
+      </SliceScreen>
+    );
+  }
 
   return (
     <SliceScreen title={`Тест · ${i + 1} из ${order.length}`}>
@@ -181,7 +204,7 @@ function NewContextTask({ onDone }: { onDone: () => void }) {
         <SliceNote text="Голос — по желанию и только твой: не оценивается. Считается написанный ответ." />
         <SliceBtn
           label="Отправить"
-          disabled={text.trim().length < 10}
+          disabled={text.trim().length < SLICE_NEW_CONTEXT_MIN_CHARS}
           onPress={() => {
             recordNewContext(text, uri ?? undefined);
             onDone();
@@ -197,7 +220,11 @@ function NewContextTask({ onDone }: { onDone: () => void }) {
 // свободное производство (порядок охраняется и в ядре).
 function HoldoutTest({ onDone }: { onDone: () => void }) {
   const { c } = useMarina();
-  const order = useMemo(() => holdoutOrder(), []);
+  // Возобновление: уже записанные пропускаются (свидетельства иммутабельны)
+  const order = useMemo(() => {
+    const doneIds = new Set(recordedAssessmentIds("day14"));
+    return holdoutOrder().filter((id) => !doneIds.has(id));
+  }, []);
   const [i, setI] = useState(0);
   const [answer, setAnswer] = useState("");
   const item = anyAssessedItem(order[i] ?? "");
@@ -215,7 +242,22 @@ function HoldoutTest({ onDone }: { onDone: () => void }) {
     }
   }
 
-  if (!item) return null;
+  if (!order.length || !item) {
+    return (
+      <SliceScreen title="Контрольные">
+        <SliceCard tone="soft">
+          <SliceNote text="Все контрольные уже записаны. Закрываем шаг." />
+          <SliceBtn
+            label="Продолжить"
+            onPress={() => {
+              finishHoldout();
+              onDone();
+            }}
+          />
+        </SliceCard>
+      </SliceScreen>
+    );
+  }
 
   return (
     <SliceScreen title={`Контрольные · ${i + 1} из ${order.length}`}>

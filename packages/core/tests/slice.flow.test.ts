@@ -143,7 +143,7 @@ test("полный поток пилота: вход → претест → 5+re
   assert.ok(trained.every((id) => !isHoldoutId(id)));
   assert.throws(
     () => recordAssessmentItem("day14", holdoutOrder()[0], "", "blank"),
-    /до нового контекста/,
+    /контрольная дня 14/,
     "контрольная не должна предъявляться до нового контекста"
   );
   for (const id of trained) {
@@ -179,9 +179,16 @@ test("полный поток пилота: вход → претест → 5+re
   }
   finishHoldout();
 
-  // ── часть 4: финальный экспорт ──
+  // ── часть 4: финализация однократна, повторная выгрузка — чистое чтение ──
   const parsed = JSON.parse(exportSliceData());
   assert.equal(parsed.partial, false);
+  assert.ok(parsed.finalizedAt);
+  const finals = sliceLog().filter((e) => e.type === "pilot-finalized");
+  assert.equal(finals.length, 1);
+  const logLenAfterFirstExport = sliceLog().length;
+  JSON.parse(exportSliceData()); // повторная выгрузка
+  assert.equal(sliceLog().filter((e) => e.type === "pilot-finalized").length, 1);
+  assert.equal(sliceLog().length, logLenAfterFirstExport);
   assert.equal(parsed.summaries.day14.trained.correct, 22);
   assert.equal(parsed.summaries.day14.holdout.blank, 6);
   assert.equal(parsed.summaries.pretest.trained.correct, 1);

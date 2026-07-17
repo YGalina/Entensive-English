@@ -105,6 +105,8 @@ export type SliceState = {
   newContextAt?: number;
   /** день 14, часть 3: отдельный тест 6 КОНТРОЛЬНЫХ завершён */
   holdoutAt?: number;
+  /** пилот финализирован (однократно); дальнейшие выгрузки — чистое чтение */
+  finalizedAt?: number;
 };
 
 // Снапшот для useSyncExternalStore обязан быть стабильной ссылкой, пока
@@ -376,6 +378,26 @@ export function isHoldoutId(itemId: string): boolean {
   return SLICE_HOLDOUT.some((h) => h.id === itemId);
 }
 
+/** id единиц, по которым в фазе уже есть записанное свидетельство. */
+export function recordedAssessmentIds(phase: "pretest" | "day14"): string[] {
+  const seen = new Set<string>();
+  for (const e of readLog()) {
+    if (e.type === "assessment-item" && e.payload.phase === phase) {
+      seen.add(String(e.payload.itemId));
+    }
+  }
+  return [...seen];
+}
+
+function hasAssessmentRecord(phase: "pretest" | "day14", itemId: string): boolean {
+  return readLog().some(
+    (e) =>
+      e.type === "assessment-item" &&
+      e.payload.phase === phase &&
+      e.payload.itemId === itemId
+  );
+}
+
 /**
  * Порядок единиц ПРЕТЕСТА: 22 тренируемые + 6 контрольных, перемешаны вместе.
  * Фиксируется при претесте. В день 14 группы тестируются РАЗДЕЛЬНО
@@ -421,11 +443,42 @@ export function recordAssessmentItem(
   answer: string,
   verdict: AssessVerdict
 ) {
-  // Порядок дня 14 охраняется в ядре: контрольные единицы НЕ предъявляются,
-  // пока задача нового контекста не отправлена — иначе экспозиция контрольных
-  // могла бы загрязнить свободное производство.
-  if (phase === "day14" && isHoldoutId(itemId) && !readState().newContextAt) {
-    throw new Error("slice-protocol: контрольная единица дня 14 до нового контекста");
+  // ═══ Инварианты протокола — В ЯДРЕ, не в порядке экранов ═══
+  const s = readState();
+  if (!anyAssessedItem(itemId)) {
+    throw new Error(`slice-protocol: неизвестная единица «${itemId}»`);
+  }
+  if (phase === "pretest") {
+    // претест открыт до finishPretest; после — никаких дозаписей
+    if (s.pretestAt) throw new Error("slice-protocol: запись претеста после его завершения");
+  } else if (!isHoldoutId(itemId)) {
+    // тренируемая дня 14: тест открыт только когда открыт весь день 14,
+    // и закрыт после finishDay14
+    if (!s.pretestAt)
+      throw new Error("slice-protocol: тренируемая дня 14 до претеста");
+    if (s.sessionsCompleted < SLICE_TOTAL_SESSIONS)
+      throw new Error("slice-protocol: тренируемая дня 14 до завершения программы");
+    if (nowMs() - s.pretestAt < 14 * DAY_MS)
+      throw new Error("slice-protocol: тренируемая дня 14 раньше 14 календарных дней");
+    if (s.assessAt)
+      throw new Error("slice-protocol: тренируемая дня 14 после завершения теста тренируемых");
+  } else {
+    // контрольная дня 14: строго после теста тренируемых И нового контекста,
+    // до finishHoldout — иначе экспозиция загрязняет свободное производство
+    if (!s.assessAt)
+      throw new Error("slice-protocol: контрольная дня 14 до завершения теста тренируемых");
+    if (!s.newContextAt)
+      throw new Error("slice-protocol: контрольная дня 14 до нового контекста");
+    if (s.holdoutAt)
+      throw new Error("slice-protocol: контрольная дня 14 после завершения теста контрольных");
+  }
+  // Иммутабельность: свидетельство пишется один раз; перезаписи и
+  // last-write-wins запрещены. (Будущая коррекция — только отдельным
+  // corrective-событием; сейчас не реализуется.)
+  if (hasAssessmentRecord(phase, itemId)) {
+    throw new Error(
+      `slice-protocol: повторная запись — свидетельство неизменяемо (${phase}/${itemId})`
+    );
   }
   const pretestExposed = readLog().some(
     (e) =>
@@ -449,6 +502,18 @@ export function recordAssessmentItem(
 
 export function finishPretest() {
   const s = readState();
+  // идемпотентность: завершение однократно, штамп не перезаписывается
+  if (s.pretestAt) throw new Error("slice-protocol: претест уже завершён");
+  // полнота: ровно одно валидное свидетельство по каждой из 28 единиц
+  // (дубликаты исключены иммутабельностью записи)
+  const need = assessmentOrder();
+  const rec = new Set(recordedAssessmentIds("pretest"));
+  const missing = need.filter((id) => !rec.has(id));
+  if (missing.length) {
+    throw new Error(
+      `slice-protocol: претест неполон — нет ответа по ${missing.length} из ${need.length} единиц`
+    );
+  }
   s.pretestAt = nowMs();
   s.itemOrder = assessmentOrder();
   // HoldoutAssignment: ученик × набор × эксперимент — фиксируется явно.
@@ -479,7 +544,7 @@ export type AssessmentSummary = {
 export function assessmentSummary(phase: "pretest" | "day14"): AssessmentSummary {
   const empty = () => ({ correct: 0, incorrect: 0, blank: 0, total: 0 });
   const out: AssessmentSummary = { phase, trained: empty(), holdout: empty() };
-  // при повторных прохождениях считаем ПОСЛЕДНИЙ ответ по каждой единице
+  // иммутабельность гарантирует одну запись на единицу; Map — просто дедупликация ключей
   const last = new Map<string, { verdict: AssessVerdict; holdout: boolean }>();
   for (const e of readLog()) {
     if (e.type !== "assessment-item" || e.payload.phase !== phase) continue;
@@ -512,6 +577,14 @@ export function finishDay14() {
     );
   if (nowMs() - s.pretestAt < 14 * DAY_MS)
     throw new Error("slice-protocol: day14 раньше 14 календарных дней от претеста");
+  // полнота: ровно одно свидетельство по каждой из 22 тренируемых
+  const rec = new Set(recordedAssessmentIds("day14").filter((id) => !isHoldoutId(id)));
+  const missing = day14TrainedOrder().filter((id) => !rec.has(id));
+  if (missing.length) {
+    throw new Error(
+      `slice-protocol: тест тренируемых неполон — нет ответа по ${missing.length} из 22`
+    );
+  }
   s.assessAt = nowMs();
   writeState(s);
   logSlice("day14-finished", {});
@@ -526,6 +599,15 @@ export function finishHoldout() {
   if (!s.newContextAt)
     throw new Error("slice-protocol: тест контрольных до нового контекста");
   if (s.holdoutAt) throw new Error("slice-protocol: тест контрольных уже завершён");
+  // полнота: ровно одно свидетельство по каждой из 6 контрольных —
+  // без этого финальный экспорт не разблокируется
+  const rec = new Set(recordedAssessmentIds("day14").filter(isHoldoutId));
+  const missing = holdoutOrder().filter((id) => !rec.has(id));
+  if (missing.length) {
+    throw new Error(
+      `slice-protocol: тест контрольных неполон — нет ответа по ${missing.length} из 6`
+    );
+  }
   s.holdoutAt = nowMs();
   writeState(s);
   logSlice("holdout-finished", {});
@@ -538,8 +620,18 @@ export type OpportunityStatus = "used" | "missed" | "insufficient-opportunity";
  * неиспользованным целям честного шанса появиться — их статус
  * «insufficient-opportunity», и в знаменатель они НЕ входят. `[H]`-правило,
  * значение пересматривается по данным пилота.
+ *
+ * НЕ путать с валидностью ВХОДА: insufficient-opportunity — классификация
+ * свидетельства ВАЛИДНО выполненной задачи, а не замена отсутствующему
+ * содержимому. Пустой/слишком короткий ввод отклоняется до классификации.
  */
 const MIN_OPPORTUNITY_WORDS = 25;
+
+/**
+ * Канонический минимум длины ответа нового контекста (символов после trim).
+ * ЕДИНСТВЕННЫЙ источник истины для ядра И UI — экран импортирует эту константу.
+ */
+export const SLICE_NEW_CONTEXT_MIN_CHARS = 10;
 
 export type NewContextResult = {
   statuses: Record<string, OpportunityStatus>;
@@ -596,6 +688,14 @@ export function recordNewContext(text: string, audioRef?: string): NewContextRes
   const s = readState();
   if (!s.assessAt) throw new Error("slice-protocol: новый контекст до завершения дня 14");
   if (s.newContextAt) throw new Error("slice-protocol: новый контекст уже отправлен");
+  // валидность входа (согласована с UI через SLICE_NEW_CONTEXT_MIN_CHARS):
+  // пустота/пробелы/слишком коротко — отклонение, НЕ insufficient-opportunity
+  const trimmed = text.trim();
+  if (!trimmed) throw new Error("slice-protocol: пустой ответ нового контекста");
+  if (trimmed.length < SLICE_NEW_CONTEXT_MIN_CHARS)
+    throw new Error(
+      `slice-protocol: ответ нового контекста короче минимума (${SLICE_NEW_CONTEXT_MIN_CHARS} символов)`
+    );
 
   // Порядок: новый контекст идёт ДО экспозиции контрольных единиц дня 14.
   const hasHoldoutDay14 = readLog().some(
@@ -854,22 +954,36 @@ export function voiceArtifactRefs(): {
 }
 
 /**
- * Финальная выгрузка пилота (JSON). Завершает протокол, поэтому охраняется:
- * доступна только когда пройдены все три части дня 14 — тест тренируемых,
- * новый контекст и тест контрольных. Для незавершённого пилота (выбыла,
- * отладка) есть exportPartialSliceData — с явной пометкой partial.
+ * Финализация пилота — ОДНОКРАТНОЕ протокольное событие. Требует все три
+ * части дня 14 (тест тренируемых · новый контекст · тест контрольных),
+ * пишет pilot-finalized один раз и больше никогда не мутирует состояние.
  */
-export function exportSliceData(): string {
+export function finalizePilot() {
   const s = readState();
+  if (s.finalizedAt) throw new Error("slice-protocol: пилот уже финализирован");
   if (!s.assessAt || !s.newContextAt || !s.holdoutAt) {
     throw new Error(
-      "slice-protocol: финальный экспорт до завершения протокола " +
+      "slice-protocol: финализация до завершения протокола " +
         "(нужны: тест тренируемых, новый контекст, тест контрольных); " +
         "для незавершённого пилота — exportPartialSliceData"
     );
   }
+  s.finalizedAt = nowMs();
+  writeState(s);
+  logSlice("pilot-finalized", {});
+}
+
+/**
+ * Финальная выгрузка (JSON). Финализация и скачивание разделены: первый
+ * вызов финализирует пилот (однократно), повторные вызовы — ЧИСТОЕ ЧТЕНИЕ:
+ * не пишут событий и не трогают состояние протокола.
+ */
+export function exportSliceData(): string {
+  if (!readState().finalizedAt) finalizePilot();
+  const s = readState();
   const payload = {
     exportedAt: new Date(nowMs()).toISOString(),
+    finalizedAt: new Date(s.finalizedAt!).toISOString(),
     experimentId: SLICE_EXPERIMENT_ID,
     partial: false,
     // Классы доказательств разделены; письменное ≠ устное (код-ревью §4):
@@ -888,7 +1002,7 @@ export function exportSliceData(): string {
     voiceArtifacts: voiceArtifactRefs(),
     log: readLog(),
   };
-  logSlice("export", {});
+  // намеренно БЕЗ logSlice: повторное скачивание не мутирует протокол
   return JSON.stringify(payload, null, 2);
 }
 

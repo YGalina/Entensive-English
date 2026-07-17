@@ -6,7 +6,9 @@ import {
   assessmentOrder,
   checkAssessmentAnswer,
   recordAssessmentItem,
+  recordedAssessmentIds,
   finishPretest,
+  sliceState,
 } from "@ie/core/slice";
 import { useMarina } from "@/theme";
 import { SliceScreen, SliceCard, SliceBtn, SliceNote } from "@/components/slice-ui";
@@ -19,7 +21,14 @@ import { SliceScreen, SliceCard, SliceBtn, SliceNote } from "@/components/slice-
 export default function SlicePretest() {
   const { c } = useMarina();
   const router = useRouter();
-  const order = useMemo(() => assessmentOrder(), []);
+  // Возобновление после прерывания: уже записанные единицы пропускаются —
+  // свидетельства иммутабельны, повторная запись отклоняется ядром.
+  const total = useMemo(() => assessmentOrder().length, []);
+  const order = useMemo(() => {
+    const doneIds = new Set(recordedAssessmentIds("pretest"));
+    return assessmentOrder().filter((id) => !doneIds.has(id));
+  }, []);
+  const startedAt = total - order.length;
   const [i, setI] = useState(0);
   const [answer, setAnswer] = useState("");
   const done = i >= order.length;
@@ -44,7 +53,7 @@ export default function SlicePretest() {
           <SliceBtn
             label="К пилоту"
             onPress={() => {
-              finishPretest();
+              if (!sliceState().pretestAt) finishPretest();
               router.back();
             }}
           />
@@ -54,7 +63,7 @@ export default function SlicePretest() {
   }
 
   return (
-    <SliceScreen title={`Претест · ${i + 1} из ${order.length}`}>
+    <SliceScreen title={`Претест · ${startedAt + i + 1} из ${total}`}>
       <SliceCard>
         <SliceNote text="Как это сказать по-английски? Напиши форму — слово, сочетание или начало фразы. Часть единиц — контрольные: они не появятся в уроках, но важны для честного сравнения." />
         <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 20, color: c.ink }}>
@@ -84,7 +93,7 @@ export default function SlicePretest() {
       <View style={{ height: 4, borderRadius: 2, backgroundColor: c.brandSoft, overflow: "hidden" }}>
         <View
           style={{
-            width: `${Math.round((i / order.length) * 100)}%`,
+            width: `${Math.round(((startedAt + i) / total) * 100)}%`,
             height: 4,
             backgroundColor: c.brand,
           }}
