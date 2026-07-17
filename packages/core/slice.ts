@@ -393,13 +393,37 @@ export function checkAssessmentAnswer(itemId: string, answer: string): AssessVer
   return itemFoundInText(item, answer) ? "correct" : "incorrect";
 }
 
+/**
+ * Метаданные экспозиции пишутся ПРЯМО в событие (contamination — явное поле,
+ * а не вывод из типа события при анализе):
+ * group — trained/holdout · pretestExposed — единица уже предъявлялась на
+ * претесте · intentionallyReassessed — намеренный повторный замер (день 14
+ * по дизайну повторяет претест; это контролируемая, помеченная экспозиция).
+ */
 export function recordAssessmentItem(
   phase: "pretest" | "day14",
   itemId: string,
   answer: string,
   verdict: AssessVerdict
 ) {
-  logSlice("assessment-item", { phase, itemId, answer, verdict, holdout: isHoldoutId(itemId) });
+  const pretestExposed = readLog().some(
+    (e) =>
+      e.type === "assessment-item" &&
+      e.payload.phase === "pretest" &&
+      e.payload.itemId === itemId
+  );
+  logSlice("assessment-item", {
+    phase,
+    itemId,
+    answer,
+    verdict,
+    holdout: isHoldoutId(itemId),
+    exposure: {
+      group: isHoldoutId(itemId) ? "holdout" : "trained",
+      pretestExposed,
+      intentionallyReassessed: phase === "day14" && pretestExposed,
+    },
+  });
 }
 
 export function finishPretest() {
@@ -451,48 +475,127 @@ export function assessmentSummary(phase: "pretest" | "day14"): AssessmentSummary
   return out;
 }
 
+/**
+ * Закрыть отложенный тест. Протокол охраняется В ЯДРЕ, не порядком экранов:
+ * претест сделан · все 14 учебных сессий пройдены · интервал выдержан ·
+ * тест ещё не закрывался. Иначе — исключение (невалидный переход).
+ */
 export function finishDay14() {
   const s = readState();
+  if (!s.pretestAt) throw new Error("slice-protocol: day14 без претеста");
+  if (s.assessAt) throw new Error("slice-protocol: day14 уже завершён");
+  if (s.sessionsCompleted < SLICE_TOTAL_SESSIONS)
+    throw new Error(
+      `slice-protocol: day14 до завершения программы (${s.sessionsCompleted}/${SLICE_TOTAL_SESSIONS})`
+    );
+  if (nowMs() - s.pretestAt < 14 * DAY_MS)
+    throw new Error("slice-protocol: day14 раньше 14 календарных дней от претеста");
   s.assessAt = nowMs();
   writeState(s);
   logSlice("day14-finished", {});
 }
 
+export type OpportunityStatus = "used" | "missed" | "insufficient-opportunity";
+
 /**
- * Задача нового контекста с opportunity-моделью: знаменатель — targetIds
- * (тренируемые единицы, которым промпт даёт реальную возможность появиться).
- * used ∪ missed = target; offTarget — прочие тренируемые, всплывшие сами.
- * Метрика: used/denominator, missed — явное состояние «возможность была,
- * единица не всплыла» (не то же самое, что «не знает»).
+ * Порог валидной возможности: ответ короче этого числа слов не даёт
+ * неиспользованным целям честного шанса появиться — их статус
+ * «insufficient-opportunity», и в знаменатель они НЕ входят. `[H]`-правило,
+ * значение пересматривается по данным пилота.
  */
-export function recordNewContext(text: string, audioRef?: string) {
+const MIN_OPPORTUNITY_WORDS = 25;
+
+export type NewContextResult = {
+  statuses: Record<string, OpportunityStatus>;
+  usedIds: string[];
+  missedIds: string[];
+  insufficientIds: string[];
+  offTargetIds: string[];
+  denominator: number;
+  wordCount: number;
+};
+
+/**
+ * Чистое вычисление opportunity-статусов (тестируется отдельно от
+ * одноразового recordNewContext). Три статуса на каждую цель:
+ * used (появилась) · missed (возможность была валидной — ответ достаточно
+ * развёрнут, — но единица не всплыла) · insufficient-opportunity (ответ
+ * слишком короткий, чтобы судить). Знаменатель = used + missed;
+ * insufficient-opportunity в знаменатель НЕ входит.
+ */
+export function newContextOpportunities(text: string): NewContextResult {
   const detected = detectFoundItems(text).map((i) => i.id);
   const target = SLICE_NEW_CONTEXT.targetIds;
-  const usedIds = target.filter((id) => detected.includes(id));
-  const missedIds = target.filter((id) => !detected.includes(id));
+  const wordCount = normalize(text).split(" ").filter(Boolean).length;
+  const validOpportunity = wordCount >= MIN_OPPORTUNITY_WORDS;
+
+  const statuses: Record<string, OpportunityStatus> = {};
+  for (const id of target) {
+    statuses[id] = detected.includes(id)
+      ? "used"
+      : validOpportunity
+        ? "missed"
+        : "insufficient-opportunity";
+  }
+  const usedIds = target.filter((id) => statuses[id] === "used");
+  const missedIds = target.filter((id) => statuses[id] === "missed");
+  const insufficientIds = target.filter((id) => statuses[id] === "insufficient-opportunity");
   const offTargetIds = detected.filter((id) => !target.includes(id));
+  return {
+    statuses,
+    usedIds,
+    missedIds,
+    insufficientIds,
+    offTargetIds,
+    denominator: usedIds.length + missedIds.length,
+    wordCount,
+  };
+}
+
+/**
+ * Задача нового контекста. Протокол охраняется В ЯДРЕ (не порядком экранов):
+ * только после завершённого дня 14 и только один раз.
+ */
+export function recordNewContext(text: string, audioRef?: string): NewContextResult {
   const s = readState();
+  if (!s.assessAt) throw new Error("slice-protocol: новый контекст до завершения дня 14");
+  if (s.newContextAt) throw new Error("slice-protocol: новый контекст уже отправлен");
+
+  const res = newContextOpportunities(text);
   s.newContextAt = nowMs();
   writeState(s);
   logSlice("new-context-submitted", {
     text,
-    targetIds: target,
-    denominator: target.length,
-    usedIds,
-    missedIds,
-    offTargetIds,
+    wordCount: res.wordCount,
+    targetIds: SLICE_NEW_CONTEXT.targetIds,
+    statuses: res.statuses,
+    usedIds: res.usedIds,
+    missedIds: res.missedIds,
+    insufficientIds: res.insufficientIds,
+    offTargetIds: res.offTargetIds,
+    denominator: res.denominator,
     grammar: grammarSignals(text),
-    voice: Boolean(audioRef),
+    // голос: только ссылка на приватный артефакт, без содержимого и анализа
+    voice: audioRef ? { artifactRef: audioRef, privacy: "private", analysed: false } : null,
   });
-  return { usedIds, missedIds, offTargetIds, denominator: target.length };
+  return res;
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** Отложенный тест открыт: ≥14 календарных дней от претеста (интервал важнее полноты). */
+/**
+ * Отложенный тест открыт, только когда выполнены ОБА условия:
+ * ≥14 календарных дней от претеста И все 14 учебных сессий завершены.
+ * (Recovery-сессии в счёт не входят — см. completeSession.)
+ */
 export function assessmentAvailable(now = nowMs()): boolean {
   const s = readState();
-  return Boolean(s.pretestAt && !s.assessAt && now - s.pretestAt >= 14 * DAY_MS);
+  return Boolean(
+    s.pretestAt &&
+      !s.assessAt &&
+      s.sessionsCompleted >= SLICE_TOTAL_SESSIONS &&
+      now - s.pretestAt >= 14 * DAY_MS
+  );
 }
 
 // ───────────────────────── план сессии ─────────────────────────
@@ -671,6 +774,39 @@ export function sliceProgress(now = nowMs()): SliceProgress {
 
 // ───────────────────────── экспорт данных пилота ─────────────────────────
 
+/**
+ * Реестр голосовых артефактов: только ССЫЛКИ (uri/идентификатор) и статус
+ * приватности — без содержимого и без анализа. Ссылка нового контекста
+ * сохраняется наравне с сессионными.
+ */
+export function voiceArtifactRefs(): {
+  at: number;
+  ref: string;
+  promptKind: string;
+  privacy: "private";
+  analysed: false;
+}[] {
+  const out: { at: number; ref: string; promptKind: string; privacy: "private"; analysed: false }[] = [];
+  for (const e of readLog()) {
+    if (e.type === "voice-artifact" && typeof e.payload.uri === "string") {
+      out.push({
+        at: e.at,
+        ref: e.payload.uri,
+        promptKind: String(e.payload.promptKind ?? "slice-say"),
+        privacy: "private",
+        analysed: false,
+      });
+    }
+    if (e.type === "new-context-submitted") {
+      const v = e.payload.voice as { artifactRef?: string } | null | undefined;
+      if (v?.artifactRef) {
+        out.push({ at: e.at, ref: v.artifactRef, promptKind: "slice-new-context", privacy: "private", analysed: false });
+      }
+    }
+  }
+  return out;
+}
+
 /** Полная выгрузка пилота (JSON): состояние, лог, produce-FSRS, сводки. */
 export function exportSliceData(): string {
   const payload = {
@@ -689,6 +825,7 @@ export function exportSliceData(): string {
       pretest: assessmentSummary("pretest"),
       day14: assessmentSummary("day14"),
     },
+    voiceArtifacts: voiceArtifactRefs(),
     log: readLog(),
   };
   logSlice("export", {});

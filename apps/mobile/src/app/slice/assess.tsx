@@ -9,6 +9,8 @@ import {
   recordAssessmentItem,
   finishDay14,
   recordNewContext,
+  assessmentAvailable,
+  useSliceState,
 } from "@ie/core/slice";
 import { addArtifact } from "@ie/core/output";
 import { useVoiceRecorder } from "@ie/media/recorder";
@@ -25,10 +27,32 @@ type Phase = "test" | "context" | "done";
 export default function SliceAssess() {
   const params = useLocalSearchParams<{ phase?: string }>();
   const [phase, setPhase] = useState<Phase>(params.phase === "context" ? "context" : "test");
+  const s = useSliceState();
+
+  // Протокол охраняется и в ядре (finishDay14/recordNewContext бросают),
+  // и здесь — чтобы прямой заход по ссылке не открыл тест раньше времени.
+  if (phase === "test" && !assessmentAvailable()) return <NotYetScreen />;
+  if (phase === "context" && !s.assessAt) return <NotYetScreen />;
 
   if (phase === "test") return <Day14Test onDone={() => setPhase("context")} />;
   if (phase === "context") return <NewContextTask onDone={() => setPhase("done")} />;
   return <DoneScreen />;
+}
+
+function NotYetScreen() {
+  const { c } = useMarina();
+  const router = useRouter();
+  return (
+    <SliceScreen title="Отложенный тест">
+      <SliceCard>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
+          Тест ещё не открыт
+        </Text>
+        <SliceNote text="Он откроется, когда будут выполнены оба условия: все 14 учебных сессий пройдены и с претеста прошло 14 календарных дней. Так сравнение с базовой линией остаётся честным." />
+        <SliceBtn label="К пилоту" onPress={() => router.back()} />
+      </SliceCard>
+    </SliceScreen>
+  );
 }
 
 function Day14Test({ onDone }: { onDone: () => void }) {

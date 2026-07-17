@@ -1,8 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { configureStorage, memoryStorage } from "../storage";
+import { __setNowForTests } from "../now";
 
 configureStorage(memoryStorage());
+
+const DAY = 24 * 3600 * 1000;
 
 const {
   SLICE_ITEMS,
@@ -38,6 +41,10 @@ const {
   isHoldoutId,
   recordAssessmentItem,
   assessmentSummary,
+  finishDay14,
+  recordNewContext,
+  newContextOpportunities,
+  voiceArtifactRefs,
 } = await import("../slice");
 
 test("банк: 22 тренируемые (5/5/4/4/4) + 6 контрольных, id уникальны", () => {
@@ -220,14 +227,97 @@ test("itemEvidence — только процесс: два значения, «t
   }
 });
 
-test("отложенный тест: закрыт до 14 календарных дней от претеста", () => {
-  const s = sliceState();
-  assert.ok(s.pretestAt);
-  assert.equal(assessmentAvailable(s.pretestAt! + 13 * 24 * 3600 * 1000), false);
-  assert.equal(assessmentAvailable(s.pretestAt! + 14 * 24 * 3600 * 1000 + 1), true);
+test("гейт дня 14: нужны ОБА условия; ранние переходы отвергаются ядром", () => {
+  const s0 = sliceState();
+  assert.ok(s0.pretestAt);
+  const timeEnough = s0.pretestAt! + 15 * DAY;
+
+  // (a) времени достаточно, сессий < 14 → закрыт
+  assert.ok(s0.sessionsCompleted < 14);
+  assert.equal(assessmentAvailable(timeEnough), false);
+  // и ядро отвергает прямые вызовы, минуя UI
+  assert.throws(() => finishDay14(), /до завершения программы/);
+  assert.throws(
+    () => recordNewContext("Last week I solved a problem with our monthly report."),
+    /до завершения дня 14/
+  );
+
+  // докручиваем программу до 14 учебных сессий
+  while (sliceState().sessionsCompleted < 14) {
+    completeSession(nextSessionPlan());
+  }
+  assert.equal(sliceState().sessionsCompleted, 14);
+
+  // (b) 14 сессий, времени мало → закрыт; finishDay14 отвергает по времени
+  assert.equal(assessmentAvailable(s0.pretestAt! + 13 * DAY), false);
+  assert.throws(() => finishDay14(), /раньше 14 календарных/);
+
+  // (c) оба условия → открыт
+  assert.equal(assessmentAvailable(timeEnough), true);
 });
 
-test("экспорт: классы доказательств разделены, письменное ≠ устное", () => {
+test("finishDay14/recordNewContext: валидный путь один раз, повторы отвергаются", () => {
+  const s0 = sliceState();
+  __setNowForTests(s0.pretestAt! + 15 * DAY);
+  finishDay14(); // валидный переход
+  assert.throws(() => finishDay14(), /уже завершён/);
+
+  const longText =
+    "Last week I was busy with many small tasks at work and I finally solved a problem with our monthly report after two long days of checking every number twice.";
+  const res = recordNewContext(longText, "file://voice-test.m4a");
+  assert.ok(res.denominator > 0);
+  assert.throws(() => recordNewContext(longText), /уже отправлен/);
+  __setNowForTests(null);
+});
+
+test("opportunity-статусы: insufficient не входит в знаменатель", () => {
+  // короткий ответ: использованное — used, остальное — insufficient, не missed
+  const short = newContextOpportunities("I solved a problem.");
+  assert.equal(short.statuses["solve-a-problem"], "used");
+  assert.equal(short.statuses["figure-out"], "insufficient-opportunity");
+  assert.equal(short.missedIds.length, 0);
+  assert.equal(short.denominator, short.usedIds.length);
+
+  // развёрнутый ответ (≥25 слов): неиспользованное — честный missed
+  const long = newContextOpportunities(
+    "Last week I was busy with many small tasks at work and I finally solved a problem with our monthly report after two long days of checking every number twice."
+  );
+  assert.equal(long.statuses["figure-out"], "missed");
+  assert.ok(long.wordCount >= 25);
+  assert.equal(long.denominator, long.usedIds.length + long.missedIds.length);
+  assert.ok(!long.insufficientIds.length);
+});
+
+test("contamination-метаданные — прямо в событии, без вывода из типа", () => {
+  // figure-out был на претесте → день 14 = намеренный повторный замер
+  recordAssessmentItem("day14", "figure-out", "figure out", "correct");
+  let e = sliceLog().filter((x) => x.type === "assessment-item").at(-1)!;
+  assert.deepEqual(e.payload.exposure, {
+    group: "trained",
+    pretestExposed: true,
+    intentionallyReassessed: true,
+  });
+
+  // improve на претесте в ЭТОМ тест-файле не предъявлялся
+  recordAssessmentItem("day14", "improve", "improve", "correct");
+  e = sliceLog().filter((x) => x.type === "assessment-item").at(-1)!;
+  assert.deepEqual(e.payload.exposure, {
+    group: "trained",
+    pretestExposed: false,
+    intentionallyReassessed: false,
+  });
+
+  // holdout с претестом: группа holdout + повторный замер
+  recordAssessmentItem("day14", "h-turn-down", "", "blank");
+  e = sliceLog().filter((x) => x.type === "assessment-item").at(-1)!;
+  assert.deepEqual(e.payload.exposure, {
+    group: "holdout",
+    pretestExposed: true,
+    intentionallyReassessed: true,
+  });
+});
+
+test("экспорт: классы доказательств разделены; voice — только ссылка и приватность", () => {
   const parsed = JSON.parse(exportSliceData());
   assert.ok(parsed.evidenceNote.includes("ПИСЬМЕННОЕ"));
   assert.ok(parsed.evidenceNote.includes("не является свидетельством устной"));
@@ -235,4 +325,12 @@ test("экспорт: классы доказательств разделены
   assert.ok(parsed.summaries.pretest.holdout);
   assert.ok(Array.isArray(parsed.log));
   assert.equal(parsed.experimentId, "slice-v1-pilot");
+  // голос нового контекста: ссылка сохранена, содержимого и анализа нет
+  const refs = parsed.voiceArtifacts as { ref: string; privacy: string; analysed: boolean; promptKind: string }[];
+  const nc = refs.find((v) => v.promptKind === "slice-new-context");
+  assert.ok(nc, "ссылка на голос нового контекста не сохранилась");
+  assert.equal(nc!.ref, "file://voice-test.m4a");
+  assert.equal(nc!.privacy, "private");
+  assert.equal(nc!.analysed, false);
+  assert.deepEqual(voiceArtifactRefs().find((v) => v.promptKind === "slice-new-context")?.ref, "file://voice-test.m4a");
 });

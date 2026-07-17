@@ -81,7 +81,7 @@ export default function SliceHub() {
       {assessOpen && (
         <SliceCard tone="soft">
           <Title text="Отложенный тест открыт" />
-          <SliceNote text="Прошло 14 дней с претеста. Те же 22 единицы, тот же порядок — сравним с базовой линией." />
+          <SliceNote text="Программа пройдена и прошло 14 дней с претеста. Те же 28 единиц (22 учебные + 6 контрольных), тот же порядок — сравним с базовой линией." />
           <SliceBtn label="Пройти тест" onPress={() => router.push("/slice/assess")} />
         </SliceCard>
       )}
