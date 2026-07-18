@@ -5,6 +5,7 @@ import {
   needsRecovery,
   assessmentAvailable,
   sliceProgress,
+  finalizePilot,
   exportSliceData,
   exportPartialSliceData,
   SLICE_TOTAL_SESSIONS,
@@ -28,7 +29,9 @@ export default function SliceHub() {
   const assessOpen = assessmentAvailable();
   const contextLeft = Boolean(s.assessAt) && !s.newContextAt;
   const holdoutLeft = Boolean(s.newContextAt) && !s.holdoutAt;
-  const finished = Boolean(s.holdoutAt);
+  // все три части дня 14 пройдены, но пилот ещё НЕ финализирован явно
+  const readyToFinalize = Boolean(s.holdoutAt) && !s.finalizedAt;
+  const finalized = Boolean(s.finalizedAt);
 
   return (
     <SliceScreen title="Пилот · Vertical Slice">
@@ -110,7 +113,20 @@ export default function SliceHub() {
         </SliceCard>
       )}
 
-      {finished && (
+      {readyToFinalize && (
+        <SliceCard tone="soft">
+          <Title text="Последний шаг · Завершить пилот" />
+          <SliceNote text="Все части пройдены. Финализация закрывает пилот один раз и делает данные окончательными — после неё правки уже не пишутся. Только после этого доступна финальная выгрузка." />
+          <SliceBtn
+            label="Завершить пилот"
+            onPress={() => {
+              finalizePilot();
+            }}
+          />
+        </SliceCard>
+      )}
+
+      {finalized && (
         <SliceCard tone="soft">
           <Title text="Пилот завершён" />
           <SliceNote text="Спасибо. Выгрузи финальные данные кнопкой ниже и отправь Галине." />
@@ -141,11 +157,12 @@ export default function SliceHub() {
       {entryDone && (
         <SliceBtn
           kind="ghost"
-          label={finished ? "Выгрузить данные пилота (JSON)" : "Выгрузить черновик (пилот не завершён)"}
+          label={finalized ? "Выгрузить данные пилота (JSON)" : "Выгрузить черновик (пилот не финализирован)"}
           onPress={() => {
-            const json = finished
+            // экспорт НИКОГДА не финализирует: до финализации — только черновик
+            const json = finalized
               ? exportSliceData()
-              : exportPartialSliceData("ручная выгрузка до завершения протокола");
+              : exportPartialSliceData("ручная выгрузка до финализации пилота");
             void Share.share({ message: json });
           }}
         />

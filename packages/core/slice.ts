@@ -974,13 +974,19 @@ export function finalizePilot() {
 }
 
 /**
- * Финальная выгрузка (JSON). Финализация и скачивание разделены: первый
- * вызов финализирует пилот (однократно), повторные вызовы — ЧИСТОЕ ЧТЕНИЕ:
- * не пишут событий и не трогают состояние протокола.
+ * Финальная выгрузка (JSON). Финализация и скачивание РАЗДЕЛЕНЫ полностью:
+ * экспорт НИКОГДА не финализирует неявно — он требует уже финализированного
+ * пилота (finalizePilot вызывается явно из UI). До финализации экспорт
+ * отклоняется; после — это чистое чтение (без событий и мутаций состояния),
+ * повторные выгрузки безопасны.
  */
 export function exportSliceData(): string {
-  if (!readState().finalizedAt) finalizePilot();
   const s = readState();
+  if (!s.finalizedAt) {
+    throw new Error(
+      "slice-protocol: экспорт до финализации пилота (сначала finalizePilot)"
+    );
+  }
   const payload = {
     exportedAt: new Date(nowMs()).toISOString(),
     finalizedAt: new Date(s.finalizedAt!).toISOString(),

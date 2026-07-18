@@ -46,6 +46,7 @@ const {
   assessmentAvailable,
   finishDay14,
   finishHoldout,
+  finalizePilot,
   recordNewContext,
   day14TrainedOrder,
   holdoutOrder,
@@ -151,8 +152,8 @@ test("полный поток пилота: вход → претест → 5+re
     recordAssessmentItem("day14", id, item.en, checkAssessmentAnswer(id, item.en));
   }
   finishDay14();
-  // финальный экспорт закрыт, пока не пройдены новый контекст и контрольные
-  assert.throws(() => exportSliceData(), /до завершения протокола/);
+  // экспорт закрыт до финализации (а финализация — до всех частей)
+  assert.throws(() => exportSliceData(), /до финализации/);
 
   // ── часть 2: новый контекст СТРОГО до экспозиции контрольных ──
   const holdoutDay14Before = sliceLog().filter(
@@ -171,7 +172,7 @@ test("полный поток пилота: вход → претест → 5+re
   assert.ok(res.usedIds.includes("sort-out"));
   assert.ok(res.missedIds.length > 0, "missed opportunity должен быть явным состоянием");
   assert.equal(res.usedIds.length + res.missedIds.length, res.denominator);
-  assert.throws(() => exportSliceData(), /до завершения протокола/);
+  assert.throws(() => exportSliceData(), /до финализации/);
 
   // ── часть 3: контрольные — отдельной последовательностью ──
   for (const id of holdoutOrder()) {
@@ -179,7 +180,9 @@ test("полный поток пилота: вход → претест → 5+re
   }
   finishHoldout();
 
-  // ── часть 4: финализация однократна, повторная выгрузка — чистое чтение ──
+  // ── часть 4: экспорт не финализирует; финализация явная, однократная ──
+  assert.throws(() => exportSliceData(), /до финализации/);
+  finalizePilot();
   const parsed = JSON.parse(exportSliceData());
   assert.equal(parsed.partial, false);
   assert.ok(parsed.finalizedAt);

@@ -343,9 +343,9 @@ test("новый контекст: валидность входа и однор
 test("контрольные: полнота, дубликаты, завершение; финализация однократна", () => {
   // ноль контрольных → завершение отклонено
   assert.throws(() => finishHoldout(), /неполон/);
-  // финализация/экспорт до контрольных → отклонены
+  // финализация до контрольных → отклонена; экспорт до финализации → отклонён
   assert.throws(() => finalizePilot(), /до завершения протокола/);
-  assert.throws(() => exportSliceData(), /до завершения протокола/);
+  assert.throws(() => exportSliceData(), /до финализации/);
   // черновик доступен и помечен
   const draft = JSON.parse(exportPartialSliceData("до контрольных"));
   assert.equal(draft.partial, true);
@@ -371,18 +371,28 @@ test("контрольные: полнота, дубликаты, заверше
     /после завершения теста контрольных/
   );
 
-  // финализация: однократно, повторные выгрузки — чистое чтение
+  // экспорт НЕ финализирует неявно: до finalizePilot он отклоняется
+  assert.throws(() => exportSliceData(), /до финализации/);
+  assert.equal(sliceState().finalizedAt, undefined);
+
+  // явная финализация: однократна, иммутабельна
+  finalizePilot();
+  assert.ok(sliceState().finalizedAt);
+  assert.throws(() => finalizePilot(), /уже финализирован/);
+  const finals = () => sliceLog().filter((e) => e.type === "pilot-finalized").length;
+  assert.equal(finals(), 1);
+
+  // повторные выгрузки после финализации — чистое чтение (без событий/мутаций)
   const parsed = JSON.parse(exportSliceData());
   assert.equal(parsed.partial, false);
   assert.ok(parsed.finalizedAt);
-  const finals = () => sliceLog().filter((e) => e.type === "pilot-finalized").length;
-  assert.equal(finals(), 1);
+  const stampFinal = sliceState().finalizedAt;
   const logLen = sliceLog().length;
   const again = JSON.parse(exportSliceData());
   assert.equal(again.finalizedAt, parsed.finalizedAt);
   assert.equal(finals(), 1);
   assert.equal(sliceLog().length, logLen, "повторная выгрузка мутировала лог");
-  assert.throws(() => finalizePilot(), /уже финализирован/);
+  assert.equal(sliceState().finalizedAt, stampFinal, "повторная выгрузка сдвинула штамп финализации");
   __setNowForTests(null);
 });
 
