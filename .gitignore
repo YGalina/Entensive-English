@@ -28,6 +28,10 @@ build
 .DS_Store
 *.pem
 
+# Obsidian personal workspace/cache (portable vault settings remain tracked)
+.obsidian/workspace*.json
+.obsidian/cache/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
