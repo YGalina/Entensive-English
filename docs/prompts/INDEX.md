@@ -11,6 +11,7 @@ Only reusable, current prompts are indexed here. Chat transcripts and superseded
 | D-01 | [Visual design from approved specifications](design/01_visual_design_from_approved_specs.md) | Claude Design / Fable | Approved |
 | D-02 | [Audit existing design against approved system](design/02_audit_existing_design_against_approved_system.md) | Claude Design / Fable | Current |
 | D-03 | [Redesign approved batch in Living Content](design/03_redesign_approved_batch_in_living_content.md) | Claude Design / Fable | Blocked until D-02 approval |
+| D-04 | [Independent design and UX-copy audit](design/04_opus_independent_design_and_content_audit.md) | Claude Opus | Current |
 | UX-03 | [Information Architecture](ux/03_information_architecture.md) | Claude Opus | Approved |
 | UX-04 | [User Journey Architecture](ux/04_user_journey_architecture.md) | Claude Opus | Approved |
 | UX-05 | [Interaction Architecture](ux/05_interaction_architecture.md) | Claude Opus | Approved |
