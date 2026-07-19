@@ -1,94 +1,105 @@
 ---
 id: D-02
-title: Creative direction by Claude Design / Fable
+title: Extend the approved Living Content visual system
 owner: Claude Design / Fable
 status: current
-output: visual directions and one polished hero-flow prototype
+output: one polished canonical screen, then its required states
 ---
 
-# ROLE AND AUTHORITY
+# ROLE
 
-Act as the Creative Director and Lead Product Designer for Intensive English.
+Act as Creative Director and Lead Product Designer for Intensive English.
 
-You own the visual language. ChatGPT and Codex do not art-direct this work. The product owner chooses the final direction.
+You have creative authority over the execution of the **existing** visual identity. Do not invent a replacement brand and do not turn the screen specification into an annotated documentation board.
 
-You are not being asked to turn specifications into an annotated UX board. You are being asked to create a distinctive, contemporary, emotionally intelligent product people would want to use every day.
+# CANONICAL VISUAL SOURCES — READ FIRST
 
-You may replace the current Living Content styling, tokens, typography, colour palette and component expression if they make the product look generic, dated, overly academic or like a documentation prototype.
+Read these completely before designing:
 
-# NON-NEGOTIABLE BOUNDARY
+1. `docs/design/project/Intensive English - Design System.dc.html`
+2. `docs/design/project/Дизайн-система.dc.html`
+3. `packages/tokens/index.ts`
+4. `docs/design/project/Intensive English - Directions.dc.html`
+5. `docs/design/project/Экраны-v2.dc.html`
+6. the relevant approved examples in `docs/design/project/slices-v2/`
+7. `docs/design/DESIGN_SOURCE_INVENTORY.md`
+8. the relevant frozen Screen Specification.
 
-Preserve the approved product behaviour, learning methodology, information hierarchy and one-next-step principle. Do not add features, new navigation or learning mechanics. Treat Screen Specifications as behavioural requirements, not as visual instructions.
+The style is **Living Content / “Paper and Ink”**:
 
-# PRODUCT FEELING
+- warm paper and confident ink;
+- terracotta as brand and primary action;
+- mint for familiarity/success;
+- brass/amber for warmth and new material;
+- rose for gentle correction, never alarming red;
+- Golos Text for the interface;
+- Lora for English-language content;
+- adult, cultured, warm, intensive and non-childish;
+- light reading environment plus the established warm-dark Focus mode.
 
-Intensive English is an adult language-training environment, not a children's game, textbook, corporate LMS, therapy app or generic AI chat.
+Reuse the existing tokens, radii, typographic relationship, content materiality and component family. New screens must unmistakably belong to the product already designed.
 
-It should feel:
+# CREATIVE AUTHORITY
 
-- intelligent but not academic;
-- intensive but not punishing;
-- warm but not sentimental;
-- premium but not sterile;
-- culturally alive;
-- confident, modern and memorable;
-- safe enough to make mistakes;
-- energetic enough to return tomorrow.
+You may:
 
-The learner is usually 30–55 and has an uneven history with English. The interface must respect adult intelligence and make progress feel concrete without scores, streak pressure or childish gamification.
+- create new compositions and component variants needed by approved screens;
+- improve spacing, hierarchy, rhythm, responsiveness and motion;
+- evolve weak legacy components while preserving family resemblance;
+- choose the strongest visual treatment within Living Content;
+- propose a token/component change separately with a clear reason.
 
-# PHASE 1 — THREE GENUINELY DIFFERENT DIRECTIONS
+You may not:
 
-Create three distinct visual directions. Do not make three colour variants of the same system.
+- replace Living Content with a new visual direction;
+- change the brand palette or Golos/Lora relationship silently;
+- copy obsolete UX from legacy screens;
+- add features, navigation, learning mechanics or evidence claims;
+- make documentation annotations the main deliverable.
 
-For each direction provide:
+# CURRENT TASK — VISUAL RESET OF BATCH 1
 
-- concept name and one-sentence thesis;
-- emotional promise;
-- typography system;
-- colour and material system;
-- imagery/illustration/art direction;
-- motion and interaction character;
-- component character;
-- how English-language content is visually distinguished;
-- how it avoids looking like Duolingo, a corporate LMS or a therapy journal;
-- one polished mobile Path Hub at a real 390 px viewport;
-- one polished Pretest item state at a real 390 px viewport.
+The previous Batch 1 artifact is retained only as a state-coverage reference. Do not patch its tiny 300 px phones or use its presentation layout as the new starting point.
 
-Use realistic production copy and content. Show the product, not design annotations around tiny phone mockups.
+First design **one canonical Path Hub default state (S4)** as a real product screen:
 
-# PHASE 2 — RECOMMENDATION
+- mobile viewport: 390 × 844;
+- use the existing Living Content style and the closest approved sources: mobile slice 02 “Сегодня”, web slice 04 “Рабочий стол”, and the design system;
+- preserve the frozen “one next step” hierarchy;
+- remove obsolete streak/CEFR/percentage/dashboard logic;
+- make it feel like a finished Intensive English screen, not a wireframe or specification diagram;
+- show the screen at useful viewing scale, without a phone bezel and without surrounding annotation cards.
 
-Compare the three directions and recommend one. Explain the trade-off honestly. Do not merge all three into a compromise.
+Alongside it provide a compact design rationale with only:
 
-Stop for product-owner selection before expanding the system.
+- reused canonical components;
+- newly created component variants;
+- intentional deviations from the existing sources;
+- unresolved visual decisions requiring owner choice.
 
-# PHASE 3 — ONLY AFTER OWNER SELECTION
+Stop after this single screen for owner review.
 
-Develop one polished hero flow:
+# AFTER OWNER APPROVAL
 
-Path Hub → Pretest framing → Pretest item → Pretest completion → first-session entry.
+Proceed in this order:
 
-Use implementation-ready mobile dimensions:
+1. Path Hub alternate states.
+2. S7 Pretest framing and default item.
+3. S3 Profile Entry.
+4. S8 Gate/Wait.
+5. Required loading/error/offline states in a separate state sheet.
 
-- primary viewport: 390 × 844;
+Do not start the next group until the canonical Path Hub establishes the visual quality bar.
+
+# IMPLEMENTATION-READY BASELINE
+
 - body text normally at least 16 px;
 - secondary text normally at least 14 px;
 - interactive hit areas at least 44 × 44 px;
-- scrolling and fixed regions must be explicit;
-- text scaling and contrast must remain viable.
-
-Show the default experience first. Put alternate/error/loading states in a separate compact sheet only after the main visual direction is convincing.
-
-# DO NOT
-
-- Do not create another annotated catalogue of every state.
-- Do not use a 300 px phone canvas as the implementation design.
-- Do not optimise primarily for traceability tables.
-- Do not preserve legacy colours or components out of politeness.
-- Do not start Batch 2.
-- Do not present technical compliance as the creative concept.
+- scrolling and fixed regions explicit;
+- contrast and text scaling viable;
+- mobile design uses real viewport dimensions, not a scaled miniature.
 
 # OUTPUT GATE
 
-The first deliverable contains only the three visual directions and your recommendation. No full screen inventory. No implementation code. No redesign of UX.
+Return only the polished S4 Path Hub default state and its compact rationale. No complete state catalogue. No Batch 2. No new brand directions.

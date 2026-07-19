@@ -4,7 +4,7 @@ Last updated: 2026-07-19
 
 ## Phase
 
-Visual direction reset — Creative Director exploration.
+Visual design reset — extend approved Living Content style.
 
 ## Architecture status
 
@@ -12,7 +12,7 @@ Frozen. Changes require an ADR, an Architecture Resolution where applicable, and
 
 ## Current focus
 
-The first Batch 1 artifact was useful as a state-coverage board but rejected as the visual direction. Claude Design / Fable now owns creative direction under `docs/prompts/design/02_creative_direction_by_fable.md`. Frozen UX and methodology remain unchanged.
+The first Batch 1 artifact was useful as a state-coverage board but is not the final product UI. The existing Living Content style remains canonical. Claude Design / Fable now redesigns one S4 Path Hub default screen within that style under D-02. Frozen UX and methodology remain unchanged.
 
 ## Completed this session
 
@@ -20,11 +20,11 @@ Codex reviewed the first artifact. The owner rejected it as the product's visual
 
 ## Next task
 
-Claude Design / Fable creates three genuinely different visual directions for Path Hub and one Pretest item, then stops for owner selection.
+Claude Design / Fable creates one polished S4 Path Hub default screen at 390 × 844 by extending the established Living Content system, then stops for owner review.
 
 ## Blockers
 
-Do not start Batch 2 or expand the screen inventory before the owner selects a visual direction. Evening Circle remains Future Extension.
+Do not start Batch 2 or expand the state inventory before the owner approves the canonical Path Hub. Evening Circle remains Future Extension.
 
 ## Handoff rule
 

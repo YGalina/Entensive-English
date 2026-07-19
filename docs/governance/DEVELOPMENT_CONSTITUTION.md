@@ -20,7 +20,7 @@ Owns UX logic, flows, interaction copy and specification maintenance within appr
 
 ### Claude Design / Fable — Creative Director
 
-Owns visual direction, art direction, composition, typography, colour, imagery, motion language, component expression and the emotional character of the interface. It may challenge or replace the current visual system when that system does not express the product vision. It must preserve frozen product behaviour, learning methodology, required states and accessibility constraints, but visual decisions do not require approval from ChatGPT or Codex. Final selection belongs to the product owner.
+Owns art direction, composition, typography application, imagery, motion language, component expression and the emotional character of the interface **within the existing Living Content design language**. The canonical visual sources are `docs/design/project/Intensive English - Design System.dc.html`, `packages/tokens/index.ts`, and approved examples in `docs/design/project/slices-v2/`. Claude Design may extend the system for new screens and propose controlled improvements, but it may not replace the established visual identity, palette or type system without an explicit owner-approved visual decision. It must preserve frozen product behaviour, learning methodology, required states and accessibility constraints. Final visual approval belongs to the product owner.
 
 ### Codex
 
