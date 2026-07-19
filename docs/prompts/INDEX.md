@@ -8,6 +8,9 @@ Only reusable, current prompts are indexed here. Chat transcripts and superseded
 | A-01 | [Integrated Learning Blueprint](architecture/01_integrated_learning_blueprint.md) | Claude Opus | Approved historical |
 | UX-01 | [Experience Architecture](ux/01_experience_architecture.md) | Claude Opus | Approved |
 | UX-02 | [UX Architecture](ux/02_ux_architecture.md) | Claude Opus | Approved |
+| D-01 | [Visual design from approved specifications](design/01_visual_design_from_approved_specs.md) | Claude Design / Fable | Approved |
+| D-02 | [Audit existing design against approved system](design/02_audit_existing_design_against_approved_system.md) | Claude Design / Fable | Current |
+| D-03 | [Redesign approved batch in Living Content](design/03_redesign_approved_batch_in_living_content.md) | Claude Design / Fable | Blocked until D-02 approval |
 | UX-03 | [Information Architecture](ux/03_information_architecture.md) | Claude Opus | Approved |
 | UX-04 | [User Journey Architecture](ux/04_user_journey_architecture.md) | Claude Opus | Approved |
 | UX-05 | [Interaction Architecture](ux/05_interaction_architecture.md) | Claude Opus | Approved |

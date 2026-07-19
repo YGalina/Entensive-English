@@ -2,12 +2,12 @@
 
 ## In progress
 
-- [ ] Claude Design / Fable: create one polished S4 Path Hub default screen within Living Content under D-02; owner reviews it.
+- [ ] Claude Design / Fable: audit all existing mobile/web/focus screens against the approved learning/product/UX system under D-02; owner reviews the migration sequence.
 
 ## Next
 
 - [ ] Owner decision: Evening Circle — future screen or drop (source exists, no approved screen; marked Future Extension in Batch 1).
-- [ ] After S4 approval: expand required Path Hub states, then design S7 default flow and run logic/accessibility QA.
+- [ ] After D-02 approval: execute the first owner-approved journey batch under D-03 and run Codex logic/accessibility QA.
 - [ ] Visual Design Batch 2: remaining assessment protocol S9–S13 only after visual direction approval.
 - [ ] Frozen-alignment visual fixes for S18 Progress (remove CEFR/%-of-course/streak).
 - [ ] Prepare scoped visual-design corrections; implement approved designs and run UX/engineering QA.

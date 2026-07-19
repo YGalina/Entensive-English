@@ -2,4 +2,7 @@
 
 Reusable prompts for visual design based on approved Screen Specifications. Historical design prompts remain linked from `docs/ai_handoffs/`.
 
+- [D-01 · Visual design from approved specifications](01_visual_design_from_approved_specs.md)
+- [D-02 · Audit existing design against approved product and learning system](02_audit_existing_design_against_approved_system.md)
+- [D-03 · Redesign an approved batch in Living Content](03_redesign_approved_batch_in_living_content.md)
 - [Historical Claude design-system prompt](../../ai_handoffs/09_claude_design_system_prompt.md)

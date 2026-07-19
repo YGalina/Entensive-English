@@ -4,7 +4,7 @@ Last updated: 2026-07-19
 
 ## Phase
 
-Visual design reset — extend approved Living Content style.
+Existing-design audit against approved product and learning system.
 
 ## Architecture status
 
@@ -12,7 +12,7 @@ Frozen. Changes require an ADR, an Architecture Resolution where applicable, and
 
 ## Current focus
 
-The first Batch 1 artifact was useful as a state-coverage board but is not the final product UI. The existing Living Content style remains canonical. Claude Design / Fable now redesigns one S4 Path Hub default screen within that style under D-02. Frozen UX and methodology remain unchanged.
+Before further visual production, Claude Design / Fable must audit every existing mobile, web and focus screen against the approved methodology, curriculum, Product Constitution, Experience Architecture, UX, IA, journeys, interactions and Screen Specifications. Living Content remains canonical. The audit is governed by D-02.
 
 ## Completed this session
 
@@ -20,11 +20,11 @@ Codex reviewed the first artifact. The owner rejected it as the product's visual
 
 ## Next task
 
-Claude Design / Fable creates one polished S4 Path Hub default screen at 390 × 844 by extending the established Living Content system, then stops for owner review.
+Claude Design / Fable creates the five-file design audit and migration package required by D-02, then stops for owner approval of the migration sequence.
 
 ## Blockers
 
-Do not start Batch 2 or expand the state inventory before the owner approves the canonical Path Hub. Evening Circle remains Future Extension.
+Do not redraw screens or start another batch before the owner approves the design migration audit and sequence. Evening Circle remains Future Extension pending owner decision.
 
 ## Handoff rule
 

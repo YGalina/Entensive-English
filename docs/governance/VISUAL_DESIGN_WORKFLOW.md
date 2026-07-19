@@ -20,25 +20,31 @@ Visual identity: Living Content / “Paper and Ink”
 5. `docs/design/project/slices-v2/`
 6. `docs/design/DESIGN_SOURCE_INVENTORY.md`
 
-## Per-screen procedure
+## Product-wide audit and migration procedure
 
-### 1. Style immersion
+### 1. Audit the existing designed product
 
-Claude Design reads the complete canonical design system and the closest approved mobile/web/focus examples. It identifies what can be reused, adapted and newly created.
+Claude Design reviews every existing mobile, web and focus screen against the approved methodology, curriculum, Product Constitution, Experience Architecture, UX, IA, journeys, interactions and Screen Specifications using D-02.
 
-### 2. Canonical default screen
+The audit classifies each source as KEEP, ADAPT, REBUILD IN LIVING CONTENT, ARCHIVE or FUTURE REFERENCE and identifies every approved screen requiring a new design.
 
-Design one default screen at real target dimensions. The primary deliverable is the product screen itself, without a phone bezel, technical canvas or surrounding state catalogue.
+### 2. Owner approves the migration sequence
 
-### 3. Owner visual review
+The product owner reviews the audit, resolves founder decisions and approves the order of complete user journeys. No visual redesign starts before this gate.
+
+### 3. Design one approved journey batch
+
+Using D-03, Claude Design redesigns one coherent journey batch at real target dimensions. Existing valid screens and components are reused; obsolete logic is removed; missing screens are created in Living Content.
+
+### 4. Owner visual review
 
 The product owner judges whether it feels like Intensive English and whether the hierarchy is understandable. This is the visual approval gate. Codex does not select taste.
 
-### 4. Required states
+### 5. Required states
 
 Only after default-screen approval, Claude Design expands the same design into required variants, loading, error, offline, resume and empty states. States live in a separate compact sheet.
 
-### 5. Codex QA
+### 6. Codex QA
 
 Codex checks only:
 
@@ -50,11 +56,11 @@ Codex checks only:
 
 Codex findings request the smallest correction and do not replace the chosen art direction.
 
-### 6. Claude Design patch
+### 7. Claude Design patch
 
 Claude Design resolves accepted QA findings while protecting the approved visual concept.
 
-### 7. Owner approval and freeze
+### 8. Owner approval and freeze
 
 The owner approves the screen. The artifact, rationale, state sheet and implementation handoff are versioned in Git. Only then does the next screen or batch begin.
 
