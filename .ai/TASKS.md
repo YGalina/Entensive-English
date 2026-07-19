@@ -2,16 +2,18 @@
 
 ## In progress
 
-- [ ] Inventory existing design sources and map them to approved screen specifications.
+- (none)
 
 ## Next
 
-- [ ] Review current mobile and web design against the approved UX package.
-- [ ] Prepare scoped visual-design corrections.
-- [ ] Implement approved designs and run UX/engineering QA.
+- [ ] Owner decision: Evening Circle — future screen or drop (source exists, no approved screen).
+- [ ] Scope visual design per approved screen (start with design gaps: assessment protocol S7–S13).
+- [ ] Frozen-alignment visual fixes for S18 Progress (remove CEFR/%-of-course/streak) and S4 Path Hub.
+- [ ] Prepare scoped visual-design corrections; implement approved designs and run UX/engineering QA.
 
 ## Completed
 
+- [x] Inventory existing design sources and map them to approved screen specifications → `docs/design/DESIGN_SOURCE_INVENTORY.md`.
 - [x] Freeze Product Constitution v1.2.
 - [x] Complete Experience, UX, Information, Journey, Interaction, and Screen Specification layers.
 - [x] Complete pre-visual UX review.
