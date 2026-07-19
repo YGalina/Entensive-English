@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#EAE3D2;font-family:'Golos Text',sans-serif}
+a{color:#C94E2D;text-decoration:none}a:hover{color:#E8623D;text-decoration:underline}
+</style>
+</helmet>
+<section style="padding:48px 56px 90px;display:flex;flex-direction:column;gap:44px;min-width:2100px">
+
+  <!-- ===== HEADER ===== -->
+  <div style="max-width:1180px;display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="background:#22201B;color:#FAF6EE;font:700 12px 'Golos Text';letter-spacing:.08em;padding:6px 12px;border-radius:999px">VISUAL DESIGN · BATCH 1</span>
+      <span style="font:600 13px 'Golos Text';color:#6F6857">design/source-inventory → S3 · S4 · S7 · S8 · спека 06 · D-01 · frozen v1.2</span>
+    </div>
+    <div style="font:800 34px/1.1 'Golos Text';letter-spacing:-.02em;color:#22201B">Вход, тропа и оценочный протокол — mobile-first</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div style="flex:1;min-width:340px;background:#FFF;border:1px solid #E3D9C4;border-radius:16px;padding:16px 18px">
+        <div style="font:700 11px 'Golos Text';letter-spacing:.1em;color:#6F6857;margin-bottom:8px">COMPLIANCE · ЧЕК-ЛИСТ D-01</div>
+        <div style="font:400 13px/1.65 'Golos Text';color:#22201B">✓ один ведущий шаг на каждом состоянии · ✓ «не помню» — равноправная кнопка, не ссылка-сдача · ✓ претест = «стартовое фото», эмоциональный контракт до и внутри · ✓ окно ожидания даты — поддерживающий возврат, не пустая линия · ✓ без CEFR, стриков, стражей, каталога навыков, levelcheck, Галины внутри app · ✓ без красного цвета ошибки (роза/охра) · ✓ состояния S27: saved-local / not-saved / storage-unavailable · ✓ оценочный режим: без опоры, ретрая, показа ответов, наград</div>
+      </div>
+      <div style="width:340px;background:#EFE7D7;border:1px dashed #C9BB9C;border-radius:16px;padding:16px 18px">
+        <div style="font:700 11px 'Golos Text';letter-spacing:.1em;color:#8A5FA8;margin-bottom:8px">FUTURE EXTENSION · НЕ ПРОЕКТИРУЕТСЯ</div>
+        <div style="font:400 13px/1.6 'Golos Text';color:#4A453A"><b>Вечерний круг</b> — источник есть (slices-v2 mobile 07 / focus 02), утверждённого экрана нет. Помечен как будущее расширение; решение владельца — до любой визуальной работы. В Batch 1 не входит.</div>
+      </div>
+      <div style="width:340px;background:#FFF;border:1px solid #E3D9C4;border-radius:16px;padding:16px 18px">
+        <div style="font:700 11px 'Golos Text';letter-spacing:.1em;color:#6F6857;margin-bottom:8px">SLICE HUB ≠ PATH [PLAN]</div>
+        <div style="font:400 13px/1.6 'Golos Text';color:#22201B">Спроектирован <b>хаб пилота</b> `[IMPL·срез]`. Общепродуктовая Path-проекция — `[PLAN]` и здесь не изобретается: бейдж «Пилот · Vertical Slice» в шапке хаба явно отделяет реализованный контур от будущей тропы.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ S3 ============================================================ -->
+  <div style="display:flex;flex-direction:column;gap:18px">
+    <div id="1a" style="display:flex;align-items:center;gap:12px">
+      <a href="#1a" style="background:#E8623D;color:#fff;font:700 13px 'Golos Text';padding:5px 12px;border-radius:999px">1a</a>
+      <span style="font:800 22px 'Golos Text';color:#22201B">S3 · Profile Entry — пять наблюдаемых признаков</span>
+      <span style="font:600 12px 'Golos Text';color:#6F6857">[IMPL·срез] · вход из S2 · выход → Path Hub (первый шаг = претест)</span>
+    </div>
+    <div style="display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap">
+
+      <!-- S3 phone 1: partial -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Состояние: частично (2 из 5)</div>
+        <div style="width:300px;height:716px;border-radius:46px;background:#1a1712;padding:10px;box-shadow:0 22px 48px -18px rgba(70,45,20,.42)">
+          <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;background:#FAF6EE;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px 4px"><span style="font:600 13px 'Golos Text';color:#22201B">9:41</span><span style="display:flex;gap:4px"><span style="width:14px;height:9px;border-radius:2px;background:#22201B"></span><span style="width:9px;height:9px;border-radius:2px;background:#22201B;opacity:.4"></span></span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 16px 8px">
+              <span style="width:34px;height:34px;border-radius:12px;border:1px solid #E3D9C4;background:#fff;display:flex;align-items:center;justify-content:center;font:600 15px 'Golos Text';color:#22201B">‹</span>
+              <span style="font:700 17px 'Golos Text';color:#22201B">Вход в пилот</span>
+            </div>
+            <div style="flex:1;overflow:hidden;padding:4px 16px 0;display:flex;flex-direction:column;gap:10px">
+              <div style="font:400 12px/1.5 'Golos Text';color:#6F6857">Заполняется вместе с Галиной на разговоре. «Недостаточно данных» — честный ответ: он никого не отсеивает автоматически, решение о включении принимает человек.</div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+                <div style="font:700 14px 'Golos Text';color:#22201B">P1 · Понимает текст среза</div>
+                <div style="font:400 11.5px/1.5 'Golos Text';color:#6F6857">Прочитала текст дня 1 и пересказала по-русски суть без словаря.</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <span style="border-radius:999px;padding:7px 13px;background:#E8623D;font:600 12px 'Golos Text';color:#fff">Да</span>
+                  <span style="border-radius:999px;padding:7px 13px;border:1px solid #E3D9C4;background:#fff;font:600 12px 'Golos Text';color:#22201B">Нет</span>
+                  <span style="border-radius:999px;padding:7px 13px;border:1px solid #E3D9C4;background:#fff;font:600 12px 'Golos Text';color:#22201B">Недостаточно данных</span>
+                </div>
+              </div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+                <div style="font:700 14px 'Golos Text';color:#22201B">P2 · Узнаёт конструкцию</div>
+                <div style="font:400 11.5px/1.5 'Golos Text';color:#6F6857">Видит разницу <span style="font:italic 600 11.5px Lora;color:#4A453A">«I've been doing / I did»</span>: какая про процесс, какая про факт.</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <span style="border-radius:999px;padding:7px 13px;border:1px solid #E3D9C4;background:#fff;font:600 12px 'Golos Text';color:#22201B">Да</span>
+                  <span style="border-radius:999px;padding:7px 13px;border:1px solid #E3D9C4;background:#fff;font:600 12px 'Golos Text';color:#22201B">Нет</span>
+                  <span style="border-radius:999px;padding:7px 13px;background:#E8623D;font:600 12px 'Golos Text';color:#fff">Недостаточно данных</span>
+                </div>
+              </div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+                <div style="font:700 14px 'Golos Text';color:#22201B">P3 · Дефицит извлечения</div>
+                <div style="font:400 11.5px/1.5 'Golos Text';color:#6F6857">«Скажи: мы уложились в срок» — пауза, калька или отказ, хотя в тексте узнала.</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <span style="border-radius:999px;padding:7px 13px;border:1px solid #E3D9C4;background:#fff;font:600 12px 'Golos Text';color:#22201B">Да</span>
+                  <span style="border-radius:999px;padding:7px 13px;border:1px solid #E3D9C4;background:#fff;font:600 12px 'Golos Text';color:#22201B">Нет</span>
+                  <span style="border-radius:999px;padding:7px 13px;border:1px solid #E3D9C4;background:#fff;font:600 12px 'Golos Text';color:#22201B">Недостаточно данных</span>
+                </div>
+              </div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px 16px 0 0;border-bottom:none;padding:14px 14px 6px">
+                <div style="font:700 14px 'Golos Text';color:#22201B">P4 · Устная задача с опорой посильна</div>
+              </div>
+            </div>
+            <div style="padding:10px 16px 22px;background:linear-gradient(rgba(250,246,238,0),#FAF6EE 40%)">
+              <div style="font:600 11.5px 'Golos Text';color:#6F6857;text-align:center;margin-bottom:8px">Отмечено 2 из 5 — сохранить можно, когда отмечены все</div>
+              <div style="height:50px;border-radius:14px;background:#E8623D;opacity:.45;display:flex;align-items:center;justify-content:center;font:700 15px 'Golos Text';color:#fff">Сохранить и войти в пилот</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S3 phone 2: complete -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Состояние: все отмечены — можно сохранить</div>
+        <div style="width:300px;height:716px;border-radius:46px;background:#1a1712;padding:10px;box-shadow:0 22px 48px -18px rgba(70,45,20,.42)">
+          <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;background:#FAF6EE;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px 4px"><span style="font:600 13px 'Golos Text';color:#22201B">9:41</span><span style="display:flex;gap:4px"><span style="width:14px;height:9px;border-radius:2px;background:#22201B"></span><span style="width:9px;height:9px;border-radius:2px;background:#22201B;opacity:.4"></span></span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 16px 8px">
+              <span style="width:34px;height:34px;border-radius:12px;border:1px solid #E3D9C4;background:#fff;display:flex;align-items:center;justify-content:center;font:600 15px 'Golos Text';color:#22201B">‹</span>
+              <span style="font:700 17px 'Golos Text';color:#22201B">Вход в пилот</span>
+            </div>
+            <div style="flex:1;overflow:hidden;padding:4px 16px 0;display:flex;flex-direction:column;gap:8px">
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:14px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center"><span style="font:700 13px 'Golos Text';color:#22201B">P1 · Понимает текст среза</span><span style="border-radius:999px;padding:5px 11px;background:#E8623D;font:600 11px 'Golos Text';color:#fff">Да</span></div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:14px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center"><span style="font:700 13px 'Golos Text';color:#22201B">P2 · Узнаёт конструкцию</span><span style="border-radius:999px;padding:5px 11px;background:#E8623D;font:600 11px 'Golos Text';color:#fff">Да</span></div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:14px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center"><span style="font:700 13px 'Golos Text';color:#22201B">P3 · Дефицит извлечения</span><span style="border-radius:999px;padding:5px 11px;background:#E8623D;font:600 11px 'Golos Text';color:#fff">Да</span></div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:14px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center"><span style="font:700 13px 'Golos Text';color:#22201B">P4 · Устная задача посильна</span><span style="border-radius:999px;padding:5px 11px;border:1px solid #E3D9C4;background:#EFE7D7;font:600 11px 'Golos Text';color:#4A453A">Недостаточно данных</span></div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:14px;padding:11px 14px;display:flex;justify-content:space-between;align-items:center"><span style="font:700 13px 'Golos Text';color:#22201B">P5 · Есть конкретная цель</span><span style="border-radius:999px;padding:5px 11px;background:#E8623D;font:600 11px 'Golos Text';color:#fff">Да</span></div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:13px 14px;display:flex;flex-direction:column;gap:7px">
+                <div style="font:700 13px 'Golos Text';color:#22201B">Заметка</div>
+                <div style="min-height:56px;border:1px solid #E3D9C4;border-radius:12px;padding:10px 12px;font:400 12.5px/1.5 'Golos Text';color:#22201B">Цель — стендапы команды по средам. По P4 добрать наблюдение на первой неделе.</div>
+              </div>
+              <div style="font:400 11px/1.5 'Golos Text';color:#6F6857">Данные пилота хранятся только на этом устройстве и выгружаются вручную с экрана пилота.</div>
+            </div>
+            <div style="padding:10px 16px 22px">
+              <div style="height:50px;border-radius:14px;background:#E8623D;box-shadow:0 12px 24px -12px rgba(232,98,61,.55);display:flex;align-items:center;justify-content:center;font:700 15px 'Golos Text';color:#fff">Сохранить и войти в пилот</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S3 state tiles -->
+      <div style="width:320px;display:flex;flex-direction:column;gap:12px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Состояния сохранения и повторного входа (S27)</div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#C99A3B">NOT-SAVED · ЧЕСТНО</div>
+          <div style="background:#FDF3E3;border:1px solid #ECD9AE;border-radius:12px;padding:11px 13px;font:500 12.5px/1.5 'Golos Text';color:#4A453A">Не сохранилось. Всё, что ты отметила, — на экране, ничего не потеряно. Вход откроется после сохранения.</div>
+          <div style="height:44px;border-radius:12px;border:1.5px solid #E8623D;display:flex;align-items:center;justify-content:center;font:700 13px 'Golos Text';color:#C94E2D">Сохранить ещё раз</div>
+          <div style="font:400 11px/1.5 'Golos Text';color:#6F6857">Повтор идемпотентен по явной отправке — дубликат профиля не создаётся.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#4FB286">SAVED-LOCAL</div>
+          <div style="display:flex;align-items:center;gap:8px;background:#FAF6EE;border:1px solid #E3D9C4;border-radius:12px;padding:10px 13px"><span style="width:18px;height:18px;border-radius:50%;background:#4FB286;color:#fff;display:flex;align-items:center;justify-content:center;font:700 11px 'Golos Text'">✓</span><span style="font:500 12.5px 'Golos Text';color:#22201B">Сохранено на этом устройстве</span></div>
+          <div style="font:400 11px/1.5 'Golos Text';color:#6F6857">Тихое подтверждение при переходе в Path Hub; «сохранено-локально» и core-accepted различаются в данных, не в тоне.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">ПОВТОРНЫЙ ВХОД · ЗАВЕРШЁННЫЙ ПРОФИЛЬ</div>
+          <div style="background:#EFE7D7;border-radius:12px;padding:11px 13px;font:500 12.5px/1.55 'Golos Text';color:#4A453A">Профиль заполнен 19 июля и не перезаписывается молча. Изменения — только явным действием вместе с Галиной.</div>
+          <div style="height:40px;border-radius:12px;border:1px solid #E3D9C4;display:flex;align-items:center;justify-content:center;font:600 12.5px 'Golos Text';color:#22201B">Посмотреть ответы</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#C99A3B">STORAGE-UNAVAILABLE</div>
+          <div style="background:#FDF3E3;border:1px solid #ECD9AE;border-radius:12px;padding:11px 13px;font:500 12.5px/1.5 'Golos Text';color:#4A453A">Хранилище устройства недоступно. Мы не начинаем пилот, пока не сможем честно хранить твои данные.</div>
+        </div>
+      </div>
+
+      <!-- S3 annotation -->
+      <div style="width:330px;background:#22201B;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+        <div style="font:700 11px 'Golos Text';letter-spacing:.1em;color:#E8B36A">АННОТАЦИИ · S3 → СПЕКА 06 §B</div>
+        <div style="font:400 12.5px/1.7 'Golos Text';color:#F5EFE2">
+          <b>Компоненты:</b> 5 признаков-переключателей (да / нет / недостаточно данных) · заметка · сохранить-и-войти.<br><br>
+          <b>Одно ведущее действие:</b> единственный CTA «Сохранить и войти» — активен только при 5/5; счётчик объясняет блокировку, не стыдит.<br><br>
+          <b>«Недостаточно данных»</b> — пилюля того же ранга, что «Да/Нет»; выбранная — терракота либо wash (см. P4): легальный исход, решает человек, не автоотказ.<br><br>
+          <b>Английское</b> в чек-описаниях — Lora italic (голос языка).<br><br>
+          <b>Ошибки:</b> not-saved без красного (охра/warnSoft); вход не открывается до сохранения; повтор без дубликата (S27).<br><br>
+          <b>Не переносится:</b> старый онбординг «язык/цель/время/страж» (mobile 17–20) — конфликт с Г-1.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ S4 ============================================================ -->
+  <div style="display:flex;flex-direction:column;gap:18px">
+    <div id="1b" style="display:flex;align-items:center;gap:12px">
+      <a href="#1b" style="background:#E8623D;color:#fff;font:700 13px 'Golos Text';padding:5px 12px;border-radius:999px">1b</a>
+      <span style="font:800 22px 'Golos Text';color:#22201B">S4 · Path Hub — ровно один ведущий шаг</span>
+      <span style="font:600 12px 'Golos Text';color:#6F6857">[IMPL·срез — хаб пилота] · общая Path-проекция [PLAN] · ориентация, не дашборд</span>
+    </div>
+    <div style="display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap">
+
+      <!-- S4 phone 1: обычный -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Состояние: обычный — сессия дня ведёт</div>
+        <div style="width:300px;height:716px;border-radius:46px;background:#1a1712;padding:10px;box-shadow:0 22px 48px -18px rgba(70,45,20,.42)">
+          <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;background:#FAF6EE;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px 4px"><span style="font:600 13px 'Golos Text';color:#22201B">9:41</span><span style="display:flex;gap:4px"><span style="width:14px;height:9px;border-radius:2px;background:#22201B"></span><span style="width:9px;height:9px;border-radius:2px;background:#22201B;opacity:.4"></span></span></div>
+            <div style="padding:12px 18px 6px;display:flex;flex-direction:column;gap:3px">
+              <div style="display:flex;align-items:center;gap:8px"><span style="font:800 20px 'Golos Text';letter-spacing:-.02em;color:#22201B">Тропа</span><span style="border:1px solid #E3D9C4;border-radius:999px;padding:3px 9px;font:600 10px 'Golos Text';letter-spacing:.06em;color:#6F6857">ПИЛОТ · VERTICAL SLICE</span></div>
+              <div style="font:400 12px 'Golos Text';color:#6F6857">Одна задача: ответить на <span style="font:italic 600 12px Lora;color:#4A453A">“So what have you been working on lately?”</span></div>
+            </div>
+            <div style="flex:1;overflow:hidden;padding:8px 16px 0;display:flex;flex-direction:column;gap:12px">
+              <div style="background:#fff;border:2px solid #E8623D;border-radius:20px;padding:18px 16px;box-shadow:0 16px 34px -20px rgba(232,98,61,.55);display:flex;flex-direction:column;gap:9px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;border-radius:50%;background:#E8623D"></span><span style="font:600 11px 'Golos Text';letter-spacing:.08em;color:#C94E2D">ВЕДУЩИЙ ШАГ</span></div>
+                <div style="font:800 19px/1.2 'Golos Text';letter-spacing:-.01em;color:#22201B">Сессия 6 из 14</div>
+                <div style="font:400 12.5px/1.5 'Golos Text';color:#6F6857">Новые единицы дня: текст → извлечение → твой ответ → вслух. Около 15 минут.</div>
+                <div style="height:48px;border-radius:14px;background:#E8623D;display:flex;align-items:center;justify-content:center;font:700 15px 'Golos Text';color:#fff">Начать сессию</div>
+              </div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+                <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">КАК ИДЁТ</div>
+                <div style="display:flex;gap:8px;align-items:center"><span style="width:6px;height:6px;border-radius:3px;background:#4FB286"></span><span style="font:500 12.5px 'Golos Text';color:#22201B">Сессия 5 из 14 завершена вчера</span></div>
+                <div style="display:flex;gap:8px;align-items:center"><span style="width:6px;height:6px;border-radius:3px;background:#4FB286"></span><span style="font:500 12.5px 'Golos Text';color:#22201B">Вчера 6 из 8 достались без подсказки</span></div>
+                <div style="display:flex;gap:8px;align-items:center"><span style="width:6px;height:6px;border-radius:3px;background:#E3D9C4"></span><span style="font:500 12.5px 'Golos Text';color:#6F6857">По 3 единицам данных пока мало</span></div>
+                <div style="font:400 10.5px/1.5 'Golos Text';color:#6F6857">Факты процесса, не оценка умения говорить.</div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <span style="flex:1;border:1px solid #E3D9C4;border-radius:12px;padding:10px 0;text-align:center;font:600 12px 'Golos Text';color:#4A453A;background:#FFFDF8">Словарь</span>
+                <span style="flex:1;border:1px solid #E3D9C4;border-radius:12px;padding:10px 0;text-align:center;font:600 12px 'Golos Text';color:#4A453A;background:#FFFDF8">Библиотека</span>
+                <span style="flex:1;border:1px solid #E3D9C4;border-radius:12px;padding:10px 0;text-align:center;font:600 12px 'Golos Text';color:#4A453A;background:#FFFDF8">Прогресс</span>
+              </div>
+              <div style="font:400 10.5px/1.5 'Golos Text';color:#6F6857;text-align:center">Кладовые — рядом, когда нужны. Просмотр не двигает прогресс.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S4 phone 2: recovery -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Состояние: пауза — Recovery ведёт, полная сессия не второй CTA</div>
+        <div style="width:300px;height:716px;border-radius:46px;background:#1a1712;padding:10px;box-shadow:0 22px 48px -18px rgba(70,45,20,.42)">
+          <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;background:#FAF6EE;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px 4px"><span style="font:600 13px 'Golos Text';color:#22201B">9:41</span><span style="display:flex;gap:4px"><span style="width:14px;height:9px;border-radius:2px;background:#22201B"></span><span style="width:9px;height:9px;border-radius:2px;background:#22201B;opacity:.4"></span></span></div>
+            <div style="padding:12px 18px 6px;display:flex;flex-direction:column;gap:3px">
+              <div style="display:flex;align-items:center;gap:8px"><span style="font:800 20px 'Golos Text';letter-spacing:-.02em;color:#22201B">Тропа</span><span style="border:1px solid #E3D9C4;border-radius:999px;padding:3px 9px;font:600 10px 'Golos Text';letter-spacing:.06em;color:#6F6857">ПИЛОТ · VERTICAL SLICE</span></div>
+              <div style="font:400 12px 'Golos Text';color:#6F6857">Был перерыв — это пауза, не потеря.</div>
+            </div>
+            <div style="flex:1;overflow:hidden;padding:8px 16px 0;display:flex;flex-direction:column;gap:12px">
+              <div style="background:#fff;border:2px solid #E8623D;border-radius:20px;padding:18px 16px;box-shadow:0 16px 34px -20px rgba(232,98,61,.55);display:flex;flex-direction:column;gap:9px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;border-radius:50%;background:#E8623D"></span><span style="font:600 11px 'Golos Text';letter-spacing:.08em;color:#C94E2D">ВЕДУЩИЙ ШАГ</span></div>
+                <div style="font:800 19px/1.2 'Golos Text';letter-spacing:-.01em;color:#22201B">Вернуться с 5 минут</div>
+                <div style="font:400 12.5px/1.5 'Golos Text';color:#6F6857">Короткий возврат: несколько единиц и одна твоя фраза. Программу из 14 сессий не тратит.</div>
+                <div style="height:48px;border-radius:14px;background:#E8623D;display:flex;align-items:center;justify-content:center;font:700 15px 'Golos Text';color:#fff">Вернуться с 5 минут</div>
+                <div style="text-align:center;font:600 12px 'Golos Text';color:#C94E2D;text-decoration:underline;text-underline-offset:3px">Можно и сразу полную сессию</div>
+              </div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+                <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">КАК ИДЁТ</div>
+                <div style="display:flex;gap:8px;align-items:center"><span style="width:6px;height:6px;border-radius:3px;background:#4FB286"></span><span style="font:500 12.5px 'Golos Text';color:#22201B">Сессия 5 из 14 · последняя — 6 дней назад</span></div>
+                <div style="display:flex;gap:8px;align-items:center"><span style="width:6px;height:6px;border-radius:3px;background:#4FB286"></span><span style="font:500 12.5px 'Golos Text';color:#22201B">Возвратов после паузы: 1 (программу не тратят)</span></div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <span style="flex:1;border:1px solid #E3D9C4;border-radius:12px;padding:10px 0;text-align:center;font:600 12px 'Golos Text';color:#4A453A;background:#FFFDF8">Словарь</span>
+                <span style="flex:1;border:1px solid #E3D9C4;border-radius:12px;padding:10px 0;text-align:center;font:600 12px 'Golos Text';color:#4A453A;background:#FFFDF8">Библиотека</span>
+                <span style="flex:1;border:1px solid #E3D9C4;border-radius:12px;padding:10px 0;text-align:center;font:600 12px 'Golos Text';color:#4A453A;background:#FFFDF8">Прогресс</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S4 phone 3: окно ожидания -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Состояние: окно ожидания даты (C2) — 14 сессий есть, 14 дней нет</div>
+        <div style="width:300px;height:716px;border-radius:46px;background:#1a1712;padding:10px;box-shadow:0 22px 48px -18px rgba(70,45,20,.42)">
+          <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;background:#FAF6EE;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px 4px"><span style="font:600 13px 'Golos Text';color:#22201B">9:41</span><span style="display:flex;gap:4px"><span style="width:14px;height:9px;border-radius:2px;background:#22201B"></span><span style="width:9px;height:9px;border-radius:2px;background:#22201B;opacity:.4"></span></span></div>
+            <div style="padding:12px 18px 6px;display:flex;flex-direction:column;gap:3px">
+              <div style="display:flex;align-items:center;gap:8px"><span style="font:800 20px 'Golos Text';letter-spacing:-.02em;color:#22201B">Тропа</span><span style="border:1px solid #E3D9C4;border-radius:999px;padding:3px 9px;font:600 10px 'Golos Text';letter-spacing:.06em;color:#6F6857">ПИЛОТ · VERTICAL SLICE</span></div>
+            </div>
+            <div style="flex:1;overflow:hidden;padding:8px 16px 0;display:flex;flex-direction:column;gap:12px">
+              <div style="background:#EFE7D7;border:1px solid #E3D9C4;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:18px;height:18px;border-radius:50%;background:#4FB286;color:#fff;display:flex;align-items:center;justify-content:center;font:700 11px 'Golos Text'">✓</span><span style="font:700 14px 'Golos Text';color:#22201B">Программа пройдена — 14 из 14</span></div>
+                <div style="font:400 12px/1.55 'Golos Text';color:#4A453A">Отложенный тест откроется <b>2 августа</b> — сравнение честно только через 14 дней после претеста. Раньше он не откроется, и новые курс-сессии не создаются.</div>
+              </div>
+              <div style="background:#fff;border:2px solid #E8623D;border-radius:20px;padding:18px 16px;box-shadow:0 16px 34px -20px rgba(232,98,61,.55);display:flex;flex-direction:column;gap:9px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;border-radius:50%;background:#E8623D"></span><span style="font:600 11px 'Golos Text';letter-spacing:.08em;color:#C94E2D">ВЕДУЩИЙ ШАГ · ПОКА ЖДЁМ</span></div>
+                <div style="font:800 19px/1.2 'Golos Text';letter-spacing:-.01em;color:#22201B">Поддерживающий возврат</div>
+                <div style="font:400 12.5px/1.5 'Golos Text';color:#6F6857">5–7 минут: вернуть единицы в речь и сказать своё. Не расходует программу и не создаёт курс-сессий — просто держит язык тёплым до теста.</div>
+                <div style="height:48px;border-radius:14px;background:#E8623D;display:flex;align-items:center;justify-content:center;font:700 15px 'Golos Text';color:#fff">Вернуть единицы · 5 минут</div>
+              </div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+                <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">ДО ТЕСТА</div>
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:500 12.5px 'Golos Text';color:#22201B">Дней от претеста</span><span style="font:700 12.5px 'Golos Text';color:#22201B">11 из 14</span></div>
+                <div style="height:5px;border-radius:3px;background:#EFE7D7;overflow:hidden"><span style="display:block;width:78%;height:5px;background:#E8B36A"></span></div>
+                <div style="font:400 10.5px/1.5 'Golos Text';color:#6F6857">Ожидание — часть метода, не задержка. Можно ничего не делать — это тоже нормально.</div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <span style="flex:1;border:1px solid #E3D9C4;border-radius:12px;padding:10px 0;text-align:center;font:600 12px 'Golos Text';color:#4A453A;background:#FFFDF8">Словарь</span>
+                <span style="flex:1;border:1px solid #E3D9C4;border-radius:12px;padding:10px 0;text-align:center;font:600 12px 'Golos Text';color:#4A453A;background:#FFFDF8">Библиотека</span>
+                <span style="flex:1;border:1px solid #E3D9C4;border-radius:12px;padding:10px 0;text-align:center;font:600 12px 'Golos Text';color:#4A453A;background:#FFFDF8">Прогресс</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S4 phone 4: этап открыт -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Состояние: протокольный этап открыт</div>
+        <div style="width:300px;height:716px;border-radius:46px;background:#1a1712;padding:10px;box-shadow:0 22px 48px -18px rgba(70,45,20,.42)">
+          <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;background:#FAF6EE;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px 4px"><span style="font:600 13px 'Golos Text';color:#22201B">9:41</span><span style="display:flex;gap:4px"><span style="width:14px;height:9px;border-radius:2px;background:#22201B"></span><span style="width:9px;height:9px;border-radius:2px;background:#22201B;opacity:.4"></span></span></div>
+            <div style="padding:12px 18px 6px;display:flex;flex-direction:column;gap:3px">
+              <div style="display:flex;align-items:center;gap:8px"><span style="font:800 20px 'Golos Text';letter-spacing:-.02em;color:#22201B">Тропа</span><span style="border:1px solid #E3D9C4;border-radius:999px;padding:3px 9px;font:600 10px 'Golos Text';letter-spacing:.06em;color:#6F6857">ПИЛОТ · VERTICAL SLICE</span></div>
+            </div>
+            <div style="flex:1;overflow:hidden;padding:8px 16px 0;display:flex;flex-direction:column;gap:12px">
+              <div style="background:#fff;border:2px solid #E8623D;border-radius:20px;padding:18px 16px;box-shadow:0 16px 34px -20px rgba(232,98,61,.55);display:flex;flex-direction:column;gap:9px">
+                <div style="display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;border-radius:50%;background:#E8623D"></span><span style="font:600 11px 'Golos Text';letter-spacing:.08em;color:#C94E2D">ВЕДУЩИЙ ШАГ · ОЦЕНОЧНЫЙ РЕЖИМ</span></div>
+                <div style="font:800 19px/1.2 'Golos Text';letter-spacing:-.01em;color:#22201B">Отложенный тест открыт</div>
+                <div style="font:400 12.5px/1.5 'Golos Text';color:#6F6857">Шаг 1 из 3 — 22 учебные единицы в претестовом порядке. Дальше новый контекст, и только после него — 6 контрольных.</div>
+                <div style="height:48px;border-radius:14px;background:#E8623D;display:flex;align-items:center;justify-content:center;font:700 15px 'Golos Text';color:#fff">Пройти тест</div>
+              </div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+                <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">ТРИ ШАГА ДНЯ 14</div>
+                <div style="display:flex;gap:8px;align-items:center"><span style="width:20px;height:20px;border-radius:50%;background:#E8623D;color:#fff;display:flex;align-items:center;justify-content:center;font:700 11px 'Golos Text'">1</span><span style="font:500 12.5px 'Golos Text';color:#22201B">22 учебные единицы</span></div>
+                <div style="display:flex;gap:8px;align-items:center"><span style="width:20px;height:20px;border-radius:50%;border:1px solid #E3D9C4;color:#6F6857;display:flex;align-items:center;justify-content:center;font:700 11px 'Golos Text'">2</span><span style="font:500 12.5px 'Golos Text';color:#6F6857">Новый контекст</span></div>
+                <div style="display:flex;gap:8px;align-items:center"><span style="width:20px;height:20px;border-radius:50%;border:1px solid #E3D9C4;color:#6F6857;display:flex;align-items:center;justify-content:center;font:700 11px 'Golos Text'">3</span><span style="font:500 12.5px 'Golos Text';color:#6F6857">6 контрольных единиц</span></div>
+                <div style="font:400 10.5px/1.5 'Golos Text';color:#6F6857">Будущие шаги — информация, не кнопки: ядро откроет их по порядку.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S4 state tiles -->
+      <div style="width:320px;display:flex;flex-direction:column;gap:12px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Остальные состояния S4</div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:7px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">ГОТОВ К ФИНАЛИЗАЦИИ</div>
+          <div style="font:700 14px 'Golos Text';color:#22201B">Последний шаг · Завершить пилот</div>
+          <div style="font:400 11.5px/1.5 'Golos Text';color:#6F6857">Все части пройдены. Финализация один раз закрывает пилот; принятые ответы неизменяемы с момента отправки — она их не меняет.</div>
+          <div style="height:42px;border-radius:12px;background:#E8623D;display:flex;align-items:center;justify-content:center;font:700 13px 'Golos Text';color:#fff">Завершить пилот</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:7px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#4FB286">ПИЛОТ ЗАВЕРШЁН</div>
+          <div style="font:400 12px/1.55 'Golos Text';color:#22201B">Спасибо. Данные окончательны. Ведущий шаг — «Выгрузить финальные данные (JSON)»; повторная выгрузка — чистое чтение.</div>
+          <div style="height:42px;border-radius:12px;border:1.5px solid #E8623D;display:flex;align-items:center;justify-content:center;font:700 13px 'Golos Text';color:#C94E2D">Выгрузить данные</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:7px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">ЗАГРУЗКА ПРОЕКЦИИ</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <span style="height:14px;width:60%;border-radius:7px;background:#EFE7D7"></span>
+            <span style="height:44px;border-radius:14px;background:#EFE7D7"></span>
+            <span style="height:14px;width:80%;border-radius:7px;background:#F3EDDF"></span>
+          </div>
+          <div style="font:400 11px/1.5 'Golos Text';color:#6F6857">Спокойное ожидание — тёплые плейсхолдеры, не «пусто» и не спиннер на весь экран.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:7px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#C99A3B">РАССИНХРОН ПРОЕКЦИИ</div>
+          <div style="background:#FDF3E3;border:1px solid #ECD9AE;border-radius:12px;padding:10px 12px;font:500 12px/1.5 'Golos Text';color:#4A453A">Показано последнее известное состояние: сессия 5 из 14. Обновится при следующем открытии — прогресс никогда не дорисовывается.</div>
+        </div>
+      </div>
+
+      <!-- S4 annotation -->
+      <div style="width:330px;background:#22201B;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+        <div style="font:700 11px 'Golos Text';letter-spacing:.1em;color:#E8B36A">АННОТАЦИИ · S4 → СПЕКА 06 §C · C2 · m2 · M2</div>
+        <div style="font:400 12.5px/1.7 'Golos Text';color:#F5EFE2">
+          <b>Иерархия:</b> одна терракотовая карточка с рамкой 2px = единственный первичный элемент. «Как идёт» и кладовые — тихая периферия: 1px line, без теней-акцентов, без CTA.<br><br>
+          <b>Slice ≠ Path:</b> бейдж «ПИЛОТ · VERTICAL SLICE» в шапке; общая Path-проекция [PLAN] не изображается.<br><br>
+          <b>Окно ожидания (C2):</b> ведущий шаг — поддерживающий возврат (не курс-сессия, программу не тратит); честная подпись «пройдено · откроется 2 августа»; латунный прогресс дней — информация, не гейт-угроза. «Можно ничего не делать» — валидный текст.<br><br>
+          <b>Recovery:</b> полная сессия — текстовая ссылка внутри ведущей карточки, не второй равный CTA.<br><br>
+          <b>Кладовые (M2):</b> ряд из трёх тихих входов — фиксация существования латерального доступа; вид финализируется отдельно, латераль→латераль — через Path.<br><br>
+          <b>Убрано против legacy «Сегодня»:</b> стрик, «X% курса», CEFR, приветствие по имени от Галины.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ S7 ============================================================ -->
+  <div style="display:flex;flex-direction:column;gap:18px">
+    <div id="1c" style="display:flex;align-items:center;gap:12px">
+      <a href="#1c" style="background:#E8623D;color:#fff;font:700 13px 'Golos Text';padding:5px 12px;border-radius:999px">1c</a>
+      <span style="font:800 22px 'Golos Text';color:#22201B">S7 · Pretest — стартовое фото, не экзамен</span>
+      <span style="font:600 12px 'Golos Text';color:#6F6857">[IMPL·срез] · 28 единиц · оценочный режим: без опоры, ретрая и показа ответов · C3</span>
+    </div>
+    <div style="display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap">
+
+      <!-- S7 phone 1: эмоциональный контракт -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Вход: эмоциональный контракт (до первой единицы)</div>
+        <div style="width:300px;height:716px;border-radius:46px;background:#1a1712;padding:10px;box-shadow:0 22px 48px -18px rgba(70,45,20,.42)">
+          <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;background:#FAF6EE;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px 4px"><span style="font:600 13px 'Golos Text';color:#22201B">9:41</span><span style="display:flex;gap:4px"><span style="width:14px;height:9px;border-radius:2px;background:#22201B"></span><span style="width:9px;height:9px;border-radius:2px;background:#22201B;opacity:.4"></span></span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 16px 8px">
+              <span style="width:34px;height:34px;border-radius:12px;border:1px solid #E3D9C4;background:#fff;display:flex;align-items:center;justify-content:center;font:600 15px 'Golos Text';color:#22201B">‹</span>
+              <span style="font:700 17px 'Golos Text';color:#22201B">Претест</span>
+            </div>
+            <div style="flex:1;padding:10px 20px 0;display:flex;flex-direction:column;gap:14px">
+              <div style="width:64px;height:64px;border-radius:20px;background:#EFE7D7;display:flex;align-items:center;justify-content:center;margin-top:12px"><span style="width:26px;height:26px;border-radius:50%;border:3px solid #E8623D"></span></div>
+              <div style="font:800 24px/1.15 'Golos Text';letter-spacing:-.02em;color:#22201B">Стартовое фото.<br>Не экзамен.</div>
+              <div style="font:400 13px/1.6 'Golos Text';color:#4A453A">28 коротких «как это сказать по-английски». Мы фиксируем точку старта, чтобы через две недели ты увидела разницу своими глазами.</div>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <div style="display:flex;gap:9px;align-items:flex-start"><span style="width:7px;height:7px;border-radius:4px;background:#E8B36A;margin-top:6px"></span><span style="font:500 12.5px/1.5 'Golos Text';color:#22201B;flex:1">«Не помню» — ожидаемый и валидный ответ. Для него есть своя кнопка.</span></div>
+                <div style="display:flex;gap:9px;align-items:flex-start"><span style="width:7px;height:7px;border-radius:4px;background:#E8B36A;margin-top:6px"></span><span style="font:500 12.5px/1.5 'Golos Text';color:#22201B;flex:1">Пустые ответы — норма и вся суть стартового фото.</span></div>
+                <div style="display:flex;gap:9px;align-items:flex-start"><span style="width:7px;height:7px;border-radius:4px;background:#E8B36A;margin-top:6px"></span><span style="font:500 12.5px/1.5 'Golos Text';color:#22201B;flex:1">Никакой оценки тебя. Ответы мы не показываем и не комментируем.</span></div>
+                <div style="display:flex;gap:9px;align-items:flex-start"><span style="width:7px;height:7px;border-radius:4px;background:#4FB286;margin-top:6px"></span><span style="font:500 12.5px/1.5 'Golos Text';color:#22201B;flex:1">Сразу после — настоящая практика: ты скажешь своё.</span></div>
+              </div>
+            </div>
+            <div style="padding:10px 16px 22px">
+              <div style="height:50px;border-radius:14px;background:#E8623D;box-shadow:0 12px 24px -12px rgba(232,98,61,.55);display:flex;align-items:center;justify-content:center;font:700 15px 'Golos Text';color:#fff">Сделать стартовое фото</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S7 phone 2: единица draft -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Единица: draft — «не помню» равноправна</div>
+        <div style="width:300px;height:716px;border-radius:46px;background:#1a1712;padding:10px;box-shadow:0 22px 48px -18px rgba(70,45,20,.42)">
+          <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;background:#FAF6EE;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px 4px"><span style="font:600 13px 'Golos Text';color:#22201B">9:41</span><span style="display:flex;gap:4px"><span style="width:14px;height:9px;border-radius:2px;background:#22201B"></span><span style="width:9px;height:9px;border-radius:2px;background:#22201B;opacity:.4"></span></span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 16px 2px">
+              <span style="width:34px;height:34px;border-radius:12px;border:1px solid #E3D9C4;background:#fff;display:flex;align-items:center;justify-content:center;font:600 15px 'Golos Text';color:#22201B">‹</span>
+              <span style="font:700 17px 'Golos Text';color:#22201B">Претест</span>
+              <span style="margin-left:auto;font:600 13px 'Golos Text';color:#6F6857">3 из 28</span>
+            </div>
+            <div style="padding:8px 16px 0"><div style="height:4px;border-radius:2px;background:#EFE7D7;overflow:hidden"><span style="display:block;width:11%;height:4px;background:#E8623D"></span></div></div>
+            <div style="flex:1;padding:18px 20px 0;display:flex;flex-direction:column;gap:14px">
+              <div style="font:400 12px/1.5 'Golos Text';color:#6F6857">Как это сказать по-английски? Слово, сочетание или начало фразы.</div>
+              <div style="font:700 21px/1.3 'Golos Text';color:#22201B">мы уложились в срок</div>
+              <div style="min-height:56px;border:1.5px solid #E8623D;border-radius:14px;background:#fff;padding:15px 16px;display:flex;align-items:center"><span style="font:italic 600 17px Lora;color:#22201B">we met the…</span><span style="width:2px;height:20px;background:#E8623D;margin-left:2px"></span></div>
+              <div style="font:400 11px/1.5 'Golos Text';color:#6F6857">Автокоррекция выключена. Подсказок и ответов здесь нет — это стартовое фото, оно не учит.</div>
+            </div>
+            <div style="padding:10px 16px 22px;display:flex;flex-direction:column;gap:9px">
+              <div style="height:50px;border-radius:14px;background:#E8623D;display:flex;align-items:center;justify-content:center;font:700 15px 'Golos Text';color:#fff">Дальше</div>
+              <div style="height:50px;border-radius:14px;border:1.5px solid #E3D9C4;background:#fff;display:flex;align-items:center;justify-content:center;font:700 15px 'Golos Text';color:#4A453A">Не помню — дальше</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S7 phone 3: пустой ввод, не помню ведёт -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Единица: пустой ввод — «не помню» остаётся полноразмерной</div>
+        <div style="width:300px;height:716px;border-radius:46px;background:#1a1712;padding:10px;box-shadow:0 22px 48px -18px rgba(70,45,20,.42)">
+          <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;background:#FAF6EE;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px 4px"><span style="font:600 13px 'Golos Text';color:#22201B">9:41</span><span style="display:flex;gap:4px"><span style="width:14px;height:9px;border-radius:2px;background:#22201B"></span><span style="width:9px;height:9px;border-radius:2px;background:#22201B;opacity:.4"></span></span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 16px 2px">
+              <span style="width:34px;height:34px;border-radius:12px;border:1px solid #E3D9C4;background:#fff;display:flex;align-items:center;justify-content:center;font:600 15px 'Golos Text';color:#22201B">‹</span>
+              <span style="font:700 17px 'Golos Text';color:#22201B">Претест</span>
+              <span style="margin-left:auto;font:600 13px 'Golos Text';color:#6F6857">17 из 28</span>
+            </div>
+            <div style="padding:8px 16px 0"><div style="height:4px;border-radius:2px;background:#EFE7D7;overflow:hidden"><span style="display:block;width:57%;height:4px;background:#E8623D"></span></div></div>
+            <div style="flex:1;padding:18px 20px 0;display:flex;flex-direction:column;gap:14px">
+              <div style="font:400 12px/1.5 'Golos Text';color:#6F6857">Как это сказать по-английски?</div>
+              <div style="font:700 21px/1.3 'Golos Text';color:#22201B">брать на себя инициативу</div>
+              <div style="min-height:56px;border:1px solid #E3D9C4;border-radius:14px;background:#fff;padding:15px 16px;display:flex;align-items:center"><span style="font:italic 400 16px Lora;color:#6F6857">Напиши по-английски…</span></div>
+              <div style="background:#EFE7D7;border-radius:12px;padding:10px 13px;font:400 11.5px/1.5 'Golos Text';color:#4A453A">Не вспомнилось — так и должно быть на старте. Именно эти единицы придут в сессиях.</div>
+            </div>
+            <div style="padding:10px 16px 22px;display:flex;flex-direction:column;gap:9px">
+              <div style="height:50px;border-radius:14px;background:#E8623D;opacity:.45;display:flex;align-items:center;justify-content:center;font:700 15px 'Golos Text';color:#fff">Дальше</div>
+              <div style="height:50px;border-radius:14px;border:1.5px solid #4A453A;background:#fff;display:flex;align-items:center;justify-content:center;font:700 15px 'Golos Text';color:#22201B">Не помню — дальше</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S7 phone 4: завершение -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Фаза: complete — мост к первой сессии (C3)</div>
+        <div style="width:300px;height:716px;border-radius:46px;background:#1a1712;padding:10px;box-shadow:0 22px 48px -18px rgba(70,45,20,.42)">
+          <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;background:#FAF6EE;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px 4px"><span style="font:600 13px 'Golos Text';color:#22201B">9:41</span><span style="display:flex;gap:4px"><span style="width:14px;height:9px;border-radius:2px;background:#22201B"></span><span style="width:9px;height:9px;border-radius:2px;background:#22201B;opacity:.4"></span></span></div>
+            <div style="flex:1;padding:40px 22px 0;display:flex;flex-direction:column;gap:14px">
+              <div style="width:64px;height:64px;border-radius:50%;background:#4FB286;display:flex;align-items:center;justify-content:center;font:700 26px 'Golos Text';color:#fff">✓</div>
+              <div style="font:800 24px/1.15 'Golos Text';letter-spacing:-.02em;color:#22201B">Готово.<br>Стартовое фото сделано.</div>
+              <div style="font:400 13px/1.6 'Golos Text';color:#4A453A">Все 28 ответов записаны. Правильные ответы мы намеренно не показываем — фото не учит, оно фиксирует старт.</div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px 16px;font:400 12.5px/1.55 'Golos Text';color:#22201B">Всё, что сегодня не вспомнилось, придёт в сессиях — и через две недели ты сравнишь два фото сама.</div>
+              <div style="background:#EFE7D7;border-radius:12px;padding:10px 13px;font:500 12px/1.5 'Golos Text';color:#4A453A">Первая сессия уже доступна: через несколько минут ты скажешь своё.</div>
+            </div>
+            <div style="padding:10px 16px 22px">
+              <div style="height:50px;border-radius:14px;background:#E8623D;box-shadow:0 12px 24px -12px rgba(232,98,61,.55);display:flex;align-items:center;justify-content:center;font:700 15px 'Golos Text';color:#fff">К первой сессии</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S7 state tiles -->
+      <div style="width:320px;display:flex;flex-direction:column;gap:12px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Микросостояния единицы · draft → submitting → accepted</div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:9px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">SUBMITTING · КНОПКИ ЗАБЛОКИРОВАНЫ</div>
+          <div style="height:44px;border-radius:12px;background:#E8623D;opacity:.65;display:flex;align-items:center;justify-content:center;gap:8px"><span style="width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.4);border-top-color:#fff"></span><span style="font:700 13px 'Golos Text';color:#fff">Записываем…</span></div>
+          <div style="font:400 11px/1.5 'Golos Text';color:#6F6857">Повторное действие невозможно до подтверждения ядра; к следующей единице — только после accepted.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:9px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#4FB286">ACCEPTED</div>
+          <div style="display:flex;align-items:center;gap:8px;background:#FAF6EE;border:1px solid #E3D9C4;border-radius:12px;padding:10px 13px"><span style="width:18px;height:18px;border-radius:50%;background:#4FB286;color:#fff;display:flex;align-items:center;justify-content:center;font:700 11px 'Golos Text'">✓</span><span style="font:500 12.5px 'Golos Text';color:#22201B">Записано · 4 из 28</span></div>
+          <div style="font:400 11px/1.5 'Golos Text';color:#6F6857">Тихий тик и переход. Без «правильно/неправильно» — вердикт считается молча.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:9px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#C99A3B">REJECTED / NOT-RECORDED · НЕЙТРАЛЬНО</div>
+          <div style="background:#FDF3E3;border:1px solid #ECD9AE;border-radius:12px;padding:10px 13px;font:500 12px/1.5 'Golos Text';color:#4A453A">Не записалось. Твой ответ цел на экране — отправь ещё раз.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:9px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">DOUBLE-TAP · «УЖЕ ЗАПИСАНО»</div>
+          <div style="background:#EFE7D7;border-radius:12px;padding:10px 13px;font:500 12px/1.5 'Golos Text';color:#4A453A">Этот ответ уже записан — идём дальше. Первый ответ не потерян.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:9px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">ВОЗОБНОВЛЕНИЕ · PARTIAL</div>
+          <div style="background:#FAF6EE;border:1px solid #E3D9C4;border-radius:12px;padding:10px 13px;font:500 12px/1.5 'Golos Text';color:#22201B">Продолжаем с 12 из 28 — записанные ответы сохранены и пропущены.</div>
+          <div style="font:400 11px/1.5 'Golos Text';color:#6F6857">Свидетельства иммутабельны: повторная запись единицы отклоняется ядром.</div>
+        </div>
+      </div>
+
+      <!-- S7 annotation -->
+      <div style="width:330px;background:#22201B;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+        <div style="font:700 11px 'Golos Text';letter-spacing:.1em;color:#E8B36A">АННОТАЦИИ · S7 → СПЕКА 06 §E · C3</div>
+        <div style="font:400 12.5px/1.7 'Golos Text';color:#F5EFE2">
+          <b>Эмоциональный контракт (C3):</b> отдельный входной экран до первой единицы — четыре пункта контракта дословно из спеки; заголовок «Стартовое фото. Не экзамен» задаёт рамку; CTA «Сделать стартовое фото» — язык фотографии, не теста. Методику не меняет: ответы/подсказки не даются.<br><br>
+          <b>«Не помню» нормализована:</b> полноразмерная кнопка той же высоты (50px) сразу под «Дальше» — не ссылка-сдача. При пустом вводе «Дальше» гаснет, а «Не помню» получает чуть более тёмный контур: она — ожидаемый путь, экран не давит «заполни».<br><br>
+          <b>Ввод:</b> Lora italic для английского; автокоррекция off (подпись); фокус — терракотовый контур 1.5px.<br><br>
+          <b>Прогресс:</b> тонкая полоса + «N из 28» — темп, не балл.<br><br>
+          <b>Микросостояния:</b> draft → submitting (лок) → accepted (тихий тик); rejected нейтрален, без красного; double-tap — «уже записано», не потеря.<br><br>
+          <b>Не переносится:</b> levelcheck (mobile 30) — иная концепция, конфликт с протоколом.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ S8 ============================================================ -->
+  <div style="display:flex;flex-direction:column;gap:18px">
+    <div id="1d" style="display:flex;align-items:center;gap:12px">
+      <a href="#1d" style="background:#E8623D;color:#fff;font:700 13px 'Golos Text';padding:5px 12px;border-radius:999px">1d</a>
+      <span style="font:800 22px 'Golos Text';color:#22201B">S8 · Assessment Gate / Wait — честное «почему закрыто»</span>
+      <span style="font:600 12px 'Golos Text';color:#6F6857">[IMPL·срез] · информационное состояние · guard считает ядро · без CTA-конкуренции</span>
+    </div>
+    <div style="display:flex;gap:26px;align-items:flex-start;flex-wrap:wrap">
+
+      <!-- S8 phone 1: обе причины -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Состояние: обе причины не выполнены</div>
+        <div style="width:300px;height:716px;border-radius:46px;background:#1a1712;padding:10px;box-shadow:0 22px 48px -18px rgba(70,45,20,.42)">
+          <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;background:#FAF6EE;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px 4px"><span style="font:600 13px 'Golos Text';color:#22201B">9:41</span><span style="display:flex;gap:4px"><span style="width:14px;height:9px;border-radius:2px;background:#22201B"></span><span style="width:9px;height:9px;border-radius:2px;background:#22201B;opacity:.4"></span></span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 16px 8px">
+              <span style="width:34px;height:34px;border-radius:12px;border:1px solid #E3D9C4;background:#fff;display:flex;align-items:center;justify-content:center;font:600 15px 'Golos Text';color:#22201B">‹</span>
+              <span style="font:700 17px 'Golos Text';color:#22201B">Отложенный тест</span>
+            </div>
+            <div style="flex:1;padding:14px 20px 0;display:flex;flex-direction:column;gap:14px">
+              <div style="width:56px;height:56px;border-radius:18px;background:#EFE7D7;display:flex;align-items:center;justify-content:center"><span style="width:22px;height:22px;border-radius:6px;border:2.5px solid #6F6857;border-top-width:8px"></span></div>
+              <div style="font:800 22px/1.2 'Golos Text';letter-spacing:-.02em;color:#22201B">Тест ещё закрыт — и это правильно</div>
+              <div style="font:400 12.5px/1.6 'Golos Text';color:#4A453A">Сравнение со стартовым фото честно, только когда выполнены оба условия. Так устроен метод, а не замок.</div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:11px">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;justify-content:space-between"><span style="font:600 12.5px 'Golos Text';color:#22201B">14 сессий программы</span><span style="font:700 12.5px 'Golos Text';color:#22201B">9 из 14</span></div>
+                  <div style="height:5px;border-radius:3px;background:#EFE7D7;overflow:hidden"><span style="display:block;width:64%;height:5px;background:#E8623D"></span></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;justify-content:space-between"><span style="font:600 12.5px 'Golos Text';color:#22201B">14 дней от претеста</span><span style="font:700 12.5px 'Golos Text';color:#22201B">день 9 из 14</span></div>
+                  <div style="height:5px;border-radius:3px;background:#EFE7D7;overflow:hidden"><span style="display:block;width:64%;height:5px;background:#E8B36A"></span></div>
+                </div>
+                <div style="font:400 11px/1.5 'Golos Text';color:#6F6857">Нужны оба условия. Сейчас всё идёт своим ходом — ничего навёрстывать не нужно.</div>
+              </div>
+            </div>
+            <div style="padding:10px 16px 22px">
+              <div style="height:48px;border-radius:14px;border:1px solid #E3D9C4;background:#fff;display:flex;align-items:center;justify-content:center;font:700 14px 'Golos Text';color:#22201B">Вернуться к тропе</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S8 phone 2: только дата -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Состояние: сессии пройдены, не хватает только даты</div>
+        <div style="width:300px;height:716px;border-radius:46px;background:#1a1712;padding:10px;box-shadow:0 22px 48px -18px rgba(70,45,20,.42)">
+          <div style="width:100%;height:100%;border-radius:37px;overflow:hidden;background:#FAF6EE;display:flex;flex-direction:column">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 24px 4px"><span style="font:600 13px 'Golos Text';color:#22201B">9:41</span><span style="display:flex;gap:4px"><span style="width:14px;height:9px;border-radius:2px;background:#22201B"></span><span style="width:9px;height:9px;border-radius:2px;background:#22201B;opacity:.4"></span></span></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 16px 8px">
+              <span style="width:34px;height:34px;border-radius:12px;border:1px solid #E3D9C4;background:#fff;display:flex;align-items:center;justify-content:center;font:600 15px 'Golos Text';color:#22201B">‹</span>
+              <span style="font:700 17px 'Golos Text';color:#22201B">Отложенный тест</span>
+            </div>
+            <div style="flex:1;padding:14px 20px 0;display:flex;flex-direction:column;gap:14px">
+              <div style="font:800 22px/1.2 'Golos Text';letter-spacing:-.02em;color:#22201B">Программа пройдена. Осталось дать времени сделать своё.</div>
+              <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:11px">
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="font:600 12.5px 'Golos Text';color:#22201B">14 сессий программы</span><span style="display:flex;align-items:center;gap:6px"><span style="width:16px;height:16px;border-radius:50%;background:#4FB286;color:#fff;display:flex;align-items:center;justify-content:center;font:700 10px 'Golos Text'">✓</span><span style="font:700 12.5px 'Golos Text';color:#22201B">14 из 14</span></span></div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <div style="display:flex;justify-content:space-between"><span style="font:600 12.5px 'Golos Text';color:#22201B">14 дней от претеста</span><span style="font:700 12.5px 'Golos Text';color:#22201B">день 11 из 14</span></div>
+                  <div style="height:5px;border-radius:3px;background:#EFE7D7;overflow:hidden"><span style="display:block;width:78%;height:5px;background:#E8B36A"></span></div>
+                </div>
+              </div>
+              <div style="background:#EFE7D7;border-radius:14px;padding:13px 15px;font:500 12.5px/1.55 'Golos Text';color:#4A453A">Тест откроется <b>2 августа</b>. Расстояние во времени — часть измерения: мы смотрим, что осталось твоим без ежедневного повторения.</div>
+              <div style="font:400 11.5px/1.55 'Golos Text';color:#6F6857">Пока ждём, на тропе есть поддерживающий возврат — он не расходует программу. А можно просто вернуться 2 августа.</div>
+            </div>
+            <div style="padding:10px 16px 22px">
+              <div style="height:48px;border-radius:14px;border:1px solid #E3D9C4;background:#fff;display:flex;align-items:center;justify-content:center;font:700 14px 'Golos Text';color:#22201B">Вернуться к тропе</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- S8 tiles -->
+      <div style="width:320px;display:flex;flex-direction:column;gap:12px">
+        <div style="font:600 12px 'Golos Text';color:#6F6857">Граничные состояния</div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">ПРЯМОЙ ЗАХОД ПО ССЫЛКЕ / УВЕДОМЛЕНИЮ</div>
+          <div style="font:400 12px/1.55 'Golos Text';color:#22201B">Любая попытка открыть тест раньше guard ловится ядром и показывает этот же экран — состояние одно, откуда бы ни пришли. Stale-уведомление ведёт в актуальный Path, не в сохранённую цель.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">ЗАГРУЗКА ГАРДА</div>
+          <div style="display:flex;flex-direction:column;gap:6px"><span style="height:12px;width:70%;border-radius:6px;background:#EFE7D7"></span><span style="height:38px;border-radius:12px;background:#EFE7D7"></span></div>
+          <div style="font:400 11px/1.5 'Golos Text';color:#6F6857">Пока ядро считает условия — тёплые плейсхолдеры; цифры не мигают и не «дорисовываются» с нуля.</div>
+        </div>
+        <div style="background:#fff;border:1px solid #E3D9C4;border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px">
+          <div style="font:700 11px 'Golos Text';letter-spacing:.08em;color:#6F6857">СВЯЗЬ С S4</div>
+          <div style="font:400 12px/1.55 'Golos Text';color:#22201B">S8 — информационная страница «почему закрыто». Действие ожидания живёт на тропе (<a href="#1b">1b</a>, окно ожидания): здесь нет второго CTA — только «Вернуться к тропе».</div>
+        </div>
+      </div>
+
+      <!-- S8 annotation -->
+      <div style="width:330px;background:#22201B;border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+        <div style="font:700 11px 'Golos Text';letter-spacing:.1em;color:#E8B36A">АННОТАЦИИ · S8 → СПЕКА 06 §E</div>
+        <div style="font:400 12.5px/1.7 'Golos Text';color:#F5EFE2">
+          <b>Тон:</b> «закрыт — и это правильно»: причина — метод, не замок и не наказание. Ни guilt, ни «поторопись».<br><br>
+          <b>Два условия — две полосы:</b> сессии (терракота) и дни (латунь) визуально разные оси; выполненное условие получает мятный тик, невыполненное — спокойный факт «день 11 из 14», не тревожный таймер.<br><br>
+          <b>Дата открытия</b> всегда названа конкретно («2 августа») — обещание проверяемо.<br><br>
+          <b>Один выход:</b> ghost-кнопка «Вернуться к тропе»; никаких конкурирующих CTA — ведущий шаг ожидания живёт в S4.<br><br>
+          <b>Без записи:</b> экран информационный, событий аналитики не создаёт.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</x-dc>
+</body>
+</html>
