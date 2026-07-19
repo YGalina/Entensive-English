@@ -25,7 +25,7 @@
 - [Task Register](TASKS.md)
 - [Decision Register](DECISIONS.md)
 - [Development Constitution](../docs/governance/DEVELOPMENT_CONSTITUTION.md)
-- [Prompts](../docs/prompts/)
+- [Prompt Library](../docs/prompts/INDEX.md)
 - [Audits](../docs/audits/)
 - [Design](../docs/design/)
 

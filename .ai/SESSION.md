@@ -12,11 +12,11 @@ Frozen. Changes require an ADR, an Architecture Resolution where applicable, and
 
 ## Current focus
 
-Prepare the approved UX package and existing design materials for visual design review and implementation planning.
+Use the curated prompt library and approved UX package to inventory existing design materials before visual corrections.
 
 ## Next task
 
-Inventory existing design sources and map them to approved screen specifications before changing visual design.
+Inventory existing design sources and map them to approved screen specifications before changing visual design. Use `docs/prompts/design/01_visual_design_from_approved_specs.md` for scoped design work.
 
 ## Blockers
 

@@ -2,6 +2,8 @@
 
 Reusable, approved prompts live here. Historical prompt artifacts remain in `docs/ai_handoffs/` and are linked rather than moved.
 
+Start with the curated [Prompt Index](INDEX.md).
+
 ## Categories
 
 - [Research](research/README.md)
