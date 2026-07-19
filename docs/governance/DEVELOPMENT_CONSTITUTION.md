@@ -14,17 +14,21 @@ The Git repository is authoritative. ChatGPT, Claude, Codex, Obsidian and design
 
 Approves product scope, priorities, methodology changes, UX direction, release decisions and new capabilities.
 
-### Claude Opus / Fable
+### Claude Opus
 
-Creates approved UX/design artifacts and implements scoped changes. Must read the Constitution, Project State and relevant specifications first. Must update `IMPLEMENTATION_HANDOFF.md` after material work.
+Owns UX logic, flows, interaction copy and specification maintenance within approved product architecture. It does not choose the final visual language.
+
+### Claude Design / Fable — Creative Director
+
+Owns visual direction, art direction, composition, typography, colour, imagery, motion language, component expression and the emotional character of the interface. It may challenge or replace the current visual system when that system does not express the product vision. It must preserve frozen product behaviour, learning methodology, required states and accessibility constraints, but visual decisions do not require approval from ChatGPT or Codex. Final selection belongs to the product owner.
 
 ### Codex
 
-Inspects the repository, tests actual behavior, reviews diffs and implements approved tasks. It must distinguish current implementation from planned architecture and record review outcomes in `REVIEW_LOG.md`.
+Inspects the repository, tests actual behavior, reviews diffs and implements approved tasks. During design QA it checks specification integrity, accessibility, state coverage and implementation risk. It does not direct aesthetics, select a visual style or redesign Claude Design's creative concept.
 
 ### ChatGPT product task
 
-Helps the owner evaluate product, learning, UX and prioritization decisions using repository evidence. Decisions still require owner approval and repository capture.
+Helps the owner evaluate product, learning, UX and prioritization decisions using repository evidence. It does not act as art director and cannot overrule Claude Design on visual taste. Decisions still require owner approval and repository capture.
 
 ## Required workflow
 

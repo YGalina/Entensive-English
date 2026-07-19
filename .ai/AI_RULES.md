@@ -10,5 +10,7 @@
 8. Record reusable prompts in `docs/prompts/` or `.ai/PROMPTS/`.
 9. Update `SESSION.md` and `TASKS.md` when a task changes project state.
 10. Run relevant checks and report what was executed, blocked, or unavailable.
+11. During visual design, Claude Design / Fable is the Creative Director. It owns visual language and may replace legacy styling while preserving frozen behaviour and methodology.
+12. ChatGPT and Codex may review logic, accessibility, state coverage and implementation risk, but must not prescribe aesthetic direction or dilute an approved creative concept by committee.
 
 See [Development Constitution](../docs/governance/DEVELOPMENT_CONSTITUTION.md) for roles and workflow.
