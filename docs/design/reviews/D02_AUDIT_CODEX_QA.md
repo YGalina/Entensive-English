@@ -1,8 +1,8 @@
 # D-02 Existing-Design Audit · Codex QA
 
-Verdict: **CHANGES REQUIRED**.  
+Verdict: **CORRECTIONS INTEGRATED · APPROVED FOR MIGRATION PLANNING**.  
 Scope reviewed: five audit documents from `repo_audit_d02` archive.  
-Do not begin visual redesign or Batch 2.
+Critical corrections were integrated by Codex. The grouped-row limitation remains documented but does not justify another analysis loop. Visual work proceeds only through the corrected Batch A under D-03.
 
 ## What passed
 

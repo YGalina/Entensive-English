@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] Claude Design / Fable: audit all existing mobile/web/focus screens against the approved learning/product/UX system under D-02; owner reviews the migration sequence.
+- [ ] Owner confirms corrected D-02 migration sequence; Claude Design executes Batch A default screens under D-03.
 
 ## Next
 

@@ -4,7 +4,7 @@ Last updated: 2026-07-19
 
 ## Phase
 
-Existing-design audit against approved product and learning system.
+D-02 audit integrated; ready to start first approved design journey.
 
 ## Architecture status
 
@@ -12,7 +12,7 @@ Frozen. Changes require an ADR, an Architecture Resolution where applicable, and
 
 ## Current focus
 
-Before further visual production, Claude Design / Fable must audit every existing mobile, web and focus screen against the approved methodology, curriculum, Product Constitution, Experience Architecture, UX, IA, journeys, interactions and Screen Specifications. Living Content remains canonical. The audit is governed by D-02.
+D-02 audit is stored in `docs/design/audits/` with Codex corrections. Living Content remains canonical. The rejected Batch 1 artifact is only a state reference. The next design task is Batch A under D-03.
 
 ## Completed this session
 
@@ -20,7 +20,7 @@ Codex reviewed the first artifact. The owner rejected it as the product's visual
 
 ## Next task
 
-Claude Design / Fable creates the five-file design audit and migration package required by D-02, then stops for owner approval of the migration sequence.
+Owner confirms the corrected migration sequence; Claude Design then executes Batch A default screens under D-03 and stops for visual review.
 
 ## Blockers
 
