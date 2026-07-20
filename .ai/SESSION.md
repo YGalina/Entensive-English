@@ -1,10 +1,10 @@
 # Current Project Session
 
-Last updated: 2026-07-19
+Last updated: 2026-07-20
 
 ## Phase
 
-D-02 audit integrated; ready to start first approved design journey.
+Visual design: Batch A approved and frozen; ready for Batch B.
 
 ## Architecture status
 
@@ -12,19 +12,19 @@ Frozen. Changes require an ADR, an Architecture Resolution where applicable, and
 
 ## Current focus
 
-The independent D-04 design and copy audit is stored in `docs/design/audits/` (V1 plus corrected V1.1 with V1→V1.1 changelog). Living Content remains canonical. The rejected Batch 1 artifact is only a non-authoritative state-coverage checklist. The next design task is Batch A under D-03.
+Batch A is approved and stored in `docs/design/exports/batch-a-defaults-final/`. It contains the frozen default visual direction for S1, S2, S3, S4, S7 and S8. Living Content remains canonical. Subsequent batches must reuse this visual language and must not reopen Batch A without an owner-approved change.
 
 ## Completed this session
 
-Independent D-04 audit produced (V1), then corrected under D-04A into V1.1: removed the invented programme-information/consent surface, fixed the source-of-truth hierarchy, kept old onboarding (m17/m18) archived, dropped the gender-selection control, reframed legacy copy as a candidate library, removed the chunk-only leak, qualified the reuse percentages, and pinned Batch A to the six approved surfaces (S1·S2·S3·S4 Path Hub·S7·S8).
+Batch A completed, reviewed through multiple visual and copy passes, and approved by the product owner. Final QA confirmed readable layouts, finger-safe actions, correct written-assessment language, honest calendar/session gating, and a semantically disabled S7 next action. Approved artifact: `docs/design/exports/batch-a-defaults-final/`.
 
 ## Next task
 
-Owner confirms the corrected migration sequence; Claude Design then executes Batch A default screens under D-03 and stops for visual review.
+Claude Design/Fable executes Batch B for assessment screens S9–S13 only, using Batch A as the frozen visual baseline and the approved UX/screen specifications as the behavioural source of truth. Stop after default states for owner review.
 
 ## Blockers
 
-Do not redraw screens or start another batch before the owner approves the design migration audit and sequence. Evening Circle remains Future Extension pending owner decision.
+Do not redraw S1, S2, S3, S4, S7 or S8. Do not introduce pilot/research terminology into learner-facing copy. Evening Circle remains Future Extension pending owner decision.
 
 ## Handoff rule
 
