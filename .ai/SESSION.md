@@ -12,11 +12,11 @@ Frozen. Changes require an ADR, an Architecture Resolution where applicable, and
 
 ## Current focus
 
-D-02 audit is stored in `docs/design/audits/` with Codex corrections. Living Content remains canonical. The rejected Batch 1 artifact is only a state reference. The next design task is Batch A under D-03.
+The independent D-04 design and copy audit is stored in `docs/design/audits/` (V1 plus corrected V1.1 with V1→V1.1 changelog). Living Content remains canonical. The rejected Batch 1 artifact is only a non-authoritative state-coverage checklist. The next design task is Batch A under D-03.
 
 ## Completed this session
 
-Codex reviewed the first artifact. The owner rejected it as the product's visual design. The artifact remains historical exploration; it is not approved for implementation.
+Independent D-04 audit produced (V1), then corrected under D-04A into V1.1: removed the invented programme-information/consent surface, fixed the source-of-truth hierarchy, kept old onboarding (m17/m18) archived, dropped the gender-selection control, reframed legacy copy as a candidate library, removed the chunk-only leak, qualified the reuse percentages, and pinned Batch A to the six approved surfaces (S1·S2·S3·S4 Path Hub·S7·S8).
 
 ## Next task
 
