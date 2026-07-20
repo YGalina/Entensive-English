@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] Visual Design Batch B: assessment protocol S9–S13, using frozen Batch A as the visual baseline and approved screen specifications as the behavioural source of truth.
+- [ ] Visual Design Batch B state pass: required states for S9–S13, preserving approved defaults in `docs/design/exports/batch-b-defaults/`.
 
 ## Next
 
@@ -15,6 +15,7 @@
 
 ## Completed
 
+- [x] Batch B default screens approved: S9–S13 → `docs/design/exports/batch-b-defaults/`.
 - [x] Batch A final default screens approved and frozen: S1, S2, S3, S4 Path Hub, S7 and S8 → `docs/design/exports/batch-a-defaults-final/`.
 - [x] First Batch 1 artifact reviewed and rejected as final visual direction; retained as historical state-coverage exploration.
 - [x] Visual Design Batch 1: S3 Profile Entry · S4 Path Hub · S7 Pretest · S8 Gate/Wait, with full states and annotations → `docs/design/project/batches/…Batch 1….dc.html` (branch design/batch1-visuals).

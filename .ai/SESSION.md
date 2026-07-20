@@ -4,7 +4,7 @@ Last updated: 2026-07-20
 
 ## Phase
 
-Visual design: Batch A approved and frozen; ready for Batch B.
+Visual design: Batch A frozen; Batch B defaults approved; ready for Batch B state design.
 
 ## Architecture status
 
@@ -12,15 +12,15 @@ Frozen. Changes require an ADR, an Architecture Resolution where applicable, and
 
 ## Current focus
 
-Batch A is approved and stored in `docs/design/exports/batch-a-defaults-final/`. It contains the frozen default visual direction for S1, S2, S3, S4, S7 and S8. Living Content remains canonical. Subsequent batches must reuse this visual language and must not reopen Batch A without an owner-approved change.
+Batch A is frozen in `docs/design/exports/batch-a-defaults-final/`. Batch B default screens S9–S13 are owner-approved in `docs/design/exports/batch-b-defaults/`, including the restrained vitality correction for S9–S11. Living Content remains canonical. Approved defaults must not be reopened during state design.
 
 ## Completed this session
 
-Batch A completed, reviewed through multiple visual and copy passes, and approved by the product owner. Final QA confirmed readable layouts, finger-safe actions, correct written-assessment language, honest calendar/session gating, and a semantically disabled S7 next action. Approved artifact: `docs/design/exports/batch-a-defaults-final/`.
+Batch B default screens completed and approved by the product owner. S9/S11 use muted blue only for assessment orientation and focus; S10 uses brass for context and terracotta for the primary action; S12/S13 retain their approved action/status palette. No colour communicates answer correctness.
 
 ## Next task
 
-Claude Design/Fable executes Batch B for assessment screens S9–S13 only, using Batch A as the frozen visual baseline and the approved UX/screen specifications as the behavioural source of truth. Stop after default states for owner review.
+Claude Design/Fable adds only the required interaction, loading, error, resume and completion states for S9–S13. Preserve approved default layouts and copy. Stop with a state matrix and state board for QA.
 
 ## Blockers
 
