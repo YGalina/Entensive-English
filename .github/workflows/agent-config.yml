@@ -1,0 +1,40 @@
+name: Agent configuration
+
+on:
+  pull_request:
+    paths:
+      - AGENTS.md
+      - CLAUDE.md
+      - .claude/agents/**
+      - scripts/agents/**
+      - package.json
+      - .github/workflows/agent-config.yml
+  push:
+    paths:
+      - AGENTS.md
+      - CLAUDE.md
+      - .claude/agents/**
+      - scripts/agents/**
+      - package.json
+      - .github/workflows/agent-config.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate local orchestration configuration
+        run: |
+          test -f AGENTS.md
+          test -f CLAUDE.md
+          test -f .ai/AI_PROJECT.md
+          test -f .ai/AI_RULES.md
+          test "$(find .claude/agents -maxdepth 1 -type f -name '*.md' | wc -l)" -ge 3
+          bash -n scripts/agents/doctor.sh
+          bash -n scripts/agents/smoke.sh
+          bash -n scripts/agents/review.sh
+          node -e "JSON.parse(require('fs').readFileSync('package.json', 'utf8'))"
