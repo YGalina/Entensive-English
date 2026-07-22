@@ -1,22 +1,20 @@
-# CODING AGENTS: READ THIS FIRST
+# Intensive English design source of truth
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+## Approved product screens
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+- `exports/batch-a-defaults-final/` — approved and frozen Batch A: S1, S2, S3, S4, S7, S8.
+- `exports/batch-b-correction-v2/` — current approved Batch B: S9–S13, including corrected copy, states and accessibility contract.
 
-## What you should do — IMPORTANT
+Only these two export packages may govern implementation today.
 
-**Read `intensive-english/project/Intensive English - Directions.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+## Visual-language source
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+`project/` contains the Living Content design system and earlier visual explorations. It is retained as a component, typography, palette and composition library. Screens inside it are **not automatically approved product screens** and must not override the approved exports or frozen UX specifications.
 
-## About the design files
+## Supporting material
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+- `DESIGN_SOURCE_INVENTORY.md` maps historical sources to approved specifications.
+- `audits/` and `reviews/` preserve decision evidence and review history; they are not implementation sources.
+- `assets/` holds repository-safe approved assets.
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
-
-## Bundle contents
-
-- `intensive-english/README.md` — this file
-- `intensive-english/project/` — the `Intensive English дизайн-система` project files (HTML prototypes, assets, components)
+The rejected first Batch 1 and the superseded Batch B defaults package were removed. Their history remains recoverable through Git.

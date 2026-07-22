@@ -1,7 +1,7 @@
 # BATCH B · CORRECTION HANDOFF
 ## Минимальный correction pass поверх утверждённых default S9–S13
 
-Утверждённая версия НЕ перезаписана: `docs/design/exports/batch-b-defaults/` без изменений. Correction pass: `docs/design/exports/batch-b-correction/`.
+Эта папка — текущая утверждённая версия Batch B: `docs/design/exports/batch-b-correction-v2/`. Предыдущий defaults-пакет удалён как заменённый; его история остаётся в Git.
 
 ## Изменённые файлы
 - `BATCH_B_CORRECTION_BOARD.dc.html` — борд: 5 исправленных экранов + state sheets + контраст-панель + до/после + нерешённые вопросы.
