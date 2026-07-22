@@ -4,8 +4,9 @@
 
 - `exports/batch-a-defaults-final/` — approved and frozen Batch A: S1, S2, S3, S4, S7, S8.
 - `exports/batch-b-correction-v2/` — current approved Batch B: S9–S13, including corrected copy, states and accessibility contract.
+- `exports/batch-c-correction-v1/` — approved and frozen Batch C defaults: S5 phases 1–6, S14, visible S27 semantics and Focus 01.
 
-Only these two export packages may govern implementation today.
+Only these three export packages may govern implementation today. Batch C state designs remain pending until their separate review and owner approval.
 
 ## Visual-language source
 

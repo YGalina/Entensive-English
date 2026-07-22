@@ -2,19 +2,20 @@
 
 ## In progress
 
-- [x] Visual Design Batch B correction/state pass: current approved S9–S13 package → `docs/design/exports/batch-b-correction-v2/`.
+- [ ] Batch C bounded state pass from `docs/prompts/design/06_batch_c_state_pass.md`.
 
 ## Next
 
 - [ ] Owner decision FD-6: whether informed consent is required and where (human recruitment process vs. approved architecture amendment; no invented screen).
 - [ ] Owner decision FD-4: gender-neutral Russian by default vs. explicit positioning (no new entry control).
 - [ ] Owner decision: Evening Circle — future screen or drop (source exists, no approved screen; marked Future Extension in Batch 1).
-- [ ] After Batch B owner review: run Codex logic, copy, ergonomics and accessibility QA before freezing it.
+- [ ] After Fable Batch C state delivery: run Codex logic, copy, ergonomics, accessibility and implementation-claim QA before owner freeze.
 - [ ] Frozen-alignment visual fixes for S18 Progress (remove CEFR/%-of-course/streak).
 - [ ] Prepare scoped visual-design corrections; implement approved designs and run UX/engineering QA.
 
 ## Completed
 
+- [x] Batch C correction v1 defaults approved and frozen: S5 phases 1–6, S14, visible S27 semantics and Focus 01 → `docs/design/exports/batch-c-correction-v1/`; QA `BATCH_C_CORRECTION_V1_QA_CODEX.md`.
 - [x] Batch B correction v2 approved: S9–S13 defaults and required states → `docs/design/exports/batch-b-correction-v2/`.
 - [x] Batch A final default screens approved and frozen: S1, S2, S3, S4 Path Hub, S7 and S8 → `docs/design/exports/batch-a-defaults-final/`.
 - [x] First Batch 1 artifact reviewed and rejected as final visual direction; retained as historical state-coverage exploration.

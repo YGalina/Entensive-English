@@ -2,8 +2,8 @@
 id: D-05
 title: Batch C — Core Day visual execution
 owner: Claude Design / Fable
-status: ready-for-default-screen-pass
-output: default mobile screens for owner visual review
+status: completed-and-frozen
+output: `docs/design/exports/batch-c-correction-v1/`
 ---
 
 # ROLE
