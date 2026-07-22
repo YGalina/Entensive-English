@@ -4,7 +4,7 @@ Last updated: 2026-07-20
 
 ## Phase
 
-Visual design: Batch A frozen; Batch B defaults approved; ready for Batch B state design.
+Visual design: Batch A frozen; Batch B correction v2 approved; ready for the next scoped design batch.
 
 ## Architecture status
 
@@ -12,11 +12,11 @@ Frozen. Changes require an ADR, an Architecture Resolution where applicable, and
 
 ## Current focus
 
-Batch A is frozen in `docs/design/exports/batch-a-defaults-final/`. Batch B default screens S9–S13 are owner-approved in `docs/design/exports/batch-b-defaults/`, including the restrained vitality correction for S9–S11. Living Content remains canonical. Approved defaults must not be reopened during state design.
+Batch A is frozen in `docs/design/exports/batch-a-defaults-final/`. The current approved Batch B screens S9–S13 and their states are in `docs/design/exports/batch-b-correction-v2/`. The superseded defaults package and rejected Batch 1 artifact were removed. Living Content remains the canonical visual-language source. Approved screens must not be reopened without an owner decision.
 
 ## Completed this session
 
-Batch B default screens completed and approved by the product owner. S9/S11 use muted blue only for assessment orientation and focus; S10 uses brass for context and terracotta for the primary action; S12/S13 retain their approved action/status palette. No colour communicates answer correctness.
+Batch B correction v2 completed and approved by the product owner. S9/S11 use muted blue only for assessment orientation and focus; S10 uses brass for context and terracotta for the primary action; S12/S13 retain their approved action/status palette. No colour communicates answer correctness.
 
 ## Next task
 
