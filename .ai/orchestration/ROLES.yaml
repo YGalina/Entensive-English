@@ -1,0 +1,34 @@
+version: 1
+roles:
+  orchestrator:
+    default: codex
+    authority: route work, create contracts, coordinate evidence, prepare draft PRs
+    forbidden: approve product strategy, visual taste, methodology, production release
+  planner:
+    mode: read_only
+    tools: [read, search]
+    authority: decompose approved work and define measurable acceptance criteria
+    forbidden: edit files, browse unless the contract allows research, deploy
+  worker:
+    mode: scoped_write
+    isolation: git_worktree
+    authority: implement only the approved contract
+    forbidden: edit outside allowed_paths, alter frozen documents, self-accept
+  reviewer:
+    mode: read_only
+    authority: inspect actual diff, tests, screenshots, and governing specifications
+    forbidden: trust worker summary, edit the work, change acceptance criteria
+  acceptor:
+    mode: deterministic_first
+    authority: evaluate binary gates and emit PASS or FAIL
+    forbidden: reinterpret failed criteria, waive a human gate
+  owner:
+    authority: approve methodology, product strategy, visual direction, external effects, and release
+
+specialists:
+  fable:
+    use_for: bounded visual design work using the approved Living Content language
+  claude_opus:
+    use_for: unresolved cross-document UX, methodology, or high-stakes copy conflicts
+  claude_code:
+    use_for: bounded implementation when explicitly selected by the orchestrator

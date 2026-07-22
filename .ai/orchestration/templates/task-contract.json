@@ -1,0 +1,25 @@
+{
+  "id": "IE-000",
+  "objective": "Replace with one bounded, independently verifiable outcome.",
+  "base_ref": "HEAD",
+  "authoritative_inputs": [
+    "PRODUCT_CONSTITUTION.md",
+    "docs/governance/PROJECT_STATE.md"
+  ],
+  "allowed_paths": ["replace/with/approved/scope/**"],
+  "forbidden_paths": [
+    "PRODUCT_CONSTITUTION.md",
+    "learning_architecture/**",
+    "experience_architecture/**"
+  ],
+  "deliverables": ["implementation", "evidence.json", "review.md"],
+  "acceptance": [
+    {
+      "id": "AC-1",
+      "criterion": "All changed files are inside allowed_paths.",
+      "evidence": "git diff --name-only against base_ref"
+    }
+  ],
+  "human_gates": [],
+  "budgets": { "max_workers": 1, "max_review_cycles": 2 }
+}

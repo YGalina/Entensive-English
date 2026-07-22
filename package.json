@@ -16,6 +16,8 @@
     "agents:doctor": "bash scripts/agents/doctor.sh",
     "agents:smoke": "bash scripts/agents/smoke.sh",
     "agents:review": "bash scripts/agents/review.sh",
+    "agents:contract": "node scripts/agents/validate-contract.mjs",
+    "agents:accept": "node scripts/agents/accept.mjs",
     "mobile:start": "npm run start --workspace @ie/mobile",
     "mobile:ios": "npm run ios --workspace @ie/mobile",
     "mobile:android": "npm run android --workspace @ie/mobile"

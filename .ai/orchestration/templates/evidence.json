@@ -1,0 +1,13 @@
+{
+  "task_id": "IE-000",
+  "commit": "replace-with-reviewed-commit-sha",
+  "criteria": {
+    "AC-1": {
+      "status": "pass",
+      "evidence": "All changed paths were inspected against the contract."
+    }
+  },
+  "human_gates": {},
+  "checks": [],
+  "artifacts": []
+}
