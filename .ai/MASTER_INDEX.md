@@ -25,6 +25,8 @@
 - [Task Register](TASKS.md)
 - [Decision Register](DECISIONS.md)
 - [Development Constitution](../docs/governance/DEVELOPMENT_CONSTITUTION.md)
+- [Claude Interim Orchestrator](CLAUDE_INTERIM_ORCHESTRATOR.md)
+- [Claude Interim Launch Prompt](../docs/prompts/governance/01_claude_interim_orchestrator.md)
 - [Prompt Library](../docs/prompts/INDEX.md)
 - [Audits](../docs/audits/)
 - [Design](../docs/design/)

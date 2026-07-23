@@ -29,3 +29,7 @@ Do not redraw Batch A, Batch B or Batch C defaults. Do not introduce pilot/resea
 ## Handoff rule
 
 At task completion, update this file with the completed outcome, next task, blockers, and relevant commit or review reference.
+
+## Continuity
+
+If Codex/ChatGPT is unavailable, Claude Opus 4.8 may continue as temporary orchestrator under `.ai/CLAUDE_INTERIM_ORCHESTRATOR.md`. Fable remains responsible only for visual execution; the product owner retains all approval gates.
