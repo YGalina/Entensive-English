@@ -8,17 +8,16 @@
 - Batch C states frozen: `docs/design/exports/batch-c-states-correction-v1/`.
 - Recovery/data-integrity frozen: `docs/design/exports/recovery-integrity-v1/`.
 - Batch D progress/words/artifacts/review frozen: `docs/design/exports/batch-d-final/`.
+- Batch E library/reader/shadowing defaults frozen: `docs/design/exports/batch-e-correction-v1/`.
 - Batch C reviews: `BATCH_C_CORRECTION_V1_QA_CODEX.md`, `BATCH_C_STATES_CORRECTION_V1_QA_CODEX.md`.
 
 Only these packages may govern implementation. Historical Living Content files remain visual references and do not override frozen screen specifications.
 
 ## Active design task
 
-- Objective: prepare Batch E default screens for S19 Library, S21 Reading/Listening and S22 Shadowing.
-- Execution brief: `docs/prompts/design/10_batch_e_library_reader_shadowing.md`.
-- Frozen inputs: approved Batch A, Batch B, Batch C, Recovery/Integrity and Batch D packages.
-- Expected output: `docs/design/exports/batch-e-defaults/`.
-- Owner: Claude Design / Fable for visual execution.
+- Objective: select and prepare the next scoped design batch or implementation-readiness consolidation pass.
+- Frozen inputs: approved Batch A, Batch B, Batch C, Recovery/Integrity, Batch D and Batch E packages.
+- Owner: product owner approves next scope; Claude Design / Fable executes visuals only after a scoped brief exists.
 - Reviewer: Codex for logic, copy, ergonomics, accessibility and unsupported implementation claims.
 
 ## Frozen constraints
