@@ -14,9 +14,11 @@ Only these packages may govern implementation. Historical Living Content files r
 
 ## Active design task
 
-- Objective: select and prepare the next scoped visual-design batch.
+- Objective: prepare Batch E default screens for S19 Library, S21 Reading/Listening and S22 Shadowing.
+- Execution brief: `docs/prompts/design/10_batch_e_library_reader_shadowing.md`.
 - Frozen inputs: approved Batch A, Batch B, Batch C, Recovery/Integrity and Batch D packages.
-- Owner: product owner with Claude Design / Fable for visual execution.
+- Expected output: `docs/design/exports/batch-e-defaults/`.
+- Owner: Claude Design / Fable for visual execution.
 - Reviewer: Codex for logic, copy, ergonomics, accessibility and unsupported implementation claims.
 
 ## Frozen constraints

@@ -22,7 +22,7 @@ Batch D final passed owner review and Codex QA. The accepted package from `Inten
 
 ## Next task
 
-Determine the next scoped visual-design batch from the approved screen specifications and task register. Do not reopen Batch A, Batch B, Batch C, Recovery/Integrity or Batch D without an owner decision.
+Claude Design/Fable executes only `docs/prompts/design/10_batch_e_library_reader_shadowing.md`. Create the Batch E default-screen pass for S19 Library, S21 Reading/Listening and S22 Shadowing. Stop after the Batch E default-screen pass for owner visual review and Codex QA.
 
 ## Blockers
 

@@ -2,18 +2,19 @@
 
 ## In progress
 
-- [ ] Select the next scoped visual-design batch after Batch D freeze.
+- [ ] Claude Design/Fable executes `docs/prompts/design/10_batch_e_library_reader_shadowing.md` for Batch E defaults: S19 Library, S21 Reading/Listening and S22 Shadowing.
 
 ## Next
 
 - [ ] Owner decision FD-6: whether informed consent is required and where (human recruitment process vs. approved architecture amendment; no invented screen).
 - [ ] Owner decision FD-4: gender-neutral Russian by default vs. explicit positioning (no new entry control).
 - [ ] Owner decision: Evening Circle — future screen or drop (source exists, no approved screen; marked Future Extension in Batch 1).
-- [ ] Prepare the next approved visual-design brief without reopening frozen batches.
+- [ ] After Batch E owner approval, run Codex QA for content-wing logic, copy, ergonomics and unsupported claims.
 - [ ] Prepare scoped visual-design corrections; implement approved designs and run UX/engineering QA.
 
 ## Completed
 
+- [x] Prepare Batch E visual-design brief → `docs/prompts/design/10_batch_e_library_reader_shadowing.md`.
 - [x] Batch D final approved and frozen → `docs/design/exports/batch-d-final/`; accepted from `Intensive English дизайн-система_29.zip` after Codex QA verified S18/S16/S17/SRS defaults, required states, copy firewall, 390x844 action visibility and the copy correction “вернём их под руку”.
 - [x] Recovery/data-integrity gap closure approved and frozen -> `docs/design/exports/recovery-integrity-v1/`; accepted from `Intensive English дизайн-система_25.zip` after Codex QA verified S6/S1 logic, copy firewall and 390x844 action visibility.
 - [x] Batch C states correction v1 approved and frozen → `docs/design/exports/batch-c-states-correction-v1/`; QA `BATCH_C_STATES_CORRECTION_V1_QA_CODEX.md`.
