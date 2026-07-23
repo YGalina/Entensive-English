@@ -11,9 +11,11 @@ Only these packages may govern implementation. Historical Living Content files r
 
 ## Active design task
 
-- Objective: complete the bounded Batch C state pass without changing frozen default screens.
-- Execution brief: `docs/prompts/design/06_batch_c_state_pass.md`.
-- Expected output: `docs/design/exports/batch-c-states-v1/`.
+- Objective: apply the six bounded corrections to delivered Batch C states v1 without changing frozen default screens or approved visual direction.
+- Review: `docs/design/reviews/BATCH_C_STATES_V1_QA_CODEX.md`.
+- Execution brief: `docs/prompts/design/07_batch_c_state_correction.md`.
+- Input: `docs/design/exports/batch-c-states-v1/`.
+- Expected output: `docs/design/exports/batch-c-states-correction-v1/`.
 - Owner: Claude Design / Fable.
 - Reviewer: Codex for logic, copy, ergonomics, accessibility and unsupported implementation claims.
 

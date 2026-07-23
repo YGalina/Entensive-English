@@ -8,4 +8,5 @@ Reusable prompts for visual design based on approved Screen Specifications. Hist
 - [D-04 · Independent Opus design and UX-copy audit](04_opus_independent_design_and_content_audit.md)
 - [D-05 · Batch C — Core Day visual execution](05_batch_c_core_day_execution.md)
 - [D-06 · Batch C — bounded state pass](06_batch_c_state_pass.md)
+- [D-07 · Batch C states v1 — bounded correction](07_batch_c_state_correction.md)
 - [Historical Claude design-system prompt](../../ai_handoffs/09_claude_design_system_prompt.md)

@@ -20,7 +20,7 @@ Batch C correction v1 passed Codex QA and was approved by the product owner. All
 
 ## Next task
 
-Claude Design/Fable executes `docs/prompts/design/06_batch_c_state_pass.md`. Add only the bounded S5/S14/S27 states. Preserve the frozen Batch C defaults, mechanics, copy and visual system. Stop with a state matrix and state board for owner review and Codex QA.
+Batch C states v1 was delivered and reviewed. Claude Design/Fable executes only `docs/prompts/design/07_batch_c_state_correction.md`. Preserve frozen defaults and the approved black/ink task controls. Stop after the six bounded patches for owner review and Codex QA.
 
 ## Blockers
 

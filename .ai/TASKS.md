@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] Batch C bounded state pass from `docs/prompts/design/06_batch_c_state_pass.md`.
+- [ ] Batch C state correction from `docs/prompts/design/07_batch_c_state_correction.md`; v1 review: `docs/design/reviews/BATCH_C_STATES_V1_QA_CODEX.md`.
 
 ## Next
 
