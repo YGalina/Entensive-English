@@ -4,7 +4,7 @@ Last updated: 2026-07-23
 
 ## Phase
 
-Visual design: Batch A frozen; Batch B correction v2 approved; Batch C defaults and states approved and frozen; Recovery/data-integrity gap closure approved and frozen; Batch D is next.
+Visual design: Batch A frozen; Batch B correction v2 approved; Batch C defaults and states approved and frozen; Recovery/data-integrity gap closure approved and frozen; Batch D approved and frozen.
 
 ## Architecture status
 
@@ -12,15 +12,17 @@ Frozen. Changes require an ADR, an Architecture Resolution where applicable, and
 
 ## Current focus
 
-Batch A is frozen in `docs/design/exports/batch-a-defaults-final/`. Approved Batch B screens S9–S13 and their states are in `docs/design/exports/batch-b-correction-v2/`. Approved Batch C defaults and states are in `docs/design/exports/batch-c-correction-v1/` and `docs/design/exports/batch-c-states-correction-v1/`. Recovery/data-integrity gap closure is frozen in `docs/design/exports/recovery-integrity-v1/`. Living Content remains the canonical visual-language source. Approved screens must not be reopened without an owner decision.
+Batch A is frozen in `docs/design/exports/batch-a-defaults-final/`. Approved Batch B screens S9–S13 and their states are in `docs/design/exports/batch-b-correction-v2/`. Approved Batch C defaults and states are in `docs/design/exports/batch-c-correction-v1/` and `docs/design/exports/batch-c-states-correction-v1/`. Recovery/data-integrity gap closure is frozen in `docs/design/exports/recovery-integrity-v1/`. Batch D progress/words/artifacts/review is frozen in `docs/design/exports/batch-d-final/`. Living Content remains the canonical visual-language source. Approved screens must not be reopened without an owner decision.
 
 ## Completed this session
 
 Recovery/data-integrity gap closure v1 passed owner review and Codex QA. The accepted package from `Intensive English дизайн-система_25.zip` was stored as `docs/design/exports/recovery-integrity-v1/`. Verified: S6 Recovery, zero-due Recovery, S1 data-integrity failure, explicit restart confirmation, copy firewall and 390x844 action visibility.
 
+Batch D final passed owner review and Codex QA. The accepted package from `Intensive English дизайн-система_29.zip` was stored as `docs/design/exports/batch-d-final/`. Verified: S18 Progress, S16 My Words, S17 My Artifacts, SRS/review entry and required states; copy firewall; 390x844 action visibility; final owner-approved copy uses “вернём их под руку”.
+
 ## Next task
 
-Claude Design/Fable executes only `docs/prompts/design/09_batch_d_progress_words_artifacts_srs.md`. Create the Batch D default-screen pass for S18 Progress, S16 My Words, S17 My Artifacts and SRS/review surfaces. Stop after the Batch D default-screen pass for owner visual review and Codex QA.
+Determine the next scoped visual-design batch from the approved screen specifications and task register. Do not reopen Batch A, Batch B, Batch C, Recovery/Integrity or Batch D without an owner decision.
 
 ## Blockers
 
