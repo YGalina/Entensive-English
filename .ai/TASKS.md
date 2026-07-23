@@ -2,19 +2,19 @@
 
 ## In progress
 
-- [ ] Recovery/data-integrity gap closure from `docs/prompts/design/08_recovery_and_integrity_gap_closure.md`.
+- [ ] Claude Design/Fable executes `docs/prompts/design/09_batch_d_progress_words_artifacts_srs.md` for Batch D defaults: S18 Progress, S16 My Words, S17 My Artifacts and SRS/review surfaces.
 
 ## Next
 
 - [ ] Owner decision FD-6: whether informed consent is required and where (human recruitment process vs. approved architecture amendment; no invented screen).
 - [ ] Owner decision FD-4: gender-neutral Russian by default vs. explicit positioning (no new entry control).
 - [ ] Owner decision: Evening Circle — future screen or drop (source exists, no approved screen; marked Future Extension in Batch 1).
-- [ ] After Recovery/data-integrity owner review: run Codex logic, copy, ergonomics, accessibility and implementation-claim QA before freeze.
 - [ ] Frozen-alignment visual fixes for S18 Progress (remove CEFR/%-of-course/streak).
 - [ ] Prepare scoped visual-design corrections; implement approved designs and run UX/engineering QA.
 
 ## Completed
 
+- [x] Recovery/data-integrity gap closure approved and frozen -> `docs/design/exports/recovery-integrity-v1/`; accepted from `Intensive English дизайн-система_25.zip` after Codex QA verified S6/S1 logic, copy firewall and 390x844 action visibility.
 - [x] Batch C states correction v1 approved and frozen → `docs/design/exports/batch-c-states-correction-v1/`; QA `BATCH_C_STATES_CORRECTION_V1_QA_CODEX.md`.
 - [x] Batch C correction v1 defaults approved and frozen: S5 phases 1–6, S14, visible S27 semantics and Focus 01 → `docs/design/exports/batch-c-correction-v1/`; QA `BATCH_C_CORRECTION_V1_QA_CODEX.md`.
 - [x] Batch B correction v2 approved: S9–S13 defaults and required states → `docs/design/exports/batch-b-correction-v2/`.

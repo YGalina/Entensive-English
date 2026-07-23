@@ -6,16 +6,17 @@
 - Batch B approved: `docs/design/exports/batch-b-correction-v2/`.
 - Batch C defaults frozen: `docs/design/exports/batch-c-correction-v1/`.
 - Batch C states frozen: `docs/design/exports/batch-c-states-correction-v1/`.
+- Recovery/data-integrity frozen: `docs/design/exports/recovery-integrity-v1/`.
 - Batch C reviews: `BATCH_C_CORRECTION_V1_QA_CODEX.md`, `BATCH_C_STATES_CORRECTION_V1_QA_CODEX.md`.
 
 Only these packages may govern implementation. Historical Living Content files remain visual references and do not override frozen screen specifications.
 
 ## Active design task
 
-- Objective: close omitted S6 Recovery and S1 data-integrity failure design coverage before Batch D.
-- Execution brief: `docs/prompts/design/08_recovery_and_integrity_gap_closure.md`.
-- Frozen inputs: approved Batch A and Batch C defaults/states.
-- Expected output: `docs/design/exports/recovery-integrity-v1/`.
+- Objective: prepare Batch D default screens for S18 Progress, S16 My Words, S17 My Artifacts and SRS/review surfaces.
+- Execution brief: `docs/prompts/design/09_batch_d_progress_words_artifacts_srs.md`.
+- Frozen inputs: approved Batch A, Batch B, Batch C and Recovery/Integrity packages.
+- Expected output: `docs/design/exports/batch-d-defaults/`.
 - Owner: Claude Design / Fable.
 - Reviewer: Codex for logic, copy, ergonomics, accessibility and unsupported implementation claims.
 
@@ -27,6 +28,7 @@ Only these packages may govern implementation. Historical Living Content files r
 - No speech analysis, pronunciation scoring or human-listening claim.
 - No invented sync/background-delivery infrastructure.
 - No research or implementation terminology in learner-facing copy.
+- No CEFR inference from activity, streaks, guardian mechanics or percent-of-course progress.
 - No application-code changes during the state pass.
 
 ## Required completion report
