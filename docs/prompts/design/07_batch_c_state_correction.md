@@ -2,7 +2,7 @@
 id: D-07
 title: Batch C states v1 — bounded correction
 owner: Claude Design / Fable
-status: ready
+status: completed-and-frozen
 input: `docs/design/exports/batch-c-states-v1/`
 output: `docs/design/exports/batch-c-states-correction-v1/`
 ---

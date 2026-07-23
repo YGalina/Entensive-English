@@ -4,7 +4,7 @@ Last updated: 2026-07-22
 
 ## Phase
 
-Visual design: Batch A frozen; Batch B correction v2 approved; Batch C correction v1 defaults approved and frozen; Batch C state pass is next.
+Visual design: Batch A frozen; Batch B correction v2 approved; Batch C defaults and states approved and frozen; Batch B recovery/data-integrity gap closure is next.
 
 ## Architecture status
 
@@ -12,15 +12,15 @@ Frozen. Changes require an ADR, an Architecture Resolution where applicable, and
 
 ## Current focus
 
-Batch A is frozen in `docs/design/exports/batch-a-defaults-final/`. Approved Batch B screens S9–S13 and their states are in `docs/design/exports/batch-b-correction-v2/`. Approved Batch C defaults are in `docs/design/exports/batch-c-correction-v1/`. Living Content remains the canonical visual-language source. Approved screens must not be reopened without an owner decision.
+Batch A is frozen in `docs/design/exports/batch-a-defaults-final/`. Approved Batch B screens S9–S13 and their states are in `docs/design/exports/batch-b-correction-v2/`. Approved Batch C defaults and states are in `docs/design/exports/batch-c-correction-v1/` and `docs/design/exports/batch-c-states-correction-v1/`. Living Content remains the canonical visual-language source. Approved screens must not be reopened without an owner decision.
 
 ## Completed this session
 
-Batch C correction v1 passed Codex QA and was approved by the product owner. All C1–C2 and M1–M5 findings were closed; keyboard-open references for phases 3 and 4 were verified. Commit `b3f6e5f` on `codex/batch-c-review`; review: `docs/design/reviews/BATCH_C_CORRECTION_V1_QA_CODEX.md`.
+Batch C state correction v1 passed Codex QA and is frozen. All six bounded corrections were verified; superseded states v1 was removed from the current source of truth. Review: `docs/design/reviews/BATCH_C_STATES_CORRECTION_V1_QA_CODEX.md`.
 
 ## Next task
 
-Batch C states v1 was delivered and reviewed. Claude Design/Fable executes only `docs/prompts/design/07_batch_c_state_correction.md`. Preserve frozen defaults and the approved black/ink task controls. Stop after the six bounded patches for owner review and Codex QA.
+Claude Design/Fable executes only `docs/prompts/design/08_recovery_and_integrity_gap_closure.md`. Complete S6 Recovery plus the S1 data-integrity failure journey by reusing frozen Batch A/C patterns. Stop for owner visual review and Codex QA. After this gap closes, proceed to planned Batch D (S18/S16/S17/SRS).
 
 ## Blockers
 
