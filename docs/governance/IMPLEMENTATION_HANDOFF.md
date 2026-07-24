@@ -21,9 +21,11 @@
 
 Only these packages may govern implementation. Historical Living Content files remain visual references and do not override frozen screen specifications.
 
+- Engineering implementation-readiness audit: `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
+
 ## Active design task
 
-- Objective: run implementation-readiness audit across frozen design packages.
+- Objective: product-owner review of implementation-readiness audit, then PR 1 foundation/contracts.
 - Frozen inputs: approved Batch A, Batch B, Batch C, Recovery/Integrity, Batch D and Batch E default/state packages.
 - Owner: product owner approves next scope; Claude Design / Fable executes visuals only after a scoped brief exists.
 - Reviewer: Codex for logic, copy, ergonomics, accessibility and unsupported implementation claims.

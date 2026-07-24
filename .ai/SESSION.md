@@ -30,9 +30,12 @@ Batch F Auth & Monetization correction v1 passed owner review and Codex QA. The 
 
 Batch F Auth & Monetization states v1 passed Codex QA. The accepted package from `Intensive English дизайн-система_37.zip` was stored as `docs/design/exports/batch-f-auth-monetization-states-v1/`. Verified: 21 auth/payment state screens, correct output path, button heights, payment/auth failure coverage, restore/cancel/expired/offline states, no trial/PRO/guarantee/CEFR-result/streak/guardian/speech-scoring claims. Returning-account default remains covered by frozen FA4; signed-out/local-only clarification is covered by FS09 and FS08.
 
+
+Engineering implementation-readiness audit v1 completed at `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`. Verdict: partially ready. Frozen visual design is strong, but implementation must start with P0 foundation/contracts because legacy code still contains pilot/Vertical Slice, Galina, guardians, streaks, levelcheck/CEFR and old pricing/auth assumptions that must not leak into product UI. Recommended first implementation PR: shared Living Content primitives, route registry, event semantics, PathNextStep contract and copy firewall.
+
 ## Next task
 
-All current visual design batches A–F defaults/states are frozen for the implementation-readiness pass. Current step: run engineering implementation-readiness audit. Do not implement code until the audit maps frozen screens to routes/components/state/data and identifies remaining blockers.
+Implementation-readiness audit v1 is complete. Current step: product-owner review of `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`, then approve PR 1 foundation/contracts before any screen implementation.
 
 ## Blockers
 

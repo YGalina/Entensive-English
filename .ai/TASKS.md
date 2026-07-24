@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] Run `docs/prompts/engineering/01_implementation_readiness_audit.md` to produce `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
+- [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
 
@@ -15,6 +15,7 @@
 
 ## Completed
 
+- [x] Engineering implementation-readiness audit v1 completed → `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`; verdict: partially ready, first implementation PR must be foundation/contracts before screen migration.
 - [x] Batch F Auth & Monetization states approved and frozen → `docs/design/exports/batch-f-auth-monetization-states-v1/`; accepted from `Intensive English дизайн-система_37.zip` after Codex QA verified 21 auth/payment states, correct output path, button sizes, failure/restore/cancel/expired/offline coverage and copy firewall.
 - [x] Batch F Auth & Monetization defaults approved and frozen → `docs/design/exports/batch-f-auth-monetization-correction-v1/`; accepted from `Intensive English дизайн-система_34.zip` after Codex QA verified corrected prices, local-account copy safety, neutral email placeholder, paywall wording and no trial/PRO/guarantee/group-intensive/CEFR-result claims.
 - [x] Create implementation-ready design index across frozen Batch A–E, Recovery/Integrity and known gaps → `docs/design/IMPLEMENTATION_READY_DESIGN_INDEX.md`.
