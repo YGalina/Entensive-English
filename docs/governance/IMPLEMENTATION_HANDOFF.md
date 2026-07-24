@@ -14,13 +14,14 @@
 - Engineering readiness audit prompt: `docs/prompts/engineering/01_implementation_readiness_audit.md`.
 - Batch F0 Auth & Monetization resolution prompt: `docs/prompts/design/11_batch_f0_auth_monetization_resolution.md`.
 - Batch F Auth & Monetization visual-design prompt template: `docs/prompts/design/12_batch_f_auth_monetization_visual_design.md`.
+- Batch F0 Auth & Monetization resolution: `docs/design/auth_monetization/BATCH_F0_AUTH_MONETIZATION_RESOLUTION.md`.
 - Batch C reviews: `BATCH_C_CORRECTION_V1_QA_CODEX.md`, `BATCH_C_STATES_CORRECTION_V1_QA_CODEX.md`.
 
 Only these packages may govern implementation. Historical Living Content files remain visual references and do not override frozen screen specifications.
 
 ## Active design task
 
-- Objective: resolve Auth & Monetization architecture before visual design or implementation.
+- Objective: execute Batch F Auth & Monetization default visual design.
 - Frozen inputs: approved Batch A, Batch B, Batch C, Recovery/Integrity, Batch D and Batch E default/state packages.
 - Owner: product owner approves next scope; Claude Design / Fable executes visuals only after a scoped brief exists.
 - Reviewer: Codex for logic, copy, ergonomics, accessibility and unsupported implementation claims.

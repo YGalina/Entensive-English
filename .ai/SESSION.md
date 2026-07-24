@@ -26,7 +26,7 @@ Batch E states v1 passed owner review and Codex QA. The accepted package from `I
 
 ## Next task
 
-Implementation-ready design consolidation is complete, but Auth & Monetization are not yet frozen. Current step: run Batch F0 Auth & Monetization Architecture Resolution before any paywall/registration visual design. Do not implement code before Auth/Payment scope is resolved.
+Implementation-ready design consolidation is complete. Batch F0 Auth & Monetization rules are ratified for v1 defaults. Current step: run Batch F Auth & Monetization visual design defaults. Do not implement code before Batch F defaults/states are reviewed and frozen.
 
 ## Blockers
 

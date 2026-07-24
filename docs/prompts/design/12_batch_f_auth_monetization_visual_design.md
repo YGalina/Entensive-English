@@ -58,6 +58,20 @@ Create only Batch F default screens for:
 
 Use the exact screen list from the approved F0 resolution if it differs.
 
+## Ratified Batch F v1 monetization defaults
+
+Use these defaults unless the approved F0 resolution says otherwise:
+
+- Pure freemium; no trial screens in the default pass.
+- Free = one full demo cycle + one general context pack.
+- Paid = continuation, additional packs, personalization, full library depth, deeper stats/support/scale.
+- Hide PRO, guarantee, group intensive and high-ticket offers from the self-serve v1 paywall.
+- No app-only guarantee.
+- No CEFR, fluency, word-count result or timeframe promise.
+- Mobile payment is status/management handoff only until IAP is separately scoped.
+- Web/desktop checkout is the primary payment route.
+- Anonymous-local first run is allowed; account is offered at continuation/sync/purchase/profile boundary.
+
 ## Design constraints
 
 - Use the approved Living Content visual language.
