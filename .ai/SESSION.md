@@ -26,7 +26,7 @@ Batch E states v1 passed owner review and Codex QA. The accepted package from `I
 
 ## Next task
 
-Prepare the next scoped visual-design brief after owner decision on the next batch. Do not reopen approved batches. Likely next work: Batch F for remaining planned surfaces/states, or a consolidation pass that creates the implementation-ready design index across frozen batches.
+Implementation-ready design consolidation is complete. Current step: review `docs/design/IMPLEMENTATION_READY_DESIGN_INDEX.md` and run the engineering readiness audit prompt `docs/prompts/engineering/01_implementation_readiness_audit.md`. Do not implement code before the audit.
 
 ## Blockers
 
