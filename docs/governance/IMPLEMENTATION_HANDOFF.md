@@ -9,6 +9,7 @@
 - Recovery/data-integrity frozen: `docs/design/exports/recovery-integrity-v1/`.
 - Batch D progress/words/artifacts/review frozen: `docs/design/exports/batch-d-final/`.
 - Batch E library/reader/shadowing defaults frozen: `docs/design/exports/batch-e-correction-v1/`.
+- Batch E library/reader/shadowing states frozen: `docs/design/exports/batch-e-states-v1/`.
 - Batch C reviews: `BATCH_C_CORRECTION_V1_QA_CODEX.md`, `BATCH_C_STATES_CORRECTION_V1_QA_CODEX.md`.
 
 Only these packages may govern implementation. Historical Living Content files remain visual references and do not override frozen screen specifications.
@@ -16,7 +17,7 @@ Only these packages may govern implementation. Historical Living Content files r
 ## Active design task
 
 - Objective: select and prepare the next scoped design batch or implementation-readiness consolidation pass.
-- Frozen inputs: approved Batch A, Batch B, Batch C, Recovery/Integrity, Batch D and Batch E packages.
+- Frozen inputs: approved Batch A, Batch B, Batch C, Recovery/Integrity, Batch D and Batch E default/state packages.
 - Owner: product owner approves next scope; Claude Design / Fable executes visuals only after a scoped brief exists.
 - Reviewer: Codex for logic, copy, ergonomics, accessibility and unsupported implementation claims.
 

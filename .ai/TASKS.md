@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] Decide next scoped design batch or implementation-readiness consolidation pass.
+- [ ] Decide next scoped design batch or implementation-readiness consolidation pass after Batch E states freeze.
 
 ## Next
 
@@ -14,6 +14,7 @@
 
 ## Completed
 
+- [x] Batch E states v1 approved and frozen → `docs/design/exports/batch-e-states-v1/`; accepted from `Intensive English дизайн-система_32.zip` after Codex QA verified S19/S21/S22 state coverage, copy firewall, no unsupported claims and corrected S22 recording accessibility label.
 - [x] Batch E correction v1 approved and frozen → `docs/design/exports/batch-e-correction-v1/`; accepted from `Intensive English дизайн-система_31.zip` after Codex QA verified S19/S21/S22 defaults, S22 accessible recording control, non-evaluative gate copy, disabled future import card and copy firewall.
 - [x] Prepare Batch E visual-design brief → `docs/prompts/design/10_batch_e_library_reader_shadowing.md`.
 - [x] Batch D final approved and frozen → `docs/design/exports/batch-d-final/`; accepted from `Intensive English дизайн-система_29.zip` after Codex QA verified S18/S16/S17/SRS defaults, required states, copy firewall, 390x844 action visibility and the copy correction “вернём их под руку”.
