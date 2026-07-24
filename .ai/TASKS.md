@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] Run `docs/prompts/design/12_batch_f_auth_monetization_visual_design.md` for Batch F Auth & Monetization defaults.
+- [ ] Run `docs/prompts/design/13_batch_f_auth_monetization_states.md` for Batch F Auth & Monetization states.
 
 ## Next
 
@@ -10,13 +10,13 @@
 - [ ] Owner decision FD-4: gender-neutral Russian by default vs. explicit positioning (no new entry control).
 - [ ] Owner decision: Evening Circle — future screen or drop (source exists, no approved screen; marked Future Extension in Batch 1).
 - [ ] Prepare next design brief only after selecting scope; do not reopen frozen Batch A–E packages.
-- [ ] After owner approval of Batch F defaults, run Codex QA and then Batch F states.
-- [ ] After Batch F defaults/states are frozen, update `docs/design/IMPLEMENTATION_READY_DESIGN_INDEX.md`.
+- [ ] After Batch F states are frozen, update `docs/design/IMPLEMENTATION_READY_DESIGN_INDEX.md`.
 - [ ] Then run `docs/prompts/engineering/01_implementation_readiness_audit.md` to produce `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 - [ ] Prepare scoped visual-design corrections; implement approved designs and run UX/engineering QA.
 
 ## Completed
 
+- [x] Batch F Auth & Monetization defaults approved and frozen → `docs/design/exports/batch-f-auth-monetization-correction-v1/`; accepted from `Intensive English дизайн-система_34.zip` after Codex QA verified corrected prices, local-account copy safety, neutral email placeholder, paywall wording and no trial/PRO/guarantee/group-intensive/CEFR-result claims.
 - [x] Create implementation-ready design index across frozen Batch A–E, Recovery/Integrity and known gaps → `docs/design/IMPLEMENTATION_READY_DESIGN_INDEX.md`.
 - [x] Create first engineering readiness audit prompt → `docs/prompts/engineering/01_implementation_readiness_audit.md`.
 - [x] Create Batch F0 Auth & Monetization resolution prompt → `docs/prompts/design/11_batch_f0_auth_monetization_resolution.md`.

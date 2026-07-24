@@ -15,13 +15,14 @@
 - Batch F0 Auth & Monetization resolution prompt: `docs/prompts/design/11_batch_f0_auth_monetization_resolution.md`.
 - Batch F Auth & Monetization visual-design prompt template: `docs/prompts/design/12_batch_f_auth_monetization_visual_design.md`.
 - Batch F0 Auth & Monetization resolution: `docs/design/auth_monetization/BATCH_F0_AUTH_MONETIZATION_RESOLUTION.md`.
+- Batch F Auth & Monetization defaults frozen: `docs/design/exports/batch-f-auth-monetization-correction-v1/`.
 - Batch C reviews: `BATCH_C_CORRECTION_V1_QA_CODEX.md`, `BATCH_C_STATES_CORRECTION_V1_QA_CODEX.md`.
 
 Only these packages may govern implementation. Historical Living Content files remain visual references and do not override frozen screen specifications.
 
 ## Active design task
 
-- Objective: execute Batch F Auth & Monetization default visual design.
+- Objective: execute Batch F Auth & Monetization states visual design.
 - Frozen inputs: approved Batch A, Batch B, Batch C, Recovery/Integrity, Batch D and Batch E default/state packages.
 - Owner: product owner approves next scope; Claude Design / Fable executes visuals only after a scoped brief exists.
 - Reviewer: Codex for logic, copy, ergonomics, accessibility and unsupported implementation claims.
@@ -35,7 +36,7 @@ Only these packages may govern implementation. Historical Living Content files r
 - No invented sync/background-delivery infrastructure.
 - No research or implementation terminology in learner-facing copy.
 - No CEFR inference from activity, streaks, guardian mechanics or percent-of-course progress.
-- No application-code changes during the state pass.
+- No application-code changes during the Batch F state pass.
 
 ## Required completion report
 
