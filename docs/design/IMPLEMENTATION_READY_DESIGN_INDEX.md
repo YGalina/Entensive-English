@@ -27,6 +27,7 @@ This index does not replace the Product Constitution, UX architecture, screen sp
 | Batch D | `docs/design/exports/batch-d-final/` | S16 My Words, S17 My Artifacts, S18 Progress, review/SRS entry and states | Ready for implementation |
 | Batch E defaults | `docs/design/exports/batch-e-correction-v1/` | S19 Library, S21 Reading/Listening, S22 Repeat After Voice | Ready for implementation |
 | Batch E states | `docs/design/exports/batch-e-states-v1/` | S19/S21/S22 state coverage | Ready for implementation; see owner decisions |
+| Batch F defaults | `docs/design/exports/batch-f-auth-monetization-correction-v1/` | FA1–FA4 auth/account entry, S20 account/payment section, S25 paywall/manage subscription defaults | Ready for implementation after Batch F states are frozen |
 
 ## Screen coverage
 
@@ -110,14 +111,28 @@ This index does not replace the Product Constitution, UX architecture, screen sp
 | S22 Playback | `batch-e-states-v1/screens/S22_playback.html` | Comparison is optional, not system judgement. |
 | S22 Save failed | `batch-e-states-v1/screens/S22_save_failed.html` | Local storage issue; no cloud/sync claim. |
 
+
+### Auth, account and monetization
+
+| Screen/state | Approved source | Notes |
+|---|---|---|
+| FA1 Auth Choice | `batch-f-auth-monetization-correction-v1/screens/FA1_auth_choice.html` | Account is offered at the continuation boundary, not as a wall; anonymous-local path remains valid. |
+| FA2 Email Magic Link | `batch-f-auth-monetization-correction-v1/screens/FA2_email_magic_link.html` | Passwordless email entry. |
+| FA3 Link Sent | `batch-f-auth-monetization-correction-v1/screens/FA3_link_sent.html` | Neutral placeholder `name@example.com`; no personal email in UI. |
+| FA4 Returning Account | `batch-f-auth-monetization-correction-v1/screens/FA4_returning.html` | Returning-account path. |
+| S20 Account/payment section | `batch-f-auth-monetization-correction-v1/screens/S20_account_payment_section.html` | Account and subscription status surface. |
+| S25 Paywall default | `batch-f-auth-monetization-correction-v1/screens/S25_paywall_default.html` | Pure freemium; no trial, PRO, guarantees, group intensive, CEFR-result or timeframe claims. Placeholder prices: 690 ₽ / 3 990 ₽. |
+| S25 Manage subscription default | `batch-f-auth-monetization-correction-v1/screens/S25_manage_subscription.html` | Subscription status and management handoff; do not invent provider-specific implementation. |
+
 ## Known state gaps before implementation
 
 These are not blockers for implementing already covered slices, but they must not be invented in code.
 
 | Gap | Status | Required action |
 |---|---|---|
-| Auth / registration / login | Not frozen | Run Batch F0 resolution, then Batch F visual design. |
-| Subscription / Paywall S25 | Not ratified | Do not hand to visual design until IA ownership and rules are ratified. |
+| Auth / registration / login defaults | Frozen | Use Batch F defaults; run Batch F states before implementation. |
+| Subscription / Paywall S25 defaults | Frozen | Use Batch F defaults; run Batch F states before implementation. |
+| Batch F auth/payment states | Not frozen | Run `docs/prompts/design/13_batch_f_auth_monetization_states.md`. |
 | S5 full state coverage beyond existing critical states | Partially covered | Implement only covered states or request a scoped state pass. |
 | S9–S13 assessment edge states | Partially covered in Batch B | Review assessment protocol before implementation. |
 | S19 YouTube/import flow | Future/disabled | Do not implement active import from the disabled card. |
@@ -236,6 +251,6 @@ Before starting any slice:
 
 ## Next recommended task
 
-Run `docs/prompts/design/11_batch_f0_auth_monetization_resolution.md` before starting visual design or engineering for auth/payment.
+Run `docs/prompts/design/13_batch_f_auth_monetization_states.md` for Batch F auth/payment states.
 
-After Batch F0 and Batch F are frozen, rerun this index and then use `docs/prompts/engineering/01_implementation_readiness_audit.md` to map frozen screens to existing app routes/components/state/data and produce a non-coding implementation plan.
+After Batch F states are frozen, update this index and then use `docs/prompts/engineering/01_implementation_readiness_audit.md` to map frozen screens to existing app routes/components/state/data and produce a non-coding implementation plan.
