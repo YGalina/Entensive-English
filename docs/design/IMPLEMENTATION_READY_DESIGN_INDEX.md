@@ -27,7 +27,8 @@ This index does not replace the Product Constitution, UX architecture, screen sp
 | Batch D | `docs/design/exports/batch-d-final/` | S16 My Words, S17 My Artifacts, S18 Progress, review/SRS entry and states | Ready for implementation |
 | Batch E defaults | `docs/design/exports/batch-e-correction-v1/` | S19 Library, S21 Reading/Listening, S22 Repeat After Voice | Ready for implementation |
 | Batch E states | `docs/design/exports/batch-e-states-v1/` | S19/S21/S22 state coverage | Ready for implementation; see owner decisions |
-| Batch F defaults | `docs/design/exports/batch-f-auth-monetization-correction-v1/` | FA1–FA4 auth/account entry, S20 account/payment section, S25 paywall/manage subscription defaults | Ready for implementation after Batch F states are frozen |
+| Batch F defaults | `docs/design/exports/batch-f-auth-monetization-correction-v1/` | FA1–FA4 auth/account entry, S20 account/payment section, S25 paywall/manage subscription defaults | Ready for implementation with Batch F states |
+| Batch F states | `docs/design/exports/batch-f-auth-monetization-states-v1/` | Auth/payment state coverage: validation, magic link, provider/offline/local, sign-out, checkout, payment, restore, cancel/expired/region/offline management | Ready for implementation; provider-specific payment details remain implementation-dependent |
 
 ## Screen coverage
 
@@ -124,6 +125,28 @@ This index does not replace the Product Constitution, UX architecture, screen sp
 | S25 Paywall default | `batch-f-auth-monetization-correction-v1/screens/S25_paywall_default.html` | Pure freemium; no trial, PRO, guarantees, group intensive, CEFR-result or timeframe claims. Placeholder prices: 690 ₽ / 3 990 ₽. |
 | S25 Manage subscription default | `batch-f-auth-monetization-correction-v1/screens/S25_manage_subscription.html` | Subscription status and management handoff; do not invent provider-specific implementation. |
 
+| FS01 Email invalid | `batch-f-auth-monetization-states-v1/screens/FS01_email_invalid.html` | Email validation correction. |
+| FS02 Magic-link loading | `batch-f-auth-monetization-states-v1/screens/FS02_magiclink_loading.html` | Link verification/loading. |
+| FS03 Magic-link expired | `batch-f-auth-monetization-states-v1/screens/FS03_magiclink_expired.html` | Expired link + resend. |
+| FS04 Magic-link failed | `batch-f-auth-monetization-states-v1/screens/FS04_magiclink_failed.html` | Failed link + recovery. |
+| FS05 Resend available | `batch-f-auth-monetization-states-v1/screens/FS05_resend_available.html` | Resend state. |
+| FS06 Provider error | `batch-f-auth-monetization-states-v1/screens/FS06_provider_error.html` | Apple/Google provider error pattern. |
+| FS07 Auth offline | `batch-f-auth-monetization-states-v1/screens/FS07_auth_offline.html` | Offline auth + continue locally. |
+| FS08 Continue locally | `batch-f-auth-monetization-states-v1/screens/FS08_continue_locally.html` | Local-only clarification. |
+| FS09 Sign-out confirm | `batch-f-auth-monetization-states-v1/screens/FS09_signout_confirm.html` | Sign-out confirmation. |
+| FS10 Checkout loading | `batch-f-auth-monetization-states-v1/screens/FS10_checkout_loading.html` | Checkout handoff/loading. |
+| FS11 Payment success | `batch-f-auth-monetization-states-v1/screens/FS11_payment_success.html` | Payment success. |
+| FS12 Payment failed | `batch-f-auth-monetization-states-v1/screens/FS12_payment_failed.html` | Failed payment + free exit. |
+| FS13 Checkout cancelled | `batch-f-auth-monetization-states-v1/screens/FS13_checkout_cancelled.html` | User-cancelled checkout. |
+| FS14 Restore loading | `batch-f-auth-monetization-states-v1/screens/FS14_restore_loading.html` | Restore purchase loading. |
+| FS15 Restore success | `batch-f-auth-monetization-states-v1/screens/FS15_restore_success.html` | Restore success. |
+| FS16 Restore not found | `batch-f-auth-monetization-states-v1/screens/FS16_restore_notfound.html` | No purchase found. |
+| FS17 Already subscribed | `batch-f-auth-monetization-states-v1/screens/FS17_already_subscribed.html` | Active subscription already exists. |
+| FS18 Cancelled, access until | `batch-f-auth-monetization-states-v1/screens/FS18_cancelled_access_until.html` | Cancelled subscription with paid access remaining. |
+| FS19 Expired, free continues | `batch-f-auth-monetization-states-v1/screens/FS19_expired_free_continues.html` | Expired subscription, free mode continues. |
+| FS20 Region unavailable | `batch-f-auth-monetization-states-v1/screens/FS20_region_unavailable.html` | Payment method/region unavailable. |
+| FS21 Manage offline | `batch-f-auth-monetization-states-v1/screens/FS21_manage_offline.html` | Offline payment management. |
+
 ## Known state gaps before implementation
 
 These are not blockers for implementing already covered slices, but they must not be invented in code.
@@ -132,7 +155,6 @@ These are not blockers for implementing already covered slices, but they must no
 |---|---|---|
 | Auth / registration / login defaults | Frozen | Use Batch F defaults; run Batch F states before implementation. |
 | Subscription / Paywall S25 defaults | Frozen | Use Batch F defaults; run Batch F states before implementation. |
-| Batch F auth/payment states | Not frozen | Run `docs/prompts/design/13_batch_f_auth_monetization_states.md`. |
 | S5 full state coverage beyond existing critical states | Partially covered | Implement only covered states or request a scoped state pass. |
 | S9–S13 assessment edge states | Partially covered in Batch B | Review assessment protocol before implementation. |
 | S19 YouTube/import flow | Future/disabled | Do not implement active import from the disabled card. |
@@ -251,6 +273,4 @@ Before starting any slice:
 
 ## Next recommended task
 
-Run `docs/prompts/design/13_batch_f_auth_monetization_states.md` for Batch F auth/payment states.
-
-After Batch F states are frozen, update this index and then use `docs/prompts/engineering/01_implementation_readiness_audit.md` to map frozen screens to existing app routes/components/state/data and produce a non-coding implementation plan.
+Run `docs/prompts/engineering/01_implementation_readiness_audit.md` to map frozen screens to existing app routes/components/state/data and produce a non-coding implementation plan.

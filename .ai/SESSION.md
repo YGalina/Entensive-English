@@ -4,7 +4,7 @@ Last updated: 2026-07-23
 
 ## Phase
 
-Visual design: Batch A frozen; Batch B correction v2 approved; Batch C defaults and states approved and frozen; Recovery/data-integrity gap closure approved and frozen; Batch D approved and frozen; Batch E defaults and states approved and frozen; Batch F Auth & Monetization defaults approved and frozen.
+Visual design: Batch A frozen; Batch B correction v2 approved; Batch C defaults and states approved and frozen; Recovery/data-integrity gap closure approved and frozen; Batch D approved and frozen; Batch E defaults and states approved and frozen; Batch F Auth & Monetization defaults and states approved and frozen.
 
 ## Architecture status
 
@@ -12,7 +12,7 @@ Frozen. Changes require an ADR, an Architecture Resolution where applicable, and
 
 ## Current focus
 
-Batch A is frozen in `docs/design/exports/batch-a-defaults-final/`. Approved Batch B screens S9–S13 and their states are in `docs/design/exports/batch-b-correction-v2/`. Approved Batch C defaults and states are in `docs/design/exports/batch-c-correction-v1/` and `docs/design/exports/batch-c-states-correction-v1/`. Recovery/data-integrity gap closure is frozen in `docs/design/exports/recovery-integrity-v1/`. Batch D progress/words/artifacts/review is frozen in `docs/design/exports/batch-d-final/`. Batch E library/reader/shadowing defaults are frozen in `docs/design/exports/batch-e-correction-v1/`; Batch E states are frozen in `docs/design/exports/batch-e-states-v1/`. Batch F Auth & Monetization defaults are frozen in `docs/design/exports/batch-f-auth-monetization-correction-v1/`. Living Content remains the canonical visual-language source. Approved screens must not be reopened without an owner decision.
+Batch A is frozen in `docs/design/exports/batch-a-defaults-final/`. Approved Batch B screens S9–S13 and their states are in `docs/design/exports/batch-b-correction-v2/`. Approved Batch C defaults and states are in `docs/design/exports/batch-c-correction-v1/` and `docs/design/exports/batch-c-states-correction-v1/`. Recovery/data-integrity gap closure is frozen in `docs/design/exports/recovery-integrity-v1/`. Batch D progress/words/artifacts/review is frozen in `docs/design/exports/batch-d-final/`. Batch E library/reader/shadowing defaults are frozen in `docs/design/exports/batch-e-correction-v1/`; Batch E states are frozen in `docs/design/exports/batch-e-states-v1/`. Batch F Auth & Monetization defaults are frozen in `docs/design/exports/batch-f-auth-monetization-correction-v1/`; Batch F states are frozen in `docs/design/exports/batch-f-auth-monetization-states-v1/`. Living Content remains the canonical visual-language source. Approved screens must not be reopened without an owner decision.
 
 ## Completed this session
 
@@ -27,9 +27,12 @@ Batch E states v1 passed owner review and Codex QA. The accepted package from `I
 
 Batch F Auth & Monetization correction v1 passed owner review and Codex QA. The accepted package from `Intensive English дизайн-система_34.zip` was stored as `docs/design/exports/batch-f-auth-monetization-correction-v1/`. Verified: prices match `06_monetization.md` placeholders (690 ₽ / 3 990 ₽), anonymous-local copy avoids unsafe cross-device promises, email placeholder is neutral, paywall benefit copy is corrected, no trial/PRO/guarantee/group-intensive/CEFR-result claims are present in learner-facing screens.
 
+
+Batch F Auth & Monetization states v1 passed Codex QA. The accepted package from `Intensive English дизайн-система_37.zip` was stored as `docs/design/exports/batch-f-auth-monetization-states-v1/`. Verified: 21 auth/payment state screens, correct output path, button heights, payment/auth failure coverage, restore/cancel/expired/offline states, no trial/PRO/guarantee/CEFR-result/streak/guardian/speech-scoring claims. Returning-account default remains covered by frozen FA4; signed-out/local-only clarification is covered by FS09 and FS08.
+
 ## Next task
 
-Batch F Auth & Monetization defaults are approved and frozen. Current step: run Batch F Auth & Monetization states. Do not implement code before Batch F states are reviewed and frozen.
+All current visual design batches A–F defaults/states are frozen for the implementation-readiness pass. Current step: run engineering implementation-readiness audit. Do not implement code until the audit maps frozen screens to routes/components/state/data and identifies remaining blockers.
 
 ## Blockers
 
