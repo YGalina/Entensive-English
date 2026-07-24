@@ -23,6 +23,19 @@ Only these packages may govern implementation. Historical Living Content files r
 
 - Engineering implementation-readiness audit: `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
+## Implementation foundation (engineering PR 1)
+
+Product Shell Contracts landed as additive, non-destructive foundation per the audit's Slice 0 / PR 1 recommendation (no full screens, no frozen design or legacy code changed):
+
+- Shared Living Content UI primitive contract: `packages/tokens/primitives.ts` (radii from `marina`; a11y minimums — touch ≥44, body ≥16, secondary ≥14; focus ring; button/surface/pill/text-role specs). Platform-agnostic data both RN and web read.
+- Frozen screen route registry: `packages/core/routes.ts` (`SCREENS` S1–S27 with product-ready + frozen-design source; `LEGACY_ROUTES` marks pilot/guardian/streak/levelcheck/removed-concept routes **not product-ready**; helpers `isProductReady`, `productReadyScreens`, `isLegacyRoute`).
+- Event categories: `packages/core/eventCategories.ts` (progress/evidence/process/navigation/system; only progress+evidence may write course truth — `mayWriteProgress`, `assertMayWriteProgress`).
+- PathNextStep contract: `packages/core/pathNextStep.ts` (read-only `computeNextStep` returns exactly one primary step; Path is a projection, never writes progress).
+- Copy/semantic firewall: `packages/core/copyFirewall.ts` (`scanForBannedTerms`, `passesCopyFirewall`, `SEMANTIC_RULES`) + checklist `docs/engineering/COPY_SEMANTIC_FIREWALL_CHECKLIST.md`.
+- Tests: `packages/core/tests/foundation.test.ts` — 13/13 pass; new modules typecheck clean.
+
+Constraint for later PRs: only `SCREENS` entries with `productReady:true` may be implemented; every learner-facing string must pass `scanForBannedTerms`; process/navigation events must never move Path. Next gate: Codex review of PR 1, then PR 2 (S1 Entry/Resume + Path routing).
+
 ## Active design task
 
 - Objective: product-owner review of implementation-readiness audit, then PR 1 foundation/contracts.

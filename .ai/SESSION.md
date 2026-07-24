@@ -33,9 +33,11 @@ Batch F Auth & Monetization states v1 passed Codex QA. The accepted package from
 
 Engineering implementation-readiness audit v1 completed at `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`. Verdict: partially ready. Frozen visual design is strong, but implementation must start with P0 foundation/contracts because legacy code still contains pilot/Vertical Slice, Galina, guardians, streaks, levelcheck/CEFR and old pricing/auth assumptions that must not leak into product UI. Recommended first implementation PR: shared Living Content primitives, route registry, event semantics, PathNextStep contract and copy firewall.
 
+Engineering PR 1 (Foundation / Product Shell Contracts) implemented per the audit's Slice 0 recommendation: shared Living Content UI primitive contract (`packages/tokens/primitives.ts`), frozen screen route registry with legacy pilot/guardian/streak/levelcheck routes marked not product-ready (`packages/core/routes.ts`), event categories with the progress-writer invariant (`packages/core/eventCategories.ts`), the read-only PathNextStep contract (`packages/core/pathNextStep.ts`), and a machine-checkable copy/semantic firewall (`packages/core/copyFirewall.ts` + `docs/engineering/COPY_SEMANTIC_FIREWALL_CHECKLIST.md`). Foundation tests pass (13/13) and the new modules typecheck clean. No full screens implemented; no frozen design or legacy code changed. Rebased onto the current branch tip (`f4d6009`).
+
 ## Next task
 
-Implementation-readiness audit v1 is complete. Current step: product-owner review of `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`, then approve PR 1 foundation/contracts before any screen implementation.
+Implementation-readiness audit v1 is complete and PR 1 Foundation / Product Shell Contracts is implemented. Current step: Codex review of PR 1 for semantic leakage and event correctness (audit's final-recommendation gate), then PR 2 (S1 Entry/Resume + Path routing wired to `computeNextStep` against frozen Batch A).
 
 ## Blockers
 

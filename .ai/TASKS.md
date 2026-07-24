@@ -2,19 +2,21 @@
 
 ## In progress
 
+- [ ] Codex review of PR 1 (Foundation / Product Shell Contracts) for semantic leakage and event correctness.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
 
+- [ ] PR 2 (engineering): implement S1 Entry/Resume + Path routing wired to `computeNextStep` (frozen Batch A), reusing PR 1 route registry and copy firewall.
 - [ ] Owner decision FD-6: whether informed consent is required and where (human recruitment process vs. approved architecture amendment; no invented screen).
 - [ ] Owner decision FD-4: gender-neutral Russian by default vs. explicit positioning (no new entry control).
 - [ ] Owner decision: Evening Circle — future screen or drop (source exists, no approved screen; marked Future Extension in Batch 1).
 - [ ] Prepare next design brief only after selecting scope; do not reopen frozen Batch A–E packages.
-- [ ] Then run `docs/prompts/engineering/01_implementation_readiness_audit.md` to produce `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 - [ ] Prepare scoped visual-design corrections; implement approved designs and run UX/engineering QA.
 
 ## Completed
 
+- [x] PR 1 Foundation / Product Shell Contracts (engineering, on `f4d6009`): shared Living Content UI primitive contract (`packages/tokens/primitives.ts`); frozen screen route registry with legacy pilot/guardian/streak/levelcheck routes marked not product-ready (`packages/core/routes.ts`); event categories + progress-writer invariant (`packages/core/eventCategories.ts`); read-only PathNextStep contract (`packages/core/pathNextStep.ts`); machine-checkable copy/semantic firewall (`packages/core/copyFirewall.ts`, `docs/engineering/COPY_SEMANTIC_FIREWALL_CHECKLIST.md`); foundation tests `packages/core/tests/foundation.test.ts` (13/13). No full screens; no frozen design or legacy code changed.
 - [x] Engineering implementation-readiness audit v1 completed → `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`; verdict: partially ready, first implementation PR must be foundation/contracts before screen migration.
 - [x] Batch F Auth & Monetization states approved and frozen → `docs/design/exports/batch-f-auth-monetization-states-v1/`; accepted from `Intensive English дизайн-система_37.zip` after Codex QA verified 21 auth/payment states, correct output path, button sizes, failure/restore/cancel/expired/offline coverage and copy firewall.
 - [x] Batch F Auth & Monetization defaults approved and frozen → `docs/design/exports/batch-f-auth-monetization-correction-v1/`; accepted from `Intensive English дизайн-система_34.zip` after Codex QA verified corrected prices, local-account copy safety, neutral email placeholder, paywall wording and no trial/PRO/guarantee/group-intensive/CEFR-result claims.
