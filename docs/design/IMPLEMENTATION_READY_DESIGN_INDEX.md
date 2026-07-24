@@ -116,6 +116,8 @@ These are not blockers for implementing already covered slices, but they must no
 
 | Gap | Status | Required action |
 |---|---|---|
+| Auth / registration / login | Not frozen | Run Batch F0 resolution, then Batch F visual design. |
+| Subscription / Paywall S25 | Not ratified | Do not hand to visual design until IA ownership and rules are ratified. |
 | S5 full state coverage beyond existing critical states | Partially covered | Implement only covered states or request a scoped state pass. |
 | S9–S13 assessment edge states | Partially covered in Batch B | Review assessment protocol before implementation. |
 | S19 YouTube/import flow | Future/disabled | Do not implement active import from the disabled card. |
@@ -234,6 +236,6 @@ Before starting any slice:
 
 ## Next recommended task
 
-Create `docs/prompts/engineering/01_implementation_readiness_audit.md` and run Codex against the codebase before implementation starts.
+Run `docs/prompts/design/11_batch_f0_auth_monetization_resolution.md` before starting visual design or engineering for auth/payment.
 
-The audit should map frozen screens to existing app routes/components/state/data and produce a non-coding implementation plan. It should not write application code yet.
+After Batch F0 and Batch F are frozen, rerun this index and then use `docs/prompts/engineering/01_implementation_readiness_audit.md` to map frozen screens to existing app routes/components/state/data and produce a non-coding implementation plan.

@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] Run `docs/prompts/engineering/01_implementation_readiness_audit.md` to produce `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
+- [ ] Run `docs/prompts/design/11_batch_f0_auth_monetization_resolution.md` to produce `docs/design/auth_monetization/BATCH_F0_AUTH_MONETIZATION_RESOLUTION.md`.
 
 ## Next
 
@@ -10,12 +10,17 @@
 - [ ] Owner decision FD-4: gender-neutral Russian by default vs. explicit positioning (no new entry control).
 - [ ] Owner decision: Evening Circle — future screen or drop (source exists, no approved screen; marked Future Extension in Batch 1).
 - [ ] Prepare next design brief only after selecting scope; do not reopen frozen Batch A–E packages.
+- [ ] After owner approval of Batch F0, run `docs/prompts/design/12_batch_f_auth_monetization_visual_design.md`.
+- [ ] After Batch F defaults/states are frozen, update `docs/design/IMPLEMENTATION_READY_DESIGN_INDEX.md`.
+- [ ] Then run `docs/prompts/engineering/01_implementation_readiness_audit.md` to produce `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 - [ ] Prepare scoped visual-design corrections; implement approved designs and run UX/engineering QA.
 
 ## Completed
 
 - [x] Create implementation-ready design index across frozen Batch A–E, Recovery/Integrity and known gaps → `docs/design/IMPLEMENTATION_READY_DESIGN_INDEX.md`.
 - [x] Create first engineering readiness audit prompt → `docs/prompts/engineering/01_implementation_readiness_audit.md`.
+- [x] Create Batch F0 Auth & Monetization resolution prompt → `docs/prompts/design/11_batch_f0_auth_monetization_resolution.md`.
+- [x] Create Batch F Auth & Monetization visual-design prompt template → `docs/prompts/design/12_batch_f_auth_monetization_visual_design.md`.
 - [x] Batch E states v1 approved and frozen → `docs/design/exports/batch-e-states-v1/`; accepted from `Intensive English дизайн-система_32.zip` after Codex QA verified S19/S21/S22 state coverage, copy firewall, no unsupported claims and corrected S22 recording accessibility label.
 - [x] Batch E correction v1 approved and frozen → `docs/design/exports/batch-e-correction-v1/`; accepted from `Intensive English дизайн-система_31.zip` after Codex QA verified S19/S21/S22 defaults, S22 accessible recording control, non-evaluative gate copy, disabled future import card and copy firewall.
 - [x] Prepare Batch E visual-design brief → `docs/prompts/design/10_batch_e_library_reader_shadowing.md`.
