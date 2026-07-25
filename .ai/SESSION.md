@@ -37,7 +37,7 @@ Engineering PR 1 (Foundation / Product Shell Contracts) implemented per the audi
 
 ## Next task
 
-Implementation-readiness audit v1 is complete and PR 1 Foundation / Product Shell Contracts is implemented. Current step: Codex review of PR 1 for semantic leakage and event correctness (audit's final-recommendation gate), then PR 2 (S1 Entry/Resume + Path routing wired to `computeNextStep` against frozen Batch A).
+PR 1 Foundation is implemented; PR 2 (S1 Entry/Resume Router + Path routing foundation) is now implemented: `packages/core/entryRouting.ts` builds the read-only Path projection from local storage and wires it to `computeNextStep` (`resolveEntryRoute` → product route); a mobile `entry/` route group hosts the S1 router shell plus minimal product-safe stubs (recognition S2, path-hub S4, integrity-blocked + explicit restart-confirm from Recovery/Integrity, neutral coming-soon placeholder). Core tests 24/24 pass and core typechecks clean; no legacy route deleted, no frozen design changed, no payment provider. Mobile RN typecheck was not runnable in this worktree (no `node_modules`). Current step: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Entry full screens, which unlock the profile→path transition).
 
 ## Blockers
 

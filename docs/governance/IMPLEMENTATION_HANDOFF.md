@@ -34,7 +34,17 @@ Product Shell Contracts landed as additive, non-destructive foundation per the a
 - Copy/semantic firewall: `packages/core/copyFirewall.ts` (`scanForBannedTerms`, `passesCopyFirewall`, `SEMANTIC_RULES`) + checklist `docs/engineering/COPY_SEMANTIC_FIREWALL_CHECKLIST.md`.
 - Tests: `packages/core/tests/foundation.test.ts` — 13/13 pass; new modules typecheck clean.
 
-Constraint for later PRs: only `SCREENS` entries with `productReady:true` may be implemented; every learner-facing string must pass `scanForBannedTerms`; process/navigation events must never move Path. Next gate: Codex review of PR 1, then PR 2 (S1 Entry/Resume + Path routing).
+Constraint for later PRs: only `SCREENS` entries with `productReady:true` may be implemented; every learner-facing string must pass `scanForBannedTerms`; process/navigation events must never move Path.
+
+## Implementation PR 2 (S1 Entry/Resume Router + Path routing)
+
+Additive, non-destructive routing shell (no full session, no legacy route deleted, no frozen design changed, no payment provider):
+
+- `packages/core/entryRouting.ts`: read-only Path projection from local storage (`ENTRY_KEYS`, `readPathState`) wired to `computeNextStep`; `routeForStep` / `resolveEntryRoute` map the one next step to a product route; `ENTRY_COPY` holds frozen learner-facing copy, verified by the copy firewall in tests. Router never writes progress/evidence.
+- Mobile `apps/mobile/src/app/entry/`: `_layout.tsx`, S1 router `index.tsx` (replaces into the resolved route over a warm "свет лампы" transition), and minimal product-safe stubs — `recognition.tsx` (S2), `path-hub.tsx` (S4), `integrity-blocked.tsx` + `integrity-restart-confirm.tsx` (Recovery/Integrity; explicit acknowledgement gate; no silent new-user flow), `coming-soon.tsx` (neutral placeholder for resume/protocol/recovery/daily destinations). `apps/mobile/src/components/entry-ui.tsx` consumes PR 1 primitives (button heights, a11y minimums).
+- Tests: `packages/core/tests/entryRouting.test.ts` — 11/11 (routing precedence, invalid-id rejection, entitlement-lock projection, firewall over `ENTRY_COPY`). Core suite 24/24; core typechecks clean. Mobile RN typecheck not runnable in this worktree (no `node_modules`).
+
+Next gate: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Entry full screens, which write `ie_profile` and unlock the profile→path-hub transition).
 
 ## Active design task
 
