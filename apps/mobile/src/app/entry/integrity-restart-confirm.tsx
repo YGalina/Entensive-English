@@ -2,22 +2,21 @@ import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useRouter, type Href } from "expo-router";
 import { useMarina } from "@/theme";
-import { storage } from "@ie/core/storage";
-import { ENTRY_COPY, ENTRY_KEYS } from "@ie/core/entryRouting";
+import { ENTRY_COPY, confirmIntegrityRestart } from "@ie/core/entryRouting";
 import { EntryScaffold, Title, Body, PrimaryButton, GhostButton } from "@/components/entry-ui";
 
 // S1 restart confirmation (Recovery/Integrity design). Destructive; the confirm
 // action is enabled only after an explicit acknowledgement (form + text, not
-// colour alone). Clearing the integrity flag lets S1 re-resolve to onboarding.
+// colour alone). Restart creates a FRESH local path (old profile/draft/protocol/
+// daily are not silently reused) and routes back to onboarding.
 export default function IntegrityRestartConfirm() {
   const router = useRouter();
   const { c, radius } = useMarina();
   const [ack, setAck] = useState(false);
 
   function restart() {
-    // Router-read flag; clearing it re-opens a fresh path on next resolve.
-    storage().setItem(ENTRY_KEYS.integrityBlocked, "0");
-    router.replace("/entry" as Href);
+    const { route } = confirmIntegrityRestart();
+    router.replace(route as Href);
   }
 
   return (

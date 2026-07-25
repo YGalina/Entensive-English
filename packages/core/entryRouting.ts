@@ -17,8 +17,15 @@ import { SCREENS, type ScreenId } from "./routes";
 
 /** Ключи хранилища, читаемые роутером входа (write — в будущих PR). */
 export const ENTRY_KEYS = {
+  /**
+   * Активная локальная траектория. Все привязанные к пути записи (профиль и др.)
+   * действительны, только если их штамп совпадает с этим id. Перезапуск после
+   * повреждения создаёт НОВЫЙ id — старые записи перестают принадлежать пути.
+   */
+  activePath: "ie_active_path",
   integrityBlocked: "ie_integrity_blocked", // "1" — стор повреждён без восстановления
-  profile: "ie_profile", // присутствие ключа = профиль создан (owner: Profile)
+  profile: "ie_profile", // присутствие ключа = профиль записан (owner: Profile)
+  profilePath: "ie_profile_path", // id пути, которому принадлежит профиль
   resumeDraft: "ie_resume_draft", // "1" — есть возобновляемый черновик
   openProtocolStage: "ie_open_protocol_stage", // ScreenId открытого этапа (owner: Protocol)
   recoveryNeeded: "ie_recovery_needed", // "1" — нужна Recovery (owner: Daily Engine)
@@ -37,11 +44,30 @@ function flag(key: string): boolean {
   return storage().getItem(key) === "1";
 }
 
+/** Id активной локальной траектории (null — ещё не заведена). */
+export function activeLocalPath(): string | null {
+  return storage().getItem(ENTRY_KEYS.activePath);
+}
+
+/**
+ * Профиль засчитывается, ТОЛЬКО если он существует и принадлежит активной
+ * локальной траектории (штамп профиля === активный путь). После перезапуска
+ * активный путь меняется, поэтому старый профиль автоматически игнорируется —
+ * никакого тихого переиспользования прежнего профиля.
+ */
+function hasActiveProfile(): boolean {
+  const s = storage();
+  if (s.getItem(ENTRY_KEYS.profile) == null) return false;
+  const bound = s.getItem(ENTRY_KEYS.profilePath);
+  const active = s.getItem(ENTRY_KEYS.activePath);
+  return bound != null && active != null && bound === active;
+}
+
 /** Построить проекцию Path из локального хранилища (ТОЛЬКО чтение). */
 export function readPathState(): PathState {
   return {
     integrityBlocked: flag(ENTRY_KEYS.integrityBlocked),
-    hasProfile: storage().getItem(ENTRY_KEYS.profile) != null,
+    hasProfile: hasActiveProfile(),
     hasResumableDraft: flag(ENTRY_KEYS.resumeDraft),
     openProtocolStage: asScreenId(storage().getItem(ENTRY_KEYS.openProtocolStage)),
     recoveryNeeded: flag(ENTRY_KEYS.recoveryNeeded),
@@ -79,6 +105,37 @@ export function resolveEntryRoute(): { step: PathNextStep; route: ProductRoute }
 }
 
 /**
+ * Явное подтверждение перезапуска после блокировки целостности.
+ * Создаёт СВЕЖУЮ локальную траекторию (новый id) и очищает проекции, которые не
+ * должны переноситься: integrity, черновик, recovery, шаг дня и открытый этап
+ * протокола. Прежний профиль НЕ переиспользуется молча — он остаётся привязан к
+ * старому пути и потому игнорируется. Возвращает новый путь и маршрут на S2.
+ *
+ * `now` инъектируется (по умолчанию Date.now()) — чистое, тестируемое поведение.
+ */
+export function confirmIntegrityRestart(now: number = Date.now()): {
+  activePath: string;
+  route: ProductRoute;
+} {
+  const s = storage();
+  const prev = s.getItem(ENTRY_KEYS.activePath);
+  let fresh = `path-${now}`;
+  if (fresh === prev) fresh = `${fresh}-r`; // гарантируем отличие от прежнего пути
+  s.setItem(ENTRY_KEYS.activePath, fresh);
+
+  // Сбрасываем проекции, которые не должны пережить перезапуск.
+  s.setItem(ENTRY_KEYS.integrityBlocked, "0");
+  s.setItem(ENTRY_KEYS.resumeDraft, "0");
+  s.setItem(ENTRY_KEYS.recoveryNeeded, "0");
+  s.setItem(ENTRY_KEYS.dailyStepLocked, "0");
+  s.setItem(ENTRY_KEYS.dailyStep, ""); // "" — невалидный ScreenId → игнорируется
+  s.setItem(ENTRY_KEYS.openProtocolStage, "");
+
+  // Профиль не удаляем, но он привязан к прежнему пути → hasActiveProfile() = false.
+  return { activePath: fresh, route: ENTRY_ROUTES.onboarding };
+}
+
+/**
  * Learner-facing копирайт входа/целостности. Строки из замороженных дизайнов
  * (Batch A S1/S2/S4; Recovery/Integrity S1). Держатся здесь, чтобы (а) mobile-
  * оболочки не расходились в тексте и (б) copy-firewall мог их проверять в тестах.
@@ -106,6 +163,6 @@ export const ENTRY_COPY = {
   restartConfirm: "Начать новый путь",
   restartCancel: "Вернуться",
   comingSoonTitle: "Этот шаг скоро откроется",
-  comingSoonLead: "Мы готовим его бережно. Твой прогресс на месте — ничего не потеряно.",
+  comingSoonLead: "Мы готовим его. Пока он недоступен — вернись сюда чуть позже.",
   comingSoonBack: "Назад",
 } as const;

@@ -9,6 +9,8 @@ import {
   readPathState,
   routeForStep,
   resolveEntryRoute,
+  confirmIntegrityRestart,
+  activeLocalPath,
 } from "../entryRouting";
 import { computeNextStep, type NextStepKind } from "../pathNextStep";
 import { passesCopyFirewall, scanForBannedTerms } from "../copyFirewall";
@@ -18,6 +20,12 @@ function fresh() {
 }
 function set(key: string, value = "1") {
   storage().setItem(key, value);
+}
+/** A valid product profile must belong to the active local path. */
+function setProfile(pathId = "p1") {
+  storage().setItem(ENTRY_KEYS.activePath, pathId);
+  storage().setItem(ENTRY_KEYS.profile, "1");
+  storage().setItem(ENTRY_KEYS.profilePath, pathId);
 }
 
 test("first launch (empty storage) routes to recognition", () => {
@@ -29,7 +37,7 @@ test("first launch (empty storage) routes to recognition", () => {
 
 test("profile present routes to path hub", () => {
   fresh();
-  set(ENTRY_KEYS.profile);
+  setProfile();
   const { step, route } = resolveEntryRoute();
   assert.equal(step.kind, "path-hub");
   assert.equal(route, "/entry/path-hub");
@@ -37,7 +45,7 @@ test("profile present routes to path hub", () => {
 
 test("integrity block wins over profile and daily step", () => {
   fresh();
-  set(ENTRY_KEYS.profile);
+  setProfile();
   set(ENTRY_KEYS.dailyStep, "S5");
   set(ENTRY_KEYS.integrityBlocked);
   const { step, route } = resolveEntryRoute();
@@ -48,7 +56,7 @@ test("integrity block wins over profile and daily step", () => {
 
 test("resumable draft routes ahead of protocol/daily", () => {
   fresh();
-  set(ENTRY_KEYS.profile);
+  setProfile();
   set(ENTRY_KEYS.resumeDraft);
   const { step, route } = resolveEntryRoute();
   assert.equal(step.kind, "resume-draft");
@@ -57,14 +65,14 @@ test("resumable draft routes ahead of protocol/daily", () => {
 
 test("valid open protocol stage is honoured; invalid id is ignored", () => {
   fresh();
-  set(ENTRY_KEYS.profile);
+  setProfile();
   set(ENTRY_KEYS.openProtocolStage, "S9");
   let r = resolveEntryRoute();
   assert.equal(r.step.kind, "protocol-stage");
   assert.equal(r.step.screenId, "S9");
 
   fresh();
-  set(ENTRY_KEYS.profile);
+  setProfile();
   set(ENTRY_KEYS.openProtocolStage, "S99"); // not a real ScreenId
   r = resolveEntryRoute();
   assert.equal(r.step.kind, "path-hub"); // ignored → falls through
@@ -72,7 +80,7 @@ test("valid open protocol stage is honoured; invalid id is ignored", () => {
 
 test("recovery flag routes to recovery step", () => {
   fresh();
-  set(ENTRY_KEYS.profile);
+  setProfile();
   set(ENTRY_KEYS.recoveryNeeded);
   const { step } = resolveEntryRoute();
   assert.equal(step.kind, "recovery");
@@ -80,7 +88,7 @@ test("recovery flag routes to recovery step", () => {
 
 test("daily step with entitlement lock is projected, not gated", () => {
   fresh();
-  set(ENTRY_KEYS.profile);
+  setProfile();
   set(ENTRY_KEYS.dailyStep, "S5");
   set(ENTRY_KEYS.dailyStepLocked);
   const { step } = resolveEntryRoute();
@@ -90,7 +98,7 @@ test("daily step with entitlement lock is projected, not gated", () => {
 
 test("readPathState reflects raw storage", () => {
   fresh();
-  set(ENTRY_KEYS.profile);
+  setProfile();
   const s = readPathState();
   assert.equal(s.hasProfile, true);
   assert.equal(s.integrityBlocked, false);
@@ -116,7 +124,7 @@ test("routeForStep covers every NextStepKind", () => {
 
 test("resolveEntryRoute agrees with computeNextStep on the same state", () => {
   fresh();
-  set(ENTRY_KEYS.profile);
+  setProfile();
   const { step } = resolveEntryRoute();
   assert.equal(step.kind, computeNextStep(readPathState()).kind);
 });
@@ -128,4 +136,56 @@ test("all learner-facing entry copy passes the copy firewall", () => {
       `ENTRY_COPY.${key} tripped firewall: ${JSON.stringify(scanForBannedTerms(value))}`,
     );
   }
+});
+
+// ---- Active local path boundary + integrity restart ----
+
+test("old profile is ignored after the active local path changes", () => {
+  fresh();
+  setProfile("p1");
+  assert.equal(resolveEntryRoute().step.kind, "path-hub");
+  // Active path moves to a new id; the old profile no longer belongs to it.
+  storage().setItem(ENTRY_KEYS.activePath, "p2");
+  assert.equal(readPathState().hasProfile, false);
+  const { step, route } = resolveEntryRoute();
+  assert.equal(step.kind, "onboarding");
+  assert.equal(route, "/entry/recognition");
+});
+
+test("integrity restart creates a fresh local path and routes to onboarding", () => {
+  fresh();
+  setProfile("p1");
+  set(ENTRY_KEYS.integrityBlocked);
+  set(ENTRY_KEYS.resumeDraft);
+  set(ENTRY_KEYS.recoveryNeeded);
+  set(ENTRY_KEYS.dailyStep, "S5");
+  set(ENTRY_KEYS.openProtocolStage, "S9");
+
+  const NOW = 1_700_000_000_000;
+  const res = confirmIntegrityRestart(NOW);
+  assert.equal(res.route, "/entry/recognition");
+  assert.equal(res.activePath, `path-${NOW}`);
+  assert.notEqual(res.activePath, "p1");
+  assert.equal(activeLocalPath(), `path-${NOW}`);
+
+  // Fresh path: old profile, draft, protocol stage, daily step and recovery
+  // are all ignored — nothing silently reused.
+  const st = readPathState();
+  assert.equal(st.hasProfile, false);
+  assert.equal(st.integrityBlocked, false);
+  assert.equal(st.hasResumableDraft, false);
+  assert.equal(st.recoveryNeeded, false);
+  assert.equal(st.openProtocolStage, undefined);
+  assert.equal(st.dailyStep, undefined);
+
+  const { step, route } = resolveEntryRoute();
+  assert.equal(step.kind, "onboarding");
+  assert.equal(route, "/entry/recognition");
+});
+
+test("integrity restart id differs even when now equals the current path id", () => {
+  fresh();
+  storage().setItem(ENTRY_KEYS.activePath, "path-5");
+  const res = confirmIntegrityRestart(5);
+  assert.notEqual(res.activePath, "path-5");
 });
