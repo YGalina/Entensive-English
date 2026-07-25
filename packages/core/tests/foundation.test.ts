@@ -33,8 +33,8 @@ test("product-ready screens carry a frozen design source", () => {
   }
 });
 
-test("planned screens are not product-ready (S25 paywall included)", () => {
-  assert.equal(isProductReady("S25"), false);
+test("planned screens are not product-ready, while frozen Batch F S25 is ready", () => {
+  assert.equal(isProductReady("S25"), true);
   assert.equal(isProductReady("S23"), false);
   assert.equal(isProductReady("S1"), true);
 });

@@ -62,7 +62,7 @@ export const SCREENS: readonly ScreenRoute[] = [
   { id: "S22", name: "Shadowing", platform: "mobile", status: "frozen-design", productReady: true, frozenDesign: "docs/design/exports/batch-e-correction-v1/" },
   { id: "S23", name: "Story Engine", platform: "both", status: "planned", productReady: false, notes: "PLAN; ADR" },
   { id: "S24", name: "Community Ladder", platform: "both", status: "planned", productReady: false, notes: "PLAN/FUT; validation [U]" },
-  { id: "S25", name: "Subscription / Paywall", platform: "web", status: "planned", productReady: false, notes: "F0 ratified rules; Batch F not yet designed" },
+  { id: "S25", name: "Subscription / Paywall", platform: "both", status: "frozen-design", productReady: true, frozenDesign: "docs/design/exports/batch-f-auth-monetization-correction-v1/", notes: "Batch F defaults + states frozen; web checkout primary, mobile status/manage handoff" },
   { id: "S26", name: "Notification", platform: "mobile", status: "planned", productReady: false, notes: "PLAN" },
   { id: "S27", name: "Save / Offline States", platform: "both", status: "planned", productReady: false, notes: "cross-cutting state family, not a screen" },
 ] as const;
