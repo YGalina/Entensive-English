@@ -1,6 +1,6 @@
 # Current Project Session
 
-Last updated: 2026-07-23
+Last updated: 2026-07-26
 
 ## Phase
 
@@ -14,7 +14,7 @@ Frozen. Changes require an ADR, an Architecture Resolution where applicable, and
 
 Batch A is frozen in `docs/design/exports/batch-a-defaults-final/`. Approved Batch B screens S9–S13 and their states are in `docs/design/exports/batch-b-correction-v2/`. Approved Batch C defaults and states are in `docs/design/exports/batch-c-correction-v1/` and `docs/design/exports/batch-c-states-correction-v1/`. Recovery/data-integrity gap closure is frozen in `docs/design/exports/recovery-integrity-v1/`. Batch D progress/words/artifacts/review is frozen in `docs/design/exports/batch-d-final/`. Batch E library/reader/shadowing defaults are frozen in `docs/design/exports/batch-e-correction-v1/`; Batch E states are frozen in `docs/design/exports/batch-e-states-v1/`. Batch F Auth & Monetization defaults are frozen in `docs/design/exports/batch-f-auth-monetization-correction-v1/`; Batch F states are frozen in `docs/design/exports/batch-f-auth-monetization-states-v1/`. Living Content remains the canonical visual-language source. Approved screens must not be reopened without an owner decision.
 
-## Completed this session
+## Engineering status
 
 Recovery/data-integrity gap closure v1 passed owner review and Codex QA. The accepted package from `Intensive English дизайн-система_25.zip` was stored as `docs/design/exports/recovery-integrity-v1/`. Verified: S6 Recovery, zero-due Recovery, S1 data-integrity failure, explicit restart confirmation, copy firewall and 390x844 action visibility.
 
@@ -39,9 +39,13 @@ Engineering PR 1 (Foundation / Product Shell Contracts) implemented per the audi
 
 PR 2 (S1 Entry/Resume Router + Path routing foundation) and its integrity-restart correction are **accepted**. Independent Codex review passed: exact commit `cca2dc1` verified, 115/115 repository tests passed, no blocking findings. The accepted line on `codex/recovery-integrity-freeze` is `cca2dc1`.
 
+## Completed this session
+
+Engineering PR 3 implemented S2 Recognition, S3 Profile Entry and the complete-profile → Path Hub transition. Owner-ratified S3 copy and translation states are frozen in `docs/design/exports/s3-copy-ratification-v3/`. Commit `09436bf` passed 135/135 core unit tests and mobile TypeScript. GitHub review: PR #4.
+
 ## Next task
 
-**Active task: PR 3 (engineering) — not yet begun.** Scope: S2 Recognition; S3 Profile Entry; complete the profile → Path Hub transition. Mandatory acceptance criterion: the first ordinary path creates or obtains an active local path; saving S3 writes both `ie_profile` and `ie_profile_path`; `ie_profile_path` must equal `ie_active_path`; after saving, `resolveEntryRoute()` must route to Path Hub. Do not change frozen design. (Note: an interim PR 3 core that already satisfies this criterion was written last turn and is preserved off the accepted line on branch `interim/pr3-core-wip`; it must come through the normal review gate — it is not on the accepted branch.)
+**Active task: PR 4 (engineering) — S4 Path Hub.** Implement the frozen one-next-step Path Hub using `PathNextStep`; expose lateral repositories without competing with the primary action; preserve honest wait/locked states; do not reuse learner-facing pilot/Vertical Slice copy. Do not begin S5 Daily Cycle inside this PR.
 
 ## Blockers
 
