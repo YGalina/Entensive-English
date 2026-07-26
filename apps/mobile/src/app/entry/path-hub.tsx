@@ -1,39 +1,221 @@
-import { Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter, type Href } from "expo-router";
 import { useMarina } from "@/theme";
 import { ENTRY_COPY } from "@ie/core/entryRouting";
-import { EntryScaffold, Body, PrimaryButton } from "@/components/entry-ui";
+import { A11Y } from "@ie/tokens/primitives";
 
-// S4 Path Hub (minimal product stub, PR 2): orientation, one leading step.
-// Full hub (honest hours, lateral library) is a later slice.
+// S4 Path Hub — frozen Batch A implementation.
+// Orientation, not a dashboard: one primary next step. Practice-time facts and
+// Library are quiet/lateral and never compete with the leading action.
+
+const WEEKDAYS = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"] as const;
+
+function todayLabel(now = new Date()): string {
+  const text = new Intl.DateTimeFormat("ru-RU", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  }).format(now);
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function greeting(now = new Date()): string {
+  const hour = now.getHours();
+  if (hour < 12) return "Доброе утро";
+  if (hour < 18) return "Добрый день";
+  return "Добрый вечер";
+}
+
 export default function PathHub() {
   const router = useRouter();
-  const { c, radius } = useMarina();
+  const insets = useSafeAreaInsets();
+  const { c } = useMarina();
+
   return (
-    <EntryScaffold>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: c.bg }}
+      contentContainerStyle={{
+        flexGrow: 1,
+        paddingHorizontal: 26,
+        paddingTop: insets.top + 18,
+        paddingBottom: insets.bottom + 28,
+      }}
+    >
+      <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.muted }}>{todayLabel()}</Text>
+      <Text
+        style={{
+          fontFamily: "GolosText_800ExtraBold",
+          fontSize: 30,
+          lineHeight: 34,
+          letterSpacing: -0.7,
+          color: c.ink,
+          marginTop: 4,
+        }}
+      >
+        {greeting()}
+      </Text>
+
       <View
         style={{
           borderWidth: 2,
           borderColor: c.brand,
-          borderRadius: radius.card,
-          padding: 20,
-          gap: 10,
+          borderRadius: 24,
+          padding: 22,
+          marginTop: 18,
           backgroundColor: c.surface,
+          shadowColor: c.brand,
+          shadowOpacity: 0.18,
+          shadowRadius: 20,
+          shadowOffset: { width: 0, height: 10 },
+          elevation: 4,
         }}
       >
-        <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 13, letterSpacing: 1, color: c.brand }}>
-          {ENTRY_COPY.pathHubKicker}
-        </Text>
-        <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 22, lineHeight: 28, color: c.ink }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 9 }}>
+          <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: c.brand }} />
+          <Text
+            style={{
+              fontFamily: "GolosText_600SemiBold",
+              fontSize: 14,
+              letterSpacing: 0.8,
+              color: c.brand,
+            }}
+          >
+            {ENTRY_COPY.pathHubKicker}
+          </Text>
+        </View>
+        <Text
+          style={{
+            fontFamily: "GolosText_700Bold",
+            fontSize: 26,
+            lineHeight: 30,
+            letterSpacing: -0.5,
+            color: c.ink,
+            marginTop: 12,
+          }}
+        >
           {ENTRY_COPY.pathHubTitle}
         </Text>
-        <Body>{ENTRY_COPY.pathHubLead}</Body>
-        <View style={{ height: 8 }} />
-        <PrimaryButton
-          label={ENTRY_COPY.pathHubCta}
-          onPress={() => router.replace("/entry/coming-soon" as Href)}
-        />
+        <Text
+          style={{ fontFamily: "GolosText_400Regular", fontSize: 16, lineHeight: 24, color: c.muted, marginTop: 8 }}
+        >
+          {ENTRY_COPY.pathHubLead}
+        </Text>
+
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
+          {["28 коротких фраз", "около 15 минут"].map((label) => (
+            <View key={label} style={{ borderRadius: 999, paddingVertical: 8, paddingHorizontal: 14, backgroundColor: c.brandSoft }}>
+              <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.brandInk }}>{label}</Text>
+            </View>
+          ))}
+          <View
+            style={{
+              borderRadius: 999,
+              paddingVertical: 8,
+              paddingHorizontal: 14,
+              backgroundColor: `${c.accent}24`,
+            }}
+          >
+            <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.accentD }}>
+              Можно отвечать «Не помню»
+            </Text>
+          </View>
+        </View>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={ENTRY_COPY.pathHubCta}
+          onPress={() => router.push("/entry/coming-soon" as Href)}
+          style={{
+            minHeight: 56,
+            borderRadius: 16,
+            backgroundColor: c.brand,
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 18,
+          }}
+        >
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 17, color: c.onBrand }}>
+            {ENTRY_COPY.pathHubCta}
+          </Text>
+        </Pressable>
       </View>
-    </EntryScaffold>
+
+      <View
+        style={{
+          backgroundColor: c.surface,
+          borderRadius: 20,
+          padding: 18,
+          marginTop: 14,
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.accent }} />
+          <Text
+            style={{
+              fontFamily: "GolosText_600SemiBold",
+              fontSize: 14,
+              letterSpacing: 0.6,
+              color: c.muted,
+              marginLeft: 8,
+            }}
+          >
+            ВРЕМЯ ПРАКТИКИ · {new Intl.DateTimeFormat("ru-RU", { month: "long" }).format(new Date()).toUpperCase()}
+          </Text>
+          <Text style={{ marginLeft: "auto", fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.muted }}>
+            первая неделя
+          </Text>
+        </View>
+        <View style={{ flexDirection: "row", alignItems: "flex-end", gap: 8, height: 34, marginTop: 14 }}>
+          {WEEKDAYS.map((day) => (
+            <View key={day} style={{ flex: 1, alignItems: "center", gap: 6 }}>
+              <View style={{ width: "100%", height: 6, borderRadius: 4, backgroundColor: c.brandSoft }} />
+              <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 14, color: c.muted }}>{day}</Text>
+            </View>
+          ))}
+        </View>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted, marginTop: 10 }}>
+          Часы появятся после первой сессии.
+        </Text>
+      </View>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Открыть библиотеку"
+        onPress={() => router.push("/(tabs)/library" as Href)}
+        style={{
+          minHeight: A11Y.minTouchTarget,
+          borderWidth: 1,
+          borderColor: c.line,
+          borderRadius: 20,
+          backgroundColor: c.surface,
+          padding: 14,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 14,
+          marginTop: 14,
+        }}
+      >
+        <View
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 14,
+            backgroundColor: c.amber,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ fontFamily: "Lora_400Regular_Italic", fontSize: 19, color: c.ink }}>Aa</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>Библиотека</Text>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted, marginTop: 2 }}>
+            живой английский
+          </Text>
+        </View>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 22, color: c.muted }}>›</Text>
+      </Pressable>
+    </ScrollView>
   );
 }
