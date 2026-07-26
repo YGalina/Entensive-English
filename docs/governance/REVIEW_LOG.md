@@ -7,6 +7,7 @@ Record completed reviews here after the detailed report has been saved in its ap
 | 2026-07-18 | Vertical Slice finalization semantics | Codex | — | Ready for Pilot with stated limitations | Freeze feature work; perform manual device/audio checks |
 | 2026-07-18 | Product Constitution v1.2 | Claude + Codex | `08f863f` | Governance contradictions resolved | Architecture frozen; changes require ADR |
 | 2026-07-18 | UX stack pre-visual review | Claude + Codex | — | Approved minimal patches required before visual work | Apply accepted patches, then proceed to design |
+| 2026-07-26 | PR 5 · S7 baseline + S8 assessment wait | Codex | `36e108a` | Corrections required, no architecture change | Add keyboard avoidance, honest direct-route guards, Russian count forms and progress accessibility; rerun full checks |
 
 ## Entry format
 

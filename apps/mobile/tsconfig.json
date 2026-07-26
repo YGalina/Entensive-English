@@ -8,6 +8,12 @@
       ],
       "@/assets/*": [
         "./assets/*"
+      ],
+      "@ie/core/*": [
+        "../../packages/core/*"
+      ],
+      "@ie/tokens/*": [
+        "../../packages/tokens/*"
       ]
     },
     "moduleSuffixes": [

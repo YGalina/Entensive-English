@@ -78,6 +78,16 @@ test("valid open protocol stage is honoured; invalid id is ignored", () => {
   assert.equal(r.step.kind, "path-hub"); // ignored → falls through
 });
 
+test("implemented S7/S8 protocol stages resolve to their product routes", () => {
+  fresh();
+  setProfile();
+  set(ENTRY_KEYS.openProtocolStage, "S7");
+  assert.equal(resolveEntryRoute().route, "/entry/pretest");
+
+  set(ENTRY_KEYS.openProtocolStage, "S8");
+  assert.equal(resolveEntryRoute().route, "/entry/assessment-wait");
+});
+
 test("recovery flag routes to recovery step", () => {
   fresh();
   setProfile();

@@ -67,3 +67,20 @@ Next gate: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Ent
 ## Required completion report
 
 Report exact created files, covered states, source branch/commit if available, assumptions, unresolved decisions and checks performed. Stop for product-owner visual review and Codex QA.
+
+## Implementation PR 5 (S7 baseline + S8 assessment wait)
+
+Branch: `codex/pr5-baseline-wait`.
+
+- `packages/core/entryAssessment.ts`: pure 14-session/14-day S8 projection, Protocol stage writer, S7→S5 handoff and firewall-tested learner copy.
+- `packages/core/entryRouting.ts`: implemented protocol stages S7/S8 now resolve to `/entry/pretest` and `/entry/assessment-wait`.
+- `apps/mobile/src/app/entry/pretest.tsx`: frozen S7 flow for 28 immutable assessment items; autocorrect off; first-class “Не помню”; synchronous double-submit lock; accepted-write-only advance; partial resume; complete-only finalization.
+- `apps/mobile/src/app/entry/assessment-wait.tsx`: frozen S8 information state with independent session/day conditions and exact opening date.
+- `apps/mobile/src/app/entry/path-hub.tsx`: first Path action opens S7; after completed S7 it exposes the first-practice handoff.
+- `apps/mobile/tsconfig.json`: explicit local workspace aliases for core/tokens so mobile typechecking resolves the worktree source rather than another checkout.
+
+Checks: core 139/139; mobile TypeScript clean; copy firewall clean; `git diff --check` clean.
+
+Next gate: independent review of the implementation commit, then PR 6 implements the approved S5 Daily Cycle and S14 Summary. Device keyboard/layout testing remains required before release.
+
+Independent review of `36e108a` found only implementation-level corrections: keyboard avoidance on S7, S8 direct-route guards, Russian remaining-count forms and accessible progress semantics. These are applied in the follow-up correction; no Claude/Fable input or architecture change was required.
