@@ -6,7 +6,7 @@ import { sliceItem, type SliceItem, SLICE_TEXTS } from "@ie/core/data/slice";
 import {
   nextSessionPlan,
   startSession,
-  completeSession,
+  completeSessionGuarded,
   recordEncounter,
   recordRetrieval,
   recordProduction,
@@ -49,10 +49,11 @@ export default function SliceSession() {
   const [foundIds, setFoundIds] = useState<string[]>([]);
 
   const started = useRef(false);
+  const startedEventId = useRef<string | null>(null);
   useEffect(() => {
     if (started.current) return;
     started.current = true;
-    startSession(plan);
+    startedEventId.current = startSession(plan).id;
     if (plan.type === "intro") recordEncounter(plan.newItems.map((i) => i.id), "prime");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -100,8 +101,8 @@ export default function SliceSession() {
           text={prodText}
           foundIds={foundIds}
           onFinish={() => {
-            completeSession(plan);
-            router.back();
+            const result = completeSessionGuarded(plan, startedEventId.current ?? "");
+            if (result.completed) router.replace("/entry/path-hub");
           }}
         />
       )}

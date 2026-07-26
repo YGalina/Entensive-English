@@ -84,3 +84,16 @@ Checks: core 139/139; mobile TypeScript clean; copy firewall clean; `git diff --
 Next gate: independent review of the implementation commit, then PR 6 implements the approved S5 Daily Cycle and S14 Summary. Device keyboard/layout testing remains required before release.
 
 Independent review of `36e108a` found only implementation-level corrections: keyboard avoidance on S7, S8 direct-route guards, Russian remaining-count forms and accessible progress semantics. These are applied in the follow-up correction; no Claude/Fable input or architecture change was required.
+
+## Implementation PR 6 (S5 Daily Cycle + S14 Summary) — foundation in progress
+
+Branch: `codex/pr6-daily-summary`.
+
+- Product Path now resolves S5 to `/entry/daily-session`.
+- The validated learning mechanics are shared with the existing Vertical Slice rather than duplicated.
+- `completeSessionGuarded` enforces the frozen minimum-completion contract: retrieval when required plus one production; safe exit is not completion; the same started session cannot complete twice.
+- S5 completion returns deterministically to the Path Hub.
+
+Checks at foundation checkpoint: core 141/141; mobile TypeScript clean; `git diff --check` clean.
+
+Not ready for merge yet: visual/state alignment to frozen Batch C and resumable product-session draft remain in progress.

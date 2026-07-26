@@ -835,13 +835,46 @@ export function nextSessionPlan(recovery = false): SessionPlan {
 }
 
 export function startSession(plan: SessionPlan) {
-  logSlice("session-started", {
+  return logSlice("session-started", {
     type: plan.type,
     number: plan.number,
     introDay: plan.introDay,
     newItems: plan.newItems.map((i) => i.id),
     reviewIds: plan.reviewIds,
   });
+}
+
+export type CompleteSessionGuardResult =
+  | { completed: true }
+  | { completed: false; reason: "missing-retrieval" | "missing-production" | "already-completed" | "unknown-session" };
+
+/**
+ * Product S5 completion guard. A safe exit is never a completed curriculum
+ * session. The legacy `completeSession` mutation remains the single writer,
+ * while this boundary proves the minimum evidence since this exact start event.
+ */
+export function completeSessionGuarded(
+  plan: SessionPlan,
+  startedEventId: string
+): CompleteSessionGuardResult {
+  const log = readLog();
+  const startIndex = log.findIndex(
+    (event) => event.id === startedEventId && event.type === "session-started"
+  );
+  if (startIndex < 0) return { completed: false, reason: "unknown-session" };
+  const afterStart = log.slice(startIndex + 1);
+  if (afterStart.some((event) => event.type === "session-completed")) {
+    return { completed: false, reason: "already-completed" };
+  }
+  const needsRetrieval = plan.type !== "recovery" || plan.reviewIds.length > 0;
+  if (needsRetrieval && !afterStart.some((event) => event.type === "retrieval-attempt")) {
+    return { completed: false, reason: "missing-retrieval" };
+  }
+  if (!afterStart.some((event) => event.type === "production-submitted")) {
+    return { completed: false, reason: "missing-production" };
+  }
+  completeSession(plan);
+  return { completed: true };
 }
 
 export function completeSession(plan: SessionPlan) {
