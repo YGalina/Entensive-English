@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -6,13 +7,18 @@ import {
   ASSESSMENT_TOTAL_SESSIONS,
   ENTRY_ASSESSMENT_COPY,
   assessmentGateView,
+  setOpenAssessmentStage,
 } from "@ie/core/entryAssessment";
 import { sliceState } from "@ie/core/slice";
 import { useMarina } from "@/theme";
 
 function Segments({ value, total, color, empty }: { value: number; total: number; color: string; empty: string }) {
   return (
-    <View style={{ flexDirection: "row", gap: 3, marginTop: 16 }}>
+    <View
+      accessibilityRole="progressbar"
+      accessibilityValue={{ min: 0, max: total, now: value }}
+      style={{ flexDirection: "row", gap: 3, marginTop: 16 }}
+    >
       {Array.from({ length: total }, (_, index) => (
         <View
           key={index}
@@ -23,13 +29,34 @@ function Segments({ value, total, color, empty }: { value: number; total: number
   );
 }
 
+function countLabel(value: number, one: string, few: string, many: string): string {
+  const mod100 = value % 100;
+  const mod10 = value % 10;
+  if (mod100 >= 11 && mod100 <= 14) return `${value} ${many}`;
+  if (mod10 === 1) return `${value} ${one}`;
+  if (mod10 >= 2 && mod10 <= 4) return `${value} ${few}`;
+  return `${value} ${many}`;
+}
+
 export default function AssessmentWait() {
   const { c } = useMarina();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const state = sliceState();
-  const started = state.pretestAt ?? Date.now();
-  const gate = assessmentGateView(started, state.sessionsCompleted);
+  const started = state.pretestAt;
+  const gate = started == null ? null : assessmentGateView(started, state.sessionsCompleted);
+  useEffect(() => {
+    if (started == null) {
+      router.replace("/entry/path-hub");
+      return;
+    }
+    if (gate?.available) {
+      setOpenAssessmentStage("S9");
+      router.replace("/entry/coming-soon");
+    }
+  }, [gate?.available, router, started]);
+
+  if (started == null || gate == null || gate.available) return null;
   const date = new Intl.DateTimeFormat("ru-RU", {
     weekday: "long",
     day: "numeric",
@@ -65,7 +92,7 @@ export default function AssessmentWait() {
         </View>
         <Segments value={gate.sessions} total={ASSESSMENT_TOTAL_SESSIONS} color={c.accent} empty={c.brandSoft} />
         <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted, marginTop: 10 }}>
-          осталось {gate.sessionsRemaining} сессии
+          осталось {countLabel(gate.sessionsRemaining, "сессия", "сессии", "сессий")}
         </Text>
       </View>
 
@@ -81,7 +108,7 @@ export default function AssessmentWait() {
         </View>
         <Segments value={gate.days} total={ASSESSMENT_TOTAL_DAYS} color={c.amber} empty={c.brandSoft} />
         <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted, marginTop: 10 }}>
-          осталось {gate.daysRemaining} дней · {date}
+          осталось {countLabel(gate.daysRemaining, "день", "дня", "дней")} · {date}
         </Text>
       </View>
 

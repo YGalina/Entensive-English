@@ -56,7 +56,9 @@ export function assessmentGateView(
 }
 
 /** Protocol owns this projection; Path only reads it. */
-export function setOpenAssessmentStage(stage: "S7" | "S8" | null): void {
+export type AssessmentStage = "S7" | "S8" | "S9" | "S10" | "S11" | "S12" | "S13";
+
+export function setOpenAssessmentStage(stage: AssessmentStage | null): void {
   storage().setItem(ENTRY_KEYS.openProtocolStage, stage ?? "");
 }
 

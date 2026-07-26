@@ -82,3 +82,5 @@ Branch: `codex/pr5-baseline-wait`.
 Checks: core 139/139; mobile TypeScript clean; copy firewall clean; `git diff --check` clean.
 
 Next gate: independent review of the implementation commit, then PR 6 implements the approved S5 Daily Cycle and S14 Summary. Device keyboard/layout testing remains required before release.
+
+Independent review of `36e108a` found only implementation-level corrections: keyboard avoidance on S7, S8 direct-route guards, Russian remaining-count forms and accessible progress semantics. These are applied in the follow-up correction; no Claude/Fable input or architecture change was required.
