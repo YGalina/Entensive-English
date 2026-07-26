@@ -1,6 +1,6 @@
 # Бэклог экспериментов и A/B — Intensive English
 
-Дата: 2026-07-10. Составлено по skill `ab-testing` + аудиты (`08_product_audit_v3_codex.md`, `Research for EE/06_product_audit/`) + рыночный синтез (`Research for EE/04_layer3_synthesis/`).
+Дата: 2026-07-10. Составлено по skill `ab-testing` + аудиты (`08_product_audit_v3_codex.md`, `/Users/galinayanovskaya/Intensive English Research/06_product_audit/`) + рыночный синтез (`/Users/galinayanovskaya/Intensive English Research/04_layer3_synthesis/`).
 
 ## Честная правда про стадию
 

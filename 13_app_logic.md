@@ -7,7 +7,7 @@
 
 Синтез четырёх источников:
 1. **Макеты Галины** (июль 2026): `docs/design/project/` — Экраны-v2 (40+ мобильных экранов), Веб-приложение, Лендинг, Focus-режим, Оплата и письма, Дизайн-система «Living Content»; аннотации 40 ходов старого канваса Screens.
-2. **Наука и метод**: `05_method_to_mechanics.md`, `09_architecture_plan.md`, `10_psychology_layer.md`, `11_experiments_backlog.md`, синтезы `Research for EE/`.
+2. **Наука и метод**: `05_method_to_mechanics.md`, `09_architecture_plan.md`, `10_psychology_layer.md`, `11_experiments_backlog.md`, синтезы `/Users/galinayanovskaya/Intensive English Research/`.
 3. **Рынок**: `08_product_audit_v3_codex.md`, аудит codex, референсы LingQ/Praktika.
 4. **Опыт Галины**: психолог и бизнес-тренер — работа с частями (стражи), группы, честность без манипуляций, «тренер, не репетитор».
 

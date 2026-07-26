@@ -1,67 +1,42 @@
 # Intensive English
 
-Интенсивное приложение для изучения английского по логике Петрусинского,
-Лозанова, Крашена и моторно-фонетического подхода Шестова.
+Monorepository for a learning system that helps adults move from receptive knowledge to accurate, fluent, independent English use.
 
-Это уже не старый одиночный Next.js-прототип. Сейчас проект живёт как
-монорепозиторий:
+## Read first
 
-- `apps/mobile` — мобильное приложение Expo / React Native.
-- `apps/web` — web-приложение Next.js 16.
-- `packages/core` — общие данные, SRS, план дня, WPM, уровень, библиотека.
-- `packages/tokens` — дизайн-токены темы «Марина».
-- `packages/media` — speech / ambient audio для web и native.
+The concise repository map and source-of-truth rules are in [`docs/repository/REPOSITORY_MAP.md`](docs/repository/REPOSITORY_MAP.md).
 
-Главная идея продукта: английский встраивается не через зубрёжку по одному слову,
-а через многоканальный цикл:
+Current layers:
 
-```text
-настройка состояния -> массив -> контекст -> узнавание -> закрепление
-```
+1. **Scientific research** — `/Users/galinayanovskaya/Intensive English Research` (external corpus).
+2. **Educational methodology** — [`learning_architecture/current/`](learning_architecture/current/).
+3. **Learning experience** — [`learning_experience/`](learning_experience/).
+4. **Product architecture** — [`product_system/v2/`](product_system/v2/).
+5. **UX and design** — [`feedback/`](feedback/) and [`docs/design/project/`](docs/design/project/).
+6. **Technical implementation** — [`apps/`](apps/) and [`packages/`](packages/).
 
-## Что уже построено
+Historical Fable5 and Claude prompts are kept in [`docs/ai_handoffs/`](docs/ai_handoffs/). They are provenance, not current specifications.
 
-### Mobile
+## Applications
 
-- Онбординг-квиз с образовательными факт-экранами.
-- Выбор языка интерфейса и родного языка для переводов.
-- «Сегодня» как живой дашборд дня: кольцо прогресса, метрики, следующий шаг.
-- «Полка дня» с книгами и видео по интересам.
-- 3-минутка: дыхание 4-2-6, фразы, установка.
-- Сеанс: настройка, киносеанс, «знаю» в потоке, SRS.
-- Звуки: лестница темпа, упражнения по фразам, а не отдельным словам.
-- Чтение: рассказы, WPM, библиотека.
-- Слушать: YouTube/shadowing через WebView.
-- Нативная озвучка через `expo-speech`.
-- Спокойная музыка Bach / alpha-настройка.
-- Двуязычный интерфейс ru/en.
+- `apps/mobile` — Expo / React Native mobile application.
+- `apps/web` — Next.js web application and server routes.
+- `packages/core` — shared learning logic, assessment, SRS, planning, and executable content.
+- `packages/tokens` — shared visual tokens.
+- `packages/media` — speech, recording, and ambient-media adapters.
 
-### Web
+## Current curriculum and exercises
 
-- Сегодня / Словарь / Звуки / Времена / Чтение / Видео / Набор / Профиль.
-- Грамматика в речи: времена в готовых конструкциях, сборка на слух.
-- Shadowing по YouTube.
-- Скорочтение и библиотека Gutenberg.
-- Набор по Шестову: моторная память, печать фраз.
-- FSRS-повторы.
-- Magic-link auth, sync API и Stripe skeleton в env-gated режиме.
-- PWA manifest и иконка.
+- Curriculum: [`product_system/v2/curriculum_blueprint_b1_b2_v2.md`](product_system/v2/curriculum_blueprint_b1_b2_v2.md).
+- Content and syllabus: [`product_system/v2/content_selection_and_syllabus_v2.md`](product_system/v2/content_selection_and_syllabus_v2.md).
+- Exercise architecture: [`product_system/v2/exercise_architecture_v2.md`](product_system/v2/exercise_architecture_v2.md).
+- Executable content and mechanics: `packages/core/data/` and `packages/core/*.ts`.
 
-## Методическая карта
+Product v2 is intentionally frozen pending founder decisions and validation of the smallest integrated learning unit. Do not treat an unimplemented document as proof that a feature exists; inspect `apps/` and `packages/` for implementation reality.
 
-Подробный бриф для Fable 5 и всех следующих разработчиков:
+## Development
 
-- `07_vision_prompt.md` — актуальная карта продукта, навыков A-K и реестр того,
-  что уже построено.
-- `05_method_to_mechanics.md` — методика -> механика приложения.
-- `03_spec_MVP.md` — спецификация MVP.
-- `02_concept.md` и `01_research_method.md` — концепция и исследование.
-- `04_design_system.md` — дизайн-система.
-- `06_monetization.md` — модель оплаты.
-
-## Запуск
-
-Установить зависимости:
+Install dependencies:
 
 ```bash
 npm install
@@ -90,16 +65,4 @@ Core tests:
 npm run test:unit
 ```
 
-## Текущая ветка
-
-Актуальная работа сейчас в ветке:
-
-```text
-feature/monorepo-split
-```
-
-GitHub:
-
-```text
-https://github.com/YGalina/Entensive-English/tree/feature/monorepo-split
-```
+Before changing Next.js code, read the relevant guide in `node_modules/next/dist/docs/` as required by `AGENTS.md`.

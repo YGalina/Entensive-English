@@ -31,6 +31,12 @@ build
 # Obsidian personal workspace/cache (portable vault settings remain tracked)
 .obsidian/workspace*.json
 .obsidian/cache/
+.obsidian/appearance.json
+
+# Local source deliveries and meeting recordings (accepted artifacts are
+# extracted into docs/ before commit; raw downloads stay outside the repo)
+/Intensive English *zip*
+/GMT*_Recording*
 
 # debug
 npm-debug.log*

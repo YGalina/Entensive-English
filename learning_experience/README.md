@@ -1,14 +1,15 @@
-# learning_experience/
+# Learning experience
 
-Learning Experience Architecture v1 (2026-07-13). Как ученик **проживает** систему во времени. Проектирование опыта — **не код** (заморожен, stop-condition).
+This layer translates the current methodology into the learner's lived journey without redefining scientific claims.
 
-Слои документации проекта:
-- `learning_architecture/` — **методика** (что работает по науке).
-- `product_system/` + `product_system/v2/` — **продукт** (как это устроено как система).
-- `learning_experience/` — **опыт** (как ученик это проживает день за днём). ← эта папка.
+Start with:
 
-**Начать с** `learning_experience_architecture_v1.md` (head + 15 ответов + конфликты).
+1. `experience_promise_and_principles.md` — experience promise and invariants.
+2. `learner_transformation_arc.md` — end-to-end learner journey.
+3. `daily_learning_engine.md` and `weekly_learning_rhythms.md` — daily and weekly orchestration.
+4. `training_block_architecture.md` — structure of a learning block.
+5. `experience_surface_map.md` — mapping to mobile, web, AI, live, and offline surfaces.
 
-Файлы: promise/principles · transformation_arc · daily_engine · weekly_rhythms · training_blocks · films_books_life · ai_relationship · human_community_journey · progress_experience · post_b2_lifestyle · surface_map · gap_audit · hypotheses_register · founder_decisions.
-
-Метки: [R] наука · [P] программа-прецедент · [H] гипотеза · [F] решение Галины · [U] неизвестно. Founder-идея ≠ доказательство; гипотезы не двигаем в факт без данных.
+Methodology source: `../learning_architecture/current/`.
+Product decisions: `../product_system/v2/`.
+Implementation reality: `../apps/` and `../packages/`.
