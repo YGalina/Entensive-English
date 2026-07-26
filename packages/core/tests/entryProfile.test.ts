@@ -74,6 +74,60 @@ test("profile from a previous path is ignored after integrity restart", () => {
   assert.equal(resolveEntryRoute().step.kind, "path-hub");
 });
 
+// ---- Read-back verification: a save counts only when storage proves it ----
+
+/** Storage that silently drops writes to the given keys (quota / private mode). */
+function droppingStorage(dropped: string[], seed: Record<string, string> = {}): StorageAdapter {
+  const m = new Map<string, string>(Object.entries(seed));
+  return {
+    getItem: (k) => m.get(k) ?? null,
+    setItem: (k, v) => {
+      if (dropped.includes(k)) return; // write silently lost
+      m.set(k, v);
+    },
+    subscribeExternal: () => () => {},
+  };
+}
+
+test("dropped active-path write fails the save", () => {
+  configureStorage(droppingStorage([ENTRY_KEYS.activePath]));
+  const res = saveProfile(SIGNS, "", 11);
+  assert.equal(res.ok, false);
+});
+
+test("dropped profile write fails even though an OLDER profile survives", () => {
+  // An older, still-readable profile must never be accepted as proof of the new write.
+  const stale = JSON.stringify({ signs: SIGNS, note: "старое", savedAt: 1, path: "p1" });
+  configureStorage(
+    droppingStorage([ENTRY_KEYS.profile], {
+      [ENTRY_KEYS.activePath]: "p1",
+      [ENTRY_KEYS.profile]: stale,
+      [ENTRY_KEYS.profilePath]: "p1",
+    }),
+  );
+  const res = saveProfile(SIGNS, "новое", 12);
+  assert.equal(res.ok, false);
+  // The stale profile is still there — which is exactly why presence is not proof.
+  assert.equal(storage().getItem(ENTRY_KEYS.profile), stale);
+});
+
+test("dropped profilePath write fails the save", () => {
+  configureStorage(droppingStorage([ENTRY_KEYS.profilePath], { [ENTRY_KEYS.activePath]: "p1" }));
+  const res = saveProfile(SIGNS, "", 13);
+  assert.equal(res.ok, false);
+});
+
+test("successful save is confirmed by exact read-back of all three keys", () => {
+  fresh();
+  const res = saveProfile(SIGNS, "заметка", 14);
+  assert.equal(res.ok, true);
+  if (!res.ok) return;
+  const active = storage().getItem(ENTRY_KEYS.activePath);
+  assert.equal(storage().getItem(ENTRY_KEYS.profile), JSON.stringify(res.profile));
+  assert.equal(storage().getItem(ENTRY_KEYS.profilePath), active);
+  assert.equal(res.profile.path, active);
+});
+
 test("saveProfile reports storage-unavailable honestly", () => {
   // Adapter whose writes are dropped (private mode / quota) → read-back fails.
   const failing: StorageAdapter = {

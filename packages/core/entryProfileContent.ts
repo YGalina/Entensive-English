@@ -40,6 +40,8 @@ export type SignQuestion = {
   options: { yes: string; no: string; insufficient: string };
   /** true — копирайт выведен инженерно и ждёт утверждения (см. шапку файла). */
   pendingRatification: boolean;
+  /** Известное методологическое возражение к этой формулировке, если есть. */
+  pendingNote?: string;
 };
 
 export const S3_QUESTIONS: readonly SignQuestion[] = [
@@ -56,6 +58,13 @@ export const S3_QUESTIONS: readonly SignQuestion[] = [
       insufficient: "Не могу оценить",
     },
     pendingRatification: true,
+    // Инженерная заметка (не решение): в текущем виде вопрос НЕ проверяет
+    // понимание СВЯЗНОГО текста — (а) показано одно предложение, а не абзац;
+    // (б) русский перевод виден сразу, поэтому ответить «да» можно, не читая
+    // по-английски. Замена методики — не инженерное решение: формулировку и
+    // способ проверки определяет владелец/Fable.
+    pendingNote:
+      "Не валиден как проверка понимания связного текста: одно предложение и сразу видимый перевод. Требуется решение владельца/Fable.",
   },
   {
     key: "s2",
@@ -128,7 +137,13 @@ export const S3_COPY = {
   noteSkipHint: "Можно оставить пустым.",
   save: "Сохранить и начать",
   saving: "Сохраняем…",
-  savedLocal: "Сохранено на этом устройстве.",
+  /**
+   * Обещание ДО сохранения (будущее время): где окажутся ответы, если сохранение
+   * пройдёт. Это не подтверждение записи. Подтверждения «сохранено» в UI нет
+   * вовсе: успешное сохранение сразу уводит в Path Hub, а неуспешное показывает
+   * честный отказ — придумывать сообщение об успехе не требуется и нельзя.
+   */
+  saveLocalHint: "Ответы сохранятся только на этом устройстве.",
   saveFailedTitle: "Не сохранилось",
   saveFailedLead: "Твои ответы остались на экране. Попробуй сохранить ещё раз.",
   saveFailedRetry: "Сохранить ещё раз",
@@ -147,7 +162,7 @@ export function s3CopyStrings(): string[] {
     S3_COPY.noteSkipHint,
     S3_COPY.save,
     S3_COPY.saving,
-    S3_COPY.savedLocal,
+    S3_COPY.saveLocalHint,
     S3_COPY.saveFailedTitle,
     S3_COPY.saveFailedLead,
     S3_COPY.saveFailedRetry,

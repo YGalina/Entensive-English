@@ -46,6 +46,14 @@ test("derived questions are explicitly flagged as pending ratification", () => {
   assert.deepEqual(derived, ["s1", "s2", "s4", "s5"]);
 });
 
+test("s1 carries its known methodological objection and stays unratified", () => {
+  const s1 = S3_QUESTIONS.find((q) => q.key === "s1");
+  assert.ok(s1);
+  assert.equal(s1.pendingRatification, true);
+  assert.ok(s1.pendingNote, "s1 must record why it is not yet a valid comprehension check");
+  assert.match(s1.pendingNote, /связного текста/);
+});
+
 test("all S3 learner-facing copy passes the copy firewall", () => {
   for (const s of s3CopyStrings()) {
     assert.ok(s, "empty copy string");
@@ -61,8 +69,19 @@ test("save-failure copy is honest and does not over-promise", () => {
   // Claims only what is technically true: the answers are still on screen.
   assert.match(S3_COPY.saveFailedLead, /остались на экране/);
   assert.ok(passesCopyFirewall(S3_COPY.saveFailedLead));
-  // Local save is described as local — no cloud/sync promise.
-  assert.match(S3_COPY.savedLocal, /на этом устройстве/);
+});
+
+test("pre-save hint promises local storage in the future tense, never claims a save", () => {
+  // Shown BEFORE saving: where answers will live if the write succeeds.
+  assert.match(S3_COPY.saveLocalHint, /сохранятся/);
+  assert.match(S3_COPY.saveLocalHint, /только на этом устройстве/);
+  // Must not read as confirmation that anything is already stored.
+  assert.doesNotMatch(S3_COPY.saveLocalHint, /Сохранено|сохранено/);
+  // No cloud/sync promise either.
+  assert.ok(passesCopyFirewall(S3_COPY.saveLocalHint));
+  // There is deliberately no "saved" confirmation string at all: success routes
+  // straight to Path Hub, so no success message can be fabricated.
+  assert.equal("savedLocal" in S3_COPY, false);
 });
 
 test("counter renders as N из 5", () => {

@@ -42,7 +42,9 @@ export default function ProfileEntry() {
 
   function goBack() {
     setFailed(false);
-    if (step === 0) router.back();
+    // На первом вопросе выход детерминированный: S2 входит сюда через replace(),
+    // поэтому router.back() не гарантирует возврат на узнавание.
+    if (step === 0) router.replace("/entry/recognition" as Href);
     else setStep((s) => s - 1);
   }
 
@@ -281,17 +283,21 @@ export default function ProfileEntry() {
               {failed ? S3_COPY.saveFailedRetry : S3_COPY.save}
             </Text>
           </Pressable>
-          <Text
-            style={{
-              fontFamily: "GolosText_400Regular",
-              fontSize: 14,
-              color: c.muted,
-              textAlign: "center",
-              marginTop: 10,
-            }}
-          >
-            {S3_COPY.savedLocal}
-          </Text>
+          {/* Обещание до сохранения; при отказе его не показываем — там честный
+              отказ выше. Подтверждения «сохранено» нет: успех сразу уводит в Path Hub. */}
+          {!failed && (
+            <Text
+              style={{
+                fontFamily: "GolosText_400Regular",
+                fontSize: 14,
+                color: c.muted,
+                textAlign: "center",
+                marginTop: 10,
+              }}
+            >
+              {S3_COPY.saveLocalHint}
+            </Text>
+          )}
         </View>
       )}
     </ScrollView>

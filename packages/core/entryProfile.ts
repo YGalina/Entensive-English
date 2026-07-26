@@ -62,14 +62,21 @@ export function saveProfile(signs: ProfileSigns, note: string, now: number = Dat
     s.setItem(ENTRY_KEYS.activePath, path);
   }
   const profile: LearnerProfile = { signs, note, savedAt: now, path };
-  s.setItem(ENTRY_KEYS.profile, JSON.stringify(profile));
+  const serialized = JSON.stringify(profile);
+  s.setItem(ENTRY_KEYS.profile, serialized);
   s.setItem(ENTRY_KEYS.profilePath, path);
 
-  // Проверяем, что запись действительно легла (приватный режим/квота/сбой).
-  const back = s.getItem(ENTRY_KEYS.profile);
-  if (back == null || s.getItem(ENTRY_KEYS.profilePath) !== path) {
-    return { ok: false, reason: "storage-unavailable" };
-  }
+  // Сохранение считается успешным ТОЛЬКО если чтение подтверждает все три факта.
+  // Присутствие какого-то профиля доказательством не считается: старая запись,
+  // пережившая сброшенную запись (приватный режим/квота), — это НЕ успех.
+  const backActive = s.getItem(ENTRY_KEYS.activePath);
+  // (1) активная траектория — та, в которую мы сохраняли;
+  if (backActive !== path) return { ok: false, reason: "storage-unavailable" };
+  // (2) прочитанный профиль ТОЧНО равен только что сериализованному;
+  if (s.getItem(ENTRY_KEYS.profile) !== serialized) return { ok: false, reason: "storage-unavailable" };
+  // (3) штамп профиля равен активной траектории.
+  if (s.getItem(ENTRY_KEYS.profilePath) !== backActive) return { ok: false, reason: "storage-unavailable" };
+
   return { ok: true, profile };
 }
 
