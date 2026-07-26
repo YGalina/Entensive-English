@@ -31,12 +31,14 @@ export default function ProfileEntry() {
   const [note, setNote] = useState(existing?.note ?? "");
   const [step, setStep] = useState(0); // 0..TOTAL-1 — вопросы, TOTAL — заметка
   const [failed, setFailed] = useState(false);
+  const [translationOpen, setTranslationOpen] = useState(false);
 
   const onNote = step >= TOTAL;
   const question = onNote ? null : S3_QUESTIONS[step];
 
   function answer(key: keyof ProfileSigns, value: SignAnswer) {
     setAnswers((prev) => ({ ...prev, [key]: value }));
+    setTranslationOpen(false);
     setStep((s) => s + 1);
   }
 
@@ -45,7 +47,10 @@ export default function ProfileEntry() {
     // На первом вопросе выход детерминированный: S2 входит сюда через replace(),
     // поэтому router.back() не гарантирует возврат на узнавание.
     if (step === 0) router.replace("/entry/recognition" as Href);
-    else setStep((s) => s - 1);
+    else {
+      setTranslationOpen(false);
+      setStep((s) => s - 1);
+    }
   }
 
   function save() {
@@ -158,9 +163,55 @@ export default function ProfileEntry() {
               <Text style={{ backgroundColor: c.amber }}>{question.english.highlight}</Text>
               {question.english.after}
             </Text>
-            <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, color: c.muted, marginTop: 10 }}>
-              {question.translation}
-            </Text>
+            {question.key === "s1" || question.key === "s2" ? (
+              <>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityState={{ expanded: translationOpen }}
+                  onPress={() => setTranslationOpen((open) => !open)}
+                  style={{
+                    minHeight: A11Y.minTouchTarget,
+                    marginTop: 10,
+                    borderTopWidth: 1,
+                    borderTopColor: c.brandSoft,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  <View
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 14,
+                      borderWidth: 1.5,
+                      borderColor: c.brand,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 12, color: c.brand }}>RU</Text>
+                  </View>
+                  <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 15, color: c.brand }}>
+                    {translationOpen ? "Скрыть перевод" : "Показать перевод"}
+                  </Text>
+                  {!translationOpen && (
+                    <Text style={{ flex: 1, fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted }}>
+                      {question.key === "s1" ? "— сначала попробуй без него" : "— если хочешь проверить себя"}
+                    </Text>
+                  )}
+                </Pressable>
+                {translationOpen && (
+                  <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.muted }}>
+                    {question.translation}
+                  </Text>
+                )}
+              </>
+            ) : (
+              <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, color: c.muted, marginTop: 10 }}>
+                {question.translation}
+              </Text>
+            )}
           </View>
 
           {/* Три равноправных ответа */}
@@ -250,9 +301,9 @@ export default function ProfileEntry() {
               style={{
                 marginTop: 18,
                 borderWidth: 1,
-                borderColor: c.line,
+                borderColor: c.rose,
                 borderRadius: radius.card,
-                backgroundColor: c.warnSoft,
+                backgroundColor: c.surface,
                 padding: 16,
               }}
             >

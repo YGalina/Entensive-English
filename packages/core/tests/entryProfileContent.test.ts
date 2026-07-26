@@ -41,17 +41,17 @@ test("the frozen question is reproduced verbatim from Batch A S3", () => {
   assert.equal(frozen.pendingRatification, false);
 });
 
-test("derived questions are explicitly flagged as pending ratification", () => {
-  const derived = S3_QUESTIONS.filter((q) => q.pendingRatification).map((q) => q.key);
-  assert.deepEqual(derived, ["s1", "s2", "s4", "s5"]);
+test("all five questions are owner-ratified", () => {
+  const pending = S3_QUESTIONS.filter((q) => q.pendingRatification).map((q) => q.key);
+  assert.deepEqual(pending, []);
 });
 
-test("s1 carries its known methodological objection and stays unratified", () => {
+test("s1 now checks connected text and has no unresolved objection", () => {
   const s1 = S3_QUESTIONS.find((q) => q.key === "s1");
   assert.ok(s1);
-  assert.equal(s1.pendingRatification, true);
-  assert.ok(s1.pendingNote, "s1 must record why it is not yet a valid comprehension check");
-  assert.match(s1.pendingNote, /связного текста/);
+  assert.equal(s1.pendingRatification, false);
+  assert.equal(s1.pendingNote, undefined);
+  assert.match(`${s1.english.before}${s1.english.highlight}${s1.english.after}`, /Then/);
 });
 
 test("all S3 learner-facing copy passes the copy firewall", () => {
@@ -73,8 +73,8 @@ test("save-failure copy is honest and does not over-promise", () => {
 
 test("pre-save hint promises local storage in the future tense, never claims a save", () => {
   // Shown BEFORE saving: where answers will live if the write succeeds.
-  assert.match(S3_COPY.saveLocalHint, /сохранятся/);
-  assert.match(S3_COPY.saveLocalHint, /только на этом устройстве/);
+  assert.match(S3_COPY.saveLocalHint, /останутся/);
+  assert.match(S3_COPY.saveLocalHint, /только на этом телефоне/);
   // Must not read as confirmation that anything is already stored.
   assert.doesNotMatch(S3_COPY.saveLocalHint, /Сохранено|сохранено/);
   // No cloud/sync promise either.
