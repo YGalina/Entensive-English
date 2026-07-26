@@ -35,9 +35,13 @@ Engineering implementation-readiness audit v1 completed at `docs/engineering/IMP
 
 Engineering PR 1 (Foundation / Product Shell Contracts) implemented per the audit's Slice 0 recommendation: shared Living Content UI primitive contract (`packages/tokens/primitives.ts`), frozen screen route registry with legacy pilot/guardian/streak/levelcheck routes marked not product-ready (`packages/core/routes.ts`), event categories with the progress-writer invariant (`packages/core/eventCategories.ts`), the read-only PathNextStep contract (`packages/core/pathNextStep.ts`), and a machine-checkable copy/semantic firewall (`packages/core/copyFirewall.ts` + `docs/engineering/COPY_SEMANTIC_FIREWALL_CHECKLIST.md`). Foundation tests pass (13/13) and the new modules typecheck clean. No full screens implemented; no frozen design or legacy code changed. Rebased onto the current branch tip (`f4d6009`).
 
+## Accepted
+
+PR 2 (S1 Entry/Resume Router + Path routing foundation) and its integrity-restart correction are **accepted**. Independent Codex review passed: exact commit `cca2dc1` verified, 115/115 repository tests passed, no blocking findings. The accepted line on `codex/recovery-integrity-freeze` is `cca2dc1`.
+
 ## Next task
 
-PR 1 Foundation is implemented; PR 2 (S1 Entry/Resume Router + Path routing foundation) is now implemented: `packages/core/entryRouting.ts` builds the read-only Path projection from local storage and wires it to `computeNextStep` (`resolveEntryRoute` → product route); a mobile `entry/` route group hosts the S1 router shell plus minimal product-safe stubs (recognition S2, path-hub S4, integrity-blocked + explicit restart-confirm from Recovery/Integrity, neutral coming-soon placeholder). Core tests 24/24 pass and core typechecks clean; no legacy route deleted, no frozen design changed, no payment provider. Mobile RN typecheck was not runnable in this worktree (no `node_modules`). Current step: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Entry full screens, which unlock the profile→path transition).
+**Active task: PR 3 (engineering) — not yet begun.** Scope: S2 Recognition; S3 Profile Entry; complete the profile → Path Hub transition. Mandatory acceptance criterion: the first ordinary path creates or obtains an active local path; saving S3 writes both `ie_profile` and `ie_profile_path`; `ie_profile_path` must equal `ie_active_path`; after saving, `resolveEntryRoute()` must route to Path Hub. Do not change frozen design. (Note: an interim PR 3 core that already satisfies this criterion was written last turn and is preserved off the accepted line on branch `interim/pr3-core-wip`; it must come through the normal review gate — it is not on the accepted branch.)
 
 ## Blockers
 

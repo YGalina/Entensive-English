@@ -2,12 +2,11 @@
 
 ## In progress
 
-- [ ] Codex review of PR 1 + PR 2 (foundation contracts and S1 entry/resume routing) for semantic leakage, event correctness and routing precedence.
+- [ ] **PR 3 (engineering) — ACTIVE, not yet begun:** S2 Recognition; S3 Profile Entry; complete the profile → Path Hub transition. Do not change frozen design. **Mandatory acceptance criterion:** (1) the first ordinary path creates or obtains an active local path; (2) saving S3 writes both `ie_profile` and `ie_profile_path`; (3) `ie_profile_path` must equal `ie_active_path`; (4) after saving, `resolveEntryRoute()` must route to Path Hub. Interim PR 3 core satisfying this is preserved off the accepted line on `interim/pr3-core-wip`; it must pass the normal review gate before it lands on the accepted branch.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
 
-- [ ] PR 3 (engineering): S2 Recognition + S3 Profile Entry full product screens (writes `ie_profile`, unlocking the entry-router profile→path-hub transition).
 - [ ] Owner decision FD-6: whether informed consent is required and where (human recruitment process vs. approved architecture amendment; no invented screen).
 - [ ] Owner decision FD-4: gender-neutral Russian by default vs. explicit positioning (no new entry control).
 - [ ] Owner decision: Evening Circle — future screen or drop (source exists, no approved screen; marked Future Extension in Batch 1).
@@ -16,6 +15,7 @@
 
 ## Completed
 
+- [x] **PR 2 + integrity-restart correction ACCEPTED** (independent Codex review of exact commit `cca2dc1`: 115/115 repository tests, no blocking findings). Accepted line on `codex/recovery-integrity-freeze` = `cca2dc1`.
 - [x] PR 2 (engineering): S1 Entry/Resume Router + Path routing foundation. `packages/core/entryRouting.ts` (read-only Path projection from storage → `computeNextStep` → product route; `ENTRY_KEYS`, `readPathState`, `routeForStep`, `resolveEntryRoute`, firewall-checked `ENTRY_COPY`); mobile `apps/mobile/src/app/entry/` route group (S1 router + S2/S4/integrity-blocked/restart-confirm/coming-soon stubs) and `apps/mobile/src/components/entry-ui.tsx` using PR 1 primitives; tests `packages/core/tests/entryRouting.test.ts` (11/11). No full session, no legacy deletion, no payment provider.
 - [x] PR 1 Foundation / Product Shell Contracts (engineering, on `f4d6009`): shared Living Content UI primitive contract (`packages/tokens/primitives.ts`); frozen screen route registry with legacy pilot/guardian/streak/levelcheck routes marked not product-ready (`packages/core/routes.ts`); event categories + progress-writer invariant (`packages/core/eventCategories.ts`); read-only PathNextStep contract (`packages/core/pathNextStep.ts`); machine-checkable copy/semantic firewall (`packages/core/copyFirewall.ts`, `docs/engineering/COPY_SEMANTIC_FIREWALL_CHECKLIST.md`); foundation tests `packages/core/tests/foundation.test.ts` (13/13). No full screens; no frozen design or legacy code changed.
 - [x] Engineering implementation-readiness audit v1 completed → `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`; verdict: partially ready, first implementation PR must be foundation/contracts before screen migration.
