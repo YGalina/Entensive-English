@@ -91,10 +91,17 @@ export const ENTRY_ROUTES = {
   "path-hub": "/entry/path-hub",
 } as const satisfies Record<NextStepKind, string>;
 
-export type ProductRoute = (typeof ENTRY_ROUTES)[NextStepKind];
+export type ProductRoute =
+  | (typeof ENTRY_ROUTES)[NextStepKind]
+  | "/entry/pretest"
+  | "/entry/assessment-wait";
 
 /** Маршрут для вычисленного шага. */
 export function routeForStep(step: PathNextStep): ProductRoute {
+  if (step.kind === "protocol-stage") {
+    if (step.screenId === "S7") return "/entry/pretest";
+    if (step.screenId === "S8") return "/entry/assessment-wait";
+  }
   return ENTRY_ROUTES[step.kind];
 }
 

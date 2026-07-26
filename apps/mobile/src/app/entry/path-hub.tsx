@@ -4,6 +4,8 @@ import { useRouter, type Href } from "expo-router";
 import { useMarina } from "@/theme";
 import { ENTRY_COPY } from "@ie/core/entryRouting";
 import { A11Y } from "@ie/tokens/primitives";
+import { setOpenAssessmentStage } from "@ie/core/entryAssessment";
+import { sliceState } from "@ie/core/slice";
 
 // S4 Path Hub — frozen Batch A implementation.
 // Orientation, not a dashboard: one primary next step. Practice-time facts and
@@ -31,6 +33,12 @@ export default function PathHub() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { c } = useMarina();
+  const pretestComplete = Boolean(sliceState().pretestAt);
+  const title = pretestComplete ? "Первая практика" : ENTRY_COPY.pathHubTitle;
+  const lead = pretestComplete
+    ? "Начнём с короткого контекста, затем вернём новые фразы из памяти."
+    : ENTRY_COPY.pathHubLead;
+  const cta = pretestComplete ? "Начать практику" : ENTRY_COPY.pathHubCta;
 
   return (
     <ScrollView
@@ -94,12 +102,12 @@ export default function PathHub() {
             marginTop: 12,
           }}
         >
-          {ENTRY_COPY.pathHubTitle}
+          {title}
         </Text>
         <Text
           style={{ fontFamily: "GolosText_400Regular", fontSize: 16, lineHeight: 24, color: c.muted, marginTop: 8 }}
         >
-          {ENTRY_COPY.pathHubLead}
+          {lead}
         </Text>
 
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
@@ -125,7 +133,14 @@ export default function PathHub() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={ENTRY_COPY.pathHubCta}
-          onPress={() => router.push("/entry/coming-soon" as Href)}
+          onPress={() => {
+            if (!pretestComplete) {
+              setOpenAssessmentStage("S7");
+              router.push("/entry/pretest" as Href);
+              return;
+            }
+            router.push("/entry/coming-soon" as Href);
+          }}
           style={{
             minHeight: 56,
             borderRadius: 16,
@@ -136,7 +151,7 @@ export default function PathHub() {
           }}
         >
           <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 17, color: c.onBrand }}>
-            {ENTRY_COPY.pathHubCta}
+            {cta}
           </Text>
         </Pressable>
       </View>
