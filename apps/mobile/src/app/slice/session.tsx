@@ -170,47 +170,26 @@ function PrimeStep({ plan, onNext }: { plan: SessionPlan; onNext: () => void }) 
   const { c } = useMarina();
   return (
     <>
-      <View style={{ gap: 8 }}>
-        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 27, lineHeight: 32, color: c.ink }}>
-          Три фразы на сегодня
-        </Text>
-        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 16, lineHeight: 24, color: c.muted }}>
-          Просто послушай. Заданий здесь нет.
-        </Text>
-      </View>
-      {plan.newItems.slice(0, 3).map((item) => (
-        <SliceCard key={item.id} tone="soft">
+      <SliceNote text="Единицы дня. Послушай каждую — заданий пока нет." />
+      {plan.newItems.map((item) => (
+        <SliceCard key={item.id}>
           <Pressable
             onPress={() => speakEnglish(item.en.replace(/…$/, ""), { rate: 0.9, interrupt: true })}
             accessibilityRole="button"
-            accessibilityLabel={`Прослушать: ${item.en}`}
-            style={{ minHeight: 48, flexDirection: "row", alignItems: "center", gap: 12 }}
+            style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
           >
-            <View style={{ flex: 1, gap: 6 }}>
-              <Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 22, lineHeight: 29, color: c.ink }}>
-                {item.en}
-              </Text>
-              <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, color: c.muted }}>
-                — {item.ru}
-              </Text>
-            </View>
-            <View
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 24,
-                backgroundColor: c.surface,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Ionicons name="play" size={18} color={c.ink} />
-            </View>
+            <Ionicons name="volume-medium" size={18} color={c.brand} />
+            <Text style={{ fontFamily: "Lora_700Bold", fontSize: 24, color: c.ink, flex: 1 }}>
+              {item.en}
+            </Text>
           </Pressable>
+          <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 14, color: c.muted }}>
+            {item.ru}
+          </Text>
+          {item.note && <SliceNote text={item.note} />}
         </SliceCard>
       ))}
-      <SliceNote text="Скоро эти фразы встретятся в тексте — и уже будут знакомы." />
-      <SliceBtn label="Дальше" onPress={onNext} />
+      <SliceBtn label="К тексту дня" onPress={onNext} />
     </>
   );
 }
