@@ -13,6 +13,7 @@
     "web:lint": "npm run lint --workspace @ie/web",
     "test:e2e": "npm run test:e2e --workspace @ie/web",
     "test:unit": "npm run test --workspace @ie/core",
+    "eval:s14": "npm run eval:s14 --workspace @ie/core",
     "agents:doctor": "bash scripts/agents/doctor.sh",
     "agents:smoke": "bash scripts/agents/smoke.sh",
     "agents:review": "bash scripts/agents/review.sh",
