@@ -8,7 +8,17 @@ import { useMarina } from "@/theme";
 // Общие кирпичи экранов Vertical Slice: шапка с назад, карточка, кнопки.
 // Пилотный контур намеренно самодостаточен и не трогает остальное приложение.
 
-export function SliceScreen({ title, children }: { title: string; children: ReactNode }) {
+export function SliceScreen({
+  title,
+  children,
+  onBack,
+  progress,
+}: {
+  title: string;
+  children: ReactNode;
+  onBack?: () => void;
+  progress?: { current: number; total: number };
+}) {
   const { c } = useMarina();
   const insets = useSafeAreaInsets();
   const router = useRouter();
@@ -25,7 +35,7 @@ export function SliceScreen({ title, children }: { title: string; children: Reac
         }}
       >
         <Pressable
-          onPress={() => router.back()}
+          onPress={onBack ?? (() => router.back())}
           accessibilityRole="button"
           accessibilityLabel="Назад"
           hitSlop={10}
@@ -42,8 +52,29 @@ export function SliceScreen({ title, children }: { title: string; children: Reac
         >
           <Ionicons name="chevron-back" size={20} color={c.ink} />
         </Pressable>
-        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 18, color: c.ink }}>{title}</Text>
+        <Text style={{ flex: 1, fontFamily: "GolosText_700Bold", fontSize: 17, color: c.ink }}>{title}</Text>
+        {progress && (
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.muted }}>
+            {progress.current} из {progress.total}
+          </Text>
+        )}
       </View>
+      {progress && (
+        <View style={{ flexDirection: "row", gap: 5, paddingHorizontal: 24, paddingBottom: 8 }}>
+          {Array.from({ length: progress.total }, (_, index) => (
+            <View
+              key={index}
+              style={{
+                flex: 1,
+                height: 5,
+                borderRadius: 4,
+                backgroundColor:
+                  index + 1 < progress.current ? c.ink : index + 1 === progress.current ? c.brand : c.line,
+              }}
+            />
+          ))}
+        </View>
+      )}
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: 16, paddingBottom: insets.bottom + 28, gap: 14 }}

@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] **PR 4 (engineering) — ACTIVE:** implement frozen S4 Path Hub as orientation, not a dashboard. Exactly one primary next step from `PathNextStep`; lateral repositories remain reachable without competing with it; honest wait/locked states; no pilot/Vertical Slice learner copy. Do not include S5 Daily Cycle in this PR.
+- [ ] **PR 6 (engineering) — ACTIVE:** S5 Daily Cycle + S14 Summary merge gate. Automatic CI, then device-level visual/keyboard/audio/resume QA. Frozen Batch C remains authoritative.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
