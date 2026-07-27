@@ -1,0 +1,42 @@
+name: Product quality gate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - codex/recovery-integrity-freeze
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install exact dependencies
+        run: npm ci
+
+      - name: Core unit tests
+        run: npm run test:unit
+
+      - name: Mobile TypeScript
+        run: npx tsc --noEmit -p apps/mobile/tsconfig.json
+
+      - name: Web production build
+        run: npm run web:build
+
+      - name: Deterministic S14 evaluation
+        run: npm run eval:s14

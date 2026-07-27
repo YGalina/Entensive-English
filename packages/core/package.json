@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "tsx --test tests/*.test.ts"
+    "test": "tsx --test tests/*.test.ts",
+    "eval:s14": "tsx evals/run-s14-baseline.ts"
   },
   "dependencies": {
     "ts-fsrs": "^5.4.1"
