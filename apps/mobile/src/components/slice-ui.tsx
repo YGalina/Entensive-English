@@ -40,8 +40,8 @@ export function SliceScreen({
           accessibilityLabel="Назад"
           hitSlop={10}
           style={({ pressed }) => ({
-            width: 38,
-            height: 38,
+            width: 44,
+            height: 44,
             borderRadius: 12,
             borderWidth: 1,
             borderColor: c.line,
@@ -123,7 +123,7 @@ export function SliceBtn({
       disabled={disabled}
       accessibilityRole="button"
       style={({ pressed }) => ({
-        minHeight: 50,
+        minHeight: 56,
         borderRadius: 14,
         alignItems: "center",
         justifyContent: "center",
@@ -151,7 +151,7 @@ export function SliceBtn({
 export function SliceNote({ text }: { text: string }) {
   const { c } = useMarina();
   return (
-    <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 12, lineHeight: 18, color: c.muted }}>
+    <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 21, color: c.muted }}>
       {text}
     </Text>
   );
