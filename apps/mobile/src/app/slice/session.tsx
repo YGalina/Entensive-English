@@ -1,17 +1,20 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Pressable, Text, TextInput, View } from "react-native";
+import { Alert, Pressable, Text, TextInput, View } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { sliceItem, type SliceItem, SLICE_TEXTS } from "@ie/core/data/slice";
 import {
   nextSessionPlan,
   startSession,
-  completeSession,
+  completeSessionGuarded,
   recordEncounter,
   recordRetrieval,
   recordProduction,
   recordVoiceArtifact,
   recordSummaryShown,
+  loadS5SessionDraft,
+  saveS5SessionDraft,
+  clearS5SessionDraft,
   itemFoundInText,
   detectFoundItems,
   productionSatisfied,
@@ -43,28 +46,66 @@ export default function SliceSession() {
   );
   const queue = useMemo(() => [...plan.newItems, ...reviewItems], [plan, reviewItems]);
   const dayText = plan.introDay ? SLICE_TEXTS.find((t) => t.day === plan.introDay) : undefined;
+  const restored = useMemo(() => loadS5SessionDraft(plan), [plan]);
 
-  const [step, setStep] = useState<Step>(plan.type === "intro" ? "prime" : "retrieve");
-  const [prodText, setProdText] = useState("");
-  const [foundIds, setFoundIds] = useState<string[]>([]);
+  const [step, setStep] = useState<Step>(restored?.step ?? (plan.type === "intro" ? "prime" : "retrieve"));
+  const [prodText, setProdText] = useState(restored?.productionText ?? "");
+  const [foundIds, setFoundIds] = useState<string[]>(restored?.foundIds ?? []);
+  const [retrieveIndex, setRetrieveIndex] = useState(restored?.retrieveIndex ?? 0);
+  const [retrievalInput, setRetrievalInput] = useState(restored?.retrievalInput ?? "");
 
-  const started = useRef(false);
+  const started = useRef(Boolean(restored?.startedEventId));
+  const startedEventId = useRef<string | null>(restored?.startedEventId ?? null);
   useEffect(() => {
     if (started.current) return;
     started.current = true;
-    startSession(plan);
+    startedEventId.current = startSession(plan).id;
     if (plan.type === "intro") recordEncounter(plan.newItems.map((i) => i.id), "prime");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!startedEventId.current) return;
+    saveS5SessionDraft(plan, {
+      step,
+      retrieveIndex,
+      retrievalInput,
+      productionText: prodText,
+      foundIds,
+      startedEventId: startedEventId.current,
+    });
+  }, [foundIds, plan, prodText, retrievalInput, retrieveIndex, step]);
+
+  const stepNumber: Record<Step, number> = {
+    prime: 1,
+    text: 2,
+    retrieve: 3,
+    produce: 4,
+    voice: 5,
+    summary: 6,
+  };
+
+  function exitSession() {
+    const leave = () => router.replace("/entry/path-hub");
+    if (step === "produce" && prodText.trim()) {
+      Alert.alert("Выйти?", "Черновик сохранён — продолжишь с этого места.", [
+        { text: "Остаться", style: "cancel" },
+        { text: "Выйти", onPress: leave },
+      ]);
+      return;
+    }
+    leave();
+  }
+
   return (
     <SliceScreen
-      title={
-        plan.type === "recovery"
-          ? "Вернуться с 5 минут"
-          : `Сессия ${plan.number} из 14`
-      }
+      title={plan.type === "recovery" ? "Мягкий возврат" : "Сессия дня"}
+      progress={{ current: stepNumber[step], total: 6 }}
+      onBack={exitSession}
     >
+      {restored && step === "produce" && (
+        <SliceNote text="Продолжаем. Твоя фраза ждёт на месте." />
+      )}
       {step === "prime" && (
         <PrimeStep plan={plan} onNext={() => setStep("text")} />
       )}
@@ -79,11 +120,22 @@ export default function SliceSession() {
         />
       )}
       {step === "retrieve" && (
-        <RetrieveStep queue={queue} onDone={() => setStep("produce")} />
+        <RetrieveStep
+          queue={queue}
+          initialIndex={retrieveIndex}
+          initialInput={retrievalInput}
+          onProgress={(index, input) => {
+            setRetrieveIndex(index);
+            setRetrievalInput(input);
+          }}
+          onDone={() => setStep("produce")}
+        />
       )}
       {step === "produce" && (
         <ProduceStep
           plan={plan}
+          initialText={prodText}
+          onDraft={setProdText}
           onDone={(text, ids) => {
             setProdText(text);
             setFoundIds(ids);
@@ -100,8 +152,11 @@ export default function SliceSession() {
           text={prodText}
           foundIds={foundIds}
           onFinish={() => {
-            completeSession(plan);
-            router.back();
+            const result = completeSessionGuarded(plan, startedEventId.current ?? "");
+            if (result.completed) {
+              clearS5SessionDraft();
+              router.replace("/entry/path-hub");
+            }
           }}
         />
       )}
@@ -115,26 +170,47 @@ function PrimeStep({ plan, onNext }: { plan: SessionPlan; onNext: () => void }) 
   const { c } = useMarina();
   return (
     <>
-      <SliceNote text="Единицы дня. Послушай каждую — заданий пока нет." />
-      {plan.newItems.map((item) => (
-        <SliceCard key={item.id}>
+      <View style={{ gap: 8 }}>
+        <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 27, lineHeight: 32, color: c.ink }}>
+          Три фразы на сегодня
+        </Text>
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 16, lineHeight: 24, color: c.muted }}>
+          Просто послушай. Заданий здесь нет.
+        </Text>
+      </View>
+      {plan.newItems.slice(0, 3).map((item) => (
+        <SliceCard key={item.id} tone="soft">
           <Pressable
             onPress={() => speakEnglish(item.en.replace(/…$/, ""), { rate: 0.9, interrupt: true })}
             accessibilityRole="button"
-            style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+            accessibilityLabel={`Прослушать: ${item.en}`}
+            style={{ minHeight: 48, flexDirection: "row", alignItems: "center", gap: 12 }}
           >
-            <Ionicons name="volume-medium" size={18} color={c.brand} />
-            <Text style={{ fontFamily: "Lora_700Bold", fontSize: 24, color: c.ink, flex: 1 }}>
-              {item.en}
-            </Text>
+            <View style={{ flex: 1, gap: 6 }}>
+              <Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 22, lineHeight: 29, color: c.ink }}>
+                {item.en}
+              </Text>
+              <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, color: c.muted }}>
+                — {item.ru}
+              </Text>
+            </View>
+            <View
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 24,
+                backgroundColor: c.surface,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name="play" size={18} color={c.ink} />
+            </View>
           </Pressable>
-          <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 14, color: c.muted }}>
-            {item.ru}
-          </Text>
-          {item.note && <SliceNote text={item.note} />}
         </SliceCard>
       ))}
-      <SliceBtn label="К тексту дня" onPress={onNext} />
+      <SliceNote text="Скоро эти фразы встретятся в тексте — и уже будут знакомы." />
+      <SliceBtn label="Дальше" onPress={onNext} />
     </>
   );
 }
@@ -210,10 +286,22 @@ function choicesFor(item: SliceItem, all: SliceItem[]): string[] {
   return [...opts].sort();
 }
 
-function RetrieveStep({ queue, onDone }: { queue: SliceItem[]; onDone: () => void }) {
+function RetrieveStep({
+  queue,
+  initialIndex,
+  initialInput,
+  onProgress,
+  onDone,
+}: {
+  queue: SliceItem[];
+  initialIndex: number;
+  initialInput: string;
+  onProgress: (index: number, input: string) => void;
+  onDone: () => void;
+}) {
   const { c } = useMarina();
-  const [qi, setQi] = useState(0);
-  const [input, setInput] = useState("");
+  const [qi, setQi] = useState(initialIndex);
+  const [input, setInput] = useState(initialInput);
   const [depth, setDepth] = useState<LadderDepth>(0);
   const [flash, setFlash] = useState<"ok" | "retry" | null>(null);
   const shownAt = useRef(Date.now());
@@ -233,7 +321,9 @@ function RetrieveStep({ queue, onDone }: { queue: SliceItem[]; onDone: () => voi
     setInput("");
     setDepth(0);
     setFlash(null);
-    setQi((v) => v + 1);
+    const nextIndex = qi + 1;
+    setQi(nextIndex);
+    onProgress(nextIndex, "");
   }
 
   function submit() {
@@ -304,6 +394,7 @@ function RetrieveStep({ queue, onDone }: { queue: SliceItem[]; onDone: () => voi
           value={input}
           onChangeText={(v) => {
             setInput(v);
+            onProgress(qi, v);
             if (flash === "retry") setFlash(null);
           }}
           placeholder="Напиши по-английски…"
@@ -347,13 +438,17 @@ function RetrieveStep({ queue, onDone }: { queue: SliceItem[]; onDone: () => voi
 
 function ProduceStep({
   plan,
+  initialText,
+  onDraft,
   onDone,
 }: {
   plan: SessionPlan;
+  initialText: string;
+  onDraft: (text: string) => void;
   onDone: (text: string, foundIds: string[]) => void;
 }) {
   const { c } = useMarina();
-  const [text, setText] = useState("");
+  const [text, setText] = useState(initialText);
   const [nudged, setNudged] = useState(false);
   const target = plan.production.itemId ? sliceItem(plan.production.itemId) : undefined;
 
@@ -385,7 +480,10 @@ function ProduceStep({
         </Text>
         <TextInput
           value={text}
-          onChangeText={setText}
+          onChangeText={(value) => {
+            setText(value);
+            onDraft(value);
+          }}
           placeholder="Напиши 1–3 предложения…"
           placeholderTextColor={c.muted}
           multiline
@@ -411,7 +509,13 @@ function ProduceStep({
             <SliceBtn kind="ghost" label="Оставить как есть" onPress={() => finish(true)} />
           </View>
         )}
-        <SliceBtn label="Готово" disabled={text.trim().length < 5} onPress={() => finish(false)} />
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 7 }}>
+          <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: c.accent }} />
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.muted }}>
+            Сохранено на устройстве
+          </Text>
+        </View>
+        <SliceBtn label="Сохранить и дальше" disabled={text.trim().length < 5} onPress={() => finish(false)} />
       </SliceCard>
     </>
   );
@@ -515,7 +619,7 @@ function SummaryStep({
     <>
       <SliceCard tone="soft">
         <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
-          Сегодня — твоими словами
+          Твоя фраза готова.
         </Text>
         <SliceNote text="Разбор — по твоему написанному ответу. Голос остаётся личным: мы его не анализируем." />
         {text.length > 0 && (
@@ -574,7 +678,8 @@ function SummaryStep({
         </SliceCard>
       )}
 
-      <SliceBtn label="Завершить сессию" onPress={onFinish} />
+      <SliceNote text="Это автоматический разбор написанного текста. Голосовая запись не анализировалась." />
+      <SliceBtn label="Вернуться к плану" onPress={onFinish} />
     </>
   );
 }

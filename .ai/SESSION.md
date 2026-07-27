@@ -45,7 +45,7 @@ Engineering PR 3 implemented S2 Recognition, S3 Profile Entry and the complete-p
 
 ## Next task
 
-**Active task: PR 4 (engineering) — S4 Path Hub.** Implement the frozen one-next-step Path Hub using `PathNextStep`; expose lateral repositories without competing with the primary action; preserve honest wait/locked states; do not reuse learner-facing pilot/Vertical Slice copy. Do not begin S5 Daily Cycle inside this PR.
+**Active task: PR 6 (engineering) — S5 Daily Cycle + S14 Summary merge gate.** Run GitHub automatic quality checks for `codex/pr6-daily-summary`, then perform device-level visual, keyboard, safe-exit/resume and audio lifecycle QA. Do not reopen frozen Batch C unless device evidence reveals a critical ambiguity.
 
 ## Blockers
 

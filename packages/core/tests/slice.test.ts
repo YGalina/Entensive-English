@@ -23,9 +23,11 @@ const {
   recordPilotEntry,
   finishPretest,
   recordRetrieval,
+  recordProduction,
   nextSessionPlan,
   startSession,
   completeSession,
+  completeSessionGuarded,
   needsRecovery,
   assessmentAvailable,
   sliceState,
@@ -220,6 +222,27 @@ test("recovery НЕ тратит программу", () => {
   assert.equal(after.introDone, before.introDone);
   assert.equal(after.recoveriesCompleted, 1);
   assert.equal(needsRecovery(), false);
+});
+
+test("product completion guard requires learning evidence and is one-shot", () => {
+  const plan = nextSessionPlan(true);
+  const started = startSession(plan);
+  const first = completeSessionGuarded(plan, started.id);
+  assert.equal(
+    first.completed ? "completed" : first.reason,
+    plan.reviewIds.length ? "missing-retrieval" : "missing-production"
+  );
+  if (plan.reviewIds.length) recordRetrieval(plan.reviewIds[0], 0);
+  assert.deepEqual(completeSessionGuarded(plan, started.id), {
+    completed: false,
+    reason: "missing-production",
+  });
+  recordProduction("main", "I have been working on this.", [], true);
+  assert.deepEqual(completeSessionGuarded(plan, started.id), { completed: true });
+  assert.deepEqual(completeSessionGuarded(plan, started.id), {
+    completed: false,
+    reason: "already-completed",
+  });
 });
 
 test("itemEvidence — только процесс", () => {

@@ -94,13 +94,17 @@ export const ENTRY_ROUTES = {
 export type ProductRoute =
   | (typeof ENTRY_ROUTES)[NextStepKind]
   | "/entry/pretest"
-  | "/entry/assessment-wait";
+  | "/entry/assessment-wait"
+  | "/entry/daily-session";
 
 /** Маршрут для вычисленного шага. */
 export function routeForStep(step: PathNextStep): ProductRoute {
   if (step.kind === "protocol-stage") {
     if (step.screenId === "S7") return "/entry/pretest";
     if (step.screenId === "S8") return "/entry/assessment-wait";
+  }
+  if (step.kind === "daily-cycle" && step.screenId === "S5") {
+    return "/entry/daily-session";
   }
   return ENTRY_ROUTES[step.kind];
 }

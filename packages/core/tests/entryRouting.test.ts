@@ -106,6 +106,13 @@ test("daily step with entitlement lock is projected, not gated", () => {
   assert.equal(step.locked, true);
 });
 
+test("implemented S5 daily step resolves to the product session route", () => {
+  fresh();
+  setProfile();
+  set(ENTRY_KEYS.dailyStep, "S5");
+  assert.equal(resolveEntryRoute().route, "/entry/daily-session");
+});
+
 test("readPathState reflects raw storage", () => {
   fresh();
   setProfile();

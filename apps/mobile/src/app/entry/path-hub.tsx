@@ -139,7 +139,7 @@ export default function PathHub() {
               router.push("/entry/pretest" as Href);
               return;
             }
-            router.push("/entry/coming-soon" as Href);
+            router.push("/entry/daily-session" as Href);
           }}
           style={{
             minHeight: 56,

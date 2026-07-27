@@ -42,6 +42,7 @@ export type SliceEvent = {
 const LOG_KEY = "ie_slice_log";
 const STATE_KEY = "ie_slice_state";
 const SRS_KEY = "ie_slice_srs";
+const S5_DRAFT_KEY = "ie_s5_draft";
 
 const listeners = new Set<() => void>();
 function notify() {
@@ -835,13 +836,113 @@ export function nextSessionPlan(recovery = false): SessionPlan {
 }
 
 export function startSession(plan: SessionPlan) {
-  logSlice("session-started", {
+  return logSlice("session-started", {
     type: plan.type,
     number: plan.number,
     introDay: plan.introDay,
     newItems: plan.newItems.map((i) => i.id),
     reviewIds: plan.reviewIds,
   });
+}
+
+export type S5DraftStep = "prime" | "text" | "retrieve" | "produce" | "voice" | "summary";
+
+export type S5SessionDraft = {
+  version: 1;
+  activePath: string;
+  sessionNumber: number;
+  sessionType: SessionPlan["type"];
+  introDay?: number;
+  step: S5DraftStep;
+  retrieveIndex: number;
+  retrievalInput: string;
+  productionText: string;
+  foundIds: string[];
+  startedEventId: string;
+  updatedAt: number;
+};
+
+function samePlan(draft: S5SessionDraft, plan: SessionPlan): boolean {
+  return (
+    draft.sessionNumber === plan.number &&
+    draft.sessionType === plan.type &&
+    draft.introDay === plan.introDay
+  );
+}
+
+export function loadS5SessionDraft(plan: SessionPlan): S5SessionDraft | null {
+  const raw = storage().getItem(S5_DRAFT_KEY);
+  if (!raw) return null;
+  try {
+    const draft = JSON.parse(raw) as S5SessionDraft;
+    const activePath = storage().getItem("ie_active_path") ?? "";
+    if (
+      draft.version !== 1 ||
+      !draft.startedEventId ||
+      draft.activePath !== activePath ||
+      !samePlan(draft, plan)
+    ) {
+      return null;
+    }
+    return draft;
+  } catch {
+    return null;
+  }
+}
+
+export function saveS5SessionDraft(
+  plan: SessionPlan,
+  value: Omit<S5SessionDraft, "version" | "activePath" | "sessionNumber" | "sessionType" | "introDay" | "updatedAt">
+): boolean {
+  const draft: S5SessionDraft = {
+    version: 1,
+    activePath: storage().getItem("ie_active_path") ?? "",
+    sessionNumber: plan.number,
+    sessionType: plan.type,
+    introDay: plan.introDay,
+    ...value,
+    updatedAt: nowMs(),
+  };
+  const encoded = JSON.stringify(draft);
+  storage().setItem(S5_DRAFT_KEY, encoded);
+  return storage().getItem(S5_DRAFT_KEY) === encoded;
+}
+
+export function clearS5SessionDraft(): void {
+  storage().setItem(S5_DRAFT_KEY, "");
+}
+
+export type CompleteSessionGuardResult =
+  | { completed: true }
+  | { completed: false; reason: "missing-retrieval" | "missing-production" | "already-completed" | "unknown-session" };
+
+/**
+ * Product S5 completion guard. A safe exit is never a completed curriculum
+ * session. The legacy `completeSession` mutation remains the single writer,
+ * while this boundary proves the minimum evidence since this exact start event.
+ */
+export function completeSessionGuarded(
+  plan: SessionPlan,
+  startedEventId: string
+): CompleteSessionGuardResult {
+  const log = readLog();
+  const startIndex = log.findIndex(
+    (event) => event.id === startedEventId && event.type === "session-started"
+  );
+  if (startIndex < 0) return { completed: false, reason: "unknown-session" };
+  const afterStart = log.slice(startIndex + 1);
+  if (afterStart.some((event) => event.type === "session-completed")) {
+    return { completed: false, reason: "already-completed" };
+  }
+  const needsRetrieval = plan.type !== "recovery" || plan.reviewIds.length > 0;
+  if (needsRetrieval && !afterStart.some((event) => event.type === "retrieval-attempt")) {
+    return { completed: false, reason: "missing-retrieval" };
+  }
+  if (!afterStart.some((event) => event.type === "production-submitted")) {
+    return { completed: false, reason: "missing-production" };
+  }
+  completeSession(plan);
+  return { completed: true };
 }
 
 export function completeSession(plan: SessionPlan) {
