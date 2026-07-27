@@ -92,8 +92,9 @@ test("recovery flag routes to recovery step", () => {
   fresh();
   setProfile();
   set(ENTRY_KEYS.recoveryNeeded);
-  const { step } = resolveEntryRoute();
+  const { step, route } = resolveEntryRoute();
   assert.equal(step.kind, "recovery");
+  assert.equal(route, "/entry/recovery");
 });
 
 test("daily step with entitlement lock is projected, not gated", () => {

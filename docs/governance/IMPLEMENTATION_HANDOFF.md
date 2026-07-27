@@ -21,6 +21,16 @@
 
 Only these packages may govern implementation. Historical Living Content files remain visual references and do not override frozen screen specifications.
 
+## Mandatory visual implementation gate
+
+Every visual implementation PR must identify the exact Claude Design / Fable
+project page and frozen repository export it implements. Codex may inspect the
+implementation and report design-parity findings, but its design QA is
+read-only: Codex must not make visual corrections. Any visual correction returns
+to Claude Design / Fable, then to the product owner for approval. A PR containing
+learner-facing screens must not merge until the product owner has reviewed and
+approved the live implementation preview.
+
 - Engineering implementation-readiness audit: `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Implementation foundation (engineering PR 1)
@@ -104,3 +114,13 @@ GitHub Actions passed. Automated device-sized browser QA at 390×844 covered the
 Physical-device microphone permission/interruption testing remains a release check because no Android/iOS device was attached to this environment; it does not invalidate the merged storage and UI contracts.
 
 Next implementation task: S6 Recovery product route and states from the frozen Recovery/Integrity package. Recovery must never consume a curriculum session.
+
+## Implementation PR 7 (S6 Recovery) — active
+
+Exact visual source: Claude Design / Fable page `Recovery + Integrity v1`;
+frozen export `docs/design/exports/recovery-integrity-v1/`.
+
+Scope: S4 Recovery state, S6 due and zero-due flows, exact-phase local resume,
+optional voice, deterministic return to Path. Recovery never consumes or creates
+a curriculum session. Stop at the live product-owner preview gate; do not merge
+before approval.

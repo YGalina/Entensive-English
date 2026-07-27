@@ -2,10 +2,10 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter, type Href } from "expo-router";
 import { useMarina } from "@/theme";
-import { ENTRY_COPY } from "@ie/core/entryRouting";
+import { ENTRY_COPY, readPathState } from "@ie/core/entryRouting";
 import { A11Y } from "@ie/tokens/primitives";
 import { setOpenAssessmentStage } from "@ie/core/entryAssessment";
-import { sliceState } from "@ie/core/slice";
+import { nextSessionPlan, sliceState } from "@ie/core/slice";
 
 // S4 Path Hub — frozen Batch A implementation.
 // Orientation, not a dashboard: one primary next step. Practice-time facts and
@@ -34,11 +34,26 @@ export default function PathHub() {
   const insets = useSafeAreaInsets();
   const { c } = useMarina();
   const pretestComplete = Boolean(sliceState().pretestAt);
-  const title = pretestComplete ? "Первая практика" : ENTRY_COPY.pathHubTitle;
-  const lead = pretestComplete
+  const recovery = pretestComplete && readPathState().recoveryNeeded;
+  const recoveryHasDue = recovery && nextSessionPlan(true).reviewIds.length > 0;
+  const title = recovery
+    ? recoveryHasDue
+      ? "Вернём то, что уже было твоим"
+      : "Одна своя фраза — и ты в ритме"
+    : pretestComplete ? "Первая практика" : ENTRY_COPY.pathHubTitle;
+  const lead = recovery
+    ? recoveryHasDue
+      ? "Несколько знакомых фраз и одна своя. Всё на месте."
+      : "Сегодня возвращать нечего — начнём сразу с твоей фразы."
+    : pretestComplete
     ? "Начнём с короткого контекста, затем вернём новые фразы из памяти."
     : ENTRY_COPY.pathHubLead;
-  const cta = pretestComplete ? "Начать практику" : ENTRY_COPY.pathHubCta;
+  const cta = recovery ? "Вернуться к практике" : pretestComplete ? "Начать практику" : ENTRY_COPY.pathHubCta;
+  const chips = recovery
+    ? recoveryHasDue
+      ? ["до 8 знакомых фраз", "около 5 минут", "Программа не расходуется"]
+      : ["одна своя фраза", "пара минут", "Программа не расходуется"]
+    : ["28 коротких фраз", "около 15 минут"];
 
   return (
     <ScrollView
@@ -61,7 +76,7 @@ export default function PathHub() {
           marginTop: 4,
         }}
       >
-        {greeting()}
+        {recovery ? "С возвращением" : greeting()}
       </Text>
 
       <View
@@ -89,7 +104,7 @@ export default function PathHub() {
               color: c.brand,
             }}
           >
-            {ENTRY_COPY.pathHubKicker}
+            {recovery ? "СЕГОДНЯ · КОРОТКИЙ ВОЗВРАТ" : ENTRY_COPY.pathHubKicker}
           </Text>
         </View>
         <Text
@@ -111,12 +126,12 @@ export default function PathHub() {
         </Text>
 
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
-          {["28 коротких фраз", "около 15 минут"].map((label) => (
+          {chips.map((label) => (
             <View key={label} style={{ borderRadius: 999, paddingVertical: 8, paddingHorizontal: 14, backgroundColor: c.brandSoft }}>
               <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.brandInk }}>{label}</Text>
             </View>
           ))}
-          <View
+          {!recovery && <View
             style={{
               borderRadius: 999,
               paddingVertical: 8,
@@ -127,7 +142,7 @@ export default function PathHub() {
             <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.accentD }}>
               Можно отвечать «Не помню»
             </Text>
-          </View>
+          </View>}
         </View>
 
         <Pressable
@@ -137,6 +152,10 @@ export default function PathHub() {
             if (!pretestComplete) {
               setOpenAssessmentStage("S7");
               router.push("/entry/pretest" as Href);
+              return;
+            }
+            if (recovery) {
+              router.push("/entry/recovery?mode=recovery" as Href);
               return;
             }
             router.push("/entry/daily-session" as Href);
@@ -154,6 +173,18 @@ export default function PathHub() {
             {cta}
           </Text>
         </Pressable>
+        {recovery && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Начать обычную полную сессию"
+            onPress={() => router.push("/entry/daily-session" as Href)}
+            style={{ minHeight: A11Y.minTouchTarget, alignItems: "center", justifyContent: "center", marginTop: 8 }}
+          >
+            <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.muted }}>
+              Хочу обычную полную сессию ›
+            </Text>
+          </Pressable>
+        )}
       </View>
 
       <View

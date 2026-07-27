@@ -47,8 +47,15 @@ export default function SliceSession() {
   const queue = useMemo(() => [...plan.newItems, ...reviewItems], [plan, reviewItems]);
   const dayText = plan.introDay ? SLICE_TEXTS.find((t) => t.day === plan.introDay) : undefined;
   const restored = useMemo(() => loadS5SessionDraft(plan), [plan]);
+  const recoveryHasDue = recovery && queue.length > 0;
+  const recoverySteps: Step[] = recoveryHasDue
+    ? ["retrieve", "produce", "voice", "summary"]
+    : ["produce", "voice", "summary"];
+  const initialStep: Step = recovery
+    ? (recoveryHasDue ? "retrieve" : "produce")
+    : (plan.type === "intro" ? "prime" : "retrieve");
 
-  const [step, setStep] = useState<Step>(restored?.step ?? (plan.type === "intro" ? "prime" : "retrieve"));
+  const [step, setStep] = useState<Step>(restored?.step ?? initialStep);
   const [prodText, setProdText] = useState(restored?.productionText ?? "");
   const [foundIds, setFoundIds] = useState<string[]>(restored?.foundIds ?? []);
   const [retrieveIndex, setRetrieveIndex] = useState(restored?.retrieveIndex ?? 0);
@@ -84,6 +91,12 @@ export default function SliceSession() {
     voice: 5,
     summary: 6,
   };
+  const displayedProgress = recovery
+    ? {
+        current: Math.max(1, recoverySteps.indexOf(step) + 1),
+        total: recoverySteps.length,
+      }
+    : { current: stepNumber[step], total: 6 };
 
   function exitSession() {
     const leave = () => router.replace("/entry/path-hub");
@@ -99,12 +112,15 @@ export default function SliceSession() {
 
   return (
     <SliceScreen
-      title={plan.type === "recovery" ? "Мягкий возврат" : "Сессия дня"}
-      progress={{ current: stepNumber[step], total: 6 }}
+      title={plan.type === "recovery" ? "Короткий возврат" : "Сессия дня"}
+      progress={displayedProgress}
       onBack={exitSession}
     >
       {restored && step === "produce" && (
         <SliceNote text="Продолжаем. Твоя фраза ждёт на месте." />
+      )}
+      {recovery && !recoveryHasDue && step === "produce" && !restored && (
+        <SliceNote text="Сегодня без возврата — сразу своя фраза." />
       )}
       {step === "prime" && (
         <PrimeStep plan={plan} onNext={() => setStep("text")} />
@@ -134,6 +150,7 @@ export default function SliceSession() {
       {step === "produce" && (
         <ProduceStep
           plan={plan}
+          recovery={recovery}
           initialText={prodText}
           onDraft={setProdText}
           onDone={(text, ids) => {
@@ -417,11 +434,13 @@ function RetrieveStep({
 
 function ProduceStep({
   plan,
+  recovery,
   initialText,
   onDraft,
   onDone,
 }: {
   plan: SessionPlan;
+  recovery: boolean;
   initialText: string;
   onDraft: (text: string) => void;
   onDone: (text: string, foundIds: string[]) => void;
@@ -452,10 +471,10 @@ function ProduceStep({
     <>
       <SliceCard>
         <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>
-          Теперь — о тебе
+          {recovery ? "Что изменилось за эти дни? Расскажи одной фразой." : "Теперь — о тебе"}
         </Text>
         <Text style={{ fontFamily: "GolosText_500Medium", fontSize: 15, lineHeight: 22, color: c.ink }}>
-          {plan.production.ru}
+          {!recovery && plan.production.ru}
         </Text>
         <TextInput
           value={text}
@@ -463,7 +482,7 @@ function ProduceStep({
             setText(value);
             onDraft(value);
           }}
-          placeholder="Напиши 1–3 предложения…"
+          placeholder={recovery ? "Напиши по-английски — как получится" : "Напиши 1–3 предложения…"}
           placeholderTextColor={c.muted}
           multiline
           autoCapitalize="sentences"

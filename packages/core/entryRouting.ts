@@ -14,6 +14,7 @@
 import { storage } from "./storage";
 import { computeNextStep, type PathState, type PathNextStep, type NextStepKind } from "./pathNextStep";
 import { SCREENS, type ScreenId } from "./routes";
+import { needsRecovery } from "./slice";
 
 /** Ключи хранилища, читаемые роутером входа (write — в будущих PR). */
 export const ENTRY_KEYS = {
@@ -70,7 +71,7 @@ export function readPathState(): PathState {
     hasProfile: hasActiveProfile(),
     hasResumableDraft: flag(ENTRY_KEYS.resumeDraft),
     openProtocolStage: asScreenId(storage().getItem(ENTRY_KEYS.openProtocolStage)),
-    recoveryNeeded: flag(ENTRY_KEYS.recoveryNeeded),
+    recoveryNeeded: flag(ENTRY_KEYS.recoveryNeeded) || needsRecovery(),
     dailyStep: asScreenId(storage().getItem(ENTRY_KEYS.dailyStep)),
     dailyStepLocked: flag(ENTRY_KEYS.dailyStepLocked),
   };
@@ -86,7 +87,7 @@ export const ENTRY_ROUTES = {
   onboarding: "/entry/recognition",
   "resume-draft": "/entry/coming-soon",
   "protocol-stage": "/entry/coming-soon",
-  recovery: "/entry/coming-soon",
+  recovery: "/entry/recovery",
   "daily-cycle": "/entry/coming-soon",
   "path-hub": "/entry/path-hub",
 } as const satisfies Record<NextStepKind, string>;
@@ -95,7 +96,8 @@ export type ProductRoute =
   | (typeof ENTRY_ROUTES)[NextStepKind]
   | "/entry/pretest"
   | "/entry/assessment-wait"
-  | "/entry/daily-session";
+  | "/entry/daily-session"
+  | "/entry/recovery";
 
 /** Маршрут для вычисленного шага. */
 export function routeForStep(step: PathNextStep): ProductRoute {

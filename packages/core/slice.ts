@@ -798,9 +798,8 @@ export function nextSessionPlan(recovery = false): SessionPlan {
       reviewIds: dueSliceItemIds(8),
       production: {
         kind: "main",
-        ru: SLICE_MAIN_PROMPT.ru,
+        ru: "Что изменилось за эти дни? Расскажи одной фразой.",
         lemmas: [],
-        grammar: SLICE_MAIN_PROMPT.grammar,
       },
     };
   }
@@ -951,6 +950,7 @@ export function completeSession(plan: SessionPlan) {
     // Возврат НЕ тратит программу: счётчик сессий и дни введения не двигаются
     // (код-ревью §1). Обновляется только «когда была последняя практика».
     s.recoveriesCompleted = (s.recoveriesCompleted ?? 0) + 1;
+    storage().setItem("ie_recovery_needed", "0");
   } else {
     s.sessionsCompleted = Math.min(s.sessionsCompleted + 1, SLICE_TOTAL_SESSIONS);
     if (plan.type === "intro") s.introDone = Math.min(s.introDone + 1, 5);

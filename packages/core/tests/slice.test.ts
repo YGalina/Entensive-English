@@ -117,6 +117,15 @@ test("трансформации и main-промпт: слабые услови
   assert.equal(productionSatisfied(plan, "I've been working on two projects."), true);
 });
 
+test("recovery plan uses only due review and always permits one personal phrase", () => {
+  const plan = nextSessionPlan(true);
+  assert.equal(plan.type, "recovery");
+  assert.equal(plan.newItems.length, 0);
+  assert.ok(plan.reviewIds.length <= 8);
+  assert.equal(plan.production.ru, "Что изменилось за эти дни? Расскажи одной фразой.");
+  assert.equal(productionSatisfied(plan.production, "I started a new project."), true);
+});
+
 test("детект и проверка ответов: пуры", () => {
   const found = detectFoundItems("I've been working on a big report. We met the deadline.").map((i) => i.id);
   assert.ok(found.includes("frame-working-on"));

@@ -45,9 +45,20 @@ Engineering PR 3 implemented S2 Recognition, S3 Profile Entry and the complete-p
 
 Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-path-scoped local draft recovery, safe exit/resume, six-phase progress, accessible touch targets and the approved three-phrase priming screen. Automated browser QA at 390×844 verified the complete S5→S14 flow, exact phase-4 draft recovery after reload, visible actions and no horizontal overflow or React console errors. Core tests passed 144/144; mobile TypeScript, web production build and S14 evaluation (16/16) passed locally and in GitHub Actions. PR #7 merged as `96bfe95`.
 
+Engineering PR 7 implementation is prepared on `codex/pr7-recovery`: S4
+Recovery state, S6 due and zero-due paths, 4/3-step progress, exact-phase local
+resume, optional voice and deterministic return to Path. Recovery completion
+clears its route projection but never consumes a curriculum session. Core tests
+pass 145/145; mobile TypeScript and S14 evaluation 16/16 pass. The branch is
+stopped at the mandatory live product-owner preview gate and must not merge
+before approval.
+
 ## Next task
 
-**Active task: PR 7 (engineering) — S6 Recovery product route and states.** Implement the frozen Recovery/Integrity package without consuming curriculum sessions. Cover normal due review, zero-due recovery and deterministic return to Path Hub. Reuse the accepted integrity boundary; do not reopen frozen design.
+**Active gate: PR 7 owner preview.** Review the live S4/S6 implementation
+against Claude Design / Fable page `Recovery + Integrity v1`. Codex design QA is
+read-only. If a visual correction is needed, return it to Fable; do not correct
+the visual in code. Merge only after owner approval.
 
 ## Blockers
 

@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] **PR 7 (engineering) — ACTIVE:** S6 Recovery product route and states. Normal due review and zero-due recovery; no curriculum consumption; deterministic return to Path Hub. Frozen Recovery/Integrity package remains authoritative.
+- [ ] **PR 7 owner gate — ACTIVE:** S6 Recovery implementation prepared on `codex/pr7-recovery`; 145/145 core, mobile TypeScript and S14 16/16 pass. Review live S4/S6 against Fable `Recovery + Integrity v1`; no merge before owner approval. Codex QA is read-only and any visual correction returns to Fable.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
