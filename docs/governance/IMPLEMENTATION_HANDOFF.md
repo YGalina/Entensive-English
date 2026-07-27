@@ -85,7 +85,7 @@ Next gate: independent review of the implementation commit, then PR 6 implements
 
 Independent review of `36e108a` found only implementation-level corrections: keyboard avoidance on S7, S8 direct-route guards, Russian remaining-count forms and accessible progress semantics. These are applied in the follow-up correction; no Claude/Fable input or architecture change was required.
 
-## Implementation PR 6 (S5 Daily Cycle + S14 Summary) — merge candidate
+## Implementation PR 6 (S5 Daily Cycle + S14 Summary) — accepted and merged
 
 Branch: `codex/pr6-daily-summary`.
 
@@ -99,4 +99,8 @@ Branch: `codex/pr6-daily-summary`.
 
 Checks: core 144/144; mobile TypeScript clean; S14 baseline 16/16; web production build passed; `git diff --check` clean.
 
-Next gate: GitHub automatic quality gate, then device-level visual/keyboard/audio QA. No Claude/Fable input is required unless device QA reveals a genuine ambiguity in the frozen Batch C package.
+GitHub Actions passed. Automated device-sized browser QA at 390×844 covered the complete S5→S14 path, phase-4 reload/resume, visible actions, touch-target corrections, horizontal overflow and React console errors. PR #7 merged as `96bfe95`.
+
+Physical-device microphone permission/interruption testing remains a release check because no Android/iOS device was attached to this environment; it does not invalidate the merged storage and UI contracts.
+
+Next implementation task: S6 Recovery product route and states from the frozen Recovery/Integrity package. Recovery must never consume a curriculum session.

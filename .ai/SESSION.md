@@ -1,6 +1,6 @@
 # Current Project Session
 
-Last updated: 2026-07-26
+Last updated: 2026-07-27
 
 ## Phase
 
@@ -43,9 +43,11 @@ PR 2 (S1 Entry/Resume Router + Path routing foundation) and its integrity-restar
 
 Engineering PR 3 implemented S2 Recognition, S3 Profile Entry and the complete-profile → Path Hub transition. Owner-ratified S3 copy and translation states are frozen in `docs/design/exports/s3-copy-ratification-v3/`. Commit `09436bf` passed 135/135 core unit tests and mobile TypeScript. GitHub review: PR #4.
 
+Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-path-scoped local draft recovery, safe exit/resume, six-phase progress, accessible touch targets and the approved three-phrase priming screen. Automated browser QA at 390×844 verified the complete S5→S14 flow, exact phase-4 draft recovery after reload, visible actions and no horizontal overflow or React console errors. Core tests passed 144/144; mobile TypeScript, web production build and S14 evaluation (16/16) passed locally and in GitHub Actions. PR #7 merged as `96bfe95`.
+
 ## Next task
 
-**Active task: PR 6 (engineering) — S5 Daily Cycle + S14 Summary merge gate.** Run GitHub automatic quality checks for `codex/pr6-daily-summary`, then perform device-level visual, keyboard, safe-exit/resume and audio lifecycle QA. Do not reopen frozen Batch C unless device evidence reveals a critical ambiguity.
+**Active task: PR 7 (engineering) — S6 Recovery product route and states.** Implement the frozen Recovery/Integrity package without consuming curriculum sessions. Cover normal due review, zero-due recovery and deterministic return to Path Hub. Reuse the accepted integrity boundary; do not reopen frozen design.
 
 ## Blockers
 

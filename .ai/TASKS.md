@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] **PR 6 (engineering) — ACTIVE:** S5 Daily Cycle + S14 Summary merge gate. Automatic CI, then device-level visual/keyboard/audio/resume QA. Frozen Batch C remains authoritative.
+- [ ] **PR 7 (engineering) — ACTIVE:** S6 Recovery product route and states. Normal due review and zero-due recovery; no curriculum consumption; deterministic return to Path Hub. Frozen Recovery/Integrity package remains authoritative.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
@@ -15,6 +15,7 @@
 
 ## Completed
 
+- [x] **PR 6 engineering — S5 Daily Cycle + S14 Summary:** active-path-scoped local draft recovery; six-phase progress; safe exit/resume; accessible 44px/56px controls; approved three-phrase priming; complete 390×844 browser QA with reload/resume and no overflow/console errors. Core 144/144, mobile TypeScript, web build and S14 evaluation 16/16 passed locally and in GitHub Actions. PR #7 merged as `96bfe95`.
 - [x] **PR 3 engineering + S3 copy ratification:** S2 Recognition; S3 Profile Entry; profile bound to active local path; complete profile routes to Path Hub; owner-approved S3 copy and hidden translation states frozen in `docs/design/exports/s3-copy-ratification-v3/`. Commit `09436bf`; 135/135 core tests and mobile TypeScript passed; GitHub PR #4.
 - [x] **PR 2 + integrity-restart correction ACCEPTED** (independent Codex review of exact commit `cca2dc1`: 115/115 repository tests, no blocking findings). Accepted line on `codex/recovery-integrity-freeze` = `cca2dc1`.
 - [x] PR 2 (engineering): S1 Entry/Resume Router + Path routing foundation. `packages/core/entryRouting.ts` (read-only Path projection from storage → `computeNextStep` → product route; `ENTRY_KEYS`, `readPathState`, `routeForStep`, `resolveEntryRoute`, firewall-checked `ENTRY_COPY`); mobile `apps/mobile/src/app/entry/` route group (S1 router + S2/S4/integrity-blocked/restart-confirm/coming-soon stubs) and `apps/mobile/src/components/entry-ui.tsx` using PR 1 primitives; tests `packages/core/tests/entryRouting.test.ts` (11/11). No full session, no legacy deletion, no payment provider.
