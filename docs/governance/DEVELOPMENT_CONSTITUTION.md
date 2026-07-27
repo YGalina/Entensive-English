@@ -20,11 +20,11 @@ Owns UX logic, flows, interaction copy and specification maintenance within appr
 
 ### Claude Design / Fable — Creative Director
 
-Owns art direction, composition, typography application, imagery, motion language, component expression and the emotional character of the interface **within the existing Living Content design language**. The canonical visual sources are `docs/design/project/Intensive English - Design System.dc.html`, `packages/tokens/index.ts`, and approved examples in `docs/design/project/slices-v2/`. Claude Design may extend the system for new screens and propose controlled improvements, but it may not replace the established visual identity, palette or type system without an explicit owner-approved visual decision. It must preserve frozen product behaviour, learning methodology, required states and accessibility constraints. Final visual approval belongs to the product owner.
+Owns all visual design and all visual corrections: art direction, composition, typography application, imagery, motion language, component expression and the emotional character of the interface **within the existing Living Content design language**. Work continues as pages inside the existing `Intensive English дизайн-система` Claude Design project. The canonical visual sources are `docs/design/project/Intensive English - Design System.dc.html`, `packages/tokens/index.ts`, and approved examples in `docs/design/project/slices-v2/`. Claude Design may extend the system for new screens and propose controlled improvements, but it may not replace the established visual identity, palette or type system without an explicit owner-approved visual decision. It must preserve frozen product behaviour, learning methodology, required states and accessibility constraints. Final visual approval belongs to the product owner.
 
 ### Codex
 
-Inspects the repository, tests actual behavior, reviews diffs and implements approved tasks. During design QA it checks specification integrity, accessibility, state coverage and implementation risk. It does not direct aesthetics, select a visual style or redesign Claude Design's creative concept.
+Inspects the repository, tests actual behavior, reviews diffs and implements approved tasks. During design QA it performs read-only checks of specification integrity, learning logic, accessibility, state coverage and implementation risk, then reports findings. It never applies visual corrections and never edits or prescribes layout, composition, typography, colour, spacing, visual hierarchy or component expression. Every visual finding returns to Claude Design / Fable; engineering proceeds only after product-owner approval of the corrected visual.
 
 ### ChatGPT product task
 
@@ -39,11 +39,13 @@ Helps the owner evaluate product, learning, UX and prioritization decisions usin
 5. Update `IMPLEMENTATION_HANDOFF.md`.
 6. Review the actual diff/commit independently.
 7. Record verdict and follow-up in `REVIEW_LOG.md`.
+8. For visual work: Codex reports findings → Claude Design / Fable corrects in the existing design project → product owner approves → engineering implements exactly the approved visual.
 
 ## Change policy
 
 - Frozen architecture changes require an ADR or confirmed critical defect.
 - Reviews do not add features or redesign the product.
+- Design QA is read-only; no visual correction may be applied outside Claude Design / Fable.
 - Process evidence must never be promoted to proficiency or psychological claims.
 - Existing user work is preserved; unrelated dirty-worktree changes are excluded.
 - No files are moved or deleted merely to satisfy a preferred folder structure.
