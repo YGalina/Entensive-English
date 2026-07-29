@@ -1,16 +1,18 @@
 # Current Project Session
 
-Last updated: 2026-07-27
+Last updated: 2026-07-29
 
 ## Phase
 
-Visual design: Batch A frozen; Batch B correction v2 approved; Batch C defaults and states approved and frozen; Recovery/data-integrity gap closure approved and frozen; Batch D approved and frozen; Batch E defaults and states approved and frozen; Batch F Auth & Monetization defaults and states approved and frozen.
+Methodology validation and Stage 0 content production. Frozen visual packages remain authoritative and are not reopened.
 
 ## Architecture status
 
-Frozen. Changes require an ADR, an Architecture Resolution where applicable, and product-owner approval.
+Frozen. `docs/adr/ADR-001-composite-learning-day.md` is Draft only and grants no implementation or visual-design authority.
 
 ## Current focus
+
+The training-sufficiency revision v1.2 is accepted in `docs/methodology/training_revision_v1/`. Its governing conclusion is that S5 is a valid learning block but an insufficient complete intensive day. The candidate composite-day direction must be tested through one manually produced seven-day individual module before architecture, design or implementation changes.
 
 Batch A is frozen in `docs/design/exports/batch-a-defaults-final/`. Approved Batch B screens S9–S13 and their states are in `docs/design/exports/batch-b-correction-v2/`. Approved Batch C defaults and states are in `docs/design/exports/batch-c-correction-v1/` and `docs/design/exports/batch-c-states-correction-v1/`. Recovery/data-integrity gap closure is frozen in `docs/design/exports/recovery-integrity-v1/`. Batch D progress/words/artifacts/review is frozen in `docs/design/exports/batch-d-final/`. Batch E library/reader/shadowing defaults are frozen in `docs/design/exports/batch-e-correction-v1/`; Batch E states are frozen in `docs/design/exports/batch-e-states-v1/`. Batch F Auth & Monetization defaults are frozen in `docs/design/exports/batch-f-auth-monetization-correction-v1/`; Batch F states are frozen in `docs/design/exports/batch-f-auth-monetization-states-v1/`. Living Content remains the canonical visual-language source. Approved screens must not be reopened without an owner decision.
 
@@ -41,17 +43,19 @@ PR 2 (S1 Entry/Resume Router + Path routing foundation) and its integrity-restar
 
 ## Completed this session
 
+Training-sufficiency revision v1.2 passed Codex QA. Owner decisions A1–A4 are accepted: run Stage 0; obtain separate research consent for optional speech samples; use a human speaker for decoding/text audio with TTS allowed for isolated cards; maintain Draft ADR-001 until Stage 0 evidence is reviewed.
+
 Engineering PR 3 implemented S2 Recognition, S3 Profile Entry and the complete-profile → Path Hub transition. Owner-ratified S3 copy and translation states are frozen in `docs/design/exports/s3-copy-ratification-v3/`. Commit `09436bf` passed 135/135 core unit tests and mobile TypeScript. GitHub review: PR #4.
 
 Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-path-scoped local draft recovery, safe exit/resume, six-phase progress, accessible touch targets and the approved three-phrase priming screen. Automated browser QA at 390×844 verified the complete S5→S14 flow, exact phase-4 draft recovery after reload, visible actions and no horizontal overflow or React console errors. Core tests passed 144/144; mobile TypeScript, web production build and S14 evaluation (16/16) passed locally and in GitHub Actions. PR #7 merged as `96bfe95`.
 
 ## Next task
 
-**Active task: PR 7 (engineering) — S6 Recovery product route and states.** Implement the frozen Recovery/Integrity package without consuming curriculum sessions. Cover normal due review, zero-due recovery and deterministic return to Path Hub. Reuse the accepted integrity boundary; do not reopen frozen design.
+**Active task: Stage 0 module production.** Opus acts as Learning Content Architect and produces the complete individual seven-day “Work Conversation” module: target-language inventory, final texts, exercise scripts, SRS plan, listening/decoding and pronunciation materials, scenarios, writing task, transfer task, pre/post/+7 instruments and production manifest. No application code or visual design. Stop for independent methodology and Codex QA before Fable receives learner-facing copy.
 
 ## Blockers
 
-Do not redraw Batch A, Batch B, Batch C or Recovery/Integrity. Do not introduce pilot/research terminology into learner-facing copy. Do not invent sync infrastructure, speech analysis, background AI delivery, CEFR inference from activity, streaks or guardian mechanics. Evening Circle remains Future Extension pending owner decision.
+Do not redesign frozen screens, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress. PR 7 engineering is paused at this owner gate.
 
 ## Handoff rule
 
