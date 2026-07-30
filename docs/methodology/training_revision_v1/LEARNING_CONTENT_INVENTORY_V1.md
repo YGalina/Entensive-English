@@ -6,9 +6,11 @@
 
 ## 1. Что уже существует в репозитории
 
+**Исправление (коррекция Этапа 0):** в предыдущей версии этой строки `set a goal`, `make progress` и `carry out` были ошибочно перечислены как *trained*-единицы. Это **holdout**-единицы: в учебном контенте они запрещены. Действующий инвентарь модуля — `docs/methodology/stage0_work_conversation_v1/LANGUAGE_INVENTORY.md`.
+
 | Актив | Состав | Годность для модульной системы |
 |---|---|---|
-| Банк вертикального среза (`packages/core/data/slice.ts`) | 22 trained-единицы (words/collocations/phrasal: set a goal, make progress, carry out, deadline, figure out, exhausting, on purpose…) + 6 holdout (защищены протоколом!) + 5 связных текстов (career change) + 3 грам-контраста (PPC↔Past и др.) + 6 трансформаций + main prompt | **~70% ЛЕКСИЧЕСКОГО инвентаря модуля 1** (целевых единиц) уже есть; это НЕ значит «модуль готов на 70%» — см. §2. **Holdout-6 использовать в учебном контенте НЕЛЬЗЯ до финализации пилота** (контаминация протокола) |
+| Банк вертикального среза (`packages/core/data/slice.ts`) | 22 trained-единицы (words/collocations/phrasal: deadline, figure out, exhausting, run a project, meet a deadline, come up with, sort out, put off…) + **6 holdout, защищённых протоколом: `set a goal` · `make progress` · `hold a meeting` · `carry out` · `bring up` · `turn down`** + 5 связных текстов (career change) + 3 грам-контраста (PPC↔Past и др.) + 6 трансформаций + main prompt | **~70% ЛЕКСИЧЕСКОГО инвентаря модуля 1** (целевых единиц) уже есть; это НЕ значит «модуль готов на 70%» — см. §2. **Holdout-6 использовать в учебном контенте НЕЛЬЗЯ до финализации пилота** (контаминация протокола) |
 | Batch C контент (замороженные экраны S5) | 3 chunks (That makes sense · I'll get back to you · It's up to you) + микродиалог + переводы | Прямо в модуль 1 (день 1/4); копирайт уже прошёл firewall |
 | Тексты чтения (`data/reading.ts`, Gutenberg-механика) | статьи класса «quiet quitting» | Латеральное чтение; для дней модуля нужны доменные тексты |
 | Shadowing-материал (`data/shadowing.ts`) | фразы с аудио-механикой | База ПР-блока дня 3; нужна доменная выборка |

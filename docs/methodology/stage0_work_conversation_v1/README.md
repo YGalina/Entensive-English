@@ -18,7 +18,7 @@
 
 ## Ключевое решение по чистоте протокола
 
-**Шесть holdout-единиц оценочного протокола исключены из учебного содержания полностью:** `set a goal` · `make progress` · `hold a meeting` · `carry out` · `bring up` · `turn down`. Ранний набросок модуля (`training_revision_v1/SEVEN_DAY_INTENSIVE_MODULE_V1.md`) ошибочно называл три из них реактивируемыми — здесь это исправлено; см. `OPEN_CONTENT_DECISIONS.md` §1 и `PRODUCTION_QA_CHECKLIST.md` (гейт «no holdout contamination»).
+**Шесть holdout-единиц оценочного протокола исключены из учебного содержания полностью:** `set a goal` · `make progress` · `hold a meeting` · `carry out` · `bring up` · `turn down`. Ранний набросок (`training_revision_v1/SEVEN_DAY_INTENSIVE_MODULE_V1.md`) ошибочно называл три из них реактивируемыми. **Исправлено окончательно:** тот инвентарь помечен замещённым, а три единицы — прямо запрещёнными в обучении; это не открытое решение владельца, а следствие замороженного протокола. Проведён репозиторный семантический скан (с формами и близкими вариантами) — результаты в `METHODOLOGY_CORRECTION_LOG.md`.
 
 ## Состав пакета
 
@@ -34,8 +34,10 @@
 | `STAGE0_MEASUREMENT_PACK.md` | скрининг, pre/post/+7, перенос, ежедневные вопросы, интервью, согласие |
 | `HUMAN_SCORING_GUIDE.md` | человеческая оценка образцов |
 | `PRODUCTION_QA_CHECKLIST.md` | манифест производства и статусы готовности |
-| `OPEN_CONTENT_DECISIONS.md` | нерешённые вопросы владельца/методолога |
+| `TARGET_SCORING_RULES.md` | правила зачёта каждой из 12 целей: канон, допустимые варианты, НЕзачитываемые синонимы, примеры |
+| `OPEN_CONTENT_DECISIONS.md` | **все решения приняты** (журнал решений) |
+| `METHODOLOGY_CORRECTION_LOG.md` | коррекционный проход: что изменено и почему |
 
 ## Как читать
 
-Начать с `MODULE_MANIFEST.md` → `LANGUAGE_INVENTORY.md` → дни по порядку. Тексты и задания не дублируются: дни ссылаются на `CONTENT_AND_RIGHTS_REGISTER.md` (T1–T5), `EXERCISE_AND_FEEDBACK_SCRIPTS.md` (E1–E12) и `AUDIO_AND_PRONUNCIATION_SCRIPTS.md` (A1–A6, D1–D6, P1–P2).
+Начать с `MODULE_MANIFEST.md` → `LANGUAGE_INVENTORY.md` → дни по порядку. Тексты и задания не дублируются: дни ссылаются на `CONTENT_AND_RIGHTS_REGISTER.md` (T1–T5), `EXERCISE_AND_FEEDBACK_SCRIPTS.md` (E1–E12), `AUDIO_AND_PRONUNCIATION_SCRIPTS.md` (A1–A6, D1–D6, P1–P2) и `TARGET_SCORING_RULES.md`.
