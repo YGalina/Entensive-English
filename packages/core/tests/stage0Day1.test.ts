@@ -79,6 +79,28 @@ test("malformed or stale state cannot resume", () => {
   assert.equal(loadStage0Day1(), null);
 });
 
+test("valid v2 progress migrates to v3 without losing drafts or evidence", () => {
+  startStage0Day1("full", 1);
+  const current = saveStage0Day1({
+    block: "core",
+    corePhase: "produce",
+    productionText: "I've been working on a migration.",
+    retrievalDraft: "We should meet",
+    evidence: { textRead: true, retrievalsCompleted: 2 },
+  }, 2)!;
+  const { guidedOptionalDraft: _removed, ...legacy } = current;
+  storage().setItem("ie_stage0_day1", JSON.stringify({ ...legacy, version: 2 }));
+
+  const migrated = loadStage0Day1()!;
+  assert.equal(migrated.version, 3);
+  assert.equal(migrated.guidedOptionalDraft, "");
+  assert.equal(migrated.productionText, "I've been working on a migration.");
+  assert.equal(migrated.retrievalDraft, "We should meet");
+  assert.equal(migrated.evidence.textRead, true);
+  assert.equal(migrated.evidence.retrievalsCompleted, 2);
+  assert.equal(JSON.parse(storage().getItem("ie_stage0_day1")!).version, 3);
+});
+
 test("short completion exposes only the two short-path facts", () => {
   startStage0Day1("short", 1);
   saveStage0Day1({ evidence: { primeSeen: true } }, 2);

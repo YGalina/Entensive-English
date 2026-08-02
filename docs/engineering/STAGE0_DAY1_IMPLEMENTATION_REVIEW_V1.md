@@ -36,3 +36,13 @@ Verdict: **CHANGES REQUIRED**
 | P2 | The approved optional second-version path after guided submission was absent. | The accepted state now includes the locked `C-B4-V2` prompt, optional editable draft, frame validation and persistence retry. |
 
 Status: **second correction implemented; exact correction commit requires independent re-review**.
+
+## Independent re-review of `4a71e4c`
+
+Verdict: **CHANGES REQUIRED**
+
+The three targeted findings were confirmed closed. One P1 regression remained: version 3 made `guidedOptionalDraft` mandatory without migrating valid version 2 progress. Loading a Day 1 started under `40a9ce1` could therefore return `null` and expose a fresh-start path.
+
+Correction: valid version 2 state is migrated to version 3 with an empty optional draft while preserving the exact path, block, phase, learner drafts and evidence. Malformed version 2 data remains rejected.
+
+Status: **migration correction implemented; exact correction commit requires final independent re-review**.

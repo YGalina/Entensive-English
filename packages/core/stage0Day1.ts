@@ -186,6 +186,17 @@ function isState(value: unknown): value is Stage0Day1State {
   );
 }
 
+function migrateState(value: unknown): unknown {
+  if (!value || typeof value !== "object") return value;
+  const legacy = value as Record<string, unknown>;
+  if (legacy.version !== 2 || "guidedOptionalDraft" in legacy) return value;
+  return {
+    ...legacy,
+    version: STAGE0_DAY1_VERSION,
+    guidedOptionalDraft: "",
+  };
+}
+
 function persist(value: Stage0Day1State): boolean {
   const encoded = JSON.stringify(value);
   storage().setItem(STAGE0_DAY1_KEY, encoded);
@@ -220,8 +231,10 @@ export function loadStage0Day1(): Stage0Day1State | null {
   const raw = storage().getItem(STAGE0_DAY1_KEY);
   if (!path || !raw) return null;
   try {
-    const value: unknown = JSON.parse(raw);
+    const parsed: unknown = JSON.parse(raw);
+    const value = migrateState(parsed);
     if (!isState(value) || value.activePath !== path) return null;
+    if (value !== parsed) persist(value);
     return value;
   } catch {
     return null;
