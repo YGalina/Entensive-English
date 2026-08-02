@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] **Stage 0 content — ACTIVE:** produce the complete individual seven-day “Work Conversation” module from `docs/methodology/training_revision_v1/SEVEN_DAY_INTENSIVE_MODULE_V1.md`; no code or visual design.
+- [ ] **Stage 0 Day 1 engineering — ACTIVE:** implement the accepted full and short paths, resume behavior and required states from `docs/design/exports/stage0-day1-v1/` against UX/copy contract `1f647ba`; no visual redesign and no Days 2–7.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
@@ -20,6 +20,7 @@
 
 ## Completed
 
+- [x] Stage 0 Day 1 Default v2 and States v2 approved and frozen → `docs/design/exports/stage0-day1-v1/`; QA → `docs/design/reviews/STAGE0_DAY1_DEFAULT_AND_STATES_V2_QA_CODEX.md`; governing UX/copy contract `1f647ba`.
 - [x] Training-sufficiency revision v1.2 accepted → `docs/methodology/training_revision_v1/`.
 - [x] Owner decisions A1–A4 accepted for Stage 0 preparation.
 - [x] Draft ADR-001 created; it grants no architecture or implementation authority.

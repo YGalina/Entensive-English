@@ -1,10 +1,10 @@
 # Current Project Session
 
-Last updated: 2026-07-29
+Last updated: 2026-08-02
 
 ## Phase
 
-Methodology validation and Stage 0 content production. Frozen visual packages remain authoritative and are not reopened.
+Stage 0 Day 1 implementation preparation. Frozen visual packages remain authoritative and are not reopened.
 
 ## Architecture status
 
@@ -43,6 +43,8 @@ PR 2 (S1 Entry/Resume Router + Path routing foundation) and its integrity-restar
 
 ## Completed this session
 
+Stage 0 Day 1 visual design passed owner approval and Codex QA. The accepted default and state artifacts are frozen in `docs/design/exports/stage0-day1-v1/`; QA is recorded in `docs/design/reviews/STAGE0_DAY1_DEFAULT_AND_STATES_V2_QA_CODEX.md`. The governing UX/copy contract is commit `1f647ba`.
+
 Training-sufficiency revision v1.2 passed Codex QA. Owner decisions A1–A4 are accepted: run Stage 0; obtain separate research consent for optional speech samples; use a human speaker for decoding/text audio with TTS allowed for isolated cards; maintain Draft ADR-001 until Stage 0 evidence is reviewed.
 
 Engineering PR 3 implemented S2 Recognition, S3 Profile Entry and the complete-profile → Path Hub transition. Owner-ratified S3 copy and translation states are frozen in `docs/design/exports/s3-copy-ratification-v3/`. Commit `09436bf` passed 135/135 core unit tests and mobile TypeScript. GitHub review: PR #4.
@@ -51,7 +53,7 @@ Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-pa
 
 ## Next task
 
-**Active task: Stage 0 module production.** Opus acts as Learning Content Architect and produces the complete individual seven-day “Work Conversation” module: target-language inventory, final texts, exercise scripts, SRS plan, listening/decoding and pronunciation materials, scenarios, writing task, transfer task, pre/post/+7 instruments and production manifest. No application code or visual design. Stop for independent methodology and Codex QA before Fable receives learner-facing copy.
+**Active task: implement the Stage 0 Day 1 vertical slice.** Engineering implements the accepted full and short paths from `docs/design/exports/stage0-day1-v1/` against the UX/copy contract at `1f647ba`, including resume and required states. Do not implement Days 2–7, alter visual design or invent missing product behavior. Stop for automated QA and owner device review.
 
 ## Blockers
 
