@@ -4,7 +4,7 @@ Last updated: 2026-08-02
 
 ## Phase
 
-Stage 0 Day 1 implementation preparation. Frozen visual packages remain authoritative and are not reopened.
+Stage 0 Day 1 implementation review gate. Frozen visual packages remain authoritative and are not reopened.
 
 ## Architecture status
 
@@ -45,6 +45,8 @@ PR 2 (S1 Entry/Resume Router + Path routing foundation) and its integrity-restar
 
 Stage 0 Day 1 visual design passed owner approval and Codex QA. The accepted default and state artifacts are frozen in `docs/design/exports/stage0-day1-v1/`; QA is recorded in `docs/design/reviews/STAGE0_DAY1_DEFAULT_AND_STATES_V2_QA_CODEX.md`. The governing UX/copy contract is commit `1f647ba`.
 
+Stage 0 Day 1 engineering implementation is complete on `codex/stage0-day1-vertical-slice`: active-path-scoped full and short paths, exact resume, the non-blocking meaning gate, structured retrieval, free production, optional private recording, guided variation, two explicitly evidenced spoken versions, honest completion facts and frozen Fable default/state artifacts. Mobile TypeScript is clean; the repository unit suite passes 155/155; learner-facing source is clean against the semantic-term scan; the 390×844 plan state has no horizontal overflow. The implementation has not yet passed independent code review or physical-device microphone lifecycle QA.
+
 Training-sufficiency revision v1.2 passed Codex QA. Owner decisions A1–A4 are accepted: run Stage 0; obtain separate research consent for optional speech samples; use a human speaker for decoding/text audio with TTS allowed for isolated cards; maintain Draft ADR-001 until Stage 0 evidence is reviewed.
 
 Engineering PR 3 implemented S2 Recognition, S3 Profile Entry and the complete-profile → Path Hub transition. Owner-ratified S3 copy and translation states are frozen in `docs/design/exports/s3-copy-ratification-v3/`. Commit `09436bf` passed 135/135 core unit tests and mobile TypeScript. GitHub review: PR #4.
@@ -53,7 +55,7 @@ Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-pa
 
 ## Next task
 
-**Active task: implement the Stage 0 Day 1 vertical slice.** Engineering implements the accepted full and short paths from `docs/design/exports/stage0-day1-v1/` against the UX/copy contract at `1f647ba`, including resume and required states. Do not implement Days 2–7, alter visual design or invent missing product behavior. Stop for automated QA and owner device review.
+**Active task: independently review the Stage 0 Day 1 implementation branch, then run owner device QA.** Review the exact branch tip against `docs/design/exports/stage0-day1-v1/` and UX/copy contract `1f647ba`. Verify state transitions, exact copy, persistence boundaries, accessibility and the recording lifecycle. Do not redesign or correct visuals; visual findings return to Fable. Do not implement Days 2–7.
 
 ## Blockers
 
