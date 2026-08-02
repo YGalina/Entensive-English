@@ -24,3 +24,15 @@ Initial verdict: **CHANGES REQUIRED**
 - Physical-device microphone, interruption and screen-reader checks remain a release gate.
 
 Status: **correction implemented; exact correction commit requires independent re-review**.
+
+## Independent re-review of `40a9ce1`
+
+Verdict: **CHANGES REQUIRED**
+
+| Severity | Finding | Correction status |
+|---|---|---|
+| P1 | A failed retrieval submission could clear the visible answer; the failed support-state write was not surfaced. | Retrieval now retains its UI buffer, shows `C-ERR-SAVE`, and retries the exact submit action. |
+| P2 | Three identical framed answers could produce the claim «три разных дела». | Group validation now requires three distinct normalized frame completions. |
+| P2 | The approved optional second-version path after guided submission was absent. | The accepted state now includes the locked `C-B4-V2` prompt, optional editable draft, frame validation and persistence retry. |
+
+Status: **second correction implemented; exact correction commit requires independent re-review**.

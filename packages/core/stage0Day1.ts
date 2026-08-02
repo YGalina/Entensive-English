@@ -1,7 +1,7 @@
 import { storage } from "./storage";
 
 export const STAGE0_DAY1_KEY = "ie_stage0_day1";
-export const STAGE0_DAY1_VERSION = 2 as const;
+export const STAGE0_DAY1_VERSION = 3 as const;
 
 export type Day1Mode = "full" | "short";
 export type Day1Block = "core" | "guided-variation" | "fluency-mini" | "closing";
@@ -30,6 +30,7 @@ export type Stage0Day1State = {
   retrievalDraft: string;
   retrievalSupportLevel: 0 | 1 | 2 | 3;
   guidedDrafts: readonly [string, string, string];
+  guidedOptionalDraft: string;
   currentGuidedSlot: 0 | 1 | 2;
   currentFluencyVersion: 0 | 1;
   evidence: Day1Evidence;
@@ -50,6 +51,7 @@ export type Stage0Day1Patch = Partial<
     | "retrievalDraft"
     | "retrievalSupportLevel"
     | "guidedDrafts"
+    | "guidedOptionalDraft"
     | "currentGuidedSlot"
     | "currentFluencyVersion"
   >
@@ -109,6 +111,7 @@ function initialState(path: string, mode: Day1Mode, now: number): Stage0Day1Stat
     retrievalDraft: "",
     retrievalSupportLevel: 0,
     guidedDrafts: ["", "", ""],
+    guidedOptionalDraft: "",
     currentGuidedSlot: 0,
     currentFluencyVersion: 0,
     evidence: {
@@ -165,6 +168,7 @@ function isState(value: unknown): value is Stage0Day1State {
     Array.isArray(v.guidedDrafts) &&
     v.guidedDrafts.length === 3 &&
     v.guidedDrafts.every((item) => typeof item === "string") &&
+    typeof v.guidedOptionalDraft === "string" &&
     (v.currentGuidedSlot === 0 || v.currentGuidedSlot === 1 || v.currentGuidedSlot === 2) &&
     (v.currentFluencyVersion === 0 || v.currentFluencyVersion === 1) &&
     !!e &&
@@ -404,13 +408,25 @@ export function isStage0Day1GuidedAnswer(value: string): boolean {
   return /^i['’]?ve been working on\s+\S+/.test(normalized);
 }
 
+export function areStage0Day1GuidedAnswersValid(values: readonly string[]): boolean {
+  if (values.length !== 3 || !values.every(isStage0Day1GuidedAnswer)) return false;
+  const normalized = values.map((value) => value
+    .toLowerCase()
+    .replace(/[’]/g, "'")
+    .replace(/[^a-z' ]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/^i've been working on\s+/, ""));
+  return new Set(normalized).size === 3;
+}
+
 export function submitStage0Day1GuidedVariation(now = Date.now()): Stage0Day1State | null {
   const current = loadStage0Day1();
   if (
     !current ||
     current.completed ||
     current.evidence.guidedSubmitted ||
-    current.guidedDrafts.some((item) => !isStage0Day1GuidedAnswer(item))
+    !areStage0Day1GuidedAnswersValid(current.guidedDrafts)
   ) {
     return null;
   }
@@ -424,10 +440,21 @@ export function submitStage0Day1GuidedVariation(now = Date.now()): Stage0Day1Sta
   );
 }
 
-export function continueStage0Day1AfterGuidedVariation(now = Date.now()): Stage0Day1State | null {
+export function continueStage0Day1AfterGuidedVariation(
+  guidedOptionalDraft?: string,
+  now = Date.now()
+): Stage0Day1State | null {
   const current = loadStage0Day1();
   if (!current || current.completed || !current.evidence.guidedSubmitted) return null;
-  return update(current, { block: "fluency-mini", currentFluencyVersion: 0 }, now);
+  const optionalDraft = guidedOptionalDraft ?? current.guidedOptionalDraft;
+  if (optionalDraft.trim() && !isStage0Day1GuidedAnswer(optionalDraft)) {
+    return null;
+  }
+  return update(
+    current,
+    { guidedOptionalDraft: optionalDraft, block: "fluency-mini", currentFluencyVersion: 0 },
+    now
+  );
 }
 
 export function skipStage0Day1GuidedVariation(now = Date.now()): Stage0Day1State | null {

@@ -8,6 +8,7 @@ import {
   DAY1_SHORT_BLOCKS,
   DAY1_SHORT_FACTS,
   answerStage0Day1Comprehension,
+  areStage0Day1GuidedAnswersValid,
   completeStage0Day1,
   confirmStage0Day1FluencyVersion,
   continueStage0Day1AfterComprehension,
@@ -116,7 +117,7 @@ test("full completion requires submitted guided slots and two spoken versions", 
   saveStage0Day1GuidedSlot(2, "I've been working on my kitchen.", 9);
   assert.equal(day1FullMinimumMet(loadStage0Day1()!), false);
   submitStage0Day1GuidedVariation(10);
-  continueStage0Day1AfterGuidedVariation(10.5);
+  continueStage0Day1AfterGuidedVariation(undefined, 10.5);
   confirmStage0Day1FluencyVersion("said-aloud-confirmed", 11);
   assert.equal(completeStage0Day1(12), null);
   confirmStage0Day1FluencyVersion("recorded", 13);
@@ -191,6 +192,68 @@ test("guided variation accepts only three instances of the fixed frame", () => {
   assert.equal(submitStage0Day1GuidedVariation(10), null);
   assert.equal(isStage0Day1GuidedAnswer("first"), false);
   assert.equal(isStage0Day1GuidedAnswer("I've been working on the migration."), true);
+});
+
+test("guided variation requires three distinct framed topics", () => {
+  completeShortMinimum();
+  submitStage0Day1Retrieval("second", 5);
+  submitStage0Day1Retrieval("third", 6);
+  const duplicate = "I've been working on the same task.";
+  saveStage0Day1GuidedSlot(0, duplicate, 7);
+  saveStage0Day1GuidedSlot(1, duplicate, 8);
+  saveStage0Day1GuidedSlot(2, duplicate, 9);
+  assert.equal(areStage0Day1GuidedAnswersValid([duplicate, duplicate, duplicate]), false);
+  assert.equal(submitStage0Day1GuidedVariation(10), null);
+});
+
+test("optional second guided version is validated but may be left empty", () => {
+  completeShortMinimum();
+  submitStage0Day1Retrieval("second", 5);
+  submitStage0Day1Retrieval("third", 6);
+  saveStage0Day1GuidedSlot(0, "I've been working on the first task.", 7);
+  saveStage0Day1GuidedSlot(1, "I've been working on the second task.", 8);
+  saveStage0Day1GuidedSlot(2, "I've been working on the third task.", 9);
+  submitStage0Day1GuidedVariation(10);
+  saveStage0Day1({ guidedOptionalDraft: "A different expression." }, 11);
+  assert.equal(continueStage0Day1AfterGuidedVariation(undefined, 12), null);
+  saveStage0Day1({ guidedOptionalDraft: "I've been working on another task." }, 13);
+  assert.equal(continueStage0Day1AfterGuidedVariation(undefined, 14)?.block, "fluency-mini");
+});
+
+test("optional guided draft is persisted atomically when continuing", () => {
+  completeShortMinimum();
+  submitStage0Day1Retrieval("second", 5);
+  submitStage0Day1Retrieval("third", 6);
+  saveStage0Day1GuidedSlot(0, "I've been working on the first task.", 7);
+  saveStage0Day1GuidedSlot(1, "I've been working on the second task.", 8);
+  saveStage0Day1GuidedSlot(2, "I've been working on the third task.", 9);
+  submitStage0Day1GuidedVariation(10);
+  const continued = continueStage0Day1AfterGuidedVariation("I've been working on a fourth task.", 11)!;
+  assert.equal(continued.guidedOptionalDraft, "I've been working on a fourth task.");
+  assert.equal(continued.block, "fluency-mini");
+});
+
+test("a dropped retrieval submission does not advance or erase the persisted draft", () => {
+  const values = new Map<string, string>();
+  let dropDayWrites = false;
+  const adapter: StorageAdapter = {
+    getItem: (key) => values.get(key) ?? null,
+    setItem: (key, value) => {
+      if (!(dropDayWrites && key === "ie_stage0_day1")) values.set(key, value);
+    },
+    subscribeExternal: () => () => {},
+  };
+  configureStorage(adapter);
+  storage().setItem("ie_active_path", "path-a");
+  startStage0Day1("short", 1);
+  saveStage0Day1({
+    corePhase: "retrieve",
+    retrievalDraft: "I've been working on the new onboarding.",
+  }, 2);
+  dropDayWrites = true;
+  assert.equal(submitStage0Day1Retrieval("I've been working on the new onboarding.", 3), null);
+  assert.equal(loadStage0Day1()?.retrievalDraft, "I've been working on the new onboarding.");
+  assert.equal(loadStage0Day1()?.evidence.retrievalsCompleted, 0);
 });
 
 test("a dropped draft write reports failure and preserves the last verified state", () => {
