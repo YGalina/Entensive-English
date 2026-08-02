@@ -4,7 +4,7 @@ Last updated: 2026-08-02
 
 ## Phase
 
-Stage 0 Day 1 implementation review gate. Frozen visual packages remain authoritative and are not reopened.
+Stage 0 Day 1 physical-device QA gate. Frozen visual packages remain authoritative and are not reopened.
 
 ## Architecture status
 
@@ -45,7 +45,7 @@ PR 2 (S1 Entry/Resume Router + Path routing foundation) and its integrity-restar
 
 Stage 0 Day 1 visual design passed owner approval and Codex QA. The accepted default and state artifacts are frozen in `docs/design/exports/stage0-day1-v1/`; QA is recorded in `docs/design/reviews/STAGE0_DAY1_DEFAULT_AND_STATES_V2_QA_CODEX.md`. The governing UX/copy contract is commit `1f647ba`.
 
-Stage 0 Day 1 engineering implementation is complete on `codex/stage0-day1-vertical-slice`: active-path-scoped full and short paths, exact resume, the non-blocking meaning gate, structured retrieval, free production, optional private recording, guided variation, two explicitly evidenced spoken versions, honest completion facts and frozen Fable default/state artifacts. Mobile TypeScript is clean; the repository unit suite passes 155/155; learner-facing source is clean against the semantic-term scan; the 390×844 plan state has no horizontal overflow. The implementation has not yet passed independent code review or physical-device microphone lifecycle QA.
+Stage 0 Day 1 engineering implementation is complete on `codex/stage0-day1-vertical-slice`. Independent review of exact tip `b7bb786` passed with no remaining actionable findings after corrections. The implementation now includes active-path-scoped full and short paths, exact resume, v2→v3 state migration without progress loss, the non-blocking meaning gate, structured retrieval with failure-safe input retention, free production, optional private recording, three distinct guided variations plus the approved optional second version, two explicitly evidenced spoken versions, honest completion facts and frozen Fable default/state artifacts. Mobile TypeScript is clean and the repository unit suite passes 162/162. Physical-device microphone lifecycle and screen-reader QA remain open.
 
 Training-sufficiency revision v1.2 passed Codex QA. Owner decisions A1–A4 are accepted: run Stage 0; obtain separate research consent for optional speech samples; use a human speaker for decoding/text audio with TTS allowed for isolated cards; maintain Draft ADR-001 until Stage 0 evidence is reviewed.
 
@@ -55,7 +55,7 @@ Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-pa
 
 ## Next task
 
-**Active task: independently review the Stage 0 Day 1 implementation branch, then run owner device QA.** Review the exact branch tip against `docs/design/exports/stage0-day1-v1/` and UX/copy contract `1f647ba`. Verify state transitions, exact copy, persistence boundaries, accessibility and the recording lifecycle. Do not redesign or correct visuals; visual findings return to Fable. Do not implement Days 2–7.
+**Active task: run owner QA for Stage 0 Day 1 on a physical Android device.** Verify microphone permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup and screen-reader labels. Logic/code review is accepted at `b7bb786`; visual findings return to Fable. Do not implement Days 2–7 until this device gate is recorded.
 
 ## Blockers
 

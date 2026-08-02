@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] **Stage 0 Day 1 independent engineering QA — ACTIVE:** review the implementation branch tip against the accepted Fable defaults/states and UX/copy contract `1f647ba`; verify transitions, persistence, copy, accessibility and microphone lifecycle; visual corrections go to Fable, never Codex.
+- [ ] **Stage 0 Day 1 owner physical-device QA — ACTIVE:** verify microphone permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup and screen-reader labels. Visual corrections go to Fable, never Codex.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
@@ -20,7 +20,7 @@
 
 ## Completed
 
-- [x] **Stage 0 Day 1 engineering implementation:** full/short paths, exact resume, meaning gate, structured retrieval, free production, optional local recording, guided variation, two explicit spoken-evidence versions and honest completion facts. Mobile TypeScript clean; core suite 155/155; semantic-term scan and `git diff --check` clean; 390×844 plan-state browser QA passed. Awaiting independent review and physical-device recording QA.
+- [x] **Stage 0 Day 1 engineering implementation + independent QA:** exact tip `b7bb786` passed independent review with no actionable findings after correction passes. Full/short paths, exact resume and v2→v3 migration, meaning gate, failure-safe structured retrieval, free production, optional local recording, three distinct guided variations, approved optional second version, two explicit spoken-evidence versions and honest completion facts. Mobile TypeScript clean; core suite 162/162; `git diff --check` clean. Physical-device recording/accessibility QA remains.
 
 - [x] Stage 0 Day 1 Default v2 and States v2 approved and frozen → `docs/design/exports/stage0-day1-v1/`; QA → `docs/design/reviews/STAGE0_DAY1_DEFAULT_AND_STATES_V2_QA_CODEX.md`; governing UX/copy contract `1f647ba`.
 - [x] Training-sufficiency revision v1.2 accepted → `docs/methodology/training_revision_v1/`.

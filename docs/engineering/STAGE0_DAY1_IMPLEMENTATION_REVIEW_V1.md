@@ -46,3 +46,17 @@ The three targeted findings were confirmed closed. One P1 regression remained: v
 Correction: valid version 2 state is migrated to version 3 with an empty optional draft while preserving the exact path, block, phase, learner drafts and evidence. Malformed version 2 data remains rejected.
 
 Status: **migration correction implemented; exact correction commit requires final independent re-review**.
+
+## Final independent re-review of `b7bb786`
+
+Verdict: **PASS** — no remaining actionable findings.
+
+- Valid v2 state migrates to v3 while preserving path, block, phase, drafts, evidence and completion data.
+- Full validation and active-path checks still reject malformed and wrong-path states.
+- Retrieval failure retains visible input and never advances without an accepted write.
+- Guided submission requires three distinct framed topics; the approved optional second version remains optional, validated and atomically persisted on continuation.
+- Repository unit suite: 162/162 passed.
+- Mobile TypeScript: passed.
+- `git diff --check`: passed.
+
+Remaining release gate: physical-device microphone lifecycle and screen-reader QA.

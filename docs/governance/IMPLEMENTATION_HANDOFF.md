@@ -105,7 +105,7 @@ Physical-device microphone permission/interruption testing remains a release che
 
 Next implementation task: S6 Recovery product route and states from the frozen Recovery/Integrity package. Recovery must never consume a curriculum session.
 
-## Stage 0 Day 1 vertical slice — implementation ready for independent review
+## Stage 0 Day 1 vertical slice — independent review passed
 
 Branch: `codex/stage0-day1-vertical-slice`.
 
@@ -115,6 +115,6 @@ Branch: `codex/stage0-day1-vertical-slice`.
 - `apps/mobile/src/app/entry/daily-session.tsx`: routes the accepted daily-session destination to the Stage 0 Day 1 slice.
 - `docs/design/exports/stage0-day1-v1/`: canonical Default v2, States v3 and Developer Handoff v3 sources used for implementation.
 
-Verification: mobile TypeScript clean; repository unit suite 155/155; source semantic-term scan clean; `git diff --check` clean; browser QA at 390×844 confirmed readable plan hierarchy, visible actions and no horizontal overflow. The implementation also corrects three review-time defects before handoff: voice URIs cannot leak from the optional core recording into mandatory B9 evidence; “Вернуться к опорам” restores the accepted support card; completing the closing screen no longer requires a duplicate second closing screen.
+Verification: independent review of exact tip `b7bb786` passed with no remaining actionable findings. Mobile TypeScript is clean; repository unit suite passes 162/162; source semantic-term scan and `git diff --check` are clean; browser QA at 390×844 confirmed readable plan hierarchy, visible actions and no horizontal overflow. Corrections include failure-safe learner-input persistence, exact reveal behavior, editable guided slots, three distinct framed topics, the approved optional second version, detailed recording outcomes and v2→v3 state migration without lost progress.
 
-Remaining gates: independent code/contract review of the exact branch tip; owner QA on a physical Android device for microphone permission, interruption, no-audio and local playback. Any visual mismatch is reported to Fable; Codex does not redesign or visually correct accepted screens.
+Remaining gate: owner QA on a physical Android device for microphone permission, interruption, empty audio, 60-second auto-stop, local playback, Back/unmount cleanup and screen-reader labels. Any visual mismatch is reported to Fable; Codex does not redesign or visually correct accepted screens.
