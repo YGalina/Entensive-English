@@ -1,6 +1,6 @@
 import { beforeEach, test } from "node:test";
 import assert from "node:assert/strict";
-import { configureStorage, memoryStorage, storage } from "../storage";
+import { configureStorage, memoryStorage, storage, type StorageAdapter } from "../storage";
 import {
   DAY1_FULL_BLOCKS,
   DAY1_FULL_FACTS,
@@ -10,9 +10,12 @@ import {
   answerStage0Day1Comprehension,
   completeStage0Day1,
   confirmStage0Day1FluencyVersion,
+  continueStage0Day1AfterComprehension,
+  continueStage0Day1AfterGuidedVariation,
   day1FullMinimumMet,
   firstIncompleteStage0Day1,
   loadStage0Day1,
+  isStage0Day1GuidedAnswer,
   markStage0Day1TextRead,
   saveStage0Day1,
   saveStage0Day1GuidedSlot,
@@ -98,7 +101,10 @@ test("meaning gate retries once, then reveals and never blocks the day", () => {
   assert.equal(retry.corePhase, "text");
   const shown = answerStage0Day1Comprehension(false, 5)!;
   assert.equal(shown.comprehension, "shown");
-  assert.equal(shown.corePhase, "retrieve");
+  assert.equal(shown.corePhase, "text");
+  const continued = continueStage0Day1AfterComprehension(6)!;
+  assert.equal(continued.comprehension, "resolved");
+  assert.equal(continued.corePhase, "retrieve");
 });
 
 test("full completion requires submitted guided slots and two spoken versions", () => {
@@ -110,6 +116,7 @@ test("full completion requires submitted guided slots and two spoken versions", 
   saveStage0Day1GuidedSlot(2, "I've been working on my kitchen.", 9);
   assert.equal(day1FullMinimumMet(loadStage0Day1()!), false);
   submitStage0Day1GuidedVariation(10);
+  continueStage0Day1AfterGuidedVariation(10.5);
   confirmStage0Day1FluencyVersion("said-aloud-confirmed", 11);
   assert.equal(completeStage0Day1(12), null);
   confirmStage0Day1FluencyVersion("recorded", 13);
@@ -164,12 +171,43 @@ test("guided drafts remain editable until submission and lock afterwards", () =>
   completeShortMinimum();
   submitStage0Day1Retrieval("second", 5);
   submitStage0Day1Retrieval("third", 6);
-  saveStage0Day1GuidedSlot(0, "first", 7);
-  saveStage0Day1GuidedSlot(0, "edited", 8);
-  saveStage0Day1GuidedSlot(1, "second", 9);
-  saveStage0Day1GuidedSlot(2, "third", 10);
+  saveStage0Day1GuidedSlot(0, "I've been working on the first task.", 7);
+  saveStage0Day1GuidedSlot(0, "I've been working on the edited task.", 8);
+  saveStage0Day1GuidedSlot(1, "I've been working on the second task.", 9);
+  saveStage0Day1GuidedSlot(2, "I've been working on the third task.", 10);
   const submitted = submitStage0Day1GuidedVariation(11)!;
-  assert.equal(submitted.guidedDrafts[0], "edited");
+  assert.equal(submitted.guidedDrafts[0], "I've been working on the edited task.");
   assert.equal(saveStage0Day1GuidedSlot(0, "too late", 12), null);
-  assert.equal(loadStage0Day1()?.guidedDrafts[0], "edited");
+  assert.equal(loadStage0Day1()?.guidedDrafts[0], "I've been working on the edited task.");
+});
+
+test("guided variation accepts only three instances of the fixed frame", () => {
+  completeShortMinimum();
+  submitStage0Day1Retrieval("second", 5);
+  submitStage0Day1Retrieval("third", 6);
+  saveStage0Day1GuidedSlot(0, "first", 7);
+  saveStage0Day1GuidedSlot(1, "second", 8);
+  saveStage0Day1GuidedSlot(2, "third", 9);
+  assert.equal(submitStage0Day1GuidedVariation(10), null);
+  assert.equal(isStage0Day1GuidedAnswer("first"), false);
+  assert.equal(isStage0Day1GuidedAnswer("I've been working on the migration."), true);
+});
+
+test("a dropped draft write reports failure and preserves the last verified state", () => {
+  const values = new Map<string, string>();
+  let dropDayWrites = false;
+  const adapter: StorageAdapter = {
+    getItem: (key) => values.get(key) ?? null,
+    setItem: (key, value) => {
+      if (!(dropDayWrites && key === "ie_stage0_day1")) values.set(key, value);
+    },
+    subscribeExternal: () => () => {},
+  };
+  configureStorage(adapter);
+  storage().setItem("ie_active_path", "path-a");
+  startStage0Day1("full", 1);
+  saveStage0Day1({ productionText: "verified draft" }, 2);
+  dropDayWrites = true;
+  assert.equal(saveStage0Day1({ productionText: "visible but not persisted" }, 3), null);
+  assert.equal(loadStage0Day1()?.productionText, "verified draft");
 });

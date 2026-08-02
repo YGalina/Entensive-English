@@ -321,9 +321,15 @@ export function answerStage0Day1Comprehension(
     return update(current, { comprehension: "resolved", corePhase: "retrieve" }, now);
   }
   if (current.comprehension === "retry") {
-    return update(current, { comprehension: "shown", corePhase: "retrieve" }, now);
+    return update(current, { comprehension: "shown", corePhase: "text" }, now);
   }
   return update(current, { comprehension: "retry", corePhase: "text" }, now);
+}
+
+export function continueStage0Day1AfterComprehension(now = Date.now()): Stage0Day1State | null {
+  const current = loadStage0Day1();
+  if (!current || current.completed || current.comprehension !== "shown") return null;
+  return update(current, { comprehension: "resolved", corePhase: "retrieve" }, now);
 }
 
 export function submitStage0Day1Retrieval(
@@ -388,25 +394,40 @@ export function saveStage0Day1GuidedSlot(
   );
 }
 
+export function isStage0Day1GuidedAnswer(value: string): boolean {
+  const normalized = value
+    .toLowerCase()
+    .replace(/[’]/g, "'")
+    .replace(/[^a-z' ]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  return /^i['’]?ve been working on\s+\S+/.test(normalized);
+}
+
 export function submitStage0Day1GuidedVariation(now = Date.now()): Stage0Day1State | null {
   const current = loadStage0Day1();
   if (
     !current ||
     current.completed ||
     current.evidence.guidedSubmitted ||
-    current.guidedDrafts.some((item) => !item.trim())
+    current.guidedDrafts.some((item) => !isStage0Day1GuidedAnswer(item))
   ) {
     return null;
   }
   return update(
     current,
     {
-      block: "fluency-mini",
-      currentFluencyVersion: 0,
+      block: "guided-variation",
       evidence: { guidedSlotsCompleted: 3, guidedSubmitted: true },
     },
     now
   );
+}
+
+export function continueStage0Day1AfterGuidedVariation(now = Date.now()): Stage0Day1State | null {
+  const current = loadStage0Day1();
+  if (!current || current.completed || !current.evidence.guidedSubmitted) return null;
+  return update(current, { block: "fluency-mini", currentFluencyVersion: 0 }, now);
 }
 
 export function skipStage0Day1GuidedVariation(now = Date.now()): Stage0Day1State | null {
