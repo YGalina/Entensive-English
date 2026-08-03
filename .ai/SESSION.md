@@ -1,16 +1,18 @@
 # Current Project Session
 
-Last updated: 2026-07-27
+Last updated: 2026-08-02
 
 ## Phase
 
-Visual design: Batch A frozen; Batch B correction v2 approved; Batch C defaults and states approved and frozen; Recovery/data-integrity gap closure approved and frozen; Batch D approved and frozen; Batch E defaults and states approved and frozen; Batch F Auth & Monetization defaults and states approved and frozen.
+Stage 0 Day 1 physical-device QA gate. Frozen visual packages remain authoritative and are not reopened.
 
 ## Architecture status
 
-Frozen. Changes require an ADR, an Architecture Resolution where applicable, and product-owner approval.
+Frozen. `docs/adr/ADR-001-composite-learning-day.md` is Draft only and grants no implementation or visual-design authority.
 
 ## Current focus
+
+The training-sufficiency revision v1.2 is accepted in `docs/methodology/training_revision_v1/`. Its governing conclusion is that S5 is a valid learning block but an insufficient complete intensive day. The candidate composite-day direction must be tested through one manually produced seven-day individual module before architecture, design or implementation changes.
 
 Batch A is frozen in `docs/design/exports/batch-a-defaults-final/`. Approved Batch B screens S9–S13 and their states are in `docs/design/exports/batch-b-correction-v2/`. Approved Batch C defaults and states are in `docs/design/exports/batch-c-correction-v1/` and `docs/design/exports/batch-c-states-correction-v1/`. Recovery/data-integrity gap closure is frozen in `docs/design/exports/recovery-integrity-v1/`. Batch D progress/words/artifacts/review is frozen in `docs/design/exports/batch-d-final/`. Batch E library/reader/shadowing defaults are frozen in `docs/design/exports/batch-e-correction-v1/`; Batch E states are frozen in `docs/design/exports/batch-e-states-v1/`. Batch F Auth & Monetization defaults are frozen in `docs/design/exports/batch-f-auth-monetization-correction-v1/`; Batch F states are frozen in `docs/design/exports/batch-f-auth-monetization-states-v1/`. Living Content remains the canonical visual-language source. Approved screens must not be reopened without an owner decision.
 
@@ -41,17 +43,23 @@ PR 2 (S1 Entry/Resume Router + Path routing foundation) and its integrity-restar
 
 ## Completed this session
 
+Stage 0 Day 1 visual design passed owner approval and Codex QA. The accepted default and state artifacts are frozen in `docs/design/exports/stage0-day1-v1/`; QA is recorded in `docs/design/reviews/STAGE0_DAY1_DEFAULT_AND_STATES_V2_QA_CODEX.md`. The governing UX/copy contract is commit `1f647ba`.
+
+Stage 0 Day 1 engineering implementation is complete on `codex/stage0-day1-vertical-slice`. Independent review of exact tip `b7bb786` passed with no remaining actionable findings after corrections. The implementation now includes active-path-scoped full and short paths, exact resume, v2→v3 state migration without progress loss, the non-blocking meaning gate, structured retrieval with failure-safe input retention, free production, optional private recording, three distinct guided variations plus the approved optional second version, two explicitly evidenced spoken versions, honest completion facts and frozen Fable default/state artifacts. Mobile TypeScript is clean and the repository unit suite passes 162/162. Physical-device microphone lifecycle and screen-reader QA remain open.
+
+Training-sufficiency revision v1.2 passed Codex QA. Owner decisions A1–A4 are accepted: run Stage 0; obtain separate research consent for optional speech samples; use a human speaker for decoding/text audio with TTS allowed for isolated cards; maintain Draft ADR-001 until Stage 0 evidence is reviewed.
+
 Engineering PR 3 implemented S2 Recognition, S3 Profile Entry and the complete-profile → Path Hub transition. Owner-ratified S3 copy and translation states are frozen in `docs/design/exports/s3-copy-ratification-v3/`. Commit `09436bf` passed 135/135 core unit tests and mobile TypeScript. GitHub review: PR #4.
 
 Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-path-scoped local draft recovery, safe exit/resume, six-phase progress, accessible touch targets and the approved three-phrase priming screen. Automated browser QA at 390×844 verified the complete S5→S14 flow, exact phase-4 draft recovery after reload, visible actions and no horizontal overflow or React console errors. Core tests passed 144/144; mobile TypeScript, web production build and S14 evaluation (16/16) passed locally and in GitHub Actions. PR #7 merged as `96bfe95`.
 
 ## Next task
 
-**Active task: PR 7 (engineering) — S6 Recovery product route and states.** Implement the frozen Recovery/Integrity package without consuming curriculum sessions. Cover normal due review, zero-due recovery and deterministic return to Path Hub. Reuse the accepted integrity boundary; do not reopen frozen design.
+**Active task: run owner QA for Stage 0 Day 1 on a physical Android device.** Verify microphone permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup and screen-reader labels. Logic/code review is accepted at `b7bb786`; visual findings return to Fable. Do not implement Days 2–7 until this device gate is recorded.
 
 ## Blockers
 
-Do not redraw Batch A, Batch B, Batch C or Recovery/Integrity. Do not introduce pilot/research terminology into learner-facing copy. Do not invent sync infrastructure, speech analysis, background AI delivery, CEFR inference from activity, streaks or guardian mechanics. Evening Circle remains Future Extension pending owner decision.
+Do not redesign frozen screens, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress. PR 7 engineering is paused at this owner gate.
 
 ## Handoff rule
 

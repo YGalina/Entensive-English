@@ -104,3 +104,17 @@ GitHub Actions passed. Automated device-sized browser QA at 390×844 covered the
 Physical-device microphone permission/interruption testing remains a release check because no Android/iOS device was attached to this environment; it does not invalidate the merged storage and UI contracts.
 
 Next implementation task: S6 Recovery product route and states from the frozen Recovery/Integrity package. Recovery must never consume a curriculum session.
+
+## Stage 0 Day 1 vertical slice — independent review passed
+
+Branch: `codex/stage0-day1-vertical-slice`.
+
+- `packages/core/stage0Day1.ts`: active-local-path-scoped state machine for the accepted 30-minute full path and 16-minute short path; exact first-incomplete resume; mode switching without lost drafts; non-blocking meaning gate; 3/1 retrieval counts; guided-variation submission; two explicit spoken-evidence versions; full/short completion facts.
+- `packages/core/tests/stage0Day1.test.ts`: 11 contract tests, including stale-path rejection, exact resume, retry/reveal, short-path facts, generic voice-skip exclusion, draft-preserving mode changes and full-day completion guards.
+- `apps/mobile/src/app/entry/stage0-day1.tsx`: implementation of accepted Fable Default v2 and States v3. No PhoneFrame or visual redesign; learner copy comes from the ratified inventory; recording is optional and local, auto-stops at 60 seconds, and never implies speech analysis.
+- `apps/mobile/src/app/entry/daily-session.tsx`: routes the accepted daily-session destination to the Stage 0 Day 1 slice.
+- `docs/design/exports/stage0-day1-v1/`: canonical Default v2, States v3 and Developer Handoff v3 sources used for implementation.
+
+Verification: independent review of exact tip `b7bb786` passed with no remaining actionable findings. Mobile TypeScript is clean; repository unit suite passes 162/162; source semantic-term scan and `git diff --check` are clean; browser QA at 390×844 confirmed readable plan hierarchy, visible actions and no horizontal overflow. Corrections include failure-safe learner-input persistence, exact reveal behavior, editable guided slots, three distinct framed topics, the approved optional second version, detailed recording outcomes and v2→v3 state migration without lost progress.
+
+Remaining gate: owner QA on a physical Android device for microphone permission, interruption, empty audio, 60-second auto-stop, local playback, Back/unmount cleanup and screen-reader labels. Any visual mismatch is reported to Fable; Codex does not redesign or visually correct accepted screens.

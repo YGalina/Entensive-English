@@ -23,7 +23,13 @@ export type VoiceRecorder = {
   start: () => Promise<boolean>;
   /** остановить; возвращает uri записи (blob: на web, file:// на телефоне) */
   stop: () => Promise<string | null>;
+  /** остановить с честным различением пустой записи и сбоя сохранения */
+  stopDetailed: () => Promise<VoiceStopResult>;
 };
+
+export type VoiceStopResult =
+  | { status: "saved"; uri: string }
+  | { status: "empty" | "save-failed"; uri: null };
 
 export function useVoiceRecorder(): VoiceRecorder {
   const [recording, setRecording] = useState(false);
@@ -53,25 +59,29 @@ export function useVoiceRecorder(): VoiceRecorder {
     }
   }, [supported]);
 
-  const stop = useCallback(async () => {
+  const stopDetailed = useCallback(async (): Promise<VoiceStopResult> => {
     const rec = mediaRef.current;
-    if (!rec) return null;
-    const uri = await new Promise<string | null>((resolve) => {
+    if (!rec) return { status: "save-failed", uri: null };
+    const result = await new Promise<VoiceStopResult>((resolve) => {
       rec.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: rec.mimeType || "audio/webm" });
-        resolve(blob.size > 0 ? URL.createObjectURL(blob) : null);
+        resolve(blob.size > 0
+          ? { status: "saved", uri: URL.createObjectURL(blob) }
+          : { status: "empty", uri: null });
       };
       try {
         rec.stop();
       } catch {
-        resolve(null);
+        resolve({ status: "save-failed", uri: null });
       }
     });
     rec.stream.getTracks().forEach((t) => t.stop());
     mediaRef.current = null;
     setRecording(false);
-    return uri;
+    return result;
   }, []);
+
+  const stop = useCallback(async () => (await stopDetailed()).uri, [stopDetailed]);
 
   // Размонтирование во время записи — глушим микрофон.
   useEffect(
@@ -81,5 +91,5 @@ export function useVoiceRecorder(): VoiceRecorder {
     []
   );
 
-  return { supported, recording, start, stop };
+  return { supported, recording, start, stop, stopDetailed };
 }

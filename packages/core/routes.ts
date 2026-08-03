@@ -82,7 +82,15 @@ export type LegacyRoute = {
   note: string;
 };
 
+/** Canonical application startup. The legacy tab group also redirects here. */
+export const PRODUCT_ENTRY_ROUTE = "/entry" as const;
+
 export const LEGACY_ROUTES: readonly LegacyRoute[] = [
+  { route: "apps/mobile/src/app/(tabs)/index.tsx", reason: "removed-concept", productReady: false, note: "Legacy Today dashboard; root startup redirects to product S1." },
+  { route: "apps/mobile/src/app/(tabs)/library.tsx", reason: "removed-concept", productReady: false, note: "Legacy tab implementation; does not govern frozen S19." },
+  { route: "apps/mobile/src/app/(tabs)/vocab.tsx", reason: "removed-concept", productReady: false, note: "Legacy tab implementation; does not govern frozen S16." },
+  { route: "apps/mobile/src/app/(tabs)/people.tsx", reason: "removed-concept", productReady: false, note: "Legacy coach/community shell; not a product-ready S24 implementation." },
+  { route: "apps/mobile/src/app/(tabs)/profile.tsx", reason: "removed-concept", productReady: false, note: "Legacy profile tab; does not govern frozen S20." },
   { route: "apps/mobile/src/app/slice/index.tsx", reason: "pilot-research", productReady: false, note: "Vertical-slice/pilot hub — research scaffold, not learner-facing product." },
   { route: "apps/mobile/src/app/slice/entry.tsx", reason: "pilot-research", productReady: false, note: "Pilot entry; superseded by product S3 (frozen)." },
   { route: "apps/mobile/src/app/slice/pretest.tsx", reason: "pilot-research", productReady: false, note: "Pilot pretest; superseded by product S7 (frozen)." },
@@ -93,6 +101,8 @@ export const LEGACY_ROUTES: readonly LegacyRoute[] = [
   { route: "apps/mobile/src/app/checkup.tsx", reason: "levelcheck", productReady: false, note: "CEFR levelcheck — level from activity is banned; replaced by S3 + external slice." },
   { route: "apps/mobile/src/app/roles.tsx", reason: "removed-concept", productReady: false, note: "Roles screen — removed concept (13_app_logic / platform doc)." },
   { route: "apps/mobile/src/app/three.tsx", reason: "removed-concept", productReady: false, note: "3-minute screen — dissolved into session (platform doc)." },
+  { route: "apps/mobile/src/app/session.tsx", reason: "removed-concept", productReady: false, note: "Old auto-advancing word-flow session with music; excluded from product startup." },
+  { route: "apps/mobile/src/app/coach.tsx", reason: "removed-concept", productReady: false, note: "Old trainer surface; excluded from the current product architecture." },
 ] as const;
 
 const legacyRouteSet: ReadonlySet<string> = new Set(LEGACY_ROUTES.map((r) => r.route));

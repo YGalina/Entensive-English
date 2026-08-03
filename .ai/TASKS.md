@@ -2,11 +2,16 @@
 
 ## In progress
 
-- [ ] **PR 7 (engineering) — ACTIVE:** S6 Recovery product route and states. Normal due review and zero-due recovery; no curriculum consumption; deterministic return to Path Hub. Frozen Recovery/Integrity package remains authoritative.
+- [ ] **Stage 0 Day 1 owner physical-device QA — ACTIVE:** verify microphone permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup and screen-reader labels. Visual corrections go to Fable, never Codex.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
 
+- [ ] Independent methodology QA of the produced module: coverage, sequence, cognitive load, transfer validity and evidence claims.
+- [ ] Fable learner-copy and visual-material pass only after methodology QA; reuse the approved Living Content style.
+- [ ] Prepare and run Stage 0 with 5–8 learners individually; collect pre/post/+7, transfer, workload, completion and continuation evidence.
+- [ ] Owner gate on Draft ADR-001 after Stage 0: accept, revise or reject.
+- [ ] Resume PR 7 engineering only after the Stage 0 preparation gate is closed.
 - [ ] Owner decision FD-6: whether informed consent is required and where (human recruitment process vs. approved architecture amendment; no invented screen).
 - [ ] Owner decision FD-4: gender-neutral Russian by default vs. explicit positioning (no new entry control).
 - [ ] Owner decision: Evening Circle — future screen or drop (source exists, no approved screen; marked Future Extension in Batch 1).
@@ -15,6 +20,12 @@
 
 ## Completed
 
+- [x] **Stage 0 Day 1 engineering implementation + independent QA:** exact tip `b7bb786` passed independent review with no actionable findings after correction passes. Full/short paths, exact resume and v2→v3 migration, meaning gate, failure-safe structured retrieval, free production, optional local recording, three distinct guided variations, approved optional second version, two explicit spoken-evidence versions and honest completion facts. Mobile TypeScript clean; core suite 162/162; `git diff --check` clean. Physical-device recording/accessibility QA remains.
+
+- [x] Stage 0 Day 1 Default v2 and States v2 approved and frozen → `docs/design/exports/stage0-day1-v1/`; QA → `docs/design/reviews/STAGE0_DAY1_DEFAULT_AND_STATES_V2_QA_CODEX.md`; governing UX/copy contract `1f647ba`.
+- [x] Training-sufficiency revision v1.2 accepted → `docs/methodology/training_revision_v1/`.
+- [x] Owner decisions A1–A4 accepted for Stage 0 preparation.
+- [x] Draft ADR-001 created; it grants no architecture or implementation authority.
 - [x] **PR 6 engineering — S5 Daily Cycle + S14 Summary:** active-path-scoped local draft recovery; six-phase progress; safe exit/resume; accessible 44px/56px controls; approved three-phrase priming; complete 390×844 browser QA with reload/resume and no overflow/console errors. Core 144/144, mobile TypeScript, web build and S14 evaluation 16/16 passed locally and in GitHub Actions. PR #7 merged as `96bfe95`.
 - [x] **PR 3 engineering + S3 copy ratification:** S2 Recognition; S3 Profile Entry; profile bound to active local path; complete profile routes to Path Hub; owner-approved S3 copy and hidden translation states frozen in `docs/design/exports/s3-copy-ratification-v3/`. Commit `09436bf`; 135/135 core tests and mobile TypeScript passed; GitHub PR #4.
 - [x] **PR 2 + integrity-restart correction ACCEPTED** (independent Codex review of exact commit `cca2dc1`: 115/115 repository tests, no blocking findings). Accepted line on `codex/recovery-integrity-freeze` = `cca2dc1`.
