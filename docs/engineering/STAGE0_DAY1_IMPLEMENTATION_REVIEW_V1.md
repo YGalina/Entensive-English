@@ -60,3 +60,9 @@ Verdict: **PASS** — no remaining actionable findings.
 - `git diff --check`: passed.
 
 Remaining release gate: physical-device microphone lifecycle and screen-reader QA.
+
+## Device-launch correction
+
+Physical-device launch exposed that `/` was still owned by the legacy tab group. A clean Expo launch therefore opened the rejected onboarding, auto-advancing word flow, music and trainer surfaces instead of S1.
+
+Correction: the root-owning legacy tab layout now unconditionally redirects to the canonical product entry `/entry`. S1 remains the only component allowed to decide recognition, resume, integrity, protocol or Path routing. The old tab/session/coach files remain in history but are explicitly classified as non-product routes and cannot govern startup.

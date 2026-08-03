@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import {
   SCREENS,
   LEGACY_ROUTES,
+  PRODUCT_ENTRY_ROUTE,
   isProductReady,
   productReadyScreens,
   isLegacyRoute,
@@ -48,7 +49,10 @@ test("legacy pilot/guardian/streak/levelcheck routes are marked not product-read
   assert.ok(isLegacyRoute("apps/mobile/src/app/slice/index.tsx"));
   assert.ok(isLegacyRoute("apps/mobile/src/app/block.tsx"));
   assert.ok(isLegacyRoute("apps/mobile/src/app/checkup.tsx"));
-  assert.equal(isLegacyRoute("apps/mobile/src/app/(tabs)/index.tsx"), false);
+  assert.equal(isLegacyRoute("apps/mobile/src/app/(tabs)/index.tsx"), true);
+  assert.ok(isLegacyRoute("apps/mobile/src/app/session.tsx"));
+  assert.ok(isLegacyRoute("apps/mobile/src/app/coach.tsx"));
+  assert.equal(PRODUCT_ENTRY_ROUTE, "/entry");
 });
 
 test("screen() resolves and notes S20 ownership of auth/payment entry", () => {
