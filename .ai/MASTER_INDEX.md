@@ -20,6 +20,7 @@
 ## Project operations
 
 - [AI Project Context](AI_PROJECT.md)
+- [Codex Project Handoff](CODEX_HANDOFF.md)
 - [AI Rules](AI_RULES.md)
 - [Current Session](SESSION.md)
 - [Task Register](TASKS.md)
@@ -28,6 +29,7 @@
 - [Claude Interim Orchestrator — emergency fallback, inactive](CLAUDE_INTERIM_ORCHESTRATOR.md)
 - [Claude Interim Launch Prompt](../docs/prompts/governance/01_claude_interim_orchestrator.md)
 - [Prompt Library](../docs/prompts/INDEX.md)
+- [Project Orchestrator Skill](../.agents/skills/intensive-english-orchestrator/SKILL.md)
 - [Audits](../docs/audits/)
 - [Design](../docs/design/)
 

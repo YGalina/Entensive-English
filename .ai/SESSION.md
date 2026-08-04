@@ -10,6 +10,8 @@ Stage 0 Day 1 physical-device QA gate. Frozen visual packages remain authoritati
 
 Codex is the active single orchestrator. The product owner assigns work in this Codex task; Codex manages Git, engineering, QA, acceptance and bounded delegation to Claude. Claude Design / Fable remains the exclusive visual designer and applies every visual correction. ChatGPT is background history only. Memoree supports cited historical recall but never overrides current Git.
 
+Continuity for a new Codex task is provided by `.ai/CODEX_HANDOFF.md` and the project skill `.agents/skills/intensive-english-orchestrator/SKILL.md`; the owner must not be asked to reconstruct the prior conversation.
+
 ## Architecture status
 
 Frozen. `docs/adr/ADR-001-composite-learning-day.md` is Draft only and grants no implementation or visual-design authority.

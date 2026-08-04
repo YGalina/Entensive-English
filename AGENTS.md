@@ -6,12 +6,15 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Intensive English project workflow
 
+For every Intensive English project-management, implementation, QA, design-handoff or continuity task, use the project skill at `.agents/skills/intensive-english-orchestrator/SKILL.md`. A new Codex task must read `.ai/CODEX_HANDOFF.md` before acting; do not ask the product owner to reconstruct prior chat history.
+
 Before material work, read:
 
 - `MASTER_INDEX.md`
 - `PRODUCT_CONSTITUTION.md`
 - `docs/governance/PROJECT_STATE.md`
 - `docs/governance/DEVELOPMENT_CONSTITUTION.md`
+- `.ai/CODEX_HANDOFF.md`
 - the relevant approved specification
 
 After implementation, update `docs/governance/IMPLEMENTATION_HANDOFF.md`. Independent reviews should record their verdict in `docs/governance/REVIEW_LOG.md` and identify the reviewed commit when possible.

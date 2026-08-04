@@ -1,0 +1,4 @@
+interface:
+  display_name: "Intensive English Orchestrator"
+  short_description: "Управление разработкой Intensive English"
+  default_prompt: "Use $intensive-english-orchestrator to continue the Intensive English project from the current Git state."

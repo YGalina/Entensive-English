@@ -20,6 +20,7 @@
 
 ## Completed
 
+- [x] **Codex continuity package:** project-specific orchestrator skill and complete operational handoff created so a new Codex task can resume from Git without the owner relaying the prior conversation.
 - [x] **Project control moved to Codex:** Codex is the single operational orchestrator; Claude is a delegated specialist; Fable exclusively owns visual design and visual corrections; Git is authoritative; Memoree is cited historical memory; ChatGPT is background only. Governance synchronized on 2026-08-04.
 
 - [x] **Stage 0 Day 1 engineering implementation + independent QA:** exact tip `b7bb786` passed independent review with no actionable findings after correction passes. Full/short paths, exact resume and v2→v3 migration, meaning gate, failure-safe structured retrieval, free production, optional local recording, three distinct guided variations, approved optional second version, two explicit spoken-evidence versions and honest completion facts. Mobile TypeScript clean; core suite 162/162; `git diff --check` clean. Physical-device recording/accessibility QA remains.
