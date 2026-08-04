@@ -1,10 +1,14 @@
 # Current Project Session
 
-Last updated: 2026-08-02
+Last updated: 2026-08-04
 
 ## Phase
 
 Stage 0 Day 1 physical-device QA gate. Frozen visual packages remain authoritative and are not reopened.
+
+## Operational control plane
+
+Codex is the active single orchestrator. The product owner assigns work in this Codex task; Codex manages Git, engineering, QA, acceptance and bounded delegation to Claude. Claude Design / Fable remains the exclusive visual designer and applies every visual correction. ChatGPT is background history only. Memoree supports cited historical recall but never overrides current Git.
 
 ## Architecture status
 
@@ -67,4 +71,4 @@ At task completion, update this file with the completed outcome, next task, bloc
 
 ## Continuity
 
-If Codex/ChatGPT is unavailable, Claude Opus 4.8 may continue as temporary orchestrator under `.ai/CLAUDE_INTERIM_ORCHESTRATOR.md`. Fable remains responsible only for visual execution; the product owner retains all approval gates.
+If Codex is unavailable, Claude Opus may continue only after explicit owner reactivation of the emergency protocol in `.ai/CLAUDE_INTERIM_ORCHESTRATOR.md`. Fable remains responsible only for visual execution; the product owner retains all approval gates.

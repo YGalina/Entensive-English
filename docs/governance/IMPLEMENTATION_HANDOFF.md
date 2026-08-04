@@ -46,12 +46,12 @@ Additive, non-destructive routing shell (no full session, no legacy route delete
 
 Next gate: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Entry full screens, which write `ie_profile` and unlock the profile→path-hub transition).
 
-## Active design task
+## Active project gate
 
-- Objective: product-owner review of implementation-readiness audit, then PR 1 foundation/contracts.
-- Frozen inputs: approved Batch A, Batch B, Batch C, Recovery/Integrity, Batch D and Batch E default/state packages.
-- Owner: product owner approves next scope; Claude Design / Fable executes visuals only after a scoped brief exists.
-- Reviewer: Codex for logic, copy, ergonomics, accessibility and unsupported implementation claims.
+- Objective: owner physical-device QA of Stage 0 Day 1, followed by correction and verification of actual runtime defects.
+- Authoritative implementation: branch `codex/stage0-day1-vertical-slice`; current task is recorded in `.ai/SESSION.md`.
+- Codex is the operational orchestrator, Git/engineering owner and QA gate. It may dispatch bounded analysis or review to Claude.
+- Claude Design / Fable exclusively executes visual design and visual corrections after a scoped brief. The product owner gives final visual approval.
 
 ## Frozen constraints
 
@@ -62,7 +62,7 @@ Next gate: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Ent
 - No invented sync/background-delivery infrastructure.
 - No research or implementation terminology in learner-facing copy.
 - No CEFR inference from activity, streaks, guardian mechanics or percent-of-course progress.
-- No application-code changes until implementation-readiness audit is complete and owner-approved.
+- Application-code changes must be tied to a verified defect or approved implementation task and pass proportionate automated and device checks.
 
 ## Required completion report
 

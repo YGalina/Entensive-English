@@ -8,9 +8,11 @@ This is a concise index, not a replacement for ADRs.
 | Architecture phase is closed | Active | `PRODUCT_CONSTITUTION.md`, owner decision |
 | Architectural changes require governance review | Active | `docs/governance/DEVELOPMENT_CONSTITUTION.md` |
 | Vertical Slice is frozen for pilot/manual device checks | Active | review records and current project state |
-| Current phase is visual design preparation | Active | `.ai/SESSION.md` |
+| Codex is the single operational orchestrator; the owner assigns work here, while Claude is a delegated specialist and Fable exclusively owns visual design and corrections | Active | `.ai/AI_PROJECT.md`, `.ai/AI_RULES.md`, `docs/governance/DEVELOPMENT_CONSTITUTION.md`, owner decision 2026-08-04 |
+| Git is the authoritative project state; Memoree is cited historical memory; ChatGPT conversations are non-authoritative background | Active | `.ai/AI_PROJECT.md`, `docs/governance/DEVELOPMENT_CONSTITUTION.md`, owner decision 2026-08-04 |
+| Current phase is Stage 0 Day 1 physical-device QA and correction | Active | `.ai/SESSION.md` |
 | Batch C correction v1 default screens are approved and frozen | Frozen | `docs/design/exports/batch-c-correction-v1/`, `docs/design/reviews/BATCH_C_CORRECTION_V1_QA_CODEX.md`, owner approval 2026-07-22 |
-| Claude Opus 4.8 may act as temporary project orchestrator during Codex/ChatGPT unavailability; Fable remains Creative Director and owner retains approval authority | Active through interim coverage | `.ai/CLAUDE_INTERIM_ORCHESTRATOR.md`, owner authorization 2026-07-23 |
+| Claude Opus may act as emergency interim orchestrator only when Codex is unavailable and the owner explicitly reactivates the fallback; Fable remains Creative Director and owner retains approval authority | Inactive fallback | `.ai/CLAUDE_INTERIM_ORCHESTRATOR.md`, superseded by owner decision 2026-08-04 |
 | Ink/black controls are approved for task-level actions inside Batch C exercises; terracotta remains the main journey-action colour | Approved | Product-owner decision 2026-07-23; `docs/design/reviews/BATCH_C_STATES_V1_QA_CODEX.md` |
 | Batch C states correction v1 is approved and frozen; superseded states v1 is removed from current source of truth | Frozen | `docs/design/exports/batch-c-states-correction-v1/`, `docs/design/reviews/BATCH_C_STATES_CORRECTION_V1_QA_CODEX.md` |
 | Offline groups remain in product architecture but are deferred | Planned | `PRODUCT_CONSTITUTION.md` |

@@ -1,10 +1,10 @@
 # Project State
 
-Last updated: 2026-07-18
+Last updated: 2026-08-04
 
 ## Current phase
 
-Visual product design and implementation, based on the frozen Product Constitution and approved UX stack.
+Stage 0 Day 1 physical-device QA and correction, based on frozen visual packages and the accepted engineering implementation.
 
 ## Frozen
 
@@ -14,9 +14,9 @@ Visual product design and implementation, based on the frozen Product Constituti
 
 ## Active work
 
-- Visual design based on `experience_architecture/06_SCREEN_SPECIFICATIONS.md`.
-- Mobile/web capability allocation and product design.
-- Implementation against approved screen and interaction specifications.
+- Owner physical-device QA for Stage 0 Day 1.
+- Engineering corrections for verified runtime defects.
+- Visual findings routed to Claude Design / Fable; Codex does not apply visual corrections.
 
 ## Deferred, not excluded
 
@@ -30,7 +30,7 @@ Vertical Slice verdict: Ready for Pilot with stated limitations. Manual device/a
 
 ## Next action
 
-Prepare visual design tasks from the approved Screen Specifications, review real mockups, then implement approved flows.
+Record the physical-device findings, apply verified engineering corrections, route visual corrections to Fable, and close the device gate before implementing Days 2–7.
 
 ## Rule
 

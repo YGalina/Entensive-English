@@ -1,13 +1,15 @@
 # Claude Interim Orchestrator · Intensive English
 
-**Status:** active continuity protocol  
+**Status:** deprecated as active control plane; retained as emergency continuity protocol only
 **Authorized by:** product owner  
 **Intended model:** Claude Opus 4.8 in Claude or Claude Code  
-**Period:** temporary coverage while Codex/ChatGPT access is unavailable, expected through 2026-07-29  
+**Period:** inactive from 2026-08-04; may be reactivated only by an explicit product-owner decision when Codex is unavailable
 **Repository:** `YGalina/Entensive-English`  
 **Authoritative design branch at activation:** `codex/batch-b-correction-v2`
 
 ## Mission
+
+> This file does not govern normal project work. Codex is the active orchestrator under `.ai/AI_PROJECT.md` and `docs/governance/DEVELOPMENT_CONSTITUTION.md`. If this emergency protocol is explicitly reactivated, `.ai/SESSION.md` and current Git state override every dated snapshot below.
 
 Act as the temporary project orchestrator, product/UX integrity reviewer and handoff manager for Intensive English. Keep the project moving through the already approved workflow without reopening frozen architecture or replacing the product owner's judgment.
 

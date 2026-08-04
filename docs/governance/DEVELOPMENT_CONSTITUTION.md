@@ -16,7 +16,7 @@ Approves product scope, priorities, methodology changes, UX direction, release d
 
 ### Claude Opus
 
-Owns UX logic, flows, interaction copy and specification maintenance within approved product architecture. It does not choose the final visual language.
+Acts as a bounded specialist when dispatched by Codex: UX logic, flows, interaction copy, methodology analysis or independent review within approved product architecture. It does not operate a parallel project backlog, choose the final visual language or make its output authoritative without repository review and capture.
 
 ### Claude Design / Fable — Creative Director
 
@@ -24,11 +24,15 @@ Owns all visual design and all visual corrections: art direction, composition, t
 
 ### Codex
 
-Inspects the repository, tests actual behavior, reviews diffs and implements approved tasks. During design QA it performs read-only checks of specification integrity, learning logic, accessibility, state coverage and implementation risk, then reports findings. It never applies visual corrections and never edits or prescribes layout, composition, typography, colour, spacing, visual hierarchy or component expression. Every visual finding returns to Claude Design / Fable; engineering proceeds only after product-owner approval of the corrected visual.
+Is the single operational orchestrator and engineering control plane. The product owner assigns work to Codex; Codex inspects current Git state, scopes the next bounded task, invokes Claude specialists when useful, prepares Fable briefs, implements approved engineering work, tests actual behavior, reviews diffs, maintains project controls and commits accepted outcomes. During design QA it performs read-only checks of specification integrity, learning logic, accessibility, state coverage and implementation risk, then reports findings. It never applies visual corrections and never edits or prescribes layout, composition, typography, colour, spacing, visual hierarchy or component expression. Every visual finding returns to Claude Design / Fable; engineering proceeds only after product-owner approval of the corrected visual.
 
-### ChatGPT product task
+### ChatGPT conversations
 
-Helps the owner evaluate product, learning, UX and prioritization decisions using repository evidence. It does not act as art director and cannot overrule Claude Design on visual taste. Decisions still require owner approval and repository capture.
+Are historical or optional advisory context, not a separate operating role or source of truth. They cannot assign authoritative project work, overrule current Git or require the owner to relay routine instructions between agents. Any useful decision or prompt must enter the repository through the Codex control plane.
+
+### Memoree
+
+Provides cited historical recall for durable decisions, prior audits, constraints and outcomes. It does not replace Git, specifications, tests or current source inspection; current repository evidence always wins.
 
 ## Required workflow
 
@@ -40,6 +44,7 @@ Helps the owner evaluate product, learning, UX and prioritization decisions usin
 6. Review the actual diff/commit independently.
 7. Record verdict and follow-up in `REVIEW_LOG.md`.
 8. For visual work: Codex reports findings → Claude Design / Fable corrects in the existing design project → product owner approves → engineering implements exactly the approved visual.
+9. Codex updates the active task and advances to the next safe in-scope action without waiting for a ceremonial handoff. It stops only at a genuine product-owner decision, external authorization, visual approval or unavailable evidence gate.
 
 ## Change policy
 

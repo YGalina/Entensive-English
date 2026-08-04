@@ -4,7 +4,7 @@
 
 - Product architecture: frozen
 - UX architecture and screen specifications: completed for pre-visual review
-- Current phase: visual design preparation
+- Current phase: Stage 0 Day 1 physical-device QA and correction gate
 - Current task: see [SESSION.md](SESSION.md)
 
 ## Core product documents
@@ -25,7 +25,7 @@
 - [Task Register](TASKS.md)
 - [Decision Register](DECISIONS.md)
 - [Development Constitution](../docs/governance/DEVELOPMENT_CONSTITUTION.md)
-- [Claude Interim Orchestrator](CLAUDE_INTERIM_ORCHESTRATOR.md)
+- [Claude Interim Orchestrator — emergency fallback, inactive](CLAUDE_INTERIM_ORCHESTRATOR.md)
 - [Claude Interim Launch Prompt](../docs/prompts/governance/01_claude_interim_orchestrator.md)
 - [Prompt Library](../docs/prompts/INDEX.md)
 - [Audits](../docs/audits/)
