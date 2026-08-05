@@ -2,11 +2,13 @@
 
 ## In progress
 
-- [ ] **Stage 0 Day 1 owner physical-device QA — ACTIVE:** verify microphone permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup and screen-reader labels. Visual corrections go to Fable, never Codex.
+- [ ] **Stage 0 Day 1 Fable owner-device correction — ACTIVE:** obtain the actual artifact for `docs/prompts/design/14_owner_device_feedback_correction.md` (`ed6b7cc`), inspect it against the governing sources, and stop for owner visual approval. The artifact has not yet been found, reviewed, approved or implemented. Visual corrections go to Fable, never Codex.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
 
+- [ ] After owner visual approval, implement the approved prompt-14 artifact in Codex and run proportionate automated and device-sized checks.
+- [ ] Run the final physical Android UX/UI regression only on the corrected implementation: permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup, keyboard behavior and screen-reader labels. A limited earlier check of `e1f1dbe` is diagnostic, not final acceptance.
 - [ ] Independent methodology QA of the produced module: coverage, sequence, cognitive load, transfer validity and evidence claims.
 - [ ] Fable learner-copy and visual-material pass only after methodology QA; reuse the approved Living Content style.
 - [ ] Prepare and run Stage 0 with 5–8 learners individually; collect pre/post/+7, transfer, workload, completion and continuation evidence.

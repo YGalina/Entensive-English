@@ -1,10 +1,10 @@
 # Current Project Session
 
-Last updated: 2026-08-04
+Last updated: 2026-08-05
 
 ## Phase
 
-Stage 0 Day 1 physical-device QA gate. Frozen visual packages remain authoritative and are not reopened.
+Stage 0 Day 1 owner-device correction design gate. The accepted Stage 0 package remains authoritative except for the four bounded findings already captured in `docs/prompts/design/14_owner_device_feedback_correction.md`.
 
 ## Operational control plane
 
@@ -61,11 +61,23 @@ Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-pa
 
 ## Next task
 
-**Active task: run owner QA for Stage 0 Day 1 on a physical Android device.** Verify microphone permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup and screen-reader labels. Logic/code review is accepted at `b7bb786`; visual findings return to Fable. Do not implement Days 2–7 until this device gate is recorded.
+**Active task: obtain and inspect the actual Claude Design / Fable output for prompt 14.** The required sequence is:
+
+1. Claude multi-agent UX/UI QA at `7acc9a7` — complete.
+2. Owner device findings — captured.
+3. Engineering keyboard/input correction `e1f1dbe` — complete; a limited Android verification may run early but is not final acceptance.
+4. Fable correction brief `ed6b7cc` — complete; the actual artifact has not been found, reviewed, owner-approved or implemented.
+5. Fable produces the bounded visual/copy/feedback corrections in the existing `Intensive English дизайн-система` project.
+6. Codex inspects the actual artifact against prompt 14 and governing sources.
+7. Product owner approves the corrected visuals.
+8. Codex implements the approved artifact and runs proportionate checks.
+9. Final physical Android UX/UI regression covers the complete corrected build, including microphone permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup, keyboard behavior and screen-reader labels.
+
+Do not implement Days 2–7 until this full sequence is closed.
 
 ## Blockers
 
-Do not redesign frozen screens, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress. PR 7 engineering is paused at this owner gate.
+The immediate blocker is unavailable Fable output for prompt 14. Do not redesign or visually correct the screens in Codex, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress. Final Android acceptance must wait for the approved correction artifact to be implemented.
 
 ## Handoff rule
 

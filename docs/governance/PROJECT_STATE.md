@@ -1,10 +1,10 @@
 # Project State
 
-Last updated: 2026-08-04
+Last updated: 2026-08-05
 
 ## Current phase
 
-Stage 0 Day 1 physical-device QA and correction, based on frozen visual packages and the accepted engineering implementation.
+Stage 0 Day 1 owner-device correction design gate, followed by implementation and final physical-device regression.
 
 ## Frozen
 
@@ -14,9 +14,10 @@ Stage 0 Day 1 physical-device QA and correction, based on frozen visual packages
 
 ## Active work
 
-- Owner physical-device QA for Stage 0 Day 1.
-- Engineering corrections for verified runtime defects.
-- Visual findings routed to Claude Design / Fable; Codex does not apply visual corrections.
+- Obtain the actual Claude Design / Fable artifact for prompt 14.
+- Codex inspects the artifact; the product owner approves the corrected visuals.
+- Codex implements only the approved artifact, then runs final physical Android UX/UI regression.
+- A limited early Android check of `e1f1dbe` may diagnose keyboard behavior but is not final acceptance.
 
 ## Deferred, not excluded
 
@@ -30,7 +31,7 @@ Vertical Slice verdict: Ready for Pilot with stated limitations. Manual device/a
 
 ## Next action
 
-Record the physical-device findings, apply verified engineering corrections, route visual corrections to Fable, and close the device gate before implementing Days 2–7.
+Obtain and inspect the prompt-14 Fable artifact, secure owner visual approval, implement it in Codex, then close the final physical Android regression gate before implementing Days 2–7.
 
 ## Rule
 

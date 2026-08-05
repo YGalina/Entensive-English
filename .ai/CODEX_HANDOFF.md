@@ -26,7 +26,7 @@ Use `$intensive-english-orchestrator`. Read this file, then execute the active t
 
 ## Current product gate
 
-Stage 0 Day 1 is implemented and independently reviewed. Automated status recorded before this handoff: mobile TypeScript clean and repository unit suite 162/162. The active gate is owner QA on a physical Android device. Do not implement Days 2–7 until this gate is recorded.
+Stage 0 Day 1 is implemented and independently reviewed. Automated status recorded before this handoff: mobile TypeScript clean and repository unit suite 162/162. The active gate is the Claude Design / Fable correction artifact requested by prompt 14, followed by Codex artifact inspection and owner visual approval. The corrected artifact must then be implemented before final physical Android UX/UI regression. Do not implement Days 2–7 until this sequence is closed.
 
 ### Owner findings already reported
 
@@ -42,7 +42,7 @@ Stage 0 Day 1 is implemented and independently reviewed. Automated status record
 - `ed6b7cc` — Fable correction brief at `docs/prompts/design/14_owner_device_feedback_correction.md`.
 - `4bc9290` — Codex single-control-plane governance.
 
-Next execution step: confirm physical-device behavior after `e1f1dbe`, obtain and inspect Fable's output for prompt 14, then record the device-gate verdict. Engineering fixes stay in Codex; visual corrections stay in Fable.
+Next execution step: obtain the actual Fable output for prompt 14 and inspect it against the governing sources. It has not yet been found, reviewed, owner-approved or implemented. After owner visual approval, Codex implements the accepted artifact; only then does the final physical Android UX/UI regression close the device gate. A limited early Android check of `e1f1dbe` is diagnostic only. Engineering fixes stay in Codex; visual corrections stay in Fable.
 
 ## How the project arrived here
 
