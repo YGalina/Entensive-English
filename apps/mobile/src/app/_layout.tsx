@@ -1,4 +1,4 @@
-import { Stack } from "expo-router";
+import { Redirect, Stack, usePathname } from "expo-router";
 // SDK 54: expo-router больше НЕ реэкспортит темы навигации — берём из первоисточника.
 import { DarkTheme, DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
@@ -53,6 +53,7 @@ function navTheme(mode: "light" | "dark") {
 
 export default function RootLayout() {
   const { mode } = useMarina();
+  const pathname = usePathname();
   const [fontsLoaded] = useFonts({
     GolosText_400Regular,
     GolosText_500Medium,
@@ -72,6 +73,14 @@ export default function RootLayout() {
   }, [fontsLoaded]);
 
   if (!fontsLoaded) return null;
+
+  // The repository still carries historical routes while approved product
+  // screens are migrated. They are implementation references only: no cached
+  // URL or old deep link may reopen rejected onboarding, word-flow, music,
+  // coach, guardian, streak or level-check surfaces.
+  if (pathname !== "/entry" && !pathname.startsWith("/entry/")) {
+    return <Redirect href="/entry" />;
+  }
 
   return (
     <ThemeProvider value={navTheme(mode)}>

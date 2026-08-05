@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] **Stage 0 Day 1 Fable owner-device correction — ACTIVE:** obtain the actual artifact for `docs/prompts/design/14_owner_device_feedback_correction.md` (`ed6b7cc`), inspect it against the governing sources, and stop for owner visual approval. The artifact has not yet been found, reviewed, approved or implemented. Visual corrections go to Fable, never Codex.
+- [ ] **Stage 0 Day 1 owner visual approval — ACTIVE:** Fable artifact for prompt 14 is stored at `docs/design/exports/stage0-owner-device-correction-v1/`; Codex QA passed it to owner review in `docs/design/reviews/STAGE0_OWNER_DEVICE_CORRECTION_V1_QA_CODEX.md`. It is not yet owner-approved or implemented. Visual corrections go to Fable, never Codex.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
@@ -22,6 +22,8 @@
 
 ## Completed
 
+- [x] Prompt-14 Fable artifact located and inspected: 20-file package, 15 individual screens, review board, inventory and handoff stored at `docs/design/exports/stage0-owner-device-correction-v1/`; Codex verdict is PASS for owner visual review.
+- [x] Mobile legacy-route containment: root layout permits only canonical `/entry` product routes, so cached or direct legacy links cannot reopen old onboarding, automatic word flow, music, coach, guardians, streaks or levelcheck. Mobile TypeScript and repository unit suite 162/162 pass.
 - [x] **Codex continuity package:** project-specific orchestrator skill and complete operational handoff created so a new Codex task can resume from Git without the owner relaying the prior conversation.
 - [x] **Project control moved to Codex:** Codex is the single operational orchestrator; Claude is a delegated specialist; Fable exclusively owns visual design and visual corrections; Git is authoritative; Memoree is cited historical memory; ChatGPT is background only. Governance synchronized on 2026-08-04.
 

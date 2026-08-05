@@ -61,15 +61,15 @@ Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-pa
 
 ## Next task
 
-**Active task: obtain and inspect the actual Claude Design / Fable output for prompt 14.** The required sequence is:
+**Active task: product-owner visual review of the inspected Claude Design / Fable output for prompt 14.** The required sequence is:
 
 1. Claude multi-agent UX/UI QA at `7acc9a7` — complete.
 2. Owner device findings — captured.
 3. Engineering keyboard/input correction `e1f1dbe` — complete; a limited Android verification may run early but is not final acceptance.
-4. Fable correction brief `ed6b7cc` — complete; the actual artifact has not been found, reviewed, owner-approved or implemented.
-5. Fable produces the bounded visual/copy/feedback corrections in the existing `Intensive English дизайн-система` project.
-6. Codex inspects the actual artifact against prompt 14 and governing sources.
-7. Product owner approves the corrected visuals.
+4. Fable correction brief `ed6b7cc` — complete.
+5. Fable correction artifact — downloaded and stored at `docs/design/exports/stage0-owner-device-correction-v1/`.
+6. Codex inspection — PASS for owner visual review at `docs/design/reviews/STAGE0_OWNER_DEVICE_CORRECTION_V1_QA_CODEX.md`.
+7. Product owner approves or rejects the corrected visuals — active gate.
 8. Codex implements the approved artifact and runs proportionate checks.
 9. Final physical Android UX/UI regression covers the complete corrected build, including microphone permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup, keyboard behavior and screen-reader labels.
 
@@ -77,7 +77,7 @@ Do not implement Days 2–7 until this full sequence is closed.
 
 ## Blockers
 
-The immediate blocker is unavailable Fable output for prompt 14. Do not redesign or visually correct the screens in Codex, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress. Final Android acceptance must wait for the approved correction artifact to be implemented.
+The immediate blocker is product-owner visual approval of the inspected prompt-14 package. Do not redesign or visually correct the screens in Codex, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress. Final Android acceptance must wait for the approved correction artifact to be implemented.
 
 ## Handoff rule
 
