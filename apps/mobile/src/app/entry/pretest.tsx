@@ -33,6 +33,7 @@ export default function EntryPretest() {
   const [submitting, setSubmitting] = useState(false);
   const submitLock = useRef(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [showCompletion, setShowCompletion] = useState(false);
   const item = order[index] ? anyAssessedItem(order[index]) : undefined;
   const number = completedBeforeOpen + index + 1;
 
@@ -56,8 +57,7 @@ export default function EntryPretest() {
       const last = index + 1 >= order.length;
       if (last) {
         finishPretest();
-        handoffFromPretestToFirstSession();
-        router.replace("/entry/path-hub");
+        setShowCompletion(true);
         return;
       }
       setAnswer("");
@@ -77,6 +77,27 @@ export default function EntryPretest() {
       submitLock.current = false;
       setSubmitting(false);
     }
+  }
+
+  if (showCompletion) {
+    return (
+      <View style={{ flex: 1, backgroundColor: c.bg, paddingTop: insets.top + 18, paddingHorizontal: 26, paddingBottom: insets.bottom + 18 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "baseline" }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 16, color: c.ink }}>{ENTRY_ASSESSMENT_COPY.pretestTitle}</Text>
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.muted }}>{total} из {total}</Text>
+        </View>
+        <View accessibilityRole="progressbar" accessibilityValue={{ min: 0, max: total, now: total }} style={{ height: 6, borderRadius: 6, backgroundColor: c.ink, marginTop: 12 }} />
+        <View style={{ flex: 1, justifyContent: "center", gap: 18 }}>
+          <Text style={{ fontFamily: "GolosText_800ExtraBold", fontSize: 30, lineHeight: 37, color: c.ink }}>Стартовая точка сохранена.</Text>
+          <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 17, lineHeight: 25, color: c.muted }}>Здесь не было оценки. Ответы нужны, чтобы практика началась с того, что пока не вспоминается.</Text>
+          <View style={{ height: 1, backgroundColor: c.line }} />
+          <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 17, color: c.ink }}>Теперь — первая тренировка.</Text>
+        </View>
+        <Pressable accessibilityRole="button" onPress={() => { handoffFromPretestToFirstSession(); router.replace("/entry/path-hub"); }} style={{ minHeight: 56, borderRadius: 16, backgroundColor: c.ink, alignItems: "center", justifyContent: "center" }}>
+          <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 17, color: c.bg }}>Начать тренировку</Text>
+        </Pressable>
+      </View>
+    );
   }
 
   return (

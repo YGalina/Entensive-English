@@ -4,7 +4,7 @@ Last updated: 2026-08-05
 
 ## Current phase
 
-Stage 0 Day 1 owner visual-approval gate for the inspected owner-device correction package, followed by implementation and final physical-device regression.
+Stage 0 Day 1 final physical Android regression after owner-approved prompt-14 implementation.
 
 ## Frozen
 
@@ -14,10 +14,9 @@ Stage 0 Day 1 owner visual-approval gate for the inspected owner-device correcti
 
 ## Active work
 
-- Prompt-14 Fable artifact is stored at `docs/design/exports/stage0-owner-device-correction-v1/`; Codex QA passed it for owner visual review.
-- Product owner approves or rejects the corrected visuals.
-- Codex implements only the approved artifact, then runs final physical Android UX/UI regression.
-- A limited early Android check of `e1f1dbe` may diagnose keyboard behavior but is not final acceptance.
+- Prompt-14 Fable artifact is stored and owner-approved.
+- Codex implemented the bounded S7, keyboard/input, S14 feedback and S3 responsive corrections.
+- Final physical Android UX/UI regression is active.
 
 ## Deferred, not excluded
 
@@ -31,7 +30,7 @@ Vertical Slice verdict: Ready for Pilot with stated limitations. Manual device/a
 
 ## Next action
 
-Secure owner visual approval of the inspected prompt-14 package, implement it in Codex, then close the final physical Android regression gate before implementing Days 2–7.
+Close the final physical Android regression gate on the corrected build before implementing Days 2–7.
 
 ## Rule
 

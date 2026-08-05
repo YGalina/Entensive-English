@@ -48,7 +48,7 @@ Next gate: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Ent
 
 ## Active project gate
 
-- Objective: owner visual approval of `docs/design/exports/stage0-owner-device-correction-v1/`, followed by bounded implementation and final physical Android regression.
+- Objective: final physical Android regression of the owner-approved and implemented `docs/design/exports/stage0-owner-device-correction-v1/` delta.
 - Authoritative implementation: branch `codex/stage0-day1-vertical-slice`; current task is recorded in `.ai/SESSION.md`.
 - Codex is the operational orchestrator, Git/engineering owner and QA gate. It may dispatch bounded analysis or review to Claude.
 - Claude Design / Fable exclusively executes visual design and visual corrections after a scoped brief. The product owner gives final visual approval.
@@ -59,6 +59,15 @@ Next gate: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Ent
 - Root layout now rejects every route outside `/entry` and `/entry/*`. Cached URLs and direct links can no longer expose old onboarding, automatic word cycling, word-flood, music, coach, guardians, streaks, levelcheck or other legacy surfaces.
 - The current repository contains no APK/AAB/IPA or EAS build configuration. A custom-icon app already installed on a phone is therefore not evidence of the current branch; current JavaScript is tested through a fresh Expo/Metro bundle until a separately approved native build identity and delivery path exist.
 - The configured `icon.png` is unchanged from legacy commit `503bfbe`. No approved replacement icon is present in the prompt-14 package; Codex must not invent one.
+
+## Stage 0 owner-device correction implementation
+
+- Owner visual approval recorded 2026-08-05.
+- S7 now shows the approved neutral `28 из 28` completion transition before the first training handoff.
+- Stage 0 text fields disable autocorrect, capitalization and spellcheck, retain local drafts and use the approved keyboard-safe scroll behavior.
+- S14 now evaluates only the written production: target frame present, on-topic without frame, up to two deterministic self-correction prompts, and a non-default unavailable state. It preserves the learner's original text and explicitly states that voice was not analysed.
+- S3 choices use equal full-width `minHeight: 60` controls with wrapping text and vertical scrolling.
+- Verification: mobile TypeScript clean; repository unit suite 162/162; Android Expo export successful.
 
 ## Frozen constraints
 

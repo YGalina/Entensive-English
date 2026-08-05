@@ -26,7 +26,7 @@ Use `$intensive-english-orchestrator`. Read this file, then execute the active t
 
 ## Current product gate
 
-Stage 0 Day 1 is implemented and independently reviewed. Automated status recorded before this handoff: mobile TypeScript clean and repository unit suite 162/162. The prompt-14 Fable artifact is stored at `docs/design/exports/stage0-owner-device-correction-v1/` and passed Codex QA for owner visual review. The active gate is product-owner visual approval. The approved artifact must then be implemented before final physical Android UX/UI regression. Do not implement Days 2–7 until this sequence is closed.
+Stage 0 Day 1 and the owner-approved prompt-14 correction are implemented. The correction adds the S7 completion transition, keyboard/input behavior, S14 written-text feedback states and S3 responsive choices. Mobile TypeScript, repository unit suite 162/162 and Android export pass. The active gate is final physical Android UX/UI regression. Do not implement Days 2–7 until it is closed.
 
 ### Owner findings already reported
 
@@ -42,7 +42,7 @@ Stage 0 Day 1 is implemented and independently reviewed. Automated status record
 - `ed6b7cc` — Fable correction brief at `docs/prompts/design/14_owner_device_feedback_correction.md`.
 - `4bc9290` — Codex single-control-plane governance.
 
-Next execution step: obtain product-owner visual approval or rejection of the inspected prompt-14 package. After approval, Codex implements the accepted artifact; only then does the final physical Android UX/UI regression close the device gate. A limited early Android check of `e1f1dbe` is diagnostic only. Engineering fixes stay in Codex; visual corrections stay in Fable.
+Next execution step: run the corrected build on the physical Android device and record the complete regression verdict. Engineering fixes stay in Codex; any new visual correction returns to Fable.
 
 ## How the project arrived here
 

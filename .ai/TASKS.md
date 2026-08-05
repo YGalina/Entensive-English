@@ -2,13 +2,11 @@
 
 ## In progress
 
-- [ ] **Stage 0 Day 1 owner visual approval — ACTIVE:** Fable artifact for prompt 14 is stored at `docs/design/exports/stage0-owner-device-correction-v1/`; Codex QA passed it to owner review in `docs/design/reviews/STAGE0_OWNER_DEVICE_CORRECTION_V1_QA_CODEX.md`. It is not yet owner-approved or implemented. Visual corrections go to Fable, never Codex.
+- [ ] **Stage 0 Day 1 final Android regression — ACTIVE:** owner approved the prompt-14 visuals and Codex implemented the bounded correction. Verify S7 transition, S14 written-text feedback, S3 at 200%, keyboard behavior, microphone lifecycle and screen-reader labels on the corrected physical-device build.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
 
-- [ ] After owner visual approval, implement the approved prompt-14 artifact in Codex and run proportionate automated and device-sized checks.
-- [ ] Run the final physical Android UX/UI regression only on the corrected implementation: permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup, keyboard behavior and screen-reader labels. A limited earlier check of `e1f1dbe` is diagnostic, not final acceptance.
 - [ ] Independent methodology QA of the produced module: coverage, sequence, cognitive load, transfer validity and evidence claims.
 - [ ] Fable learner-copy and visual-material pass only after methodology QA; reuse the approved Living Content style.
 - [ ] Prepare and run Stage 0 with 5–8 learners individually; collect pre/post/+7, transfer, workload, completion and continuation evidence.
@@ -22,6 +20,7 @@
 
 ## Completed
 
+- [x] Owner approved prompt-14 visuals; Codex implemented S7 completion transition, keyboard/input corrections, S14 written-text feedback states A/B/C/D and S3 responsive choices. Mobile TypeScript, repository unit suite 162/162 and Android export pass.
 - [x] Prompt-14 Fable artifact located and inspected: 20-file package, 15 individual screens, review board, inventory and handoff stored at `docs/design/exports/stage0-owner-device-correction-v1/`; Codex verdict is PASS for owner visual review.
 - [x] Mobile legacy-route containment: root layout permits only canonical `/entry` product routes, so cached or direct legacy links cannot reopen old onboarding, automatic word flow, music, coach, guardians, streaks or levelcheck. Mobile TypeScript and repository unit suite 162/162 pass.
 - [x] **Codex continuity package:** project-specific orchestrator skill and complete operational handoff created so a new Codex task can resume from Git without the owner relaying the prior conversation.

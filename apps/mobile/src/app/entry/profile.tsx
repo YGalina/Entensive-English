@@ -238,9 +238,10 @@ export default function ProfileEntry() {
                     borderRadius: 16,
                     backgroundColor: selected ? c.brandSoft : c.surface,
                     paddingHorizontal: 22,
+                    paddingVertical: 14,
                   }}
                 >
-                  <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 18, color: c.ink }}>{label}</Text>
+                  <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 18, lineHeight: 23, color: c.ink }}>{label}</Text>
                 </Pressable>
               );
             })}

@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useVoiceRecorder, playRecording } from "@ie/media/recorder";
+import { feedbackFor } from "@ie/core/feedback";
 import {
   DAY1_FULL_FACTS,
   DAY1_MINUTES,
@@ -72,6 +73,27 @@ const RETRIEVALS = [
 ] as const;
 
 const SUPPORTS = ["I've been working on…", "run a project", "meet a deadline", "come up with"] as const;
+
+const FEEDBACK_COPY: Record<string, string> = {
+  "do-decision": "Посмотри на сочетание с decision: по-английски обычно говорят make a decision.",
+  "feel-myself": "Проверь feel myself: когда речь о самочувствии, myself обычно не нужен.",
+  "depends-from": "Проверь предлог после depends: обычно это depends on.",
+  "discuss-about": "Проверь discuss about: после discuss предлог обычно не нужен.",
+  "married-on": "Проверь предлог после married: обычно это married to.",
+  "in-weekday": "С днями недели обычно нужен предлог on.",
+  "very-like": "Перед like, love, want и need слово very обычно не ставят.",
+  "capital-i": "Проверь местоимение I — оно всегда пишется с заглавной буквы.",
+  "past-marker": "Есть маркер прошлого — проверь форму основного глагола.",
+  shorter: "Попробуй разделить длинную фразу на две — так её легче сказать вслух.",
+};
+
+function writtenSummary(text: string) {
+  if (!text.trim()) return { kind: "unavailable" as const, hints: [] };
+  const hints = feedbackFor(text);
+  if (hints.length) return { kind: "issues" as const, hints };
+  if (/\bi(?:'|’)ve\s+been\s+working\s+on\b/i.test(text)) return { kind: "achieved" as const, hints };
+  return { kind: "on-topic" as const, hints };
+}
 
 function normalize(value: string) {
   return value.toLowerCase().replace(/[’']/g, "'").replace(/[^a-z' ]/g, " ").replace(/\s+/g, " ").trim();
@@ -416,7 +438,8 @@ export default function Stage0Day1Screen() {
         {support >= 1 && <Card soft><Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 15, color: c.ink }}>Подсказка — первая буква</Text><Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 17, color: c.ink }}>{item.first}</Text></Card>}
         {support >= 2 && <Card><Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 15, color: c.ink }}>Подсказка — выбери из трёх</Text>{item.choices.map((choice) => <Pressable key={choice} accessibilityRole="button" accessibilityLabel={choice} onPress={() => setInput(choice)} style={{ minHeight: 44, justifyContent: "center" }}><Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 16, color: c.ink }}>{choice}</Text></Pressable>)}</Card>}
         {support >= 3 && <Card soft><Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 18, color: c.ink }}>{item.answer}</Text><Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted }}>Перепечатай своими руками — так запоминается.</Text></Card>}
-        <TextInput accessibilityLabel="Ответ по-английски" value={input} onChangeText={(value) => { setInput(value); const next = saveStage0Day1({ retrievalDraft: value }); if (next) setSaveMessage(null); else setSaveMessage("Не сохранилось. Всё, что ты написала, — на экране. Попробуй ещё раз."); }} autoCapitalize="none" autoCorrect={false} placeholder="Ответ по-английски" placeholderTextColor={c.muted} style={{ minHeight: 58, borderRadius: 16, borderWidth: 1.5, borderColor: c.line, backgroundColor: c.surface, paddingHorizontal: 16, fontFamily: "Lora_600SemiBold", fontSize: 18, color: c.ink }} />
+        <TextInput accessibilityLabel="Ответ по-английски" value={input} onChangeText={(value) => { setInput(value); const next = saveStage0Day1({ retrievalDraft: value }); if (next) setSaveMessage(null); else setSaveMessage("Не сохранилось. Всё, что ты написала, — на экране. Попробуй ещё раз."); }} autoCapitalize="none" autoCorrect={false} spellCheck={false} placeholder="Ответ по-английски" placeholderTextColor={c.muted} style={{ minHeight: 58, borderRadius: 16, borderWidth: 1.5, borderColor: c.line, backgroundColor: c.surface, paddingHorizontal: 16, fontFamily: "Lora_600SemiBold", fontSize: 18, color: c.ink }} />
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted }}>Автоисправление выключено</Text>
         {saveMessage && <Card soft><Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.ink }}>{saveMessage}</Text><QuietButton label="Попробуй ещё раз" onPress={submit} /></Card>}
         <PrimaryButton label="Проверить" disabled={!input.trim()} onPress={submit} />
       </Shell>
@@ -429,7 +452,8 @@ export default function Stage0Day1Screen() {
         <Heading overline="СВОЯ ФРАЗА" title="Над чем ты работаешь прямо сейчас — на работе или дома? Две-три фразы." />
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>{SUPPORTS.map((label) => <View key={label} accessible accessibilityLabel={label} style={{ minHeight: 44, justifyContent: "center", borderRadius: 999, paddingHorizontal: 14, backgroundColor: c.surface, borderWidth: 1, borderColor: c.line }}><Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 14, color: c.ink }}>{label}</Text></View>)}</View>
         <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted }}>Пока ты пишешь, никто не подсказывает и не поправляет.</Text>
-        <TextInput accessibilityLabel="Своя фраза по-английски" value={productionDraft} onChangeText={(value) => { setProductionDraft(value); const next = saveStage0Day1({ productionText: value }); if (next) setSaveMessage(null); else setSaveMessage("Не сохранилось. Всё, что ты написала, — на экране. Попробуй ещё раз."); }} multiline autoCapitalize="sentences" autoCorrect={false} placeholder="Напиши по-английски…" placeholderTextColor={c.muted} style={{ minHeight: 190, textAlignVertical: "top", borderRadius: 18, borderWidth: 1.5, borderColor: c.line, backgroundColor: c.surface, padding: 16, fontFamily: "Lora_400Regular", fontSize: 18, lineHeight: 27, color: c.ink }} />
+        <TextInput accessibilityLabel="Своя фраза по-английски" value={productionDraft} onChangeText={(value) => { setProductionDraft(value); const next = saveStage0Day1({ productionText: value }); if (next) setSaveMessage(null); else setSaveMessage("Не сохранилось. Всё, что ты написала, — на экране. Попробуй ещё раз."); }} multiline autoCapitalize="none" autoCorrect={false} spellCheck={false} placeholder="Напиши по-английски…" placeholderTextColor={c.muted} style={{ minHeight: 118, textAlignVertical: "top", borderRadius: 18, borderWidth: 1.5, borderColor: c.line, backgroundColor: c.surface, padding: 16, fontFamily: "Lora_400Regular", fontSize: 18, lineHeight: 27, color: c.ink }} />
+        <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, color: c.muted }}>Автоисправление выключено</Text>
         {saveMessage && <Card soft><Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.ink }}>{saveMessage}</Text><QuietButton label="Попробуй ещё раз" onPress={() => { const next = saveStage0Day1({ productionText: productionDraft }); if (next) { accept(next); setSaveMessage(null); } }} /></Card>}
         <PrimaryButton label="Готово" disabled={!productionDraft.trim()} onPress={() => { const next = accept(submitStage0Day1Production(productionDraft)); if (!next) { setSaveMessage("Не сохранилось. Всё, что ты написала, — на экране. Попробуй ещё раз."); return; } setSaveMessage(null); if (next.mode === "short") accept(finishStage0Day1Core()); }} />
       </Shell>
@@ -451,11 +475,19 @@ export default function Stage0Day1Screen() {
   }
 
   if (state.block === "core" && state.corePhase === "summary") {
+    const summary = writtenSummary(state.productionText);
+    const retryProduction = () => accept(saveStage0Day1({ corePhase: "produce" }));
+    const finishSummary = () => { resetVoiceUi(); accept(finishStage0Day1Core()); };
     return (
       <Shell state={state} title="Сессия дня" phase={6} onBack={returnToPlan}>
-        <Heading title="Резюме сейчас не собралось." body="Твой текст сохранён — можно попробовать ещё раз." />
+        <Heading title={summary.kind === "achieved" ? "Задание выполнено: ты сказала, над чем работаешь сейчас." : summary.kind === "on-topic" ? "Ты ответила по теме." : summary.kind === "issues" ? "Посмотри на две небольшие зацепки." : "Разбор сейчас не получился."} body={summary.kind === "unavailable" ? "Это не влияет на твою фразу — она сохранена." : undefined} />
         <Card><Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 20, lineHeight: 29, color: c.ink }}>{state.productionText}</Text></Card>
-        <PrimaryButton label="Дальше" onPress={() => { resetVoiceUi(); accept(finishStage0Day1Core()); }} />
+        {summary.kind === "on-topic" && <Card soft><Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 15, lineHeight: 22, color: c.ink }}>Попробуй ещё одну версию с рамкой дня: I’ve been working on…</Text></Card>}
+        {summary.kind === "issues" && summary.hints.map((hint) => <Card soft key={hint.id}><Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.ink }}>{FEEDBACK_COPY[hint.id] ?? "Проверь эту часть фразы и попробуй ещё раз."}</Text></Card>)}
+        {summary.kind !== "issues" && <Card><Text style={{ fontFamily: "GolosText_700Bold", fontSize: 12, letterSpacing: 1, color: c.muted }}>ЕЩЁ ТАК ГОВОРЯТ</Text><Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 17, lineHeight: 25, color: c.ink }}>I’ve been working on a project at home.</Text>{summary.kind === "achieved" && <Text style={{ fontFamily: "Lora_600SemiBold", fontSize: 17, lineHeight: 25, color: c.ink }}>I’ve been working on a new idea lately.</Text>}</Card>}
+        {summary.kind !== "issues" && <Card soft><Text style={{ fontFamily: "GolosText_700Bold", fontSize: 12, letterSpacing: 1, color: c.muted }}>ГРАММАТИКА К СЛУЧАЮ</Text><Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.ink }}>I’ve been working on… помогает назвать процесс, который начался раньше и всё ещё продолжается.</Text></Card>}
+        {summary.kind !== "issues" && <Text style={{ fontFamily: "GolosText_400Regular", fontSize: 14, lineHeight: 20, color: c.muted }}>Это автоматическая проверка написанного текста. Голосовая запись не анализировалась.</Text>}
+        {summary.kind === "achieved" ? <PrimaryButton label="Дальше" onPress={finishSummary} /> : summary.kind === "unavailable" ? <><PrimaryButton label="Попробовать ещё раз" onPress={retryProduction} /><QuietButton label="Дальше" onPress={finishSummary} /></> : <><PrimaryButton label="Попробовать ещё раз" onPress={retryProduction} /><QuietButton label="Оставить как есть" onPress={finishSummary} /></>}
       </Shell>
     );
   }
@@ -468,7 +500,7 @@ export default function Stage0Day1Screen() {
         <Shell state={state} title="Три фразы по одной рамке" onBack={returnToPlan}>
           <Card soft><Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.ink }}>Понятно. В речи встречается и «I've been busy with…» — это другой оборот; сегодняшняя рамка — «I've been working on…».</Text></Card>
           <Heading title="Если хочешь — сделай вторую версию. Не хочешь — задание уже сделано." />
-          <TextInput accessibilityLabel="Опциональная вторая версия по рамке I've been working on" value={guidedOptionalDraft} onChangeText={(value) => { setGuidedOptionalDraft(value); setGuidedFrameError(false); const next = saveStage0Day1({ guidedOptionalDraft: value }); if (next) setSaveMessage(null); else setSaveMessage("Не сохранилось. Всё, что ты написала, — на экране. Попробуй ещё раз."); }} multiline autoCorrect={false} autoCapitalize="sentences" placeholder="I've been working on…" placeholderTextColor={c.muted} style={{ minHeight: 120, textAlignVertical: "top", borderRadius: 18, borderWidth: 1.5, borderColor: c.line, backgroundColor: c.surface, padding: 16, fontFamily: "Lora_400Regular", fontSize: 18, lineHeight: 27, color: c.ink }} />
+          <TextInput accessibilityLabel="Опциональная вторая версия по рамке I've been working on" value={guidedOptionalDraft} onChangeText={(value) => { setGuidedOptionalDraft(value); setGuidedFrameError(false); const next = saveStage0Day1({ guidedOptionalDraft: value }); if (next) setSaveMessage(null); else setSaveMessage("Не сохранилось. Всё, что ты написала, — на экране. Попробуй ещё раз."); }} multiline autoCorrect={false} spellCheck={false} autoCapitalize="none" placeholder="I've been working on…" placeholderTextColor={c.muted} style={{ minHeight: 64, textAlignVertical: "top", borderRadius: 18, borderWidth: 1.5, borderColor: c.line, backgroundColor: c.surface, padding: 16, fontFamily: "Lora_400Regular", fontSize: 18, lineHeight: 27, color: c.ink }} />
           {optionalFrameError && <Card soft><Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.ink }}>Рамка чуть съехала — верни «I've been …».</Text></Card>}
           {saveMessage && <Card soft><Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.ink }}>{saveMessage}</Text><QuietButton label="Попробуй ещё раз" onPress={() => { const next = saveStage0Day1({ guidedOptionalDraft }); if (next) { accept(next); setSaveMessage(null); } }} /></Card>}
           <PrimaryButton label="Дальше" onPress={() => { if (guidedOptionalDraft.trim() && !isStage0Day1GuidedAnswer(guidedOptionalDraft)) { setGuidedFrameError(true); return; } const next = continueStage0Day1AfterGuidedVariation(guidedOptionalDraft); if (next) { accept(next); setSaveMessage(null); } else setSaveMessage("Не сохранилось. Всё, что ты написала, — на экране. Попробуй ещё раз."); }} />
@@ -479,7 +511,7 @@ export default function Stage0Day1Screen() {
       <Shell state={state} title="Три фразы по одной рамке" onBack={returnToPlan}>
         <Heading overline={`${slot + 1} ИЗ 3`} title="I've been working on …" body="Продолжи про себя: «I've been working on …». Три раза — три разных дела." />
         <View style={{ flexDirection: "row", justifyContent: "center", gap: 12 }}>{[0, 1, 2].map((index) => <Pressable key={index} accessibilityRole="button" accessibilityLabel={`Фраза ${index + 1} из 3`} onPress={() => accept(saveStage0Day1({ currentGuidedSlot: index as 0 | 1 | 2 }))} style={{ width: 44, height: 44, borderRadius: 22, alignItems: "center", justifyContent: "center", borderWidth: 1.5, borderColor: index === slot ? c.brand : c.line, backgroundColor: c.surface }}><Text style={{ fontFamily: "GolosText_700Bold", color: c.ink }}>{index + 1}</Text></Pressable>)}</View>
-        <TextInput accessibilityLabel={`Фраза ${slot + 1} по рамке I've been working on`} value={guidedDrafts[slot]} onChangeText={(value) => { const nextDrafts: [string, string, string] = [...guidedDrafts]; nextDrafts[slot] = value; setGuidedDrafts(nextDrafts); setGuidedFrameError(false); const next = saveStage0Day1GuidedSlot(slot, value); if (next) setSaveMessage(null); else setSaveMessage("Не сохранилось. Всё, что ты написала, — на экране. Попробуй ещё раз."); }} multiline autoCorrect={false} autoCapitalize="sentences" placeholder="I've been working on…" placeholderTextColor={c.muted} style={{ minHeight: 150, textAlignVertical: "top", borderRadius: 18, borderWidth: 1.5, borderColor: c.line, backgroundColor: c.surface, padding: 16, fontFamily: "Lora_400Regular", fontSize: 18, lineHeight: 27, color: c.ink }} />
+        <TextInput accessibilityLabel={`Фраза ${slot + 1} по рамке I've been working on`} value={guidedDrafts[slot]} onChangeText={(value) => { const nextDrafts: [string, string, string] = [...guidedDrafts]; nextDrafts[slot] = value; setGuidedDrafts(nextDrafts); setGuidedFrameError(false); const next = saveStage0Day1GuidedSlot(slot, value); if (next) setSaveMessage(null); else setSaveMessage("Не сохранилось. Всё, что ты написала, — на экране. Попробуй ещё раз."); }} multiline autoCorrect={false} spellCheck={false} autoCapitalize="none" placeholder="I've been working on…" placeholderTextColor={c.muted} style={{ minHeight: 64, textAlignVertical: "top", borderRadius: 18, borderWidth: 1.5, borderColor: c.line, backgroundColor: c.surface, padding: 16, fontFamily: "Lora_400Regular", fontSize: 18, lineHeight: 27, color: c.ink }} />
         {guidedFrameError && <Card soft><Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.ink }}>Рамка чуть съехала — верни «I've been …».</Text></Card>}
         {saveMessage && <Card soft><Text style={{ fontFamily: "GolosText_400Regular", fontSize: 15, lineHeight: 22, color: c.ink }}>{saveMessage}</Text><QuietButton label="Попробуй ещё раз" onPress={() => { const next = saveStage0Day1GuidedSlot(slot, guidedDrafts[slot]); if (next) { accept(next); setSaveMessage(null); } }} /></Card>}
         <PrimaryButton label={slot === 2 ? "Отправить" : "Дальше"} disabled={!guidedDrafts[slot].trim()} onPress={() => { if (slot < 2) { accept(saveStage0Day1({ currentGuidedSlot: (slot + 1) as 1 | 2 })); return; } if (!areStage0Day1GuidedAnswersValid(guidedDrafts)) { setGuidedFrameError(true); return; } const next = submitStage0Day1GuidedVariation(); if (next) { accept(next); setSaveMessage(null); } else setSaveMessage("Не сохранилось. Всё, что ты написала, — на экране. Попробуй ещё раз."); }} />
