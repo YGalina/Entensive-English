@@ -22,4 +22,4 @@ The actual HTML artifact was extracted to a temporary directory, rendered throug
 
 ## Gate
 
-Product-owner visual approval is required before Codex implements the approved header behavior in the mobile application. Final physical Android regression follows implementation.
+Product-owner visual approval was recorded on 2026-08-05. Codex implemented the approved header behavior in the mobile application. Mobile TypeScript, repository unit suite 163/163, S14 baseline 16/16 and Android Expo export pass. Final physical Android regression is the active gate.

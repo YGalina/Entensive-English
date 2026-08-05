@@ -77,6 +77,13 @@ Next gate: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Ent
 - Verification: repository unit suite 163/163; mobile TypeScript clean; S14 deterministic baseline 16/16; `git diff --check` clean.
 - The same device evidence exposed a separate Path Hub week-header collision. It is visual work and is routed to Fable in `docs/prompts/design/15_path_hub_week_header_device_correction.md`; no visual correction was made in Codex.
 
+### Path Hub week-header correction — 2026-08-05
+
+- The product owner approved the inspected Fable artifact at `docs/design/exports/path-hub-week-header-device-correction-v1/`.
+- The weekly-practice header now uses the approved wrapping row: the month group may shrink and wrap, while `Первая неделя` remains intact and moves to the next line when required.
+- Copy is never truncated, shortened or reduced in size. The weekday row and explanatory copy are unchanged.
+- Final physical Android regression remains required.
+
 ## Frozen constraints
 
 - Product and UX architecture remain frozen.

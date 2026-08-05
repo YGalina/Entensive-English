@@ -164,21 +164,43 @@ export default function PathHub() {
           marginTop: 14,
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.accent }} />
-          <Text
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            alignItems: "baseline",
+            justifyContent: "space-between",
+            columnGap: 12,
+            rowGap: 4,
+          }}
+        >
+          <View
             style={{
-              fontFamily: "GolosText_600SemiBold",
-              fontSize: 14,
-              letterSpacing: 0.6,
-              color: c.muted,
-              marginLeft: 8,
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+              flexGrow: 1,
+              flexShrink: 1,
+              flexBasis: "auto",
+              minWidth: 0,
             }}
           >
-            ВРЕМЯ ПРАКТИКИ · {new Intl.DateTimeFormat("ru-RU", { month: "long" }).format(new Date()).toUpperCase()}
-          </Text>
-          <Text style={{ marginLeft: "auto", fontFamily: "GolosText_600SemiBold", fontSize: 14, color: c.muted }}>
-            первая неделя
+            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: c.accent, flexShrink: 0 }} />
+            <Text
+              style={{
+                flexShrink: 1,
+                fontFamily: "GolosText_600SemiBold",
+                fontSize: 14,
+                lineHeight: 19,
+                letterSpacing: 0.6,
+                color: c.muted,
+              }}
+            >
+              ВРЕМЯ ПРАКТИКИ · {new Intl.DateTimeFormat("ru-RU", { month: "long" }).format(new Date()).toUpperCase()}
+            </Text>
+          </View>
+          <Text style={{ flexShrink: 0, fontFamily: "GolosText_600SemiBold", fontSize: 14, lineHeight: 19, color: "#B0A893" }}>
+            Первая неделя
           </Text>
         </View>
         <View style={{ flexDirection: "row", alignItems: "flex-end", gap: 8, height: 34, marginTop: 14 }}>
