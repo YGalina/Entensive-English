@@ -107,12 +107,19 @@ test("short completion exposes only the two short-path facts", () => {
   markStage0Day1TextRead(3);
   answerStage0Day1Comprehension(true, 4);
   submitStage0Day1Retrieval("We should meet the deadline.", 5);
-  submitStage0Day1Production("I've been working on my kitchen.", 6);
+  const feedback = submitStage0Day1Production("I've been working on my kitchen.", 6)!;
+  assert.equal(feedback.corePhase, "summary");
   const ready = loadStage0Day1()!;
   assert.deepEqual(stage0Day1Facts(ready), DAY1_SHORT_FACTS);
   const done = completeStage0Day1(5)!;
   assert.equal(done.completionMode, "short");
   assert.deepEqual(stage0Day1Facts(done), DAY1_SHORT_FACTS);
+});
+
+test("full production keeps the optional voice step before written feedback", () => {
+  startStage0Day1("full", 1);
+  const next = submitStage0Day1Production("I've been working on my kitchen.", 2)!;
+  assert.equal(next.corePhase, "voice");
 });
 
 test("meaning gate retries once, then reveals and never blocks the day", () => {

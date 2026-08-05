@@ -2,7 +2,8 @@
 
 ## In progress
 
-- [ ] **Stage 0 Day 1 final Android regression — ACTIVE:** owner approved the prompt-14 visuals and Codex implemented the bounded correction. Verify S7 transition, S14 written-text feedback, S3 at 200%, keyboard behavior, microphone lifecycle and screen-reader labels on the corrected physical-device build.
+- [ ] **Path Hub week-header Fable correction — ACTIVE:** resolve the physical-device collision between `ВРЕМЯ ПРАКТИКИ · АВГУСТ` and `Первая неделя`; inspect the artifact, obtain owner visual approval and implement it before final Android acceptance.
+- [ ] **Stage 0 Day 1 final Android regression:** after the Path Hub visual correction is approved and implemented, verify S7 transition, S14 written-text feedback in short and full modes, S3 at 200%, keyboard behavior, microphone lifecycle and screen-reader labels.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next
@@ -20,6 +21,7 @@
 
 ## Completed
 
+- [x] Physical Android short-path feedback defect: Day 1 no longer closes immediately after written production; short mode reaches S14 written feedback, while full mode retains the optional voice step. Unit suite 163/163, mobile TypeScript and S14 baseline 16/16 pass.
 - [x] Owner approved prompt-14 visuals; Codex implemented S7 completion transition, keyboard/input corrections, S14 written-text feedback states A/B/C/D and S3 responsive choices. Mobile TypeScript, repository unit suite 162/162 and Android export pass.
 - [x] Prompt-14 Fable artifact located and inspected: 20-file package, 15 individual screens, review board, inventory and handoff stored at `docs/design/exports/stage0-owner-device-correction-v1/`; Codex verdict is PASS for owner visual review.
 - [x] Mobile legacy-route containment: root layout permits only canonical `/entry` product routes, so cached or direct legacy links cannot reopen old onboarding, automatic word flow, music, coach, guardians, streaks or levelcheck. Mobile TypeScript and repository unit suite 162/162 pass.

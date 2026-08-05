@@ -69,6 +69,14 @@ Next gate: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Ent
 - S3 choices use equal full-width `minHeight: 60` controls with wrapping text and vertical scrolling.
 - Verification: mobile TypeScript clean; repository unit suite 162/162; Android Expo export successful.
 
+### Short-path S14 routing correction — 2026-08-05
+
+- Physical Android evidence showed the short Day 1 path closing immediately after written production, so the implemented S14 feedback states were unreachable in that mode.
+- `submitStage0Day1Production` now routes short mode directly to written feedback (`summary`); full mode retains the optional private voice step before the same feedback.
+- The mobile screen no longer overrides the state-machine result by immediately closing short mode.
+- Verification: repository unit suite 163/163; mobile TypeScript clean; S14 deterministic baseline 16/16; `git diff --check` clean.
+- The same device evidence exposed a separate Path Hub week-header collision. It is visual work and is routed to Fable in `docs/prompts/design/15_path_hub_week_header_device_correction.md`; no visual correction was made in Codex.
+
 ## Frozen constraints
 
 - Product and UX architecture remain frozen.

@@ -61,7 +61,11 @@ Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-pa
 
 ## Next task
 
-**Active task: final physical Android UX/UI regression of the implemented prompt-14 correction.** The required sequence is:
+**Active task: close the new Path Hub visual correction gate, then resume final physical Android UX/UI regression.** Physical-device evidence confirmed that the current product Entry route is running and exposed two findings: the short Day 1 path skipped S14 feedback, and the Path Hub week header collides at the owner's device width.
+
+The short-path routing defect is corrected in Codex: written production now reaches S14 feedback in both short and full modes; full mode retains its optional voice step. Automated verification passes 163/163 tests, mobile TypeScript and S14 baseline 16/16.
+
+The Path Hub header finding is visual and is routed to Fable through `docs/prompts/design/15_path_hub_week_header_device_correction.md`. Required sequence now is:
 
 1. Claude multi-agent UX/UI QA at `7acc9a7` — complete.
 2. Owner device findings — captured.
@@ -71,13 +75,16 @@ Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-pa
 6. Codex inspection — PASS for owner visual review at `docs/design/reviews/STAGE0_OWNER_DEVICE_CORRECTION_V1_QA_CODEX.md`.
 7. Product owner approved the corrected visuals — complete.
 8. Codex implemented the approved artifact: S7 completion transition, keyboard/input references, S14 written-text feedback states and S3 responsive choices. Mobile TypeScript, 162/162 unit tests and Android export pass.
-9. Final physical Android UX/UI regression covers the complete corrected build, including microphone permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup, keyboard behavior, S7 transition, S14 feedback and screen-reader labels — active gate.
+9. Physical Android evidence confirmed current Entry/Path Hub and exposed the short-path S14 routing defect plus a Path Hub week-header visual collision.
+10. Codex short-path S14 routing correction — complete and automated checks pass.
+11. Fable Path Hub week-header correction, artifact inspection, owner visual approval and implementation — active gate.
+12. Final physical Android UX/UI regression covers the complete corrected build, including microphone permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup, keyboard behavior, S7 transition, S14 feedback and screen-reader labels.
 
 Do not implement Days 2–7 until this full sequence is closed.
 
 ## Blockers
 
-The immediate blocker is physical Android evidence for the corrected build. Do not redesign or visually correct the screens in Codex, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress.
+The immediate blocker is the Fable artifact and owner visual approval for the Path Hub week-header correction. After its implementation, physical Android evidence is required for the complete corrected build. Do not redesign or visually correct the screens in Codex, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress.
 
 ## Handoff rule
 

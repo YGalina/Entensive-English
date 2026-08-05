@@ -377,7 +377,11 @@ export function submitStage0Day1Production(
   if (!current || current.completed || !text.trim()) return null;
   return update(
     current,
-    { productionText: text, corePhase: "voice", evidence: { productionSaved: true } },
+    {
+      productionText: text,
+      corePhase: current.mode === "short" ? "summary" : "voice",
+      evidence: { productionSaved: true },
+    },
     now
   );
 }

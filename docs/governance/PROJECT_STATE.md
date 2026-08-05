@@ -4,7 +4,7 @@ Last updated: 2026-08-05
 
 ## Current phase
 
-Stage 0 Day 1 final physical Android regression after owner-approved prompt-14 implementation.
+Path Hub week-header visual correction gate before final Stage 0 Day 1 physical Android regression.
 
 ## Frozen
 
@@ -17,6 +17,8 @@ Stage 0 Day 1 final physical Android regression after owner-approved prompt-14 i
 - Prompt-14 Fable artifact is stored and owner-approved.
 - Codex implemented the bounded S7, keyboard/input, S14 feedback and S3 responsive corrections.
 - Final physical Android UX/UI regression is active.
+- Physical Android evidence confirmed the current Entry product route. Codex fixed the short-path transition that skipped S14 written feedback.
+- A separate Path Hub week-header collision is routed to Fable and awaits corrected visual output plus owner approval.
 
 ## Deferred, not excluded
 
@@ -30,7 +32,7 @@ Vertical Slice verdict: Ready for Pilot with stated limitations. Manual device/a
 
 ## Next action
 
-Close the final physical Android regression gate on the corrected build before implementing Days 2–7.
+Obtain and approve the Fable Path Hub week-header correction, implement it, then close the final physical Android regression gate before implementing Days 2–7.
 
 ## Rule
 
