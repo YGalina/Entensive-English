@@ -77,14 +77,14 @@ The Path Hub header finding is visual and is routed to Fable through `docs/promp
 8. Codex implemented the approved artifact: S7 completion transition, keyboard/input references, S14 written-text feedback states and S3 responsive choices. Mobile TypeScript, 162/162 unit tests and Android export pass.
 9. Physical Android evidence confirmed current Entry/Path Hub and exposed the short-path S14 routing defect plus a Path Hub week-header visual collision.
 10. Codex short-path S14 routing correction — complete and automated checks pass.
-11. Fable Path Hub week-header correction, artifact inspection, owner visual approval and implementation — active gate.
+11. Fable Path Hub week-header correction — downloaded from `Intensive English дизайн-система_5авг_2.zip`, stored at `docs/design/exports/path-hub-week-header-device-correction-v1/` and passed Codex QA for owner review. Product-owner visual approval is the active gate; implementation follows approval.
 12. Final physical Android UX/UI regression covers the complete corrected build, including microphone permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup, keyboard behavior, S7 transition, S14 feedback and screen-reader labels.
 
 Do not implement Days 2–7 until this full sequence is closed.
 
 ## Blockers
 
-The immediate blocker is the Fable artifact and owner visual approval for the Path Hub week-header correction. After its implementation, physical Android evidence is required for the complete corrected build. Do not redesign or visually correct the screens in Codex, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress.
+The immediate blocker is product-owner visual approval of the inspected Path Hub week-header correction. After approval Codex implements it, then physical Android evidence is required for the complete corrected build. Do not redesign or visually correct the screens in Codex, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress.
 
 ## Handoff rule
 

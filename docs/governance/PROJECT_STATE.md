@@ -18,7 +18,7 @@ Path Hub week-header visual correction gate before final Stage 0 Day 1 physical 
 - Codex implemented the bounded S7, keyboard/input, S14 feedback and S3 responsive corrections.
 - Final physical Android UX/UI regression is active.
 - Physical Android evidence confirmed the current Entry product route. Codex fixed the short-path transition that skipped S14 written feedback.
-- A separate Path Hub week-header collision is routed to Fable and awaits corrected visual output plus owner approval.
+- The Path Hub week-header Fable artifact is stored and passed Codex QA; it awaits product-owner visual approval before implementation.
 
 ## Deferred, not excluded
 
@@ -32,7 +32,7 @@ Vertical Slice verdict: Ready for Pilot with stated limitations. Manual device/a
 
 ## Next action
 
-Obtain and approve the Fable Path Hub week-header correction, implement it, then close the final physical Android regression gate before implementing Days 2–7.
+Obtain product-owner approval of the inspected Path Hub week-header correction, implement it, then close the final physical Android regression gate before implementing Days 2–7.
 
 ## Rule
 

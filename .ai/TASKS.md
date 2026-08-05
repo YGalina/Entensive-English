@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] **Path Hub week-header Fable correction — ACTIVE:** resolve the physical-device collision between `ВРЕМЯ ПРАКТИКИ · АВГУСТ` and `Первая неделя`; inspect the artifact, obtain owner visual approval and implement it before final Android acceptance.
+- [ ] **Path Hub week-header owner approval — ACTIVE:** Fable artifact is stored and passed Codex QA. Obtain owner visual approval, then implement it before final Android acceptance.
 - [ ] **Stage 0 Day 1 final Android regression:** after the Path Hub visual correction is approved and implemented, verify S7 transition, S14 written-text feedback in short and full modes, S3 at 200%, keyboard behavior, microphone lifecycle and screen-reader labels.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
@@ -21,6 +21,7 @@
 
 ## Completed
 
+- [x] Fable Path Hub week-header correction downloaded, rendered and inspected: 360 dp, 390 dp and 360 dp at 200% preserve both labels without clipping. Artifact stored at `docs/design/exports/path-hub-week-header-device-correction-v1/`; Codex QA verdict PASS for owner review.
 - [x] Physical Android short-path feedback defect: Day 1 no longer closes immediately after written production; short mode reaches S14 written feedback, while full mode retains the optional voice step. Unit suite 163/163, mobile TypeScript and S14 baseline 16/16 pass.
 - [x] Owner approved prompt-14 visuals; Codex implemented S7 completion transition, keyboard/input corrections, S14 written-text feedback states A/B/C/D and S3 responsive choices. Mobile TypeScript, repository unit suite 162/162 and Android export pass.
 - [x] Prompt-14 Fable artifact located and inspected: 20-file package, 15 individual screens, review board, inventory and handoff stored at `docs/design/exports/stage0-owner-device-correction-v1/`; Codex verdict is PASS for owner visual review.
