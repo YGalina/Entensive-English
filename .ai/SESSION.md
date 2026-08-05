@@ -49,6 +49,8 @@ PR 2 (S1 Entry/Resume Router + Path routing foundation) and its integrity-restar
 
 ## Completed this session
 
+The product owner approved the downloaded Claude Design `ie` brand mark for application use. The complete Fable package is stored at `docs/design/exports/ie-brand-package-v1/`; its supplied main, Android adaptive, monochrome, splash and favicon assets replace the legacy speech-wave icon files in the Expo application.
+
 Stage 0 Day 1 visual design passed owner approval and Codex QA. The accepted default and state artifacts are frozen in `docs/design/exports/stage0-day1-v1/`; QA is recorded in `docs/design/reviews/STAGE0_DAY1_DEFAULT_AND_STATES_V2_QA_CODEX.md`. The governing UX/copy contract is commit `1f647ba`.
 
 Stage 0 Day 1 engineering implementation is complete on `codex/stage0-day1-vertical-slice`. Independent review of exact tip `b7bb786` passed with no remaining actionable findings after corrections. The implementation now includes active-path-scoped full and short paths, exact resume, v2→v3 state migration without progress loss, the non-blocking meaning gate, structured retrieval with failure-safe input retention, free production, optional private recording, three distinct guided variations plus the approved optional second version, two explicitly evidenced spoken versions, honest completion facts and frozen Fable default/state artifacts. Mobile TypeScript is clean and the repository unit suite passes 162/162. Physical-device microphone lifecycle and screen-reader QA remain open.

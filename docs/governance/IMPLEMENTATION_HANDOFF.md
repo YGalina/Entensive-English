@@ -58,7 +58,7 @@ Next gate: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Ent
 - Canonical startup is `/entry`; the root-owning legacy tab group redirects there.
 - Root layout now rejects every route outside `/entry` and `/entry/*`. Cached URLs and direct links can no longer expose old onboarding, automatic word cycling, word-flood, music, coach, guardians, streaks, levelcheck or other legacy surfaces.
 - The current repository contains no APK/AAB/IPA or EAS build configuration. A custom-icon app already installed on a phone is therefore not evidence of the current branch; current JavaScript is tested through a fresh Expo/Metro bundle until a separately approved native build identity and delivery path exist.
-- The configured `icon.png` is unchanged from legacy commit `503bfbe`. No approved replacement icon is present in the prompt-14 package; Codex must not invent one.
+- The legacy app icon from commit `503bfbe` has been replaced by the owner-approved Fable brand package stored at `docs/design/exports/ie-brand-package-v1/`. Expo now uses the supplied `ie` icon, Android adaptive foreground/background/monochrome assets, splash icon and favicon; native and splash backgrounds use paper `#FAF6EE`, and web theme color uses brand terracotta `#E8623D`.
 
 ## Stage 0 owner-device correction implementation
 

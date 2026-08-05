@@ -21,6 +21,7 @@
 
 ## Completed
 
+- [x] Owner-approved Claude Design `ie` brand package imported and wired into Expo: main icon, Android adaptive foreground/background/monochrome, splash and favicon replace the legacy speech-wave assets.
 - [x] Fable Path Hub week-header correction downloaded, rendered and inspected: 360 dp, 390 dp and 360 dp at 200% preserve both labels without clipping. Artifact stored at `docs/design/exports/path-hub-week-header-device-correction-v1/`; Codex QA verdict PASS for owner review.
 - [x] Physical Android short-path feedback defect: Day 1 no longer closes immediately after written production; short mode reaches S14 written feedback, while full mode retains the optional voice step. Unit suite 163/163, mobile TypeScript and S14 baseline 16/16 pass.
 - [x] Owner approved prompt-14 visuals; Codex implemented S7 completion transition, keyboard/input corrections, S14 written-text feedback states A/B/C/D and S3 responsive choices. Mobile TypeScript, repository unit suite 162/162 and Android export pass.

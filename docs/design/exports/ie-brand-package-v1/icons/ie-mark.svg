@@ -1,0 +1,16 @@
+<svg width="512" height="256" viewBox="0 0 512 256" xmlns="http://www.w3.org/2000/svg">
+  <title>Intensive English — знак</title>
+  
+  <defs>
+    <linearGradient id="hl" x1="0" y1="0" x2="1" y2="0" gradientTransform="rotate(4 .5 .5)">
+      <stop offset="0" stop-color="#FFD66B" stop-opacity="0"></stop>
+      <stop offset="0.09" stop-color="#FFD66B"></stop>
+      <stop offset="0.91" stop-color="#FFD66B"></stop>
+      <stop offset="1" stop-color="#FFD66B" stop-opacity="0"></stop>
+    </linearGradient>
+  </defs>
+  <g style="mix-blend-mode:multiply">
+    <rect x="104" y="82" width="304" height="112" rx="26" fill="url(#hl)" transform="rotate(-1.5 256 138) skewX(-8)"></rect>
+  </g>
+  <text x="256" y="176" text-anchor="middle" font-family="Lora, Georgia, serif" font-style="italic" font-weight="500" font-size="150" fill="#22201B">ie</text>
+</svg>

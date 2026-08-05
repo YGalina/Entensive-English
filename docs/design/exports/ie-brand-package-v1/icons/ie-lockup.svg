@@ -1,0 +1,17 @@
+<svg width="920" height="200" viewBox="0 0 920 200" xmlns="http://www.w3.org/2000/svg">
+  <title>Intensive English — локап</title>
+  
+  <defs>
+    <linearGradient id="hl2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFD66B" stop-opacity="0"></stop>
+      <stop offset="0.1" stop-color="#FFD66B"></stop>
+      <stop offset="0.9" stop-color="#FFD66B"></stop>
+      <stop offset="1" stop-color="#FFD66B" stop-opacity="0"></stop>
+    </linearGradient>
+  </defs>
+  <g style="mix-blend-mode:multiply">
+    <rect x="26" y="64" width="176" height="66" rx="16" fill="url(#hl2)" transform="rotate(-1.5 114 97) skewX(-8)"></rect>
+  </g>
+  <text x="114" y="128" text-anchor="middle" font-family="Lora, Georgia, serif" font-style="italic" font-weight="500" font-size="88" fill="#22201B">ie</text>
+  <text x="238" y="124" font-family="&#39;Golos Text&#39;, system-ui, sans-serif" font-weight="700" font-size="62" letter-spacing="-1.2" fill="#22201B">Intensive English</text>
+</svg>

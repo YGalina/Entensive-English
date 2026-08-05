@@ -1,0 +1,68 @@
+/* Intensive English · Living Content — токены. Значения совпадают с tokens.json
+   и packages/tokens/index.ts. */
+
+:root {
+  --brand: #E8623D;
+  --brand-d: #C94E2D;
+  --brand-soft: #EFE7D7;
+  --brand-ink: #4A453A;
+  --on-brand: #FFFFFF;
+  --accent: #4FB286;
+  --accent-d: #3F9D76;
+  --sun: #E8B36A;
+  --amber: #FFD66B;
+  --rose: #C75A7A;
+  --bg: #FAF6EE;
+  --surface: #FFFFFF;
+  --ink: #22201B;
+  --muted: #6F6857;
+  --line: #E3D9C4;
+  --ok: #4FB286;
+  --warn: #C99A3B;
+  --warn-soft: #FDF3E3;
+
+  --sk-words: #E8623D;
+  --sk-sounds: #D99A2B;
+  --sk-video: #4A7BA6;
+  --sk-reading: #A8465F;
+  --sk-grammar: #4FB286;
+  --sk-typing: #8A5FA8;
+
+  --radius-control: 12px;
+  --radius-card: 16px;
+  --radius-sheet: 22px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 12px 28px -20px rgba(60, 40, 15, .45);
+
+  --font-ui: 'Golos Text', system-ui, sans-serif;
+  --font-english: 'Lora', Georgia, serif;
+}
+
+.dark {
+  --brand: #F0906E;
+  --brand-d: #F4A588;
+  --brand-soft: #2E2A22;
+  --brand-ink: #F0E6D6;
+  --on-brand: #211D16;
+  --accent: #7FC9A4;
+  --accent-d: #97D6B4;
+  --sun: #E8B36A;
+  --amber: #F0C86A;
+  --rose: #E07AA0;
+  --bg: #211D16;
+  --surface: #2E2A22;
+  --ink: #F5EFE2;
+  --muted: #9C937D;
+  --line: #3A3327;
+  --ok: #7FC9A4;
+  --warn: #E8B36A;
+  --warn-soft: #2E2A22;
+
+  --sk-words: #F0906E;
+  --sk-sounds: #E8B36A;
+  --sk-video: #7BA9D0;
+  --sk-reading: #D48BA0;
+  --sk-grammar: #7FC9A4;
+  --sk-typing: #B79BD8;
+}
