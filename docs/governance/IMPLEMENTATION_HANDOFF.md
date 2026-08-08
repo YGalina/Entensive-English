@@ -84,6 +84,13 @@ Next gate: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Ent
 - Copy is never truncated, shortened or reduced in size. The weekday row and explanatory copy are unchanged.
 - Final physical Android regression remains required.
 
+### Android QA delivery identity — 2026-08-08
+
+- Native APK delivery is unavailable on the current Mac: no Android SDK/ADB, Java runtime, native Android project, EAS project credentials or authenticated Expo session is configured.
+- The verified fallback is an Expo LAN server from `apps/mobile`, bound to `192.168.0.187:8083` with a cleared Metro cache.
+- Development builds show `QA · 1.0.0 · f93645e` at the bottom of Path Hub so the owner can distinguish the corrected bundle from stale Expo Go history. This label is guarded by `__DEV__` and is absent from production builds.
+- The visible QA identity maps to the owner-device corrections through `f93645e`; the approved brand icon commit `6ab0e27` is its direct ancestor. The native launcher icon still requires a future native build/install.
+
 ## Frozen constraints
 
 - Product and UX architecture remain frozen.

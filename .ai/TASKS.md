@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] **Stage 0 Day 1 final Android regression — ACTIVE:** verify the approved Path Hub week header, S7 transition, S14 written-text feedback in short and full modes, S3 at 200%, keyboard behavior, microphone lifecycle and screen-reader labels.
+- [ ] **Stage 0 Day 1 final Android regression — ACTIVE:** cleared-cache Expo LAN build `QA · 1.0.0 · f93645e` is verified at `exp://192.168.0.187:8083`; owner device must connect and verify the approved Path Hub header, S7 transition, S14 feedback in short/full modes, S3 at 200%, keyboard behavior, microphone lifecycle and screen-reader labels.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next

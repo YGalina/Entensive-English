@@ -253,6 +253,22 @@ export default function PathHub() {
         </View>
         <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 22, color: c.muted }}>›</Text>
       </Pressable>
+
+      {__DEV__ && (
+        <Text
+          accessibilityLabel="QA build 1.0.0 commit f93645e"
+          style={{
+            marginTop: 16,
+            textAlign: "center",
+            fontFamily: "GolosText_400Regular",
+            fontSize: 11,
+            color: c.muted,
+            opacity: 0.65,
+          }}
+        >
+          QA · 1.0.0 · f93645e
+        </Text>
+      )}
     </ScrollView>
   );
 }

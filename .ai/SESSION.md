@@ -86,7 +86,7 @@ Do not implement Days 2–7 until this full sequence is closed.
 
 ## Blockers
 
-The immediate blocker is physical Android evidence for the complete corrected build. Do not redesign or visually correct the screens in Codex, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress.
+The immediate blocker is physical Android evidence for the complete corrected build. Native APK delivery is not configured on this Mac, so the verified current delivery is the cleared-cache Expo LAN server at `exp://192.168.0.187:8083`, version `1.0.0`, development identity `QA · 1.0.0 · f93645e`. Do not redesign or visually correct the screens in Codex, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress.
 
 ## Handoff rule
 
