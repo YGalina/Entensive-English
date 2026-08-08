@@ -91,6 +91,11 @@ Next gate: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Ent
 - Development builds show `QA · 1.0.0 · f93645e` at the bottom of Path Hub so the owner can distinguish the corrected bundle from stale Expo Go history. This label is guarded by `__DEV__` and is absent from production builds.
 - The visible QA identity maps to the owner-device corrections through `f93645e`; the approved brand icon commit `6ab0e27` is its direct ancestor. The native launcher icon still requires a future native build/install.
 
+### Owner QA reset and yellow launcher tile — 2026-08-08
+
+- The owner confirmed that prior completed progress prevented the corrected flow from being visible. Development startup now performs a one-time, marker-guarded reset of only Entry/Stage 0 QA progress keys; unrelated preferences and owner files are untouched. Production builds never run this reset.
+- The owner clarified the approved launcher treatment: the icon is a full amber `#FFD66B` tile with the black `ie` mark. The main 1024 icon is derived mechanically from the approved Fable favicon asset; Android adaptive configuration uses amber as the full background and the supplied black monochrome `ie` foreground.
+
 ## Frozen constraints
 
 - Product and UX architecture remain frozen.

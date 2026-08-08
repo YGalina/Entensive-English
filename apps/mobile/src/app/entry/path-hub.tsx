@@ -256,7 +256,7 @@ export default function PathHub() {
 
       {__DEV__ && (
         <Text
-          accessibilityLabel="QA build 1.0.0 commit f93645e"
+          accessibilityLabel="QA build 1.0.0 reset 2"
           style={{
             marginTop: 16,
             textAlign: "center",
@@ -266,7 +266,7 @@ export default function PathHub() {
             opacity: 0.65,
           }}
         >
-          QA · 1.0.0 · f93645e
+          QA · 1.0.0 · reset-2
         </Text>
       )}
     </ScrollView>

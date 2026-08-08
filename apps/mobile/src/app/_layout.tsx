@@ -24,12 +24,13 @@ import {
 } from "@expo-google-fonts/lora";
 import { configureStorage } from "@ie/core/storage";
 import { marinaColors } from "@ie/tokens";
-import { kvStorage } from "@/lib/storage";
+import { kvStorage, resetOwnerQaProgressOnce } from "@/lib/storage";
 import { useMarina } from "@/theme";
 
 // Хранилище прогресса настраивается ДО первого рендера: хуки @ie/core
 // (prefs/timelog/srs) читают адаптер при первом обращении.
 configureStorage(kvStorage);
+resetOwnerQaProgressOnce();
 
 SplashScreen.preventAutoHideAsync();
 
