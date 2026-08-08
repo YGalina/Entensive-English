@@ -6,6 +6,8 @@ Last updated: 2026-08-08
 
 Owner-control reset and end-to-end UX/UI approval gate. No new learner-facing screens may be implemented until the owner can review the complete first-run → assessment → Day 1 → feedback → completed-day flow in one Fable package and explicitly approves it.
 
+The owner-facing review surface is now Figma file `q1MooGkru7rssI4k72MOwl` (`Intensive English — Owner Review · First Run + Day 1`). Existing Fable boards were partially imported into the single file. Final one-canvas arrangement is blocked by the Figma Starter MCP call limit; missing orientation and completed-day screens remain Fable 5 work, not Codex-created visuals.
+
 ## Operational control plane
 
 Codex is the active single orchestrator. The product owner assigns work in this Codex task; Codex manages Git, engineering, QA, acceptance and bounded delegation to Claude. Claude Design / Fable remains the exclusive visual designer and applies every visual correction. ChatGPT is background history only. Memoree supports cited historical recall but never overrides current Git.

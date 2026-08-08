@@ -2,6 +2,8 @@
 
 Status: owner control baseline · 2026-08-08
 
+Owner visual review file: [Figma — First Run + Day 1](https://www.figma.com/design/q1MooGkru7rssI4k72MOwl). Existing Fable boards have begun importing into this single file. It is **not yet an approval-ready end-to-end flow**; Figma Starter MCP rate limit stopped final arrangement and the missing Fable 5 screens still require design.
+
 ## Как читать статусы
 
 - **REFERENCE** — исторический или вспомогательный материал; реализовывать нельзя.
