@@ -93,7 +93,7 @@ export default function EntryPretest() {
           <View style={{ height: 1, backgroundColor: c.line }} />
           <Text style={{ fontFamily: "GolosText_600SemiBold", fontSize: 17, color: c.ink }}>Теперь — первая тренировка.</Text>
         </View>
-        <Pressable accessibilityRole="button" onPress={() => { handoffFromPretestToFirstSession(); router.replace("/entry/path-hub"); }} style={{ minHeight: 56, borderRadius: 16, backgroundColor: c.ink, alignItems: "center", justifyContent: "center" }}>
+        <Pressable accessibilityRole="button" onPress={() => { handoffFromPretestToFirstSession(); router.replace("/entry/daily-session"); }} style={{ minHeight: 56, borderRadius: 16, backgroundColor: c.ink, alignItems: "center", justifyContent: "center" }}>
           <Text style={{ fontFamily: "GolosText_700Bold", fontSize: 17, color: c.bg }}>Начать тренировку</Text>
         </Pressable>
       </View>

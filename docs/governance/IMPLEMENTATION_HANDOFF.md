@@ -96,6 +96,12 @@ Next gate: Codex review of PR 1/PR 2, then PR 3 (S2 Recognition + S3 Profile Ent
 - The owner confirmed that prior completed progress prevented the corrected flow from being visible. Development startup now performs a one-time, marker-guarded reset of only Entry/Stage 0 QA progress keys; unrelated preferences and owner files are untouched. Production builds never run this reset.
 - The owner clarified the approved launcher treatment: the icon is a full amber `#FFD66B` tile with the black `ie` mark. The main 1024 icon is derived mechanically from the approved Fable favicon asset; Android adaptive configuration uses amber as the full background and the supplied black monochrome `ie` foreground.
 
+### First-run handoff and completed-session finding — 2026-08-08
+
+- Physical Android testing confirmed the reset-2 branch is running and exposed a redundant first-practice gate: the S7 completion CTA opened Path Hub, which required a second start CTA before the Day 1 plan. The S7 CTA now hands off directly to `/entry/daily-session`; assessment completion semantics and saved state are unchanged.
+- The same run exposed a separate completed-session loop: after Day 1 is closed, Path Hub still presents `Начать практику` and reopens the completed Day 1. This requires an approved completed-day Path Hub state before implementation; it is routed to Fable together with first-run orientation and clearer full/short action semantics in `docs/prompts/design/16_first_run_orientation_and_completed_day_correction.md`.
+- Do not close final Android acceptance until the prompt-16 artifact is inspected, owner-approved and implemented. A fresh development-only QA reset identity will then be required for the next full traversal.
+
 ## Frozen constraints
 
 - Product and UX architecture remain frozen.

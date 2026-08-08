@@ -2,7 +2,8 @@
 
 ## In progress
 
-- [ ] **Stage 0 Day 1 final Android regression — ACTIVE:** build `QA · 1.0.0 · reset-2` clears prior QA progress once so the owner can traverse the corrected flow; verify the approved Path Hub header, S7 transition, S14 feedback in short/full modes, S3 at 200%, keyboard behavior, microphone lifecycle and screen-reader labels.
+- [ ] **First-run orientation and completed-Day-1 correction — ACTIVE:** Fable prompt 16 covers the missing product/practice explanation, concrete S7 handoff, explicit full/short plan actions and the completed-day Path Hub state. Inspect the artifact, obtain owner visual approval, implement it, then issue a fresh QA reset build.
+- [ ] **Stage 0 Day 1 final Android regression — BLOCKED BY PROMPT 16:** after implementation, verify completed-day routing, S7 transition, S14 feedback in short/full modes, S3 at 200%, keyboard behavior, microphone lifecycle and screen-reader labels.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
 ## Next

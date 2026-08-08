@@ -63,7 +63,7 @@ Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-pa
 
 ## Next task
 
-**Active task: close the new Path Hub visual correction gate, then resume final physical Android UX/UI regression.** Physical-device evidence confirmed that the current product Entry route is running and exposed two findings: the short Day 1 path skipped S14 feedback, and the Path Hub week header collides at the owner's device width.
+**Active task: correct first-run orientation and the completed-Day-1 loop, then resume final physical Android UX/UI regression.** The reset-2 physical-device run confirmed the corrected branch is running and exposed a new owner gate: the product is not sufficiently explained before assessment/practice, the S7 completion copy is ambiguous, and Path Hub reopens an already completed Day 1.
 
 The short-path routing defect is corrected in Codex: written production now reaches S14 feedback in both short and full modes; full mode retains its optional voice step. Automated verification passes 163/163 tests, mobile TypeScript and S14 baseline 16/16.
 
@@ -80,13 +80,16 @@ The Path Hub header finding is visual and is routed to Fable through `docs/promp
 9. Physical Android evidence confirmed current Entry/Path Hub and exposed the short-path S14 routing defect plus a Path Hub week-header visual collision.
 10. Codex short-path S14 routing correction — complete and automated checks pass.
 11. Fable Path Hub week-header correction — downloaded from `Intensive English дизайн-система_5авг_2.zip`, stored at `docs/design/exports/path-hub-week-header-device-correction-v1/`, passed Codex QA, owner-approved and implemented.
-12. Final physical Android UX/UI regression covers the complete corrected build, including the Path Hub header, microphone permission denied/granted, empty audio, interrupted recording, 60-second auto-stop, local playback, Back/unmount cleanup, keyboard behavior, S7 transition, S14 feedback and screen-reader labels — active gate.
+12. Physical Android reset-2 run confirmed the current build but exposed first-run orientation and completed-session defects.
+13. Engineering removed the redundant Path Hub start gate after S7: `Начать тренировку` now opens the Day 1 plan directly.
+14. Fable first-run orientation, S7 copy, Day 1 plan actions and completed-Day-1 Path Hub correction from `docs/prompts/design/16_first_run_orientation_and_completed_day_correction.md` — active visual/copy gate.
+15. After owner approval and Codex implementation, final physical Android UX/UI regression covers the complete corrected build, including completed-day routing, microphone lifecycle, keyboard behavior, S7 transition, S14 feedback and screen-reader labels.
 
 Do not implement Days 2–7 until this full sequence is closed.
 
 ## Blockers
 
-The immediate blocker is physical Android evidence for the complete corrected build. Native APK delivery is not configured on this Mac, so the current delivery is a cleared-cache Expo LAN build, version `1.0.0`, development identity `QA · 1.0.0 · reset-2`. This build performs a one-time development-only reset of prior Entry/Stage 0 QA progress so the corrected flow is visible. Do not redesign or visually correct the screens in Codex, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress.
+The immediate blocker is the Fable artifact and owner visual approval for prompt 16. Final Android acceptance cannot run against the known circular completed-day route. Native APK delivery is not configured on this Mac, so the current delivery remains a cleared-cache Expo LAN build. Do not redesign or visually correct the screens in Codex, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress.
 
 ## Handoff rule
 
