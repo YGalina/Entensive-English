@@ -12,6 +12,8 @@ The owner-facing review surface is now Figma file `q1MooGkru7rssI4k72MOwl` (`Int
 
 Codex is the active single orchestrator. The product owner assigns work in this Codex task; Codex manages Git, engineering, QA, acceptance and bounded delegation to Claude. Claude Design / Fable remains the exclusive visual designer and applies every visual correction. ChatGPT is background history only. Memoree supports cited historical recall but never overrides current Git.
 
+The owner-facing delivery control plane is Notion: [Intensive English — Product HQ](https://app.notion.com/p/3b61e441fe4381f495edc1cb96162930?pvs=204), with the `Intensive English — Delivery` database and Kanban, owner-approval, roadmap, risk and release views. Notion is the readable operational surface; Git remains authoritative. Obsidian Markdown is retained as the versioned technical archive and is not the owner's primary Kanban.
+
 Continuity for a new Codex task is provided by `.ai/CODEX_HANDOFF.md` and the project skill `.agents/skills/intensive-english-orchestrator/SKILL.md`; the owner must not be asked to reconstruct the prior conversation.
 
 ## Architecture status

@@ -2,7 +2,7 @@
 
 ## In progress
 
-- [ ] **Owner control center — ACTIVE:** maintain `00_OWNER_CONTROL_CENTER.md`, the complete delivery plan and UX/UI approval register as the owner-visible source for scope, status, screens and approval gates.
+- [ ] **Owner control center — ACTIVE:** maintain [Notion Product HQ](https://app.notion.com/p/3b61e441fe4381f495edc1cb96162930?pvs=204) and its `Intensive English — Delivery` database as the owner-visible operational source for Kanban, roadmap, risks, releases and approval gates. Keep `00_OWNER_CONTROL_CENTER.md` and Git governance as the versioned technical mirror; Obsidian is not the primary owner Kanban.
 - [ ] **Unified first-run → Day 1 UX/UI package — REQUIRED BEFORE IMPLEMENTATION:** replace scattered review of isolated screens with one Fable review flow covering orientation, S2/S3, assessment explanation and completion, Day 1 full/short paths, feedback, completion and completed-day Path Hub. Codex inspects; owner explicitly approves or returns it.
 - [ ] **First-run orientation and completed-Day-1 correction — ACTIVE:** Fable prompt 16 covers the missing product/practice explanation, concrete S7 handoff, explicit full/short plan actions and the completed-day Path Hub state. Inspect the artifact, obtain owner visual approval, implement it, then issue a fresh QA reset build.
 - [ ] **Stage 0 Day 1 final Android regression — BLOCKED BY PROMPT 16:** after implementation, verify completed-day routing, S7 transition, S14 feedback in short/full modes, S3 at 200%, keyboard behavior, microphone lifecycle and screen-reader labels.

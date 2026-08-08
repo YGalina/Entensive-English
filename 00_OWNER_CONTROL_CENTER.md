@@ -1,6 +1,6 @@
-# Intensive English — центр управления владельца
+# Intensive English — техническое зеркало центра управления
 
-> Это первый экран проекта в Obsidian. Здесь видно, что строится, что уже существует, что ждёт решения Галины и что запрещено реализовывать без её финального утверждения.
+> Рабочий наглядный центр проекта находится в [Notion · Intensive English — Product HQ](https://app.notion.com/p/3b61e441fe4381f495edc1cb96162930?pvs=204). Там находятся Kanban всего продукта, отдельная доска решений Галины, Roadmap, риски и релиз. Этот Markdown остаётся техническим зеркалом в Git; Obsidian больше не является основной доской владельца.
 
 ## Стоп-сигнал сейчас
 
@@ -10,15 +10,11 @@
 
 ## Что открыть
 
-1. [[01_PRODUCT_KANBAN|Product Kanban]] — ежедневное управление карточками от backlog до Done.
-2. [[02_PRODUCT_ROADMAP|Product Roadmap]] — этапы, workstreams, Definition of Ready и Definition of Done.
-3. [[03_RISKS_DEPENDENCIES_RELEASE|Risks, dependencies and release]] — риски, блокеры и release gates.
-4. [Figma · единый визуальный review первого запуска и Дня 1](https://www.figma.com/design/q1MooGkru7rssI4k72MOwl) — основной материал, в котором владелец смотрит и утверждает нарисованные экраны. Сейчас содержит импортированные Fable-доски; сборка одной последовательности не завершена из-за лимита Figma Starter MCP.
-5. [[docs/owner/PRODUCT_DELIVERY_PLAN|Полный план продукта и разработки]] — аналитика, программа обучения, контент, UX/UI, инженерия, QA, пилот и выпуск.
-6. [[docs/owner/UX_UI_APPROVAL_REGISTER|Реестр UX/UI и экранов]] — какие экраны существуют, где их смотреть, что реализовано и что утверждено владельцем.
-7. [[PRODUCT_CONSTITUTION|Конституция продукта]] — что за продукт мы строим.
-8. [[docs/governance/PROJECT_STATE|Фактическое состояние проекта]].
-9. [[.ai/DECISIONS|Решения владельца]].
+1. [Notion · Intensive English — Product HQ](https://app.notion.com/p/3b61e441fe4381f495edc1cb96162930?pvs=204) — основное ежедневное управление: Kanban, «Мои утверждения», Roadmap, риски и релиз.
+2. [Figma · единый визуальный review первого запуска и Дня 1](https://www.figma.com/design/q1MooGkru7rssI4k72MOwl) — поверхность просмотра нарисованных экранов; текущий canvas частичный и пока не является материалом для утверждения.
+3. [[docs/owner/PRODUCT_DELIVERY_PLAN|Полный план продукта и разработки]] — техническая детализация аналитики, программы, контента, UX/UI, инженерии, QA, пилота и выпуска.
+4. [[docs/owner/UX_UI_APPROVAL_REGISTER|Реестр UX/UI и экранов]] — версия в Git: какие экраны существуют, реализованы и утверждены.
+5. [[PRODUCT_CONSTITUTION|Конституция продукта]] и [[docs/governance/PROJECT_STATE|фактическое состояние проекта]].
 
 ## Текущее состояние простыми словами
 
