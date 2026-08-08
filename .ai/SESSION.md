@@ -1,10 +1,10 @@
 # Current Project Session
 
-Last updated: 2026-08-05
+Last updated: 2026-08-08
 
 ## Phase
 
-Stage 0 Day 1 owner-device correction design gate. The accepted Stage 0 package remains authoritative except for the four bounded findings already captured in `docs/prompts/design/14_owner_device_feedback_correction.md`.
+Owner-control reset and end-to-end UX/UI approval gate. No new learner-facing screens may be implemented until the owner can review the complete first-run → assessment → Day 1 → feedback → completed-day flow in one Fable package and explicitly approves it.
 
 ## Operational control plane
 

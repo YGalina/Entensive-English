@@ -16,5 +16,7 @@ This is a concise index, not a replacement for ADRs.
 | Ink/black controls are approved for task-level actions inside Batch C exercises; terracotta remains the main journey-action colour | Approved | Product-owner decision 2026-07-23; `docs/design/reviews/BATCH_C_STATES_V1_QA_CODEX.md` |
 | Batch C states correction v1 is approved and frozen; superseded states v1 is removed from current source of truth | Frozen | `docs/design/exports/batch-c-states-correction-v1/`, `docs/design/reviews/BATCH_C_STATES_CORRECTION_V1_QA_CODEX.md` |
 | Offline groups remain in product architecture but are deferred | Planned | `PRODUCT_CONSTITUTION.md` |
+| No new learner-facing UI may be implemented from isolated screens; every major flow requires one owner-reviewable end-to-end UX/UI package and an explicit owner approval recorded before implementation | Active | `00_OWNER_CONTROL_CENTER.md`, `docs/owner/UX_UI_APPROVAL_REGISTER.md`, owner correction 2026-08-08 |
+| Codex technical/design QA never substitutes for the owner's final product, UX/UI, device-build or release decision | Active | `00_OWNER_CONTROL_CENTER.md`, owner correction 2026-08-08 |
 
 Add non-trivial decisions to `docs/adr/`; link them here when they affect current work.
