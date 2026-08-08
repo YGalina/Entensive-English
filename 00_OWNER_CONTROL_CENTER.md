@@ -10,12 +10,15 @@
 
 ## Что открыть
 
-1. [Figma · единый визуальный review первого запуска и Дня 1](https://www.figma.com/design/q1MooGkru7rssI4k72MOwl) — основной материал, в котором владелец смотрит и утверждает нарисованные экраны. Сейчас содержит импортированные Fable-доски; сборка одной последовательности не завершена из-за лимита Figma Starter MCP.
-2. [[docs/owner/PRODUCT_DELIVERY_PLAN|Полный план продукта и разработки]] — аналитика, программа обучения, контент, UX/UI, инженерия, QA, пилот и выпуск.
-3. [[docs/owner/UX_UI_APPROVAL_REGISTER|Реестр UX/UI и экранов]] — какие экраны существуют, где их смотреть, что реализовано и что утверждено владельцем.
-4. [[PRODUCT_CONSTITUTION|Конституция продукта]] — что за продукт мы строим.
-5. [[docs/governance/PROJECT_STATE|Фактическое состояние проекта]].
-6. [[.ai/DECISIONS|Решения владельца]].
+1. [[01_PRODUCT_KANBAN|Product Kanban]] — ежедневное управление карточками от backlog до Done.
+2. [[02_PRODUCT_ROADMAP|Product Roadmap]] — этапы, workstreams, Definition of Ready и Definition of Done.
+3. [[03_RISKS_DEPENDENCIES_RELEASE|Risks, dependencies and release]] — риски, блокеры и release gates.
+4. [Figma · единый визуальный review первого запуска и Дня 1](https://www.figma.com/design/q1MooGkru7rssI4k72MOwl) — основной материал, в котором владелец смотрит и утверждает нарисованные экраны. Сейчас содержит импортированные Fable-доски; сборка одной последовательности не завершена из-за лимита Figma Starter MCP.
+5. [[docs/owner/PRODUCT_DELIVERY_PLAN|Полный план продукта и разработки]] — аналитика, программа обучения, контент, UX/UI, инженерия, QA, пилот и выпуск.
+6. [[docs/owner/UX_UI_APPROVAL_REGISTER|Реестр UX/UI и экранов]] — какие экраны существуют, где их смотреть, что реализовано и что утверждено владельцем.
+7. [[PRODUCT_CONSTITUTION|Конституция продукта]] — что за продукт мы строим.
+8. [[docs/governance/PROJECT_STATE|Фактическое состояние проекта]].
+9. [[.ai/DECISIONS|Решения владельца]].
 
 ## Текущее состояние простыми словами
 

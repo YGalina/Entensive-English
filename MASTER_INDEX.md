@@ -5,6 +5,9 @@
 ## Начать владельцу здесь
 
 - [Центр управления владельца](00_OWNER_CONTROL_CENTER.md) — текущее состояние, стоп-сигнал, порядок утверждений и следующий gate.
+- [Product Kanban](01_PRODUCT_KANBAN.md) — рабочие карточки по колонкам от backlog до Done.
+- [Product Roadmap](02_PRODUCT_ROADMAP.md) — этапы разработки и критерии перехода.
+- [Risks, dependencies and release](03_RISKS_DEPENDENCIES_RELEASE.md) — риски, зависимости и release gates.
 - [Полный план продукта и разработки](docs/owner/PRODUCT_DELIVERY_PLAN.md) — аналитика, программа, контент, UX/UI, инженерия, QA, пилот и релиз.
 - [Реестр UX/UI и утверждений](docs/owner/UX_UI_APPROVAL_REGISTER.md) — все области и текущий end-to-end поток с визуальными источниками и статусом реализации.
 
