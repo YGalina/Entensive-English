@@ -4,7 +4,7 @@ Last updated: 2026-08-08
 
 ## Phase
 
-Owner-control reset and end-to-end UX/UI approval gate. No new learner-facing screens may be implemented until the owner can review the complete first-run → assessment → Day 1 → feedback → completed-day flow in one Fable package and explicitly approves it.
+Owner-as-first-learner validation gate. No new curriculum UX/UI or learner-facing implementation may proceed until the existing complete learning program is exposed to the owner in one readable package, Galina completes the missing speaking baseline, and the program is run manually with her. Content/mechanics must demonstrate useful learning evidence and receive owner content/UX acceptance before Fable visualization or Codex implementation.
 
 The owner-facing review surface is now Figma file `q1MooGkru7rssI4k72MOwl` (`Intensive English — Owner Review · First Run + Day 1`). Existing Fable boards were partially imported into the single file. Final one-canvas arrangement is blocked by the Figma Starter MCP call limit; missing orientation and completed-day screens remain Fable 5 work, not Codex-created visuals.
 
@@ -67,7 +67,7 @@ Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-pa
 
 ## Next task
 
-**Active task: correct first-run orientation and the completed-Day-1 loop, then resume final physical Android UX/UI regression.** The reset-2 physical-device run confirmed the corrected branch is running and exposed a new owner gate: the product is not sufficiently explained before assessment/practice, the S7 completion copy is ambiguous, and Path Hub reopens an already completed Day 1.
+**Active task: assemble the existing program and its app traceability without redesign, then run Galina's manual self-pilot.** The immediate deliverable is one owner-readable AS-IS package covering audience, goals, scientific/methodological basis, complete curriculum, calendar/hours, skill assessment, exercises, feedback, prior research, implemented coverage and gaps. After owner review, complete the missing speaking baseline from the existing English Tutor vault and begin manual sessions. Fable first-run work and final Android acceptance are downstream, not the immediate gate.
 
 The short-path routing defect is corrected in Codex: written production now reaches S14 feedback in both short and full modes; full mode retains its optional voice step. Automated verification passes 163/163 tests, mobile TypeScript and S14 baseline 16/16.
 

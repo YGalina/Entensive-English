@@ -18,5 +18,6 @@ This is a concise index, not a replacement for ADRs.
 | Offline groups remain in product architecture but are deferred | Planned | `PRODUCT_CONSTITUTION.md` |
 | No new learner-facing UI may be implemented from isolated screens; every major flow requires one owner-reviewable end-to-end UX/UI package and an explicit owner approval recorded before implementation | Active | `00_OWNER_CONTROL_CENTER.md`, `docs/owner/UX_UI_APPROVAL_REGISTER.md`, owner correction 2026-08-08 |
 | Codex technical/design QA never substitutes for the owner's final product, UX/UI, device-build or release decision | Active | `00_OWNER_CONTROL_CENTER.md`, owner correction 2026-08-08 |
+| Galina is the first learner and design partner: the complete learning program must be shown to her and run manually with her before curriculum UX/UI or application implementation continues. A mechanic/content block becomes eligible for product development only after owner acceptance of its content and evidence from the manual self-pilot; unvalidated curriculum must not be encoded in Fable or code. | Active | Owner decision 2026-08-09 |
 
 Add non-trivial decisions to `docs/adr/`; link them here when they affect current work.
