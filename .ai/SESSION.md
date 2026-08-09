@@ -69,6 +69,8 @@ Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-pa
 
 **Active task: assemble the existing program and its app traceability without redesign, then run Galina's manual self-pilot.** The immediate deliverable is one owner-readable AS-IS package covering audience, goals, scientific/methodological basis, complete curriculum, calendar/hours, skill assessment, exercises, feedback, prior research, implemented coverage and gaps. After owner review, complete the missing speaking baseline from the existing English Tutor vault and begin manual sessions. Fable first-run work and final Android acceptance are downstream, not the immediate gate.
 
+The AS-IS package is now available for owner review in [Notion](https://app.notion.com/p/3b71e441fe4381d89e11ec7bfeb2815e?pvs=204). It includes the English Tutor personal plan, current skill-profile evidence, Stage 0 seven-day schedule, app coverage, completed-work inventory, missing traceability, and an `AS-IS календарь и Gantt` database. The Gantt contains only dates already present in source material; previously unscheduled product work is explicitly shown as unscheduled or blocked.
+
 The short-path routing defect is corrected in Codex: written production now reaches S14 feedback in both short and full modes; full mode retains its optional voice step. Automated verification passes 163/163 tests, mobile TypeScript and S14 baseline 16/16.
 
 The Path Hub header finding is visual and is routed to Fable through `docs/prompts/design/15_path_hub_week_header_device_correction.md`. Required sequence now is:
