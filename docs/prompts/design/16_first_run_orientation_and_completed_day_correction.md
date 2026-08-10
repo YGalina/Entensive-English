@@ -78,7 +78,7 @@ It must:
 - remove the active `Начать практику` action for the already completed Day 1;
 - never reopen the completed session as if it were new;
 - make clear that no additional day is currently available, without promising a release time or background delivery;
-- keep Library as the existing quiet lateral action.
+- preserve Library's quiet lateral place in the hierarchy, but do not represent it as an active destination unless the implementation handoff points to a product-ready S19 route. The current `/(tabs)/library` implementation is legacy and must never be exposed. If product-ready S19 is not yet wired, use an honest unavailable/coming-later state rather than an active control that silently returns to Entry.
 
 The engineering implementation will use this state to break the current Path Hub → completed Day 1 → Path Hub loop.
 
@@ -103,7 +103,7 @@ Include:
 - one review board;
 - individual HTML screen/state exports;
 - final copy and state inventory;
-- implementation handoff defining CTA destinations and full/short/completed state conditions;
+- implementation handoff defining CTA destinations, full/short/completed state conditions and the exact product-ready/unavailable Library condition; it must explicitly forbid `/(tabs)/library`;
 - a short statement of what existing screens remain unchanged.
 
 Stop for Codex inspection and owner visual approval. Do not alter any accepted export in place.
