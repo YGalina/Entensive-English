@@ -1,6 +1,6 @@
 # Current Project Session
 
-Last updated: 2026-08-08
+Last updated: 2026-08-10
 
 ## Phase
 
@@ -21,6 +21,8 @@ Continuity for a new Codex task is provided by `.ai/CODEX_HANDOFF.md` and the pr
 Frozen. `docs/adr/ADR-001-composite-learning-day.md` is Draft only and grants no implementation or visual-design authority.
 
 ## Current focus
+
+The owner completed a target-user think-aloud traversal of the implemented first run and Day 1 and accepted the resulting findings as product input. The durable finding register is `docs/qa/TARGET_USER_DAY1_FEEDBACK_2026-08-10.md`. Day 1 has sufficient activity volume for this slice; the release blockers are truthful evaluation/feedback, first-run orientation, completed-day continuity and a dead Library destination. Confirmed defects may be corrected without reopening the curriculum architecture, but learner-feedback behavior requires a ratified learning contract and visual changes remain Fable-only.
 
 The training-sufficiency revision v1.2 is accepted in `docs/methodology/training_revision_v1/`. Its governing conclusion is that S5 is a valid learning block but an insufficient complete intensive day. The candidate composite-day direction must be tested through one manually produced seven-day individual module before architecture, design or implementation changes.
 
@@ -67,6 +69,8 @@ Engineering PR 6 implemented S5 Daily Cycle and S14 Summary, including active-pa
 
 ## Next task
 
+**Active correction gate: accepted target-user Day 1 feedback.** Codex restores web runtime parity and maintains the defect/acceptance register. Claude Opus produces the bounded retrieval/free-production feedback contract and benchmark from `docs/prompts/ux/08_target_user_learning_feedback_contract.md`. Fable prompt 16 becomes active for first-run orientation, S7 handoff and completed-Day-1 Path Hub after the owner-approved feedback direction; Codex does not draw those states. The legacy Library route remains blocked and must not be exposed as a shortcut.
+
 **Active task: assemble the existing program and its app traceability without redesign, then run Galina's manual self-pilot.** The immediate deliverable is one owner-readable AS-IS package covering audience, goals, scientific/methodological basis, complete curriculum, calendar/hours, skill assessment, exercises, feedback, prior research, implemented coverage and gaps. After owner review, complete the missing speaking baseline from the existing English Tutor vault and begin manual sessions. Fable first-run work and final Android acceptance are downstream, not the immediate gate.
 
 The AS-IS package is now available for owner review in [Notion](https://app.notion.com/p/3b71e441fe4381d89e11ec7bfeb2815e?pvs=204). It includes the English Tutor personal plan, current skill-profile evidence, Stage 0 seven-day schedule, app coverage, completed-work inventory, missing traceability, and an `AS-IS календарь и Gantt` database. The Gantt contains only dates already present in source material; previously unscheduled product work is explicitly shown as unscheduled or blocked.
@@ -94,6 +98,8 @@ The Path Hub header finding is visual and is routed to Fable through `docs/promp
 Do not implement Days 2–7 until this full sequence is closed.
 
 ## Blockers
+
+External learner testing and store preparation are blocked by the accepted target-user findings TU-02 through TU-06. TU-01 is an engineering correction. TU-04/TU-05/TU-08 require the Opus learning-feedback contract and benchmark before code. TU-02/TU-06 require the Fable prompt-16 artifact and owner approval. TU-03 must be resolved through a product-ready S19 destination or an honest unavailable state; legacy-route containment must not be weakened.
 
 The immediate blocker is the Fable artifact and owner visual approval for prompt 16. Final Android acceptance cannot run against the known circular completed-day route. Native APK delivery is not configured on this Mac, so the current delivery remains a cleared-cache Expo LAN build. Do not redesign or visually correct the screens in Codex, implement a runtime day composer, build Stage 1, or copy Daniel materials. Research language must not enter learner-facing copy. Voice samples require separate consent and remain outside product progress.
 

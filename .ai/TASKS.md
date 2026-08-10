@@ -2,11 +2,14 @@
 
 ## In progress
 
+- [ ] **Accepted target-user Day 1 feedback — ACTIVE P0:** execute `docs/qa/TARGET_USER_DAY1_FEEDBACK_2026-08-10.md`; fix TU-01 in engineering; contract/benchmark TU-04, TU-05 and TU-08 through Opus; route TU-02 and TU-06 to Fable prompt 16; resolve TU-03 without exposing the legacy Library.
+- [ ] **Stage 0 learning-feedback contract and benchmark — ACTIVE:** Claude Opus executes `docs/prompts/ux/08_target_user_learning_feedback_contract.md`; Codex reviews outputs and converts only ratified behavior into implementation tests.
+
 - [ ] **Owner-as-first-learner self-pilot — ACTIVE P0:** show the complete existing program AS-IS; complete Galina's missing speaking baseline; run the program manually with session evidence and weekly checks; require owner content/UX acceptance before any curriculum block enters Fable or engineering.
 - [ ] **Program visibility and traceability — OWNER REVIEW:** [Notion AS-IS audit](https://app.notion.com/p/3b71e441fe4381d89e11ec7bfeb2815e?pvs=204) now shows audience, goals, methods/science, phases, existing calendar/hours, skill coverage, exercises, assessment, feedback, completed work, app mapping and missing links without redesign. Await `AS IS ПРИНЯТ ВЕРНО` or corrections before producing a revised program.
 - [ ] **Owner control center — ACTIVE:** maintain [Notion Product HQ](https://app.notion.com/p/3b61e441fe4381f495edc1cb96162930?pvs=204) and its `Intensive English — Delivery` database as the owner-visible operational source for Kanban, roadmap, risks, releases and approval gates. Keep `00_OWNER_CONTROL_CENTER.md` and Git governance as the versioned technical mirror; Obsidian is not the primary owner Kanban.
-- [ ] **Unified first-run → Day 1 UX/UI package — BLOCKED BY SELF-PILOT:** resume only after the relevant program content, mechanics and feedback have been manually tested by Galina and accepted for product UX.
-- [ ] **First-run orientation and completed-Day-1 correction — BLOCKED BY SELF-PILOT:** prompt 16 is not the active gate; do not ask Fable to encode an unapproved diagnostic/program story.
+- [ ] **Unified first-run → Day 1 UX/UI package — ACTIVE CORRECTION GATE:** target-user findings are accepted; Fable executes only the scope in prompt 16 and stops for owner approval.
+- [ ] **First-run orientation and completed-Day-1 correction — ACTIVE FABLE GATE:** execute `docs/prompts/design/16_first_run_orientation_and_completed_day_correction.md`; do not add new methodology or expose legacy routes.
 - [ ] **Stage 0 Day 1 final Android regression — BLOCKED BY PROMPT 16:** after implementation, verify completed-day routing, S7 transition, S14 feedback in short/full modes, S3 at 200%, keyboard behavior, microphone lifecycle and screen-reader labels.
 - [ ] Product-owner review: approve or adjust `docs/engineering/IMPLEMENTATION_READINESS_AUDIT_V1.md`.
 
