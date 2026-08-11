@@ -82,6 +82,20 @@ It must:
 
 The engineering implementation will use this state to break the current Path Hub → completed Day 1 → Path Hub loop.
 
+## Required correction E — honest Day 1 dose framing
+
+The current opening-phase headline `Четыре фразы на сегодня` is literally true for the four priming phrases, but the product owner and target-user traversal both read it as a statement about the **whole daily dose**. It visually makes a substantial Day 1 look like a tiny four-phrase lesson, even though the full path also contains context, comprehension, three retrievals, free written production, guided variation, two spoken attempts and factual closure.
+
+Correct this without increasing the learning load or inventing marketing claims:
+
+- make it immediately clear that the four phrases are the **opening block**, not the whole day;
+- preserve the factual full-path duration of about 30 minutes and short-path duration of about 16 minutes in the Day 1 overview;
+- do not turn the phase screen into a long syllabus or add explanatory paragraphs;
+- do not use `Четыре фразы на сегодня` as an isolated headline if it can still be read as the total daily programme;
+- provide the exact replacement learner copy and record that current copy ID `C-F1-T` is superseded for this Stage 0 Day 1 presentation only, pending owner approval and contract update.
+
+The visual and verbal solution belongs to Fable inside Living Content. The acceptance test is comprehension: a first-time learner must not describe the programme as “four phrases for today” after seeing the overview and opening block.
+
 ## Device evidence and states
 
 Provide reviewable references at:
